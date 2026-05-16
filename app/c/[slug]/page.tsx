@@ -1,71 +1,48 @@
-import { cities } from "@/data/cities";
-import { notFound } from "next/navigation";
-import type { CSSProperties } from "react";
+import Link from "next/link";
 
-export default async function CityPage({
-  params,
-  searchParams,
-}: {
-  params: Promise<{ slug: string }>;
-  searchParams?: Promise<Record<string, string | string[] | undefined>> | Record<string, string | string[] | undefined>;
-}) {
-  const { slug } = await params;
-  const sp = await searchParams;
-
-  const src = typeof sp?.src === "string" ? sp.src : "hub";
-  const v = typeof sp?.v === "string" ? sp.v : `hub_${slug}`;
-
-  const city = cities[slug];
-  if (!city) return notFound();
-
+export default function Home() {
   return (
-    <main style={{ maxWidth: 720, margin: "40px auto", padding: "0 16px", fontFamily: "system-ui" }}>
-      <h1 style={{ marginBottom: 6 }}>
-        {city.city}, {city.country}
-      </h1>
-      <div style={{ opacity: 0.8, marginBottom: 18 }}>World Heritage series</div>
+    <main
+      style={{
+        minHeight: "100vh",
+        display: "grid",
+        placeItems: "center",
+        padding: "24px",
+        fontFamily: "system-ui",
+      }}
+    >
+      <section style={{ maxWidth: 720, width: "100%", textAlign: "center" }}>
+        <div style={{ fontSize: 14, opacity: 0.7, marginBottom: 12 }}>
+          Travel affiliate city hub
+        </div>
 
-      <section style={{ lineHeight: 1.9, marginBottom: 20 }}>
-        <div><b>Day 1</b> — {city.stops[0]}</div>
-        <div><b>Day 2</b> — {city.stops[1]}</div>
-        <div><b>Day 3</b> — {city.stops[2]}</div>
-      </section>
+        <h1 style={{ fontSize: 42, lineHeight: 1.1, margin: "0 0 16px" }}>
+          Find travel links by city.
+        </h1>
 
-      <section style={{ display: "grid", gap: 10 }}>
-        <a href={city.planUrl ?? "#"} style={btnStyle}>Build this itinerary</a>
+        <p style={{ fontSize: 18, opacity: 0.75, margin: "0 0 28px" }}>
+          Quick hotel and tour links for places featured in our short videos.
+        </p>
 
-        <a
-          href={`/out/hotels?c=${encodeURIComponent(slug)}&src=${encodeURIComponent(src)}&v=${encodeURIComponent(v)}`}
-          style={btnStyle}
+        <Link
+          href="/c/rome-it?src=home&v=home_rome"
+          style={{
+            display: "inline-block",
+            padding: "14px 18px",
+            borderRadius: 14,
+            border: "1px solid #ddd",
+            textDecoration: "none",
+            color: "inherit",
+            fontWeight: 600,
+          }}
         >
-          Hotels
-        </a>
+          Explore Rome
+        </Link>
 
-        {city.affToursUrl && (
-          <a
-            href={`/out/tours?c=${encodeURIComponent(slug)}&src=${encodeURIComponent(src)}&v=${encodeURIComponent(v)}`}
-            style={btnStyle}
-          >
-            Tours
-          </a>
-        )}
+        <p style={{ marginTop: 28, fontSize: 12, opacity: 0.6 }}>
+          Some links may be affiliate links. Original 3D characters • AI-assisted visuals.
+        </p>
       </section>
-
-      <hr style={{ margin: "24px 0" }} />
-
-      <small style={{ opacity: 0.8, display: "block", lineHeight: 1.6 }}>
-        Disclosure: Some links may be affiliate links.<br />
-        Original 3D characters • AI-assisted visuals.
-      </small>
     </main>
   );
 }
-
-const btnStyle: CSSProperties = {
-  display: "block",
-  padding: "12px 14px",
-  borderRadius: 12,
-  border: "1px solid #ddd",
-  textDecoration: "none",
-  color: "inherit",
-};
