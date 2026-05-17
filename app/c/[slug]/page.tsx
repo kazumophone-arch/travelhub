@@ -43,6 +43,10 @@ export default async function CityPage({
   return (
     <main style={pageStyle}>
       <section style={cardStyle}>
+        <Link href="/" style={homeLinkStyle}>
+          ← Home
+        </Link>
+
         <div style={eyebrowStyle}>Travel links for</div>
 
         <h1 style={titleStyle}>
@@ -62,7 +66,6 @@ export default async function CityPage({
               return (
                 <div key={spot.slug} style={spotItemStyle}>
                   <span style={spotNumberStyle}>{index + 1}</span>
-
                   <div>
                     <div style={spotNameStyle}>{spot.name}</div>
                   </div>
@@ -140,7 +143,7 @@ const homeLinkStyle: CSSProperties = {
   textDecoration: "none",
   fontSize: 14,
   fontWeight: 800,
-  opacity: 0.68,
+  opacity: 0.75,
 };
 
 const eyebrowStyle: CSSProperties = {
