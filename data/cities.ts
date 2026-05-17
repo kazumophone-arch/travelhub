@@ -1,23 +1,9 @@
 // data/cities.ts
-export type City = {
-  slug: string;
-  city: string;
-  country: string;
-  stops: [string, string, string];
-  affHotelsUrl: string;
-  affToursUrl?: string;
-  planUrl?: string;
-};
+import type { City } from "./types";
+import { romeIt } from "./city-data/rome-it";
 
 export const cities: Record<string, City> = {
-  "rome-it": {
-    slug: "rome-it",
-    city: "Rome",
-    country: "Italy",
-    stops: ["Historic Center", "Trevi Fountain", "Sunset View"],
-    affHotelsUrl: "https://example.com/affiliate-hotels-rome",
-    affToursUrl: "https://example.com/affiliate-tours-rome",
-  },
+  [romeIt.slug]: romeIt,
 
   "venice-it": {
     slug: "venice-it",
