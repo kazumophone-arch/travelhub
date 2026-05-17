@@ -28,6 +28,46 @@ const asiaCountries = new Set([
   "Singapore",
 ]);
 
+const preferredOrder = [
+  "World Heritage",
+  "Spring",
+  "Summer",
+  "Autumn",
+  "Winter",
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+  "Couples",
+  "Family",
+  "Solo",
+  "Friends",
+  "Weekend",
+  "Luxury",
+  "Budget",
+  "Europe",
+  "Asia",
+  "Old Town",
+  "Scenic",
+  "Beach",
+  "Nature",
+  "Food",
+  "Italy",
+  "France",
+  "Spain",
+  "Japan",
+  "United Kingdom",
+  "Netherlands",
+];
+
 function getCityCategories(city: City) {
   const categories = new Set<string>();
 
@@ -108,46 +148,6 @@ export function CityExplorer({ cities }: Props) {
       getCityCategories(city).forEach((category) => set.add(category));
     });
 
-const preferredOrder = [
-  "World Heritage",
-  "Spring",
-  "Summer",
-  "Autumn",
-  "Winter",
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-  "Couples",
-  "Family",
-  "Solo",
-  "Friends",
-  "Weekend",
-  "Luxury",
-  "Budget",
-  "Europe",
-  "Asia",
-  "Old Town",
-  "Scenic",
-  "Beach",
-  "Nature",
-  "Food",
-  "Italy",
-  "France",
-  "Spain",
-  "Japan",
-  "United Kingdom",
-  "Netherlands",
-];
-
     const ordered = preferredOrder.filter((category) => set.has(category));
     const rest = Array.from(set)
       .filter((category) => !preferredOrder.includes(category))
@@ -197,7 +197,7 @@ const preferredOrder = [
             <div style={eyebrowStyle}>City-based travel links</div>
 
             <h1 style={heroTitleStyle}>
-              Find beautiful cities. Book the stay faster.
+              Find beautiful cities. Book stays faster.
             </h1>
 
             <p style={heroSubtitleStyle}>
@@ -313,7 +313,7 @@ const preferredOrder = [
 
                   <div style={destinationBodyStyle}>
                     <div style={destinationTopStyle}>
-                      <div>
+                      <div style={destinationTextStyle}>
                         <h3 style={destinationTitleStyle}>{city.city}</h3>
                         <p style={destinationCountryStyle}>{city.country}</p>
                       </div>
@@ -349,6 +349,7 @@ const preferredOrder = [
 
 const pageStyle: CSSProperties = {
   minHeight: "100vh",
+  overflowX: "hidden",
   background:
     "radial-gradient(circle at 12% 0%, rgba(255, 221, 180, 0.72), transparent 30%), radial-gradient(circle at 88% 4%, rgba(175, 205, 255, 0.58), transparent 28%), linear-gradient(180deg, #fbf7f0 0%, #ffffff 44%, #eef4f8 100%)",
   color: "#171717",
@@ -359,15 +360,16 @@ const pageStyle: CSSProperties = {
 const shellStyle: CSSProperties = {
   maxWidth: 1120,
   margin: "0 auto",
-  padding: "22px 20px 54px",
+  padding: "18px 16px 48px",
 };
 
 const navStyle: CSSProperties = {
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
-  gap: 16,
-  marginBottom: 30,
+  gap: 12,
+  flexWrap: "wrap",
+  marginBottom: 28,
 };
 
 const logoStyle: CSSProperties = {
@@ -375,7 +377,7 @@ const logoStyle: CSSProperties = {
   textDecoration: "none",
   fontSize: 18,
   fontWeight: 800,
-  letterSpacing: "-0.04em",
+  letterSpacing: "-0.03em",
 };
 
 const navPillStyle: CSSProperties = {
@@ -391,19 +393,20 @@ const navPillStyle: CSSProperties = {
 
 const heroStyle: CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "minmax(0, 1.1fr) minmax(280px, 0.9fr)",
+  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 360px), 1fr))",
   gap: 24,
   alignItems: "center",
   marginBottom: 38,
 };
 
 const heroTextStyle: CSSProperties = {
-  padding: "28px 0",
+  padding: "20px 0",
+  minWidth: 0,
 };
 
 const eyebrowStyle: CSSProperties = {
   fontSize: 12,
-  letterSpacing: "0.16em",
+  letterSpacing: "0.14em",
   textTransform: "uppercase",
   opacity: 0.58,
   marginBottom: 14,
@@ -412,16 +415,17 @@ const eyebrowStyle: CSSProperties = {
 const heroTitleStyle: CSSProperties = {
   margin: "0 0 18px",
   maxWidth: 680,
-  fontSize: "clamp(46px, 8vw, 86px)",
-  lineHeight: 0.92,
-  letterSpacing: "-0.075em",
+  fontSize: "clamp(34px, 10vw, 76px)",
+  lineHeight: 1.04,
+  letterSpacing: "-0.035em",
   fontWeight: 850,
+  overflowWrap: "break-word",
 };
 
 const heroSubtitleStyle: CSSProperties = {
-  margin: "0 0 26px",
+  margin: "0 0 24px",
   maxWidth: 520,
-  fontSize: 17,
+  fontSize: "clamp(15px, 4vw, 17px)",
   lineHeight: 1.65,
   opacity: 0.72,
 };
@@ -442,10 +446,12 @@ const searchBoxStyle: CSSProperties = {
 const searchIconStyle: CSSProperties = {
   fontSize: 22,
   opacity: 0.5,
+  flexShrink: 0,
 };
 
 const searchInputStyle: CSSProperties = {
   width: "100%",
+  minWidth: 0,
   padding: "15px 8px",
   border: 0,
   outline: "none",
@@ -456,25 +462,26 @@ const searchInputStyle: CSSProperties = {
 
 const heroPreviewStyle: CSSProperties = {
   position: "relative",
+  minWidth: 0,
 };
 
 const heroImageStyle: CSSProperties = {
-  minHeight: 420,
-  borderRadius: 36,
+  minHeight: "clamp(250px, 68vw, 420px)",
+  borderRadius: 32,
   background:
     "linear-gradient(135deg, #d9a76f 0%, #b86b4b 42%, #3b2f2f 100%)",
-  boxShadow: "0 36px 90px rgba(0, 0, 0, 0.22)",
+  boxShadow: "0 30px 80px rgba(0, 0, 0, 0.2)",
   position: "relative",
   overflow: "hidden",
 };
 
 const floatingCardStyle: CSSProperties = {
   position: "absolute",
-  left: 22,
-  right: 22,
-  bottom: 22,
-  padding: 18,
-  borderRadius: 24,
+  left: 18,
+  right: 18,
+  bottom: 18,
+  padding: 16,
+  borderRadius: 22,
   background: "rgba(255, 255, 255, 0.82)",
   backdropFilter: "blur(18px)",
   border: "1px solid rgba(255, 255, 255, 0.5)",
@@ -484,15 +491,15 @@ const floatingCardStyle: CSSProperties = {
 const floatingSmallTextStyle: CSSProperties = {
   fontSize: 12,
   textTransform: "uppercase",
-  letterSpacing: "0.14em",
+  letterSpacing: "0.12em",
   opacity: 0.55,
   marginBottom: 8,
 };
 
 const floatingTitleStyle: CSSProperties = {
-  fontSize: 28,
+  fontSize: "clamp(22px, 7vw, 28px)",
   fontWeight: 800,
-  letterSpacing: "-0.05em",
+  letterSpacing: "-0.035em",
 };
 
 const floatingSubStyle: CSSProperties = {
@@ -509,14 +516,15 @@ const featuredStyle: CSSProperties = {
 const sectionHeaderStyle: CSSProperties = {
   display: "flex",
   justifyContent: "space-between",
-  gap: 18,
-  alignItems: "end",
+  gap: 12,
+  alignItems: "flex-end",
   marginBottom: 16,
+  flexWrap: "wrap",
 };
 
 const smallLabelStyle: CSSProperties = {
   fontSize: 12,
-  letterSpacing: "0.14em",
+  letterSpacing: "0.12em",
   textTransform: "uppercase",
   opacity: 0.5,
   marginBottom: 6,
@@ -524,8 +532,8 @@ const smallLabelStyle: CSSProperties = {
 
 const sectionTitleStyle: CSSProperties = {
   margin: 0,
-  fontSize: 28,
-  letterSpacing: "-0.055em",
+  fontSize: "clamp(24px, 6vw, 28px)",
+  letterSpacing: "-0.035em",
   fontWeight: 800,
 };
 
@@ -537,14 +545,14 @@ const mutedTextStyle: CSSProperties = {
 
 const featuredGridStyle: CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))",
+  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 260px), 1fr))",
   gap: 14,
 };
 
 const featuredCardStyle: CSSProperties = {
   display: "block",
   padding: 10,
-  borderRadius: 30,
+  borderRadius: 28,
   background: "rgba(255, 255, 255, 0.78)",
   border: "1px solid rgba(0, 0, 0, 0.08)",
   boxShadow: "0 24px 70px rgba(0, 0, 0, 0.1)",
@@ -553,8 +561,8 @@ const featuredCardStyle: CSSProperties = {
 };
 
 const featuredVisualStyle: CSSProperties = {
-  height: 170,
-  borderRadius: 24,
+  height: "clamp(145px, 42vw, 170px)",
+  borderRadius: 22,
   position: "relative",
   overflow: "hidden",
 };
@@ -578,8 +586,8 @@ const featuredContentStyle: CSSProperties = {
 const featuredTitleStyle: CSSProperties = {
   margin: 0,
   fontSize: 24,
-  lineHeight: 1,
-  letterSpacing: "-0.055em",
+  lineHeight: 1.05,
+  letterSpacing: "-0.035em",
 };
 
 const featuredCountryStyle: CSSProperties = {
@@ -605,6 +613,7 @@ const categoryWrapStyle: CSSProperties = {
   overflowX: "auto",
   paddingBottom: 14,
   marginBottom: 8,
+  WebkitOverflowScrolling: "touch",
 };
 
 const categoryButtonStyle: CSSProperties = {
@@ -629,13 +638,13 @@ const activeCategoryStyle: CSSProperties = {
 
 const destinationGridStyle: CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 260px), 1fr))",
   gap: 16,
 };
 
 const destinationCardStyle: CSSProperties = {
   display: "block",
-  borderRadius: 30,
+  borderRadius: 28,
   background: "rgba(255, 255, 255, 0.82)",
   border: "1px solid rgba(0, 0, 0, 0.08)",
   boxShadow: "0 20px 58px rgba(0, 0, 0, 0.08)",
@@ -645,7 +654,7 @@ const destinationCardStyle: CSSProperties = {
 };
 
 const destinationVisualStyle: CSSProperties = {
-  height: 160,
+  height: "clamp(140px, 40vw, 160px)",
   position: "relative",
 };
 
@@ -673,11 +682,16 @@ const destinationTopStyle: CSSProperties = {
   marginBottom: 16,
 };
 
+const destinationTextStyle: CSSProperties = {
+  minWidth: 0,
+};
+
 const destinationTitleStyle: CSSProperties = {
   margin: 0,
-  fontSize: 25,
-  lineHeight: 1,
-  letterSpacing: "-0.055em",
+  fontSize: "clamp(22px, 6vw, 25px)",
+  lineHeight: 1.05,
+  letterSpacing: "-0.035em",
+  overflowWrap: "break-word",
 };
 
 const destinationCountryStyle: CSSProperties = {
@@ -702,6 +716,7 @@ const spotsStyle: CSSProperties = {
   display: "grid",
   gap: 7,
   fontSize: 14,
+  lineHeight: 1.35,
   opacity: 0.74,
   marginBottom: 16,
 };
