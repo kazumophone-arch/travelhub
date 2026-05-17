@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import type { City } from "@/data/types";
+import { TravelDiscoveryTools } from "@/components/TravelDiscoveryTools";
 
 type Props = {
   cities: City[];
@@ -388,7 +389,11 @@ export function CityExplorer({ cities }: Props) {
             </div>
 
             <div style={heroActionsStyle}>
-              <button type="button" onClick={handleSurpriseMe} style={primaryHeroButtonStyle}>
+              <button
+                type="button"
+                onClick={handleSurpriseMe}
+                style={primaryHeroButtonStyle}
+              >
                 Surprise me
               </button>
 
@@ -410,7 +415,8 @@ export function CityExplorer({ cities }: Props) {
               <div style={floatingCardStyle}>
                 <div style={floatingSmallTextStyle}>This month</div>
                 <div style={floatingTitleStyle}>
-                  {thisMonthCities[0]?.city ?? "Rome"}, {thisMonthCities[0]?.country ?? "Italy"}
+                  {thisMonthCities[0]?.city ?? "Rome"},{" "}
+                  {thisMonthCities[0]?.country ?? "Italy"}
                 </div>
                 <div style={floatingSubStyle}>
                   {currentMonth} · Hotels · Tours · Spots
@@ -419,6 +425,8 @@ export function CityExplorer({ cities }: Props) {
             </div>
           </div>
         </section>
+
+        <TravelDiscoveryTools cities={cities} />
 
         <section style={feedSectionStyle}>
           <div style={sectionHeaderStyle}>
@@ -562,7 +570,10 @@ export function CityExplorer({ cities }: Props) {
                       {(spot.tags.length > 0 ? spot.tags : ["Featured"])
                         .slice(0, 2)
                         .map((tag, tagIndex) => (
-                          <span key={`${tag}-${tagIndex}`} style={smallChipStyle}>
+                          <span
+                            key={`${tag}-${tagIndex}`}
+                            style={smallChipStyle}
+                          >
                             {tag}
                           </span>
                         ))}
