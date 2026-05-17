@@ -6,4 +6,5 @@ export type City = {
   affHotelsUrl: string;
   affToursUrl?: string;
   planUrl?: string;
+  categories?: string[];
 };
