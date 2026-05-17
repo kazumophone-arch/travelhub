@@ -9,6 +9,17 @@ type Props = {
   cities: City[];
 };
 
+type DiscoverySpot = {
+  citySlug: string;
+  cityName: string;
+  country: string;
+  slug: string;
+  name: string;
+  summary: string;
+  tags: string[];
+  canOpen: boolean;
+};
+
 const europeCountries = new Set([
   "Italy",
   "France",
@@ -27,6 +38,54 @@ const asiaCountries = new Set([
   "Thailand",
   "Singapore",
 ]);
+
+const monthNames = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+const moodCards = [
+  {
+    label: "Romantic",
+    title: "Romantic escapes",
+    text: "Canals, sunsets, old streets, and atmospheric city walks.",
+  },
+  {
+    label: "Family",
+    title: "Family-friendly",
+    text: "Easy-to-understand destinations for relaxed trip planning.",
+  },
+  {
+    label: "Solo",
+    title: "Solo travel picks",
+    text: "Walkable cities and iconic spots that work well alone.",
+  },
+  {
+    label: "World Heritage",
+    title: "World Heritage",
+    text: "Historic centers, old towns, temples, and cultural routes.",
+  },
+  {
+    label: "Scenic",
+    title: "Scenic views",
+    text: "Beautiful skylines, canals, beaches, rivers, and sunset moments.",
+  },
+  {
+    label: "Old Town",
+    title: "Old town walks",
+    text: "Compact cities with old streets, plazas, bridges, and architecture.",
+  },
+];
 
 const preferredOrder = [
   "World Heritage",
@@ -68,6 +127,20 @@ const preferredOrder = [
   "Netherlands",
 ];
 
+function getCurrentMonth() {
+  return monthNames[new Date().getMonth()];
+}
+
+function slugify(value: string) {
+  return (
+    value
+      .toLowerCase()
+      .replaceAll("&", "and")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "") || "spot"
+  );
+}
+
 function getCityCategories(city: City) {
   const categories = new Set<string>();
 
@@ -103,6 +176,19 @@ function getCityCategories(city: City) {
   return Array.from(categories);
 }
 
+function getCityReason(city: City) {
+  const categories = getCityCategories(city);
+
+  if (categories.includes("Romantic")) return "For romantic city walks";
+  if (categories.includes("Family")) return "Easy pick for family trips";
+  if (categories.includes("Solo")) return "Walkable pick for solo travel";
+  if (categories.includes("World Heritage")) return "Historic and cultural route";
+  if (categories.includes("Scenic")) return "For scenic views and atmosphere";
+  if (categories.includes("Old Town")) return "Best for old town wandering";
+
+  return `Start with ${city.stops[0]}`;
+}
+
 function visualForCity(slug: string) {
   const visuals: Record<string, string> = {
     "rome-it":
@@ -135,11 +221,60 @@ function visualForCity(slug: string) {
   );
 }
 
+function visualForIndex(index: number) {
+  const visuals = [
+    "linear-gradient(135deg, #d9a76f 0%, #b86b4b 44%, #3b2f2f 100%)",
+    "linear-gradient(135deg, #9cc9d7 0%, #e7c389 46%, #8b5f4d 100%)",
+    "linear-gradient(135deg, #c7d4df 0%, #d3b58d 44%, #4b4b58 100%)",
+    "linear-gradient(135deg, #f0b45f 0%, #d95850 45%, #2e6f89 100%)",
+  ];
+
+  return visuals[index % visuals.length];
+}
+
+function getDiscoverySpots(cities: City[]) {
+  const spots: DiscoverySpot[] = [];
+
+  cities.forEach((city) => {
+    if (city.spotDetails && city.spotDetails.length > 0) {
+      city.spotDetails.forEach((spot) => {
+        spots.push({
+          citySlug: city.slug,
+          cityName: city.city,
+          country: city.country,
+          slug: spot.slug,
+          name: spot.name,
+          summary: spot.summary,
+          tags: spot.tags ?? [],
+          canOpen: true,
+        });
+      });
+
+      return;
+    }
+
+    city.stops.forEach((stop, index) => {
+      spots.push({
+        citySlug: city.slug,
+        cityName: city.city,
+        country: city.country,
+        slug: slugify(stop),
+        name: stop,
+        summary: `A featured place from ${city.city}.`,
+        tags: [index === 0 ? "Featured" : "Travel spot"],
+        canOpen: false,
+      });
+    });
+  });
+
+  return spots.slice(0, 12);
+}
+
 export function CityExplorer({ cities }: Props) {
   const [query, setQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
 
-  const featuredCities = cities.slice(0, 3);
+  const currentMonth = getCurrentMonth();
 
   const categories = useMemo(() => {
     const set = new Set<string>();
@@ -154,6 +289,31 @@ export function CityExplorer({ cities }: Props) {
       .sort();
 
     return ["All", ...ordered, ...rest];
+  }, [cities]);
+
+  const thisMonthCities = useMemo(() => {
+    const monthly = cities.filter((city) => city.months?.includes(currentMonth));
+
+    if (monthly.length > 0) return monthly.slice(0, 6);
+
+    return cities
+      .filter((city) => {
+        const categories = getCityCategories(city);
+        return (
+          categories.includes("Scenic") ||
+          categories.includes("World Heritage") ||
+          categories.includes("Old Town")
+        );
+      })
+      .slice(0, 6);
+  }, [cities, currentMonth]);
+
+  const featuredCities = useMemo(() => {
+    return cities.slice(0, 8);
+  }, [cities]);
+
+  const discoverySpots = useMemo(() => {
+    return getDiscoverySpots(cities);
   }, [cities]);
 
   const filteredCities = useMemo(() => {
@@ -181,6 +341,18 @@ export function CityExplorer({ cities }: Props) {
     });
   }, [cities, query, activeCategory]);
 
+  function handleMoodClick(label: string) {
+    setQuery("");
+    setActiveCategory(label);
+  }
+
+  function handleSurpriseMe() {
+    if (cities.length === 0) return;
+
+    const randomCity = cities[Math.floor(Math.random() * cities.length)];
+    window.location.href = `/c/${randomCity.slug}?src=home&v=surprise_${randomCity.slug}`;
+  }
+
   return (
     <main style={pageStyle}>
       <section style={shellStyle}>
@@ -194,15 +366,15 @@ export function CityExplorer({ cities }: Props) {
 
         <section style={heroStyle}>
           <div style={heroTextStyle}>
-            <div style={eyebrowStyle}>City-based travel links</div>
+            <div style={eyebrowStyle}>Discover travel links by mood</div>
 
             <h1 style={heroTitleStyle}>
-              Find beautiful cities. Book stays faster.
+              Find the kind of trip you actually want.
             </h1>
 
             <p style={heroSubtitleStyle}>
-              Search destinations featured in our travel shorts and jump straight
-              to hotel and tour options.
+              Browse by month, mood, city, or spot. Then jump straight to hotel
+              and tour options when a place feels right.
             </p>
 
             <div style={searchBoxStyle}>
@@ -210,55 +382,195 @@ export function CityExplorer({ cities }: Props) {
               <input
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                placeholder="Search city, country, or spot..."
+                placeholder="Search city, country, season, or spot..."
                 style={searchInputStyle}
               />
+            </div>
+
+            <div style={heroActionsStyle}>
+              <button type="button" onClick={handleSurpriseMe} style={primaryHeroButtonStyle}>
+                Surprise me
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setQuery("");
+                  setActiveCategory(currentMonth);
+                }}
+                style={secondaryHeroButtonStyle}
+              >
+                Best in {currentMonth}
+              </button>
             </div>
           </div>
 
           <div style={heroPreviewStyle}>
             <div style={heroImageStyle}>
               <div style={floatingCardStyle}>
-                <div style={floatingSmallTextStyle}>Featured</div>
-                <div style={floatingTitleStyle}>Rome, Italy</div>
-                <div style={floatingSubStyle}>Hotels · Tours · Old Town</div>
+                <div style={floatingSmallTextStyle}>This month</div>
+                <div style={floatingTitleStyle}>
+                  {thisMonthCities[0]?.city ?? "Rome"}, {thisMonthCities[0]?.country ?? "Italy"}
+                </div>
+                <div style={floatingSubStyle}>
+                  {currentMonth} · Hotels · Tours · Spots
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        <section style={featuredStyle}>
+        <section style={feedSectionStyle}>
           <div style={sectionHeaderStyle}>
             <div>
-              <div style={smallLabelStyle}>This week</div>
-              <h2 style={sectionTitleStyle}>Featured cities</h2>
+              <div style={smallLabelStyle}>This month</div>
+              <h2 style={sectionTitleStyle}>Best places in {currentMonth}</h2>
             </div>
-            <span style={mutedTextStyle}>From latest shorts</span>
+            <span style={mutedTextStyle}>Seasonal picks</span>
           </div>
 
-          <div style={featuredGridStyle}>
-            {featuredCities.map((city) => (
+          <div style={horizontalRailStyle}>
+            {thisMonthCities.map((city, index) => (
               <Link
-                key={city.slug}
-                href={`/c/${city.slug}?src=home&v=featured_${city.slug}`}
-                style={featuredCardStyle}
+                key={`${city.slug}-month-${index}`}
+                href={`/c/${city.slug}?src=home&v=this_month_${city.slug}`}
+                style={largeRailCardStyle}
               >
                 <div
                   style={{
-                    ...featuredVisualStyle,
+                    ...largeRailVisualStyle,
+                    background: visualForCity(city.slug),
+                  }}
+                >
+                  <div style={visualBadgeStyle}>{currentMonth}</div>
+                </div>
+
+                <div style={railCardBodyStyle}>
+                  <h3 style={railCardTitleStyle}>{city.city}</h3>
+                  <p style={railCardCountryStyle}>{city.country}</p>
+                  <p style={railCardReasonStyle}>{getCityReason(city)}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <section style={feedSectionStyle}>
+          <div style={sectionHeaderStyle}>
+            <div>
+              <div style={smallLabelStyle}>Travel mood</div>
+              <h2 style={sectionTitleStyle}>Choose how you want to travel</h2>
+            </div>
+            <span style={mutedTextStyle}>Tap to filter</span>
+          </div>
+
+          <div style={moodGridStyle}>
+            {moodCards.map((mood) => {
+              const isActive = activeCategory === mood.label;
+
+              return (
+                <button
+                  key={mood.label}
+                  type="button"
+                  onClick={() => handleMoodClick(mood.label)}
+                  style={isActive ? activeMoodCardStyle : moodCardStyle}
+                >
+                  <div style={moodTitleStyle}>{mood.title}</div>
+                  <div style={moodTextStyle}>{mood.text}</div>
+                  <div style={moodActionStyle}>
+                    {isActive ? "Selected" : "Explore"}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
+        <section style={feedSectionStyle}>
+          <div style={sectionHeaderStyle}>
+            <div>
+              <div style={smallLabelStyle}>Featured</div>
+              <h2 style={sectionTitleStyle}>Cities from travel shorts</h2>
+            </div>
+            <span style={mutedTextStyle}>Swipe sideways</span>
+          </div>
+
+          <div style={horizontalRailStyle}>
+            {featuredCities.map((city, index) => (
+              <Link
+                key={`${city.slug}-featured-${index}`}
+                href={`/c/${city.slug}?src=home&v=featured_${city.slug}`}
+                style={mediumRailCardStyle}
+              >
+                <div
+                  style={{
+                    ...mediumRailVisualStyle,
                     background: visualForCity(city.slug),
                   }}
                 >
                   <div style={visualBadgeStyle}>Featured</div>
                 </div>
 
-                <div style={featuredContentStyle}>
-                  <h3 style={featuredTitleStyle}>{city.city}</h3>
-                  <p style={featuredCountryStyle}>{city.country}</p>
-                  <div style={miniMetaStyle}>Hotels · Tours</div>
+                <div style={railCardBodyStyle}>
+                  <h3 style={railCardTitleStyle}>{city.city}</h3>
+                  <p style={railCardCountryStyle}>{city.country}</p>
+                  <div style={miniMetaStyle}>Hotels · Tours · Spots</div>
                 </div>
               </Link>
             ))}
+          </div>
+        </section>
+
+        <section style={feedSectionStyle}>
+          <div style={sectionHeaderStyle}>
+            <div>
+              <div style={smallLabelStyle}>Explore by spot</div>
+              <h2 style={sectionTitleStyle}>Start from a place, not a city</h2>
+            </div>
+            <span style={mutedTextStyle}>Spot-led discovery</span>
+          </div>
+
+          <div style={horizontalRailStyle}>
+            {discoverySpots.map((spot, index) => {
+              const href = spot.canOpen
+                ? `/c/${spot.citySlug}/spot/${spot.slug}?src=home&v=spot_${spot.citySlug}_${spot.slug}`
+                : `/c/${spot.citySlug}?src=home&v=spot_preview_${spot.citySlug}`;
+
+              return (
+                <Link
+                  key={`${spot.citySlug}-${spot.slug}-${index}`}
+                  href={href}
+                  style={spotDiscoveryCardStyle}
+                >
+                  <div
+                    style={{
+                      ...spotDiscoveryVisualStyle,
+                      background: visualForIndex(index),
+                    }}
+                  >
+                    <div style={visualBadgeStyle}>{spot.cityName}</div>
+                  </div>
+
+                  <div style={spotDiscoveryBodyStyle}>
+                    <h3 style={spotDiscoveryTitleStyle}>{spot.name}</h3>
+                    <p style={spotDiscoveryMetaStyle}>
+                      {spot.cityName}, {spot.country}
+                    </p>
+                    <p style={spotDiscoveryTextStyle}>{spot.summary}</p>
+
+                    <div style={chipRowStyle}>
+                      {(spot.tags.length > 0 ? spot.tags : ["Featured"])
+                        .slice(0, 2)
+                        .map((tag, tagIndex) => (
+                          <span key={`${tag}-${tagIndex}`} style={smallChipStyle}>
+                            {tag}
+                          </span>
+                        ))}
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </section>
 
@@ -296,9 +608,9 @@ export function CityExplorer({ cities }: Props) {
             </div>
           ) : (
             <section style={destinationGridStyle}>
-              {filteredCities.map((city) => (
+              {filteredCities.map((city, index) => (
                 <Link
-                  key={city.slug}
+                  key={`${city.slug}-grid-${index}`}
                   href={`/c/${city.slug}?src=home&v=home_${city.slug}`}
                   style={destinationCardStyle}
                 >
@@ -320,6 +632,8 @@ export function CityExplorer({ cities }: Props) {
 
                       <div style={arrowStyle}>→</div>
                     </div>
+
+                    <p style={destinationReasonStyle}>{getCityReason(city)}</p>
 
                     <div style={spotsStyle}>
                       <span>{city.stops[0]}</span>
@@ -376,8 +690,8 @@ const logoStyle: CSSProperties = {
   color: "inherit",
   textDecoration: "none",
   fontSize: 18,
-  fontWeight: 800,
-  letterSpacing: "-0.03em",
+  fontWeight: 850,
+  letterSpacing: "-0.035em",
 };
 
 const navPillStyle: CSSProperties = {
@@ -414,24 +728,24 @@ const eyebrowStyle: CSSProperties = {
 
 const heroTitleStyle: CSSProperties = {
   margin: "0 0 18px",
-  maxWidth: 680,
-  fontSize: "clamp(34px, 10vw, 76px)",
-  lineHeight: 1.04,
-  letterSpacing: "-0.035em",
+  maxWidth: 760,
+  fontSize: "clamp(36px, 10vw, 78px)",
+  lineHeight: 1.02,
+  letterSpacing: "-0.04em",
   fontWeight: 850,
   overflowWrap: "break-word",
 };
 
 const heroSubtitleStyle: CSSProperties = {
   margin: "0 0 24px",
-  maxWidth: 520,
+  maxWidth: 580,
   fontSize: "clamp(15px, 4vw, 17px)",
   lineHeight: 1.65,
   opacity: 0.72,
 };
 
 const searchBoxStyle: CSSProperties = {
-  maxWidth: 560,
+  maxWidth: 590,
   display: "flex",
   alignItems: "center",
   gap: 10,
@@ -458,6 +772,36 @@ const searchInputStyle: CSSProperties = {
   background: "transparent",
   fontSize: 16,
   color: "#171717",
+};
+
+const heroActionsStyle: CSSProperties = {
+  display: "flex",
+  gap: 10,
+  flexWrap: "wrap",
+  marginTop: 14,
+};
+
+const primaryHeroButtonStyle: CSSProperties = {
+  border: 0,
+  padding: "13px 16px",
+  borderRadius: 999,
+  background: "#171717",
+  color: "#ffffff",
+  fontSize: 14,
+  fontWeight: 850,
+  cursor: "pointer",
+  boxShadow: "0 14px 34px rgba(0, 0, 0, 0.16)",
+};
+
+const secondaryHeroButtonStyle: CSSProperties = {
+  border: "1px solid rgba(0, 0, 0, 0.1)",
+  padding: "13px 16px",
+  borderRadius: 999,
+  background: "rgba(255, 255, 255, 0.78)",
+  color: "#171717",
+  fontSize: 14,
+  fontWeight: 800,
+  cursor: "pointer",
 };
 
 const heroPreviewStyle: CSSProperties = {
@@ -498,7 +842,7 @@ const floatingSmallTextStyle: CSSProperties = {
 
 const floatingTitleStyle: CSSProperties = {
   fontSize: "clamp(22px, 7vw, 28px)",
-  fontWeight: 800,
+  fontWeight: 850,
   letterSpacing: "-0.035em",
 };
 
@@ -509,8 +853,12 @@ const floatingSubStyle: CSSProperties = {
   fontWeight: 650,
 };
 
-const featuredStyle: CSSProperties = {
-  marginBottom: 38,
+const feedSectionStyle: CSSProperties = {
+  marginBottom: 40,
+};
+
+const contentStyle: CSSProperties = {
+  marginTop: 10,
 };
 
 const sectionHeaderStyle: CSSProperties = {
@@ -532,9 +880,9 @@ const smallLabelStyle: CSSProperties = {
 
 const sectionTitleStyle: CSSProperties = {
   margin: 0,
-  fontSize: "clamp(24px, 6vw, 28px)",
-  letterSpacing: "-0.035em",
-  fontWeight: 800,
+  fontSize: "clamp(24px, 6vw, 30px)",
+  letterSpacing: "-0.04em",
+  fontWeight: 850,
 };
 
 const mutedTextStyle: CSSProperties = {
@@ -543,57 +891,87 @@ const mutedTextStyle: CSSProperties = {
   whiteSpace: "nowrap",
 };
 
-const featuredGridStyle: CSSProperties = {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 260px), 1fr))",
+const horizontalRailStyle: CSSProperties = {
+  display: "flex",
   gap: 14,
+  overflowX: "auto",
+  padding: "2px 2px 16px",
+  scrollSnapType: "x mandatory",
 };
 
-const featuredCardStyle: CSSProperties = {
+const largeRailCardStyle: CSSProperties = {
   display: "block",
-  padding: 10,
-  borderRadius: 28,
-  background: "rgba(255, 255, 255, 0.78)",
+  minWidth: "min(78vw, 340px)",
+  maxWidth: 360,
+  borderRadius: 30,
+  background: "rgba(255, 255, 255, 0.82)",
   border: "1px solid rgba(0, 0, 0, 0.08)",
   boxShadow: "0 24px 70px rgba(0, 0, 0, 0.1)",
   color: "inherit",
   textDecoration: "none",
+  overflow: "hidden",
+  scrollSnapAlign: "start",
 };
 
-const featuredVisualStyle: CSSProperties = {
-  height: "clamp(145px, 42vw, 170px)",
-  borderRadius: 22,
+const largeRailVisualStyle: CSSProperties = {
+  height: 210,
   position: "relative",
+};
+
+const mediumRailCardStyle: CSSProperties = {
+  display: "block",
+  minWidth: "min(72vw, 280px)",
+  maxWidth: 300,
+  borderRadius: 28,
+  background: "rgba(255, 255, 255, 0.82)",
+  border: "1px solid rgba(0, 0, 0, 0.08)",
+  boxShadow: "0 20px 58px rgba(0, 0, 0, 0.08)",
+  color: "inherit",
+  textDecoration: "none",
   overflow: "hidden",
+  scrollSnapAlign: "start",
+};
+
+const mediumRailVisualStyle: CSSProperties = {
+  height: 160,
+  position: "relative",
 };
 
 const visualBadgeStyle: CSSProperties = {
   position: "absolute",
-  top: 12,
-  left: 12,
-  padding: "7px 10px",
+  top: 14,
+  left: 14,
+  padding: "8px 11px",
   borderRadius: 999,
   background: "rgba(255, 255, 255, 0.78)",
   backdropFilter: "blur(12px)",
   fontSize: 12,
-  fontWeight: 750,
+  fontWeight: 800,
 };
 
-const featuredContentStyle: CSSProperties = {
-  padding: "14px 8px 8px",
+const railCardBodyStyle: CSSProperties = {
+  padding: 18,
 };
 
-const featuredTitleStyle: CSSProperties = {
+const railCardTitleStyle: CSSProperties = {
   margin: 0,
-  fontSize: 24,
+  fontSize: 25,
   lineHeight: 1.05,
-  letterSpacing: "-0.035em",
+  letterSpacing: "-0.045em",
+  fontWeight: 850,
 };
 
-const featuredCountryStyle: CSSProperties = {
-  margin: "6px 0 0",
+const railCardCountryStyle: CSSProperties = {
+  margin: "7px 0 0",
   fontSize: 14,
   opacity: 0.62,
+};
+
+const railCardReasonStyle: CSSProperties = {
+  margin: "12px 0 0",
+  fontSize: 14,
+  lineHeight: 1.45,
+  opacity: 0.72,
 };
 
 const miniMetaStyle: CSSProperties = {
@@ -603,8 +981,106 @@ const miniMetaStyle: CSSProperties = {
   opacity: 0.68,
 };
 
-const contentStyle: CSSProperties = {
-  marginTop: 10,
+const moodGridStyle: CSSProperties = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 240px), 1fr))",
+  gap: 12,
+};
+
+const moodCardStyle: CSSProperties = {
+  textAlign: "left",
+  border: "1px solid rgba(0, 0, 0, 0.08)",
+  borderRadius: 26,
+  padding: 18,
+  background: "rgba(255, 255, 255, 0.78)",
+  boxShadow: "0 18px 52px rgba(0, 0, 0, 0.07)",
+  color: "#171717",
+  cursor: "pointer",
+};
+
+const activeMoodCardStyle: CSSProperties = {
+  ...moodCardStyle,
+  background: "#171717",
+  color: "#ffffff",
+};
+
+const moodTitleStyle: CSSProperties = {
+  fontSize: 20,
+  lineHeight: 1.08,
+  letterSpacing: "-0.04em",
+  fontWeight: 850,
+  marginBottom: 9,
+};
+
+const moodTextStyle: CSSProperties = {
+  fontSize: 13,
+  lineHeight: 1.55,
+  opacity: 0.7,
+  marginBottom: 16,
+};
+
+const moodActionStyle: CSSProperties = {
+  fontSize: 13,
+  fontWeight: 850,
+};
+
+const spotDiscoveryCardStyle: CSSProperties = {
+  display: "block",
+  minWidth: "min(76vw, 310px)",
+  maxWidth: 330,
+  borderRadius: 28,
+  background: "rgba(255, 255, 255, 0.82)",
+  border: "1px solid rgba(0, 0, 0, 0.08)",
+  boxShadow: "0 20px 58px rgba(0, 0, 0, 0.08)",
+  color: "inherit",
+  textDecoration: "none",
+  overflow: "hidden",
+  scrollSnapAlign: "start",
+};
+
+const spotDiscoveryVisualStyle: CSSProperties = {
+  height: 155,
+  position: "relative",
+};
+
+const spotDiscoveryBodyStyle: CSSProperties = {
+  padding: 17,
+};
+
+const spotDiscoveryTitleStyle: CSSProperties = {
+  margin: 0,
+  fontSize: 22,
+  lineHeight: 1.05,
+  letterSpacing: "-0.04em",
+  fontWeight: 850,
+};
+
+const spotDiscoveryMetaStyle: CSSProperties = {
+  margin: "7px 0 0",
+  fontSize: 13,
+  opacity: 0.62,
+  fontWeight: 650,
+};
+
+const spotDiscoveryTextStyle: CSSProperties = {
+  margin: "12px 0 14px",
+  fontSize: 13,
+  lineHeight: 1.5,
+  opacity: 0.7,
+};
+
+const chipRowStyle: CSSProperties = {
+  display: "flex",
+  flexWrap: "wrap",
+  gap: 7,
+};
+
+const smallChipStyle: CSSProperties = {
+  padding: "7px 9px",
+  borderRadius: 999,
+  background: "rgba(0, 0, 0, 0.06)",
+  fontSize: 12,
+  fontWeight: 750,
 };
 
 const categoryWrapStyle: CSSProperties = {
@@ -613,7 +1089,6 @@ const categoryWrapStyle: CSSProperties = {
   overflowX: "auto",
   paddingBottom: 14,
   marginBottom: 8,
-  WebkitOverflowScrolling: "touch",
 };
 
 const categoryButtonStyle: CSSProperties = {
@@ -679,7 +1154,7 @@ const destinationTopStyle: CSSProperties = {
   justifyContent: "space-between",
   gap: 14,
   alignItems: "flex-start",
-  marginBottom: 16,
+  marginBottom: 14,
 };
 
 const destinationTextStyle: CSSProperties = {
@@ -698,6 +1173,14 @@ const destinationCountryStyle: CSSProperties = {
   margin: "7px 0 0",
   fontSize: 14,
   opacity: 0.62,
+};
+
+const destinationReasonStyle: CSSProperties = {
+  margin: "0 0 14px",
+  fontSize: 13,
+  lineHeight: 1.45,
+  opacity: 0.7,
+  fontWeight: 650,
 };
 
 const arrowStyle: CSSProperties = {
