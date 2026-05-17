@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { cities } from "@/data/cities";
 import { notFound } from "next/navigation";
 import type { CSSProperties } from "react";
@@ -28,6 +29,17 @@ export default async function CityPage({
     src
   )}&v=${encodeURIComponent(v)}`;
 
+  const spotCards =
+    city.spotDetails && city.spotDetails.length > 0
+      ? city.spotDetails
+      : city.stops.map((stop) => ({
+          slug: stop.toLowerCase().replaceAll(" ", "-"),
+          name: stop,
+          summary: "A featured place from this city.",
+          highlights: [],
+          bestFor: [],
+        }));
+
   return (
     <main style={pageStyle}>
       <section style={cardStyle}>
@@ -38,22 +50,45 @@ export default async function CityPage({
         </h1>
 
         <p style={subtitleStyle}>
-          Quick hotel and tour links for the places featured in our short videos.
+          Explore featured spots, then jump straight to hotel and tour options.
         </p>
 
         <section style={spotsStyle}>
-          <div style={spotItemStyle}>
-            <span style={spotNumberStyle}>1</span>
-            <span>{city.stops[0]}</span>
-          </div>
-          <div style={spotItemStyle}>
-            <span style={spotNumberStyle}>2</span>
-            <span>{city.stops[1]}</span>
-          </div>
-          <div style={spotItemStyle}>
-            <span style={spotNumberStyle}>3</span>
-            <span>{city.stops[2]}</span>
-          </div>
+          {spotCards.map((spot, index) => {
+            const canOpenSpot =
+              city.spotDetails?.some((item) => item.slug === spot.slug) ?? false;
+
+            if (!canOpenSpot) {
+              return (
+                <div key={spot.slug} style={spotItemStyle}>
+                  <span style={spotNumberStyle}>{index + 1}</span>
+
+                  <div>
+                    <div style={spotNameStyle}>{spot.name}</div>
+                  </div>
+                </div>
+              );
+            }
+
+            return (
+              <Link
+                key={spot.slug}
+                href={`/c/${slug}/spot/${spot.slug}?src=${encodeURIComponent(
+                  src
+                )}&v=${encodeURIComponent(v)}`}
+                style={spotLinkStyle}
+              >
+                <span style={spotNumberStyle}>{index + 1}</span>
+
+                <div style={spotTextStyle}>
+                  <div style={spotNameStyle}>{spot.name}</div>
+                  <div style={spotSummaryStyle}>{spot.summary}</div>
+                </div>
+
+                <span style={spotArrowStyle}>→</span>
+              </Link>
+            );
+          })}
         </section>
 
         <section style={buttonGroupStyle}>
@@ -84,18 +119,28 @@ const pageStyle: CSSProperties = {
   fontFamily:
     '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif',
   background:
-    "linear-gradient(180deg, #f7f3ec 0%, #ffffff 46%, #eef3f7 100%)",
+    "radial-gradient(circle at 12% 0%, rgba(255, 221, 180, 0.72), transparent 30%), radial-gradient(circle at 88% 4%, rgba(175, 205, 255, 0.58), transparent 28%), linear-gradient(180deg, #fbf7f0 0%, #ffffff 44%, #eef4f8 100%)",
   color: "#171717",
 };
 
 const cardStyle: CSSProperties = {
   width: "100%",
-  maxWidth: 520,
-  borderRadius: 28,
+  maxWidth: 620,
+  borderRadius: 32,
   padding: "28px",
   background: "rgba(255, 255, 255, 0.86)",
-  boxShadow: "0 24px 80px rgba(0, 0, 0, 0.12)",
+  boxShadow: "0 28px 90px rgba(0, 0, 0, 0.12)",
   border: "1px solid rgba(0, 0, 0, 0.08)",
+};
+
+const homeLinkStyle: CSSProperties = {
+  display: "inline-flex",
+  marginBottom: 18,
+  color: "inherit",
+  textDecoration: "none",
+  fontSize: 14,
+  fontWeight: 800,
+  opacity: 0.68,
 };
 
 const eyebrowStyle: CSSProperties = {
@@ -107,10 +152,10 @@ const eyebrowStyle: CSSProperties = {
 };
 
 const titleStyle: CSSProperties = {
-  fontSize: 42,
-  lineHeight: 1.05,
+  fontSize: "clamp(38px, 11vw, 58px)",
+  lineHeight: 1.04,
   margin: "0 0 12px",
-  letterSpacing: "-0.04em",
+  letterSpacing: "-0.045em",
 };
 
 const subtitleStyle: CSSProperties = {
@@ -129,23 +174,58 @@ const spotsStyle: CSSProperties = {
 const spotItemStyle: CSSProperties = {
   display: "flex",
   alignItems: "center",
-  gap: 10,
-  padding: "12px 14px",
-  borderRadius: 16,
+  gap: 12,
+  padding: "14px",
+  borderRadius: 20,
   background: "rgba(0, 0, 0, 0.04)",
   fontSize: 15,
 };
 
+const spotLinkStyle: CSSProperties = {
+  display: "flex",
+  alignItems: "center",
+  gap: 12,
+  padding: "14px",
+  borderRadius: 20,
+  background: "rgba(0, 0, 0, 0.04)",
+  fontSize: 15,
+  color: "inherit",
+  textDecoration: "none",
+};
+
 const spotNumberStyle: CSSProperties = {
-  width: 24,
-  height: 24,
+  width: 26,
+  height: 26,
   display: "grid",
   placeItems: "center",
   borderRadius: "50%",
   background: "#171717",
   color: "#ffffff",
   fontSize: 13,
-  fontWeight: 700,
+  fontWeight: 800,
+  flexShrink: 0,
+};
+
+const spotTextStyle: CSSProperties = {
+  minWidth: 0,
+};
+
+const spotNameStyle: CSSProperties = {
+  fontWeight: 800,
+  letterSpacing: "-0.02em",
+};
+
+const spotSummaryStyle: CSSProperties = {
+  marginTop: 4,
+  fontSize: 13,
+  lineHeight: 1.45,
+  opacity: 0.62,
+};
+
+const spotArrowStyle: CSSProperties = {
+  marginLeft: "auto",
+  fontWeight: 800,
+  opacity: 0.6,
   flexShrink: 0,
 };
 
@@ -162,7 +242,7 @@ const primaryButtonStyle: CSSProperties = {
   color: "#ffffff",
   textAlign: "center",
   textDecoration: "none",
-  fontWeight: 700,
+  fontWeight: 800,
   fontSize: 16,
 };
 
@@ -174,7 +254,7 @@ const secondaryButtonStyle: CSSProperties = {
   color: "#171717",
   textAlign: "center",
   textDecoration: "none",
-  fontWeight: 650,
+  fontWeight: 750,
   fontSize: 15,
   border: "1px solid rgba(0, 0, 0, 0.12)",
 };
