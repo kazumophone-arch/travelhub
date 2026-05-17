@@ -5,127 +5,242 @@ export default function Home() {
   const cityList = Object.values(cities);
 
   return (
-    <main
-      style={{
-        minHeight: "100vh",
-        padding: "32px 20px",
-        fontFamily:
-          '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif',
-        background:
-          "linear-gradient(180deg, #f7f3ec 0%, #ffffff 48%, #eef3f7 100%)",
-        color: "#171717",
-      }}
-    >
-      <section style={{ maxWidth: 760, margin: "0 auto" }}>
-        <div style={{ textAlign: "center", marginBottom: 34 }}>
-          <div
-            style={{
-              fontSize: 13,
-              letterSpacing: "0.12em",
-              textTransform: "uppercase",
-              opacity: 0.6,
-              marginBottom: 12,
-            }}
-          >
-            Travel affiliate city hub
+    <main style={pageStyle}>
+      <section style={heroStyle}>
+        <div style={brandStyle}>TravelHub</div>
+
+        <div style={labelStyle}>Short-video travel links</div>
+
+        <h1 style={titleStyle}>Find your next trip, faster.</h1>
+
+        <p style={subtitleStyle}>
+          Quick hotel and tour links for cities featured in our travel shorts.
+        </p>
+
+        <Link href="/c/rome-it?src=home&v=home_featured" style={heroButtonStyle}>
+          Explore featured city
+        </Link>
+      </section>
+
+      <section style={contentStyle}>
+        <div style={sectionHeaderStyle}>
+          <div>
+            <div style={smallLabelStyle}>Featured cities</div>
+            <h2 style={sectionTitleStyle}>Choose a destination</h2>
           </div>
-
-          <h1
-            style={{
-              fontSize: 44,
-              lineHeight: 1.05,
-              letterSpacing: "-0.04em",
-              margin: "0 0 16px",
-            }}
-          >
-            Find travel links by city.
-          </h1>
-
-          <p
-            style={{
-              fontSize: 17,
-              lineHeight: 1.6,
-              opacity: 0.72,
-              maxWidth: 560,
-              margin: "0 auto",
-            }}
-          >
-            Quick hotel and tour links for places featured in our short videos.
-          </p>
+          <div style={countStyle}>{cityList.length} cities</div>
         </div>
 
-        <section
-          style={{
-            display: "grid",
-            gap: 12,
-          }}
-        >
+        <section style={gridStyle}>
           {cityList.map((city) => (
             <Link
               key={city.slug}
               href={`/c/${city.slug}?src=home&v=home_${city.slug}`}
-              style={{
-                display: "block",
-                padding: "18px 18px",
-                borderRadius: 20,
-                background: "rgba(255, 255, 255, 0.88)",
-                border: "1px solid rgba(0, 0, 0, 0.08)",
-                boxShadow: "0 12px 36px rgba(0, 0, 0, 0.06)",
-                textDecoration: "none",
-                color: "inherit",
-              }}
+              style={cardStyle}
             >
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  gap: 12,
-                  alignItems: "center",
-                }}
-              >
+              <div style={cardTopStyle}>
                 <div>
-                  <div style={{ fontSize: 20, fontWeight: 750 }}>
-                    {city.city}, {city.country}
-                  </div>
-                  <div
-                    style={{
-                      marginTop: 6,
-                      fontSize: 14,
-                      opacity: 0.65,
-                    }}
-                  >
-                    {city.stops[0]} • {city.stops[1]} • {city.stops[2]}
-                  </div>
+                  <h3 style={cityTitleStyle}>{city.city}</h3>
+                  <p style={countryStyle}>{city.country}</p>
                 </div>
 
-                <div
-                  style={{
-                    fontSize: 13,
-                    fontWeight: 700,
-                    opacity: 0.75,
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  View →
-                </div>
+                <div style={arrowStyle}>→</div>
+              </div>
+
+              <div style={spotsStyle}>
+                <span>{city.stops[0]}</span>
+                <span>{city.stops[1]}</span>
+                <span>{city.stops[2]}</span>
+              </div>
+
+              <div style={cardFooterStyle}>
+                <span>Hotels</span>
+                <span>Tours</span>
               </div>
             </Link>
           ))}
         </section>
 
-        <p
-          style={{
-            marginTop: 30,
-            fontSize: 12,
-            lineHeight: 1.6,
-            opacity: 0.55,
-            textAlign: "center",
-          }}
-        >
-          Some links may be affiliate links. Original 3D characters •
-          AI-assisted visuals.
+        <p style={disclosureStyle}>
+          Some links may be affiliate links. Original 3D characters • AI-assisted visuals.
         </p>
       </section>
     </main>
   );
 }
+
+const pageStyle: React.CSSProperties = {
+  minHeight: "100vh",
+  fontFamily:
+    '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif',
+  color: "#171717",
+  background:
+    "radial-gradient(circle at top left, rgba(255, 214, 165, 0.42), transparent 32%), radial-gradient(circle at top right, rgba(166, 197, 255, 0.35), transparent 30%), linear-gradient(180deg, #faf7f0 0%, #ffffff 46%, #eef4f8 100%)",
+};
+
+const heroStyle: React.CSSProperties = {
+  maxWidth: 820,
+  margin: "0 auto",
+  padding: "56px 20px 32px",
+  textAlign: "center",
+};
+
+const brandStyle: React.CSSProperties = {
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  padding: "8px 14px",
+  borderRadius: 999,
+  background: "rgba(255, 255, 255, 0.74)",
+  border: "1px solid rgba(0, 0, 0, 0.08)",
+  boxShadow: "0 10px 30px rgba(0, 0, 0, 0.06)",
+  fontSize: 14,
+  fontWeight: 700,
+  marginBottom: 22,
+};
+
+const labelStyle: React.CSSProperties = {
+  fontSize: 12,
+  letterSpacing: "0.16em",
+  textTransform: "uppercase",
+  opacity: 0.58,
+  marginBottom: 12,
+};
+
+const titleStyle: React.CSSProperties = {
+  margin: "0 auto 16px",
+  maxWidth: 680,
+  fontSize: "clamp(42px, 8vw, 76px)",
+  lineHeight: 0.95,
+  letterSpacing: "-0.07em",
+  fontWeight: 800,
+};
+
+const subtitleStyle: React.CSSProperties = {
+  maxWidth: 520,
+  margin: "0 auto 28px",
+  fontSize: 17,
+  lineHeight: 1.65,
+  opacity: 0.72,
+};
+
+const heroButtonStyle: React.CSSProperties = {
+  display: "inline-block",
+  padding: "15px 20px",
+  borderRadius: 18,
+  background: "#171717",
+  color: "#ffffff",
+  textDecoration: "none",
+  fontWeight: 750,
+  boxShadow: "0 18px 40px rgba(0, 0, 0, 0.18)",
+};
+
+const contentStyle: React.CSSProperties = {
+  maxWidth: 920,
+  margin: "0 auto",
+  padding: "16px 20px 46px",
+};
+
+const sectionHeaderStyle: React.CSSProperties = {
+  display: "flex",
+  justifyContent: "space-between",
+  gap: 18,
+  alignItems: "end",
+  marginBottom: 16,
+};
+
+const smallLabelStyle: React.CSSProperties = {
+  fontSize: 12,
+  letterSpacing: "0.14em",
+  textTransform: "uppercase",
+  opacity: 0.5,
+  marginBottom: 6,
+};
+
+const sectionTitleStyle: React.CSSProperties = {
+  margin: 0,
+  fontSize: 26,
+  letterSpacing: "-0.04em",
+};
+
+const countStyle: React.CSSProperties = {
+  fontSize: 13,
+  opacity: 0.62,
+  whiteSpace: "nowrap",
+};
+
+const gridStyle: React.CSSProperties = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+  gap: 14,
+};
+
+const cardStyle: React.CSSProperties = {
+  display: "block",
+  padding: 18,
+  borderRadius: 24,
+  background: "rgba(255, 255, 255, 0.84)",
+  border: "1px solid rgba(0, 0, 0, 0.08)",
+  boxShadow: "0 18px 48px rgba(0, 0, 0, 0.08)",
+  color: "inherit",
+  textDecoration: "none",
+};
+
+const cardTopStyle: React.CSSProperties = {
+  display: "flex",
+  justifyContent: "space-between",
+  gap: 14,
+  alignItems: "flex-start",
+  marginBottom: 16,
+};
+
+const cityTitleStyle: React.CSSProperties = {
+  margin: 0,
+  fontSize: 24,
+  lineHeight: 1.05,
+  letterSpacing: "-0.05em",
+};
+
+const countryStyle: React.CSSProperties = {
+  margin: "6px 0 0",
+  fontSize: 14,
+  opacity: 0.62,
+};
+
+const arrowStyle: React.CSSProperties = {
+  width: 34,
+  height: 34,
+  display: "grid",
+  placeItems: "center",
+  borderRadius: "50%",
+  background: "#171717",
+  color: "#ffffff",
+  fontWeight: 800,
+  flexShrink: 0,
+};
+
+const spotsStyle: React.CSSProperties = {
+  display: "grid",
+  gap: 7,
+  fontSize: 14,
+  opacity: 0.76,
+  marginBottom: 16,
+};
+
+const cardFooterStyle: React.CSSProperties = {
+  display: "flex",
+  gap: 8,
+  flexWrap: "wrap",
+  fontSize: 12,
+  fontWeight: 700,
+  opacity: 0.7,
+};
+
+const disclosureStyle: React.CSSProperties = {
+  margin: "30px auto 0",
+  maxWidth: 520,
+  textAlign: "center",
+  fontSize: 12,
+  lineHeight: 1.6,
+  opacity: 0.52,
+};
