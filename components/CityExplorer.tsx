@@ -21,6 +21,17 @@ type DiscoverySpot = {
   canOpen: boolean;
 };
 
+type SpotSearchResult = {
+  citySlug: string;
+  cityName: string;
+  country: string;
+  slug: string;
+  name: string;
+  summary: string;
+  highlights: string[];
+  tags: string[];
+};
+
 const europeCountries = new Set([
   "Italy",
   "France",
@@ -273,6 +284,73 @@ function getDiscoverySpots(cities: City[]) {
   return spots.slice(0, 12);
 }
 
+function getSpotSearchResults(cities: City[], query: string) {
+  const normalizedQuery = query.trim().toLowerCase();
+
+  if (!normalizedQuery) return [];
+
+  const results: SpotSearchResult[] = [];
+
+  cities.forEach((city) => {
+    const cityCategories = getCityCategories(city);
+
+    if (city.spotDetails && city.spotDetails.length > 0) {
+      city.spotDetails.forEach((spot) => {
+        if (spot.isPublished === false) return;
+
+        const searchableText = [
+          spot.name,
+          spot.summary,
+          ...spot.highlights,
+          ...spot.bestFor,
+          ...(spot.tags ?? []),
+          city.city,
+          city.country,
+          ...cityCategories,
+        ]
+          .join(" ")
+          .toLowerCase();
+
+        if (!searchableText.includes(normalizedQuery)) return;
+
+        results.push({
+          citySlug: city.slug,
+          cityName: city.city,
+          country: city.country,
+          slug: spot.slug,
+          name: spot.name,
+          summary: spot.summary,
+          highlights: spot.highlights,
+          tags: spot.tags ?? [],
+        });
+      });
+
+      return;
+    }
+
+    city.stops.forEach((stop, index) => {
+      const searchableText = [stop, city.city, city.country, ...cityCategories]
+        .join(" ")
+        .toLowerCase();
+
+      if (!searchableText.includes(normalizedQuery)) return;
+
+      results.push({
+        citySlug: city.slug,
+        cityName: city.city,
+        country: city.country,
+        slug: slugify(stop),
+        name: stop,
+        summary: `A featured place from ${city.city}.`,
+        highlights: [index === 0 ? "Featured spot" : "Travel spot"],
+        tags: [index === 0 ? "Featured" : "Travel spot"],
+      });
+    });
+  });
+
+  return results.slice(0, 8);
+}
+
 export function CityExplorer({ cities }: Props) {
   const [query, setQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
@@ -300,6 +378,7 @@ export function CityExplorer({ cities }: Props) {
   }
 
   const currentMonth = getCurrentMonth();
+  const isSearching = query.trim().length > 0;
 
   const categories = useMemo(() => {
     const set = new Set<string>();
@@ -336,6 +415,10 @@ export function CityExplorer({ cities }: Props) {
   const discoverySpots = useMemo(() => {
     return getDiscoverySpots(cities);
   }, [cities]);
+
+  const spotSearchResults = useMemo(() => {
+    return getSpotSearchResults(cities, query);
+  }, [cities, query]);
 
   const moodPreviewCities = useMemo(() => {
     const isMoodSelected = moodCards.some((mood) => mood.label === activeCategory);
@@ -477,6 +560,72 @@ export function CityExplorer({ cities }: Props) {
             </div>
           </div>
         </section>
+
+        {isSearching && (
+          <section style={feedSectionStyle}>
+            <div style={sectionHeaderStyle}>
+              <div>
+                <div style={smallLabelStyle}>Search results</div>
+                <h2 style={sectionTitleStyle}>Matching spots</h2>
+              </div>
+              <span style={mutedTextStyle}>
+                {spotSearchResults.length} spot results
+              </span>
+            </div>
+
+            {spotSearchResults.length === 0 ? (
+              <div style={searchEmptyStyle}>
+                No matching spots found. Try a city, mood, season, or broader
+                keyword.
+              </div>
+            ) : (
+              <div style={searchResultGridStyle}>
+                {spotSearchResults.map((spot, index) => (
+                  <Link
+                    key={`${spot.citySlug}-${spot.slug}-${index}`}
+                    href={`/c/${spot.citySlug}/spot/${spot.slug}?src=home&v=search_${spot.citySlug}_${spot.slug}`}
+                    style={searchResultCardStyle}
+                  >
+                    <div
+                      style={{
+                        ...searchResultVisualStyle,
+                        background: visualForIndex(index),
+                      }}
+                    >
+                      <div style={visualBadgeStyle}>{spot.cityName}</div>
+                    </div>
+
+                    <div style={searchResultBodyStyle}>
+                      <div style={searchResultMetaStyle}>
+                        {spot.cityName}, {spot.country}
+                      </div>
+
+                      <h3 style={searchResultTitleStyle}>{spot.name}</h3>
+
+                      <p style={searchResultTextStyle}>{spot.summary}</p>
+
+                      <div style={chipRowStyle}>
+                        {(spot.tags.length > 0
+                          ? spot.tags
+                          : spot.highlights
+                        )
+                          .slice(0, 3)
+                          .map((tag, tagIndex) => (
+                            <span
+                              key={`${tag}-${tagIndex}`}
+                              style={smallChipStyle}
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
 
         <TravelDiscoveryTools cities={cities} />
 
@@ -1023,6 +1172,64 @@ const railCardReasonStyle: CSSProperties = {
   fontSize: 14,
   lineHeight: 1.45,
   opacity: 0.72,
+};
+
+const searchEmptyStyle: CSSProperties = {
+  padding: 20,
+  borderRadius: 24,
+  background: "rgba(255, 255, 255, 0.78)",
+  border: "1px solid rgba(0, 0, 0, 0.08)",
+  fontSize: 14,
+  lineHeight: 1.6,
+  opacity: 0.72,
+};
+
+const searchResultGridStyle: CSSProperties = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 260px), 1fr))",
+  gap: 14,
+};
+
+const searchResultCardStyle: CSSProperties = {
+  display: "block",
+  borderRadius: 28,
+  background: "rgba(255, 255, 255, 0.82)",
+  border: "1px solid rgba(0, 0, 0, 0.08)",
+  boxShadow: "0 20px 58px rgba(0, 0, 0, 0.08)",
+  color: "inherit",
+  textDecoration: "none",
+  overflow: "hidden",
+};
+
+const searchResultVisualStyle: CSSProperties = {
+  height: 150,
+  position: "relative",
+};
+
+const searchResultBodyStyle: CSSProperties = {
+  padding: 17,
+};
+
+const searchResultMetaStyle: CSSProperties = {
+  marginBottom: 7,
+  fontSize: 13,
+  opacity: 0.62,
+  fontWeight: 650,
+};
+
+const searchResultTitleStyle: CSSProperties = {
+  margin: 0,
+  fontSize: 23,
+  lineHeight: 1.05,
+  letterSpacing: "-0.04em",
+  fontWeight: 850,
+};
+
+const searchResultTextStyle: CSSProperties = {
+  margin: "10px 0 14px",
+  fontSize: 13,
+  lineHeight: 1.5,
+  opacity: 0.7,
 };
 
 const spotDiscoveryCardStyle: CSSProperties = {
