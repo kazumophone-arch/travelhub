@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { cities } from "@/data/cities";
 import { TravelVisual } from "@/components/TravelVisual";
 import { ReturnHomeLink } from "@/components/ReturnHomeLink";
+import { isPublishedCity, isPublishedSpot, sortByRank } from "@/data/visibility";
 
 export async function generateMetadata({
   params,
@@ -66,10 +67,10 @@ export default async function SpotPage({
   const v = typeof sp?.v === "string" ? sp.v : `spot_${slug}_${spotSlug}`;
 
   const city = cities[slug];
-  if (!city) return notFound();
+if (!city || !isPublishedCity(city)) return notFound();
 
   const spot = city.spotDetails?.find((item) => item.slug === spotSlug);
-  if (!spot) return notFound();
+if (!spot || !isPublishedSpot(spot)) return notFound();
 
   const hotelsHref = `/out/hotels?c=${encodeURIComponent(
     slug
@@ -79,8 +80,11 @@ export default async function SpotPage({
     slug
   )}&src=${encodeURIComponent(src)}&v=${encodeURIComponent(v)}`;
 
-  const relatedSpots =
-    city.spotDetails?.filter((item) => item.slug !== spot.slug) ?? [];
+  const relatedSpots = sortByRank(
+  city.spotDetails?.filter(
+    (item) => item.slug !== spot.slug && isPublishedSpot(item)
+  ) ?? []
+);
 
   return (
     <main style={pageStyle}>

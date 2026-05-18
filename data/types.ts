@@ -25,6 +25,9 @@ export type Spot = {
   bestTime?: string;
   tags?: string[];
 
+  isPublished?: boolean;
+  sortRank?: number;
+
   imageUrl?: string;
   imageAlt?: string;
   imageCredit?: string;
@@ -37,6 +40,9 @@ export type City = {
   stops: [string, string, string];
 
   description?: string;
+
+  isPublished?: boolean;
+  sortRank?: number;
 
   imageUrl?: string;
   imageAlt?: string;

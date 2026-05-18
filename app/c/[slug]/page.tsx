@@ -5,6 +5,7 @@ import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import { TravelVisual } from "@/components/TravelVisual";
 import { ReturnHomeLink } from "@/components/ReturnHomeLink";
+import { isPublishedCity, isPublishedSpot, sortByRank } from "@/data/visibility";
 
 export async function generateMetadata({
   params,
@@ -59,7 +60,7 @@ export default async function CityPage({
   const v = typeof sp?.v === "string" ? sp.v : `hub_${slug}`;
 
   const city = cities[slug];
-  if (!city) return notFound();
+if (!city || !isPublishedCity(city)) return notFound();
 
   const hotelsHref = `/out/hotels?c=${encodeURIComponent(
     slug
@@ -70,22 +71,22 @@ export default async function CityPage({
   )}&src=${encodeURIComponent(src)}&v=${encodeURIComponent(v)}`;
 
   const spotCards =
-    city.spotDetails && city.spotDetails.length > 0
-      ? city.spotDetails
-      : city.stops.map((stop, index) => ({
-          slug:
-            stop
-              .toLowerCase()
-              .replaceAll(" ", "-")
-              .replace(/[^a-z0-9-]/g, "") || `spot-${index + 1}`,
-          name: stop,
-          summary: "A featured place from this city.",
-          highlights: ["Featured spot"],
-          bestFor: [],
-          imageUrl: undefined,
-          imageAlt: undefined,
-          imageCredit: undefined,
-        }));
+  city.spotDetails && city.spotDetails.length > 0
+    ? sortByRank(city.spotDetails.filter(isPublishedSpot))
+    : city.stops.map((stop, index) => ({
+        slug:
+          stop
+            .toLowerCase()
+            .replaceAll(" ", "-")
+            .replace(/[^a-z0-9-]/g, "") || `spot-${index + 1}`,
+        name: stop,
+        summary: "A featured place from this city.",
+        highlights: ["Featured spot"],
+        bestFor: [],
+        imageUrl: undefined,
+        imageAlt: undefined,
+        imageCredit: undefined,
+      }));
 
   return (
     <main style={pageStyle}>

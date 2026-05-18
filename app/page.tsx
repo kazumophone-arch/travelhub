@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { cities } from "@/data/cities";
 import { CityExplorer } from "@/components/CityExplorer";
+import { isPublishedCity, sortByRank } from "@/data/visibility";
 
 const title = "TravelHub | Find travel links by city";
 const description =
@@ -23,5 +24,9 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
-  return <CityExplorer cities={Object.values(cities)} />;
+  const publishedCities = sortByRank(
+    Object.values(cities).filter(isPublishedCity)
+  );
+
+  return <CityExplorer cities={publishedCities} />;
 }
