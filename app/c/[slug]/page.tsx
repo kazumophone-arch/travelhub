@@ -3,6 +3,7 @@ import { cities } from "@/data/cities";
 import { notFound } from "next/navigation";
 import type { CSSProperties } from "react";
 import type { Metadata } from "next";
+import type { City } from "@/data/types";
 import { TravelVisual } from "@/components/TravelVisual";
 import { ReturnHomeLink } from "@/components/ReturnHomeLink";
 import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
@@ -25,7 +26,7 @@ export async function generateMetadata({
   const title = `${city.city}, ${city.country} | TravelHub`;
   const description =
     city.description ??
-    `Explore featured spots in ${city.city} and find hotel and tour links for your trip.`;
+    `Explore featured spots in ${city.city} and find hotel, tour, and travel links for your trip.`;
 
   return {
     title,
@@ -93,9 +94,46 @@ export default async function CityPage({
           </h1>
 
           <p style={subtitleStyle}>
-            Explore the featured spots from our travel shorts, then jump straight
-            to hotel, tour, and travel links.
+            {getCityIntro(city)}
           </p>
+        </section>
+
+        <section style={overviewCardStyle}>
+          <div style={overviewTextStyle}>
+            <div style={smallLabelStyle}>Why visit</div>
+            <h2 style={overviewTitleStyle}>A quick travel snapshot.</h2>
+            <p style={overviewDescriptionStyle}>{getWhyVisitText(city)}</p>
+          </div>
+
+          <div style={snapshotGridStyle}>
+            <div style={snapshotItemStyle}>
+              <div style={snapshotLabelStyle}>Best months</div>
+              <div style={snapshotValueStyle}>
+                {formatList(city.months, "Seasonal timing coming soon")}
+              </div>
+            </div>
+
+            <div style={snapshotItemStyle}>
+              <div style={snapshotLabelStyle}>Good for</div>
+              <div style={snapshotValueStyle}>
+                {formatList(city.travelStyles, "First-time travelers")}
+              </div>
+            </div>
+
+            <div style={snapshotItemStyle}>
+              <div style={snapshotLabelStyle}>Travel mood</div>
+              <div style={snapshotValueStyle}>
+                {formatList(city.themes, "Scenic city discovery")}
+              </div>
+            </div>
+
+            <div style={snapshotItemStyle}>
+              <div style={snapshotLabelStyle}>Start with</div>
+              <div style={snapshotValueStyle}>
+                {city.stops.slice(0, 3).join(" · ")}
+              </div>
+            </div>
+          </div>
         </section>
 
         <section style={spotSectionStyle}>
@@ -187,7 +225,8 @@ export default async function CityPage({
             <div style={smallLabelStyle}>Ready to plan?</div>
             <h2 style={ctaTitleStyle}>Find travel options for {city.city}.</h2>
             <p style={ctaTextStyle}>
-              Use these links after choosing the spots you want to visit.
+              After choosing the places you want to visit, use these links to
+              continue planning.
             </p>
           </div>
 
@@ -201,6 +240,34 @@ export default async function CityPage({
       </section>
     </main>
   );
+}
+
+function getCityIntro(city: City) {
+  return (
+    city.description ??
+    `Explore ${city.city} through featured spots, seasonal travel context, and quick links for hotels, tours, and trip planning.`
+  );
+}
+
+function getWhyVisitText(city: City) {
+  const themes = city.themes?.slice(0, 3).join(", ");
+  const styles = city.travelStyles?.slice(0, 3).join(", ");
+  const stops = city.stops.slice(0, 3).join(", ");
+
+  if (themes && styles) {
+    return `${city.city} works well for ${styles.toLowerCase()} trips, especially if you want ${themes.toLowerCase()} experiences. Start with ${stops}.`;
+  }
+
+  if (themes) {
+    return `${city.city} is a strong pick for ${themes.toLowerCase()} travel. Start with ${stops}.`;
+  }
+
+  return `${city.city} is a useful destination to explore through a few clear starting points: ${stops}.`;
+}
+
+function formatList(items: string[] | undefined, fallback: string) {
+  if (!items || items.length === 0) return fallback;
+  return items.slice(0, 5).join(" · ");
 }
 
 function visualForIndex(index: number) {
@@ -241,7 +308,7 @@ const homeLinkStyle: CSSProperties = {
 };
 
 const heroStyle: CSSProperties = {
-  marginBottom: 28,
+  marginBottom: 24,
 };
 
 const eyebrowStyle: CSSProperties = {
@@ -263,10 +330,68 @@ const titleStyle: CSSProperties = {
 
 const subtitleStyle: CSSProperties = {
   margin: 0,
-  maxWidth: 620,
+  maxWidth: 680,
   fontSize: "clamp(15px, 4vw, 17px)",
   lineHeight: 1.72,
   opacity: 0.72,
+};
+
+const overviewCardStyle: CSSProperties = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))",
+  gap: 18,
+  alignItems: "start",
+  marginTop: 26,
+  marginBottom: 30,
+  padding: 22,
+  borderRadius: 30,
+  background: "rgba(255, 255, 255, 0.86)",
+  border: "1px solid rgba(0, 0, 0, 0.08)",
+  boxShadow: "0 24px 74px rgba(0, 0, 0, 0.1)",
+};
+
+const overviewTextStyle: CSSProperties = {
+  minWidth: 0,
+};
+
+const overviewTitleStyle: CSSProperties = {
+  margin: 0,
+  fontSize: "clamp(24px, 6vw, 32px)",
+  lineHeight: 1.05,
+  letterSpacing: "-0.045em",
+  fontWeight: 850,
+};
+
+const overviewDescriptionStyle: CSSProperties = {
+  margin: "10px 0 0",
+  fontSize: 14,
+  lineHeight: 1.7,
+  opacity: 0.7,
+};
+
+const snapshotGridStyle: CSSProperties = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 190px), 1fr))",
+  gap: 10,
+};
+
+const snapshotItemStyle: CSSProperties = {
+  padding: 14,
+  borderRadius: 20,
+  background: "rgba(0, 0, 0, 0.04)",
+};
+
+const snapshotLabelStyle: CSSProperties = {
+  fontSize: 12,
+  fontWeight: 850,
+  opacity: 0.56,
+  marginBottom: 7,
+};
+
+const snapshotValueStyle: CSSProperties = {
+  fontSize: 14,
+  lineHeight: 1.45,
+  fontWeight: 750,
 };
 
 const spotSectionStyle: CSSProperties = {
