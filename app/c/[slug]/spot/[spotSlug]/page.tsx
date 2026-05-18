@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { CSSProperties } from "react";
 import { cities } from "@/data/cities";
+import { TravelVisual } from "@/components/TravelVisual";
 
 export default async function SpotPage({
   params,
@@ -43,9 +44,15 @@ export default async function SpotPage({
         </Link>
 
         <section style={heroCardStyle}>
-          <div style={visualStyle}>
+          <TravelVisual
+            imageUrl={spot.imageUrl ?? city.imageUrl}
+            imageAlt={spot.imageAlt ?? city.imageAlt ?? spot.name}
+            imageCredit={spot.imageCredit ?? city.imageCredit}
+            fallback="linear-gradient(135deg, #d9a76f 0%, #b86b4b 42%, #3b2f2f 100%)"
+            style={visualStyle}
+          >
             <div style={visualBadgeStyle}>{city.city}</div>
-          </div>
+          </TravelVisual>
 
           <div style={contentStyle}>
             <div style={eyebrowStyle}>
@@ -70,9 +77,10 @@ export default async function SpotPage({
 
             <section style={sectionStyle}>
               <h2 style={sectionTitleStyle}>Highlights</h2>
+
               <div style={chipWrapStyle}>
-                {spot.highlights.map((highlight) => (
-                  <span key={highlight} style={chipStyle}>
+                {spot.highlights.map((highlight, index) => (
+                  <span key={`${highlight}-${index}`} style={chipStyle}>
                     {highlight}
                   </span>
                 ))}
@@ -81,9 +89,10 @@ export default async function SpotPage({
 
             <section style={sectionStyle}>
               <h2 style={sectionTitleStyle}>Tags</h2>
+
               <div style={chipWrapStyle}>
-                {(spot.tags ?? []).map((tag) => (
-                  <span key={tag} style={softChipStyle}>
+                {(spot.tags ?? []).map((tag, index) => (
+                  <span key={`${tag}-${index}`} style={softChipStyle}>
                     {tag}
                   </span>
                 ))}
@@ -121,9 +130,11 @@ export default async function SpotPage({
                   style={relatedCardStyle}
                 >
                   <div style={relatedCardTitleStyle}>{item.name}</div>
+
                   <div style={relatedCardTextStyle}>
                     {item.bestFor.join(" · ")}
                   </div>
+
                   <div style={relatedArrowStyle}>→</div>
                 </Link>
               ))}
@@ -180,16 +191,13 @@ const heroCardStyle: CSSProperties = {
 const visualStyle: CSSProperties = {
   minHeight: "clamp(260px, 70vw, 520px)",
   borderRadius: 26,
-  position: "relative",
-  overflow: "hidden",
-  background:
-    "linear-gradient(135deg, #d9a76f 0%, #b86b4b 42%, #3b2f2f 100%)",
 };
 
 const visualBadgeStyle: CSSProperties = {
   position: "absolute",
   top: 16,
   left: 16,
+  zIndex: 2,
   padding: "8px 12px",
   borderRadius: 999,
   background: "rgba(255, 255, 255, 0.78)",

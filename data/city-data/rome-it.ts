@@ -6,6 +6,10 @@ export const romeIt: City = {
   country: "Italy",
   stops: ["Historic Center", "Trevi Fountain", "Sunset View"],
 
+  imageUrl: "",
+  imageAlt: "Rome historic city view",
+  imageCredit: "",
+  
   seasons: ["Spring", "Autumn"],
   months: ["April", "May", "October"],
   travelStyles: ["Couples", "Family", "Solo"],
@@ -23,15 +27,19 @@ export const romeIt: City = {
       tags: ["Old Town", "World Heritage", "Architecture"],
     },
     {
-      slug: "trevi-fountain",
-      name: "Trevi Fountain",
-      summary:
-        "One of Rome’s most iconic stops, especially strong for short-form travel videos and first-trip itineraries. It works best as a dramatic visual highlight.",
-      highlights: ["Iconic fountain", "Photo spot", "Central location"],
-      bestFor: ["Couples", "First-time", "Friends"],
-      bestTime: "Early morning or evening",
-      tags: ["Romantic", "Iconic", "Architecture"],
-    },
+  slug: "trevi-fountain",
+  name: "Trevi Fountain",
+  summary:
+    "One of Rome’s most iconic stops, especially strong for short-form travel videos and first-trip itineraries. It works best as a dramatic visual highlight.",
+  highlights: ["Iconic fountain", "Photo spot", "Central location"],
+  bestFor: ["Couples", "First-time", "Friends"],
+  bestTime: "Early morning or evening",
+  tags: ["Romantic", "Iconic", "Architecture"],
+
+  imageUrl: "https://images.unsplash.com/photo-1552832230-c0197dd311b5",
+imageAlt: "Trevi Fountain in Rome",
+imageCredit: "Photo: Unsplash",
+},
     {
       slug: "sunset-view",
       name: "Sunset View",

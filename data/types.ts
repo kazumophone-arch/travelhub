@@ -6,6 +6,10 @@ export type Spot = {
   bestFor: string[];
   bestTime?: string;
   tags?: string[];
+
+  imageUrl?: string;
+  imageAlt?: string;
+  imageCredit?: string;
 };
 
 export type City = {
@@ -13,6 +17,12 @@ export type City = {
   city: string;
   country: string;
   stops: [string, string, string];
+
+  description?: string;
+
+  imageUrl?: string;
+  imageAlt?: string;
+  imageCredit?: string;
 
   spotDetails?: Spot[];
 

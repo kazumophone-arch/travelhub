@@ -2,6 +2,7 @@ import Link from "next/link";
 import { cities } from "@/data/cities";
 import { notFound } from "next/navigation";
 import type { CSSProperties } from "react";
+import { TravelVisual } from "@/components/TravelVisual";
 
 export default async function CityPage({
   params,
@@ -33,14 +34,18 @@ export default async function CityPage({
     city.spotDetails && city.spotDetails.length > 0
       ? city.spotDetails
       : city.stops.map((stop, index) => ({
-          slug: stop
-            .toLowerCase()
-            .replaceAll(" ", "-")
-            .replace(/[^a-z0-9-]/g, "") || `spot-${index + 1}`,
+          slug:
+            stop
+              .toLowerCase()
+              .replaceAll(" ", "-")
+              .replace(/[^a-z0-9-]/g, "") || `spot-${index + 1}`,
           name: stop,
           summary: "A featured place from this city.",
           highlights: ["Featured spot"],
           bestFor: [],
+          imageUrl: undefined,
+          imageAlt: undefined,
+          imageCredit: undefined,
         }));
 
   return (
@@ -75,20 +80,22 @@ export default async function CityPage({
           <div style={spotGridStyle}>
             {spotCards.map((spot, index) => {
               const canOpenSpot =
-                city.spotDetails?.some((item) => item.slug === spot.slug) ?? false;
+                city.spotDetails?.some((item) => item.slug === spot.slug) ??
+                false;
 
               const cardKey = `${spot.slug}-${index}`;
 
               const cardContent = (
                 <>
-                  <div
-                    style={{
-                      ...spotVisualStyle,
-                      background: visualForIndex(index),
-                    }}
+                  <TravelVisual
+                    imageUrl={spot.imageUrl}
+                    imageAlt={spot.imageAlt ?? spot.name}
+                    imageCredit={spot.imageCredit}
+                    fallback={visualForIndex(index)}
+                    style={spotVisualStyle}
                   >
                     <div style={spotNumberBadgeStyle}>{index + 1}</div>
-                  </div>
+                  </TravelVisual>
 
                   <div style={spotBodyStyle}>
                     <div style={spotTopStyle}>
@@ -312,6 +319,7 @@ const spotNumberBadgeStyle: CSSProperties = {
   backdropFilter: "blur(14px)",
   fontSize: 13,
   fontWeight: 850,
+  zIndex: 2,
 };
 
 const spotBodyStyle: CSSProperties = {
