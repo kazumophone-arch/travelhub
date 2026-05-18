@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import type { City } from "@/data/types";
 import { TravelDiscoveryTools } from "@/components/TravelDiscoveryTools";
@@ -275,6 +275,28 @@ export function CityExplorer({ cities }: Props) {
   const [query, setQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
 
+  useEffect(() => {
+    const shouldRestore =
+      sessionStorage.getItem("travelhubRestoreHomeScroll") === "1";
+
+    if (!shouldRestore) return;
+
+    const savedY = Number(sessionStorage.getItem("travelhubHomeScrollY") ?? "0");
+
+    requestAnimationFrame(() => {
+      window.scrollTo({
+        top: savedY,
+        behavior: "auto",
+      });
+    });
+
+    sessionStorage.removeItem("travelhubRestoreHomeScroll");
+  }, []);
+
+  function rememberHomeScroll() {
+    sessionStorage.setItem("travelhubHomeScrollY", String(window.scrollY));
+  }
+
   const currentMonth = getCurrentMonth();
 
   const categories = useMemo(() => {
@@ -310,13 +332,13 @@ export function CityExplorer({ cities }: Props) {
   }, [cities, currentMonth]);
 
   const featuredCities = useMemo(() => {
-  const manualFeatured = cities
-    .filter((city) => city.isFeatured)
-    .sort((a, b) => (a.featuredRank ?? 999) - (b.featuredRank ?? 999));
+    const manualFeatured = cities
+      .filter((city) => city.isFeatured)
+      .sort((a, b) => (a.featuredRank ?? 999) - (b.featuredRank ?? 999));
 
-  if (manualFeatured.length > 0) return manualFeatured.slice(0, 8);
+    if (manualFeatured.length > 0) return manualFeatured.slice(0, 8);
 
-  return cities.slice(0, 8);
+    return cities.slice(0, 8);
   }, [cities]);
 
   const discoverySpots = useMemo(() => {
@@ -370,12 +392,25 @@ export function CityExplorer({ cities }: Props) {
   function handleSurpriseMe() {
     if (cities.length === 0) return;
 
+    rememberHomeScroll();
+
     const randomCity = cities[Math.floor(Math.random() * cities.length)];
     window.location.href = `/c/${randomCity.slug}?src=home&v=surprise_${randomCity.slug}`;
   }
 
   return (
-    <main style={pageStyle}>
+    <main
+      style={pageStyle}
+      onClickCapture={(event) => {
+        const target = event.target as HTMLElement;
+        const anchor = target.closest("a");
+        const href = anchor?.getAttribute("href");
+
+        if (href?.startsWith("/c/")) {
+          rememberHomeScroll();
+        }
+      }}
+    >
       <section style={shellStyle}>
         <header style={navStyle}>
           <Link href="/" style={logoStyle}>
