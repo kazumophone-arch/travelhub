@@ -1,3 +1,21 @@
+export type AffiliateLinkType =
+  | "hotels"
+  | "tours"
+  | "plan"
+  | "flights"
+  | "restaurants"
+  | "activities"
+  | "transport"
+  | "insurance";
+
+export type AffiliateLink = {
+  type: AffiliateLinkType;
+  label: string;
+  url: string;
+  priority?: number;
+  isActive?: boolean;
+};
+
 export type Spot = {
   slug: string;
   name: string;
@@ -34,6 +52,8 @@ export type City = {
   travelStyles?: string[];
   themes?: string[];
   categories?: string[];
+
+  affiliateLinks?: AffiliateLink[];
 
   affHotelsUrl: string;
   affToursUrl?: string;

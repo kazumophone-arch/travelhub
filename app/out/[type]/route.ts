@@ -1,11 +1,6 @@
+import { getAffiliateLink, isAffiliateLinkType } from "@/data/affiliate-links";
 import { cities } from "@/data/cities";
 import { NextResponse } from "next/server";
-
-type LinkType = "hotels" | "tours" | "plan";
-
-function isValidLinkType(type: string): type is LinkType {
-  return type === "hotels" || type === "tours" || type === "plan";
-}
 
 function inferSpotSlug({
   citySlug,
@@ -35,32 +30,6 @@ function inferSpotSlug({
   return "";
 }
 
-function getDestinationUrl({
-  type,
-  citySlug,
-}: {
-  type: LinkType;
-  citySlug: string;
-}) {
-  const city = cities[citySlug];
-
-  if (!city) return null;
-
-  if (type === "hotels") {
-    return city.affHotelsUrl;
-  }
-
-  if (type === "tours") {
-    return city.affToursUrl ?? city.affHotelsUrl;
-  }
-
-  if (type === "plan") {
-    return city.planUrl ?? city.affHotelsUrl;
-  }
-
-  return null;
-}
-
 export async function GET(
   request: Request,
   context: {
@@ -69,7 +38,7 @@ export async function GET(
 ) {
   const { type } = await context.params;
 
-  if (!isValidLinkType(type)) {
+  if (!isAffiliateLinkType(type)) {
     return new NextResponse("Invalid link type", { status: 404 });
   }
 
@@ -86,12 +55,12 @@ export async function GET(
     return new NextResponse("City not found", { status: 404 });
   }
 
-  const destinationUrl = getDestinationUrl({
+  const affiliateLink = getAffiliateLink({
+    city,
     type,
-    citySlug,
   });
 
-  if (!destinationUrl) {
+  if (!affiliateLink) {
     return new NextResponse("Destination not found", { status: 404 });
   }
 
@@ -115,8 +84,9 @@ export async function GET(
     city_name: city.city,
     country: city.country,
 
-    link_type: type,
-    destination_url: destinationUrl,
+    link_type: affiliateLink.type,
+    link_label: affiliateLink.label,
+    destination_url: affiliateLink.url,
 
     src,
     video_id: videoId,
@@ -129,5 +99,5 @@ export async function GET(
 
   console.info("[TravelHub click]", JSON.stringify(clickEvent));
 
-  return NextResponse.redirect(destinationUrl, 302);
+  return NextResponse.redirect(affiliateLink.url, 302);
 }
