@@ -24,6 +24,9 @@ export type City = {
   imageAlt?: string;
   imageCredit?: string;
 
+  isFeatured?: boolean;
+  featuredRank?: number;
+
   spotDetails?: Spot[];
 
   seasons?: string[];
