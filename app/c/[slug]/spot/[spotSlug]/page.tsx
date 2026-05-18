@@ -1,9 +1,53 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { CSSProperties } from "react";
+import type { Metadata } from "next";
 import { cities } from "@/data/cities";
 import { TravelVisual } from "@/components/TravelVisual";
 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string; spotSlug: string }>;
+}): Promise<Metadata> {
+  const { slug, spotSlug } = await params;
+  const city = cities[slug];
+
+  if (!city) {
+    return {
+      title: "Spot not found | TravelHub",
+      description: "This TravelHub spot page could not be found.",
+    };
+  }
+
+  const spot = city.spotDetails?.find((item) => item.slug === spotSlug);
+
+  if (!spot) {
+    return {
+      title: `${city.city}, ${city.country} | TravelHub`,
+      description: `Explore featured spots in ${city.city} and find hotel and tour links.`,
+    };
+  }
+
+  const title = `${spot.name} in ${city.city} | TravelHub`;
+  const description = spot.summary;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "article",
+      url: `https://travelhub-murex.vercel.app/c/${city.slug}/spot/${spot.slug}`,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
+  };
+}
 export default async function SpotPage({
   params,
   searchParams,
