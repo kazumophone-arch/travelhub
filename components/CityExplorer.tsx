@@ -239,6 +239,8 @@ function getDiscoverySpots(cities: City[]) {
   cities.forEach((city) => {
     if (city.spotDetails && city.spotDetails.length > 0) {
       city.spotDetails.forEach((spot) => {
+        if (spot.isPublished === false) return;
+
         spots.push({
           citySlug: city.slug,
           cityName: city.city,
@@ -331,16 +333,6 @@ export function CityExplorer({ cities }: Props) {
       .slice(0, 6);
   }, [cities, currentMonth]);
 
-  const featuredCities = useMemo(() => {
-    const manualFeatured = cities
-      .filter((city) => city.isFeatured)
-      .sort((a, b) => (a.featuredRank ?? 999) - (b.featuredRank ?? 999));
-
-    if (manualFeatured.length > 0) return manualFeatured.slice(0, 8);
-
-    return cities.slice(0, 8);
-  }, [cities]);
-
   const discoverySpots = useMemo(() => {
     return getDiscoverySpots(cities);
   }, [cities]);
@@ -402,7 +394,10 @@ export function CityExplorer({ cities }: Props) {
     <main
       style={pageStyle}
       onClickCapture={(event) => {
-        const target = event.target as HTMLElement;
+        const target = event.target;
+
+        if (!(target instanceof Element)) return;
+
         const anchor = target.closest("a");
         const href = anchor?.getAttribute("href");
 
@@ -429,8 +424,8 @@ export function CityExplorer({ cities }: Props) {
             </h1>
 
             <p style={heroSubtitleStyle}>
-              Browse by month, mood, city, or spot. Then jump straight to hotel
-              and tour options when a place feels right.
+              Browse by month, mood, city, or spot. Then jump straight to hotel,
+              tour, and travel links when a place feels right.
             </p>
 
             <div style={searchBoxStyle}>
@@ -476,7 +471,7 @@ export function CityExplorer({ cities }: Props) {
                   {thisMonthCities[0]?.country ?? "Italy"}
                 </div>
                 <div style={floatingSubStyle}>
-                  {currentMonth} · Hotels · Tours · Spots
+                  {currentMonth} · Cities · Spots · Links
                 </div>
               </div>
             </div>
@@ -517,6 +512,62 @@ export function CityExplorer({ cities }: Props) {
                 </div>
               </Link>
             ))}
+          </div>
+        </section>
+
+        <section style={feedSectionStyle}>
+          <div style={sectionHeaderStyle}>
+            <div>
+              <div style={smallLabelStyle}>Explore by spot</div>
+              <h2 style={sectionTitleStyle}>Start from a place, not a city</h2>
+            </div>
+            <span style={mutedTextStyle}>Spot-led discovery</span>
+          </div>
+
+          <div style={horizontalRailStyle}>
+            {discoverySpots.map((spot, index) => {
+              const href = spot.canOpen
+                ? `/c/${spot.citySlug}/spot/${spot.slug}?src=home&v=spot_${spot.citySlug}_${spot.slug}`
+                : `/c/${spot.citySlug}?src=home&v=spot_preview_${spot.citySlug}`;
+
+              return (
+                <Link
+                  key={`${spot.citySlug}-${spot.slug}-${index}`}
+                  href={href}
+                  style={spotDiscoveryCardStyle}
+                >
+                  <div
+                    style={{
+                      ...spotDiscoveryVisualStyle,
+                      background: visualForIndex(index),
+                    }}
+                  >
+                    <div style={visualBadgeStyle}>{spot.cityName}</div>
+                  </div>
+
+                  <div style={spotDiscoveryBodyStyle}>
+                    <h3 style={spotDiscoveryTitleStyle}>{spot.name}</h3>
+                    <p style={spotDiscoveryMetaStyle}>
+                      {spot.cityName}, {spot.country}
+                    </p>
+                    <p style={spotDiscoveryTextStyle}>{spot.summary}</p>
+
+                    <div style={chipRowStyle}>
+                      {(spot.tags.length > 0 ? spot.tags : ["Featured"])
+                        .slice(0, 2)
+                        .map((tag, tagIndex) => (
+                          <span
+                            key={`${tag}-${tagIndex}`}
+                            style={smallChipStyle}
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </section>
 
@@ -587,97 +638,6 @@ export function CityExplorer({ cities }: Props) {
               </div>
             </div>
           )}
-        </section>
-
-        <section style={feedSectionStyle}>
-          <div style={sectionHeaderStyle}>
-            <div>
-              <div style={smallLabelStyle}>Featured</div>
-              <h2 style={sectionTitleStyle}>Cities from travel shorts</h2>
-            </div>
-            <span style={mutedTextStyle}>Swipe sideways</span>
-          </div>
-
-          <div style={horizontalRailStyle}>
-            {featuredCities.map((city, index) => (
-              <Link
-                key={`${city.slug}-featured-${index}`}
-                href={`/c/${city.slug}?src=home&v=featured_${city.slug}`}
-                style={mediumRailCardStyle}
-              >
-                <div
-                  style={{
-                    ...mediumRailVisualStyle,
-                    background: visualForCity(city.slug),
-                  }}
-                >
-                  <div style={visualBadgeStyle}>Featured</div>
-                </div>
-
-                <div style={railCardBodyStyle}>
-                  <h3 style={railCardTitleStyle}>{city.city}</h3>
-                  <p style={railCardCountryStyle}>{city.country}</p>
-                  <div style={miniMetaStyle}>Hotels · Tours · Spots</div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </section>
-
-        <section style={feedSectionStyle}>
-          <div style={sectionHeaderStyle}>
-            <div>
-              <div style={smallLabelStyle}>Explore by spot</div>
-              <h2 style={sectionTitleStyle}>Start from a place, not a city</h2>
-            </div>
-            <span style={mutedTextStyle}>Spot-led discovery</span>
-          </div>
-
-          <div style={horizontalRailStyle}>
-            {discoverySpots.map((spot, index) => {
-              const href = spot.canOpen
-                ? `/c/${spot.citySlug}/spot/${spot.slug}?src=home&v=spot_${spot.citySlug}_${spot.slug}`
-                : `/c/${spot.citySlug}?src=home&v=spot_preview_${spot.citySlug}`;
-
-              return (
-                <Link
-                  key={`${spot.citySlug}-${spot.slug}-${index}`}
-                  href={href}
-                  style={spotDiscoveryCardStyle}
-                >
-                  <div
-                    style={{
-                      ...spotDiscoveryVisualStyle,
-                      background: visualForIndex(index),
-                    }}
-                  >
-                    <div style={visualBadgeStyle}>{spot.cityName}</div>
-                  </div>
-
-                  <div style={spotDiscoveryBodyStyle}>
-                    <h3 style={spotDiscoveryTitleStyle}>{spot.name}</h3>
-                    <p style={spotDiscoveryMetaStyle}>
-                      {spot.cityName}, {spot.country}
-                    </p>
-                    <p style={spotDiscoveryTextStyle}>{spot.summary}</p>
-
-                    <div style={chipRowStyle}>
-                      {(spot.tags.length > 0 ? spot.tags : ["Featured"])
-                        .slice(0, 2)
-                        .map((tag, tagIndex) => (
-                          <span
-                            key={`${tag}-${tagIndex}`}
-                            style={smallChipStyle}
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                    </div>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
         </section>
 
         <section style={contentStyle}>
@@ -762,8 +722,8 @@ export function CityExplorer({ cities }: Props) {
           )}
 
           <p style={disclosureStyle}>
-            Some links may be affiliate links. Original 3D characters •
-            AI-assisted visuals.
+            Some links may be affiliate links. We may earn a commission if you
+            book through them, at no extra cost to you.
           </p>
         </section>
       </section>
@@ -1028,25 +988,6 @@ const largeRailVisualStyle: CSSProperties = {
   position: "relative",
 };
 
-const mediumRailCardStyle: CSSProperties = {
-  display: "block",
-  minWidth: "min(72vw, 280px)",
-  maxWidth: 300,
-  borderRadius: 28,
-  background: "rgba(255, 255, 255, 0.82)",
-  border: "1px solid rgba(0, 0, 0, 0.08)",
-  boxShadow: "0 20px 58px rgba(0, 0, 0, 0.08)",
-  color: "inherit",
-  textDecoration: "none",
-  overflow: "hidden",
-  scrollSnapAlign: "start",
-};
-
-const mediumRailVisualStyle: CSSProperties = {
-  height: 160,
-  position: "relative",
-};
-
 const visualBadgeStyle: CSSProperties = {
   position: "absolute",
   top: 14,
@@ -1084,11 +1025,63 @@ const railCardReasonStyle: CSSProperties = {
   opacity: 0.72,
 };
 
-const miniMetaStyle: CSSProperties = {
-  marginTop: 12,
+const spotDiscoveryCardStyle: CSSProperties = {
+  display: "block",
+  minWidth: "min(76vw, 310px)",
+  maxWidth: 330,
+  borderRadius: 28,
+  background: "rgba(255, 255, 255, 0.82)",
+  border: "1px solid rgba(0, 0, 0, 0.08)",
+  boxShadow: "0 20px 58px rgba(0, 0, 0, 0.08)",
+  color: "inherit",
+  textDecoration: "none",
+  overflow: "hidden",
+  scrollSnapAlign: "start",
+};
+
+const spotDiscoveryVisualStyle: CSSProperties = {
+  height: 155,
+  position: "relative",
+};
+
+const spotDiscoveryBodyStyle: CSSProperties = {
+  padding: 17,
+};
+
+const spotDiscoveryTitleStyle: CSSProperties = {
+  margin: 0,
+  fontSize: 22,
+  lineHeight: 1.05,
+  letterSpacing: "-0.04em",
+  fontWeight: 850,
+};
+
+const spotDiscoveryMetaStyle: CSSProperties = {
+  margin: "7px 0 0",
+  fontSize: 13,
+  opacity: 0.62,
+  fontWeight: 650,
+};
+
+const spotDiscoveryTextStyle: CSSProperties = {
+  margin: "12px 0 14px",
+  fontSize: 13,
+  lineHeight: 1.5,
+  opacity: 0.7,
+};
+
+const chipRowStyle: CSSProperties = {
+  display: "flex",
+  flexWrap: "wrap",
+  gap: 7,
+};
+
+const smallChipStyle: CSSProperties = {
+  padding: "7px 9px",
+  borderRadius: 999,
+  background: "rgba(0, 0, 0, 0.06)",
   fontSize: 12,
   fontWeight: 750,
-  opacity: 0.68,
 };
 
 const moodGridStyle: CSSProperties = {
@@ -1202,65 +1195,6 @@ const moodResultMetaStyle: CSSProperties = {
 const moodResultArrowStyle: CSSProperties = {
   fontWeight: 850,
   opacity: 0.62,
-};
-
-const spotDiscoveryCardStyle: CSSProperties = {
-  display: "block",
-  minWidth: "min(76vw, 310px)",
-  maxWidth: 330,
-  borderRadius: 28,
-  background: "rgba(255, 255, 255, 0.82)",
-  border: "1px solid rgba(0, 0, 0, 0.08)",
-  boxShadow: "0 20px 58px rgba(0, 0, 0, 0.08)",
-  color: "inherit",
-  textDecoration: "none",
-  overflow: "hidden",
-  scrollSnapAlign: "start",
-};
-
-const spotDiscoveryVisualStyle: CSSProperties = {
-  height: 155,
-  position: "relative",
-};
-
-const spotDiscoveryBodyStyle: CSSProperties = {
-  padding: 17,
-};
-
-const spotDiscoveryTitleStyle: CSSProperties = {
-  margin: 0,
-  fontSize: 22,
-  lineHeight: 1.05,
-  letterSpacing: "-0.04em",
-  fontWeight: 850,
-};
-
-const spotDiscoveryMetaStyle: CSSProperties = {
-  margin: "7px 0 0",
-  fontSize: 13,
-  opacity: 0.62,
-  fontWeight: 650,
-};
-
-const spotDiscoveryTextStyle: CSSProperties = {
-  margin: "12px 0 14px",
-  fontSize: 13,
-  lineHeight: 1.5,
-  opacity: 0.7,
-};
-
-const chipRowStyle: CSSProperties = {
-  display: "flex",
-  flexWrap: "wrap",
-  gap: 7,
-};
-
-const smallChipStyle: CSSProperties = {
-  padding: "7px 9px",
-  borderRadius: 999,
-  background: "rgba(0, 0, 0, 0.06)",
-  fontSize: 12,
-  fontWeight: 750,
 };
 
 const categoryWrapStyle: CSSProperties = {
