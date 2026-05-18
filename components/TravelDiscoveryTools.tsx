@@ -10,14 +10,22 @@ type Props = {
 };
 
 type QuizAnswer = {
-  style: string;
-  season: string;
-  mood: string;
+  style: string | null;
+  season: string | null;
+  mood: string | null;
 };
 
 const travelStyles = ["Couples", "Family", "Solo", "Friends"];
 const seasons = ["Spring", "Summer", "Autumn", "Winter"];
-const moods = ["Romantic", "Scenic", "Old Town", "World Heritage", "Beach", "Nature", "Food"];
+const moods = [
+  "Romantic",
+  "Scenic",
+  "Old Town",
+  "World Heritage",
+  "Beach",
+  "Nature",
+  "Food",
+];
 
 function getCityTags(city: City) {
   const tags = new Set<string>();
@@ -32,7 +40,11 @@ function getCityTags(city: City) {
 
   const joinedStops = city.stops.join(" ");
 
-  if (joinedStops.includes("Old") || joinedStops.includes("Historic") || joinedStops.includes("Temple")) {
+  if (
+    joinedStops.includes("Old") ||
+    joinedStops.includes("Historic") ||
+    joinedStops.includes("Temple")
+  ) {
     tags.add("Old Town");
   }
 
@@ -86,9 +98,9 @@ function scoreCity(city: City, answer: QuizAnswer) {
   const tags = getCityTags(city);
   let score = 0;
 
-  if (tags.includes(answer.style)) score += 4;
-  if (tags.includes(answer.season)) score += 3;
-  if (tags.includes(answer.mood)) score += 4;
+  if (answer.style && tags.includes(answer.style)) score += 4;
+  if (answer.season && tags.includes(answer.season)) score += 3;
+  if (answer.mood && tags.includes(answer.mood)) score += 4;
 
   const searchable = [city.city, city.country, ...city.stops, ...tags]
     .join(" ")
@@ -112,6 +124,10 @@ export function TravelDiscoveryTools({ cities }: Props) {
   const [pickedSlugs, setPickedSlugs] = useState<string[]>([]);
 
   const quizResults = useMemo(() => {
+    const hasAnyAnswer = Boolean(answer.style || answer.season || answer.mood);
+
+    if (!hasAnyAnswer) return cities.slice(0, 3);
+
     const ranked = cities
       .map((city) => ({
         city,
@@ -134,6 +150,13 @@ export function TravelDiscoveryTools({ cities }: Props) {
       .filter((city): city is City => Boolean(city));
   }, [pickedSlugs, cities]);
 
+  function toggleAnswer(key: keyof QuizAnswer, value: string) {
+    setAnswer((current) => ({
+      ...current,
+      [key]: current[key] === value ? null : value,
+    }));
+  }
+
   function nextSwipe() {
     if (cities.length === 0) return;
     setSwipeIndex((current) => (current + 1) % cities.length);
@@ -155,7 +178,9 @@ export function TravelDiscoveryTools({ cities }: Props) {
       <section style={sectionHeaderStyle}>
         <div>
           <div style={smallLabelStyle}>Interactive discovery</div>
-          <h2 style={sectionTitleStyle}>Find a trip by feeling, not just by city.</h2>
+          <h2 style={sectionTitleStyle}>
+            Find a trip by feeling, not just by city.
+          </h2>
         </div>
       </section>
 
@@ -169,6 +194,31 @@ export function TravelDiscoveryTools({ cities }: Props) {
             <div style={toolBadgeStyle}>3 picks</div>
           </div>
 
+          <div style={resultBoxStyle}>
+            <div style={resultTitleStyle}>Your matches</div>
+
+            <div style={resultListStyle}>
+              {quizResults.map((city, index) => (
+                <Link
+                  key={`${city.slug}-quiz-${index}`}
+                  href={`/c/${city.slug}?src=home&v=quiz_${city.slug}`}
+                  style={resultItemStyle}
+                >
+                  <div style={resultRankStyle}>{index + 1}</div>
+
+                  <div style={resultTextStyle}>
+                    <div style={resultCityStyle}>{city.city}</div>
+                    <div style={resultMetaStyle}>
+                      {city.country} · {getCityTags(city).slice(0, 2).join(" · ")}
+                    </div>
+                  </div>
+
+                  <div style={resultArrowStyle}>→</div>
+                </Link>
+              ))}
+            </div>
+          </div>
+
           <div style={questionBlockStyle}>
             <div style={questionLabelStyle}>Who are you traveling with?</div>
             <div style={optionRowStyle}>
@@ -176,7 +226,7 @@ export function TravelDiscoveryTools({ cities }: Props) {
                 <button
                   key={style}
                   type="button"
-                  onClick={() => setAnswer((current) => ({ ...current, style }))}
+                  onClick={() => toggleAnswer("style", style)}
                   style={answer.style === style ? activeOptionStyle : optionStyle}
                 >
                   {style}
@@ -192,7 +242,7 @@ export function TravelDiscoveryTools({ cities }: Props) {
                 <button
                   key={season}
                   type="button"
-                  onClick={() => setAnswer((current) => ({ ...current, season }))}
+                  onClick={() => toggleAnswer("season", season)}
                   style={answer.season === season ? activeOptionStyle : optionStyle}
                 >
                   {season}
@@ -208,34 +258,11 @@ export function TravelDiscoveryTools({ cities }: Props) {
                 <button
                   key={mood}
                   type="button"
-                  onClick={() => setAnswer((current) => ({ ...current, mood }))}
+                  onClick={() => toggleAnswer("mood", mood)}
                   style={answer.mood === mood ? activeOptionStyle : optionStyle}
                 >
                   {mood}
                 </button>
-              ))}
-            </div>
-          </div>
-
-          <div style={resultBoxStyle}>
-            <div style={resultTitleStyle}>Your matches</div>
-
-            <div style={resultListStyle}>
-              {quizResults.map((city, index) => (
-                <Link
-                  key={`${city.slug}-quiz-${index}`}
-                  href={`/c/${city.slug}?src=home&v=quiz_${city.slug}`}
-                  style={resultItemStyle}
-                >
-                  <div style={resultRankStyle}>{index + 1}</div>
-                  <div style={resultTextStyle}>
-                    <div style={resultCityStyle}>{city.city}</div>
-                    <div style={resultMetaStyle}>
-                      {city.country} · {getCityTags(city).slice(0, 2).join(" · ")}
-                    </div>
-                  </div>
-                  <div style={resultArrowStyle}>→</div>
-                </Link>
               ))}
             </div>
           </div>
@@ -264,7 +291,8 @@ export function TravelDiscoveryTools({ cities }: Props) {
               <div style={swipeBodyStyle}>
                 <h3 style={swipeCityStyle}>{swipeCity.city}</h3>
                 <p style={swipeReasonStyle}>
-                  {swipeCity.stops[0]} · {swipeCity.stops[1]} · {swipeCity.stops[2]}
+                  {swipeCity.stops[0]} · {swipeCity.stops[1]} ·{" "}
+                  {swipeCity.stops[2]}
                 </p>
 
                 <div style={swipeButtonRowStyle}>
@@ -272,7 +300,11 @@ export function TravelDiscoveryTools({ cities }: Props) {
                     Skip
                   </button>
 
-                  <button type="button" onClick={pickCurrentCity} style={pickButtonStyle}>
+                  <button
+                    type="button"
+                    onClick={pickCurrentCity}
+                    style={pickButtonStyle}
+                  >
                     Looks good
                   </button>
                 </div>
@@ -369,7 +401,7 @@ const toolHeaderStyle: CSSProperties = {
   justifyContent: "space-between",
   gap: 12,
   alignItems: "flex-start",
-  marginBottom: 18,
+  marginBottom: 14,
 };
 
 const toolTitleStyle: CSSProperties = {
@@ -425,7 +457,7 @@ const activeOptionStyle: CSSProperties = {
 };
 
 const resultBoxStyle: CSSProperties = {
-  marginTop: 18,
+  marginBottom: 18,
   padding: 14,
   borderRadius: 24,
   background: "rgba(0, 0, 0, 0.04)",

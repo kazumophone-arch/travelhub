@@ -317,6 +317,16 @@ export function CityExplorer({ cities }: Props) {
     return getDiscoverySpots(cities);
   }, [cities]);
 
+  const moodPreviewCities = useMemo(() => {
+    const isMoodSelected = moodCards.some((mood) => mood.label === activeCategory);
+
+    if (!isMoodSelected) return [];
+
+    return cities
+      .filter((city) => getCityCategories(city).includes(activeCategory))
+      .slice(0, 3);
+  }, [cities, activeCategory]);
+
   const filteredCities = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
 
@@ -344,7 +354,11 @@ export function CityExplorer({ cities }: Props) {
 
   function handleMoodClick(label: string) {
     setQuery("");
-    setActiveCategory(label);
+
+    setActiveCategory((current) => {
+      if (current === label) return "All";
+      return label;
+    });
   }
 
   function handleSurpriseMe() {
@@ -401,7 +415,9 @@ export function CityExplorer({ cities }: Props) {
                 type="button"
                 onClick={() => {
                   setQuery("");
-                  setActiveCategory(currentMonth);
+                  setActiveCategory((current) =>
+                    current === currentMonth ? "All" : currentMonth
+                  );
                 }}
                 style={secondaryHeroButtonStyle}
               >
@@ -469,7 +485,7 @@ export function CityExplorer({ cities }: Props) {
               <div style={smallLabelStyle}>Travel mood</div>
               <h2 style={sectionTitleStyle}>Choose how you want to travel</h2>
             </div>
-            <span style={mutedTextStyle}>Tap to filter</span>
+            <span style={mutedTextStyle}>Tap again to clear</span>
           </div>
 
           <div style={moodGridStyle}>
@@ -492,6 +508,44 @@ export function CityExplorer({ cities }: Props) {
               );
             })}
           </div>
+
+          {moodPreviewCities.length > 0 && (
+            <div style={moodResultBoxStyle}>
+              <div style={moodResultHeaderStyle}>
+                <div>
+                  <div style={smallLabelStyle}>Selected mood</div>
+                  <h3 style={moodResultTitleStyle}>Best for {activeCategory}</h3>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveCategory("All")}
+                  style={clearMoodButtonStyle}
+                >
+                  Clear
+                </button>
+              </div>
+
+              <div style={moodResultGridStyle}>
+                {moodPreviewCities.map((city, index) => (
+                  <Link
+                    key={`${city.slug}-mood-result-${index}`}
+                    href={`/c/${city.slug}?src=home&v=mood_${activeCategory}_${city.slug}`}
+                    style={moodResultCardStyle}
+                  >
+                    <div>
+                      <div style={moodResultCityStyle}>{city.city}</div>
+                      <div style={moodResultMetaStyle}>
+                        {city.country} · {city.stops[0]}
+                      </div>
+                    </div>
+
+                    <div style={moodResultArrowStyle}>→</div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
         </section>
 
         <section style={feedSectionStyle}>
@@ -604,7 +658,11 @@ export function CityExplorer({ cities }: Props) {
                 <button
                   key={category}
                   type="button"
-                  onClick={() => setActiveCategory(category)}
+                  onClick={() =>
+                    setActiveCategory((current) =>
+                      current === category ? "All" : category
+                    )
+                  }
                   style={isActive ? activeCategoryStyle : categoryButtonStyle}
                 >
                   {category}
@@ -1033,6 +1091,76 @@ const moodTextStyle: CSSProperties = {
 const moodActionStyle: CSSProperties = {
   fontSize: 13,
   fontWeight: 850,
+};
+
+const moodResultBoxStyle: CSSProperties = {
+  marginTop: 14,
+  padding: 16,
+  borderRadius: 26,
+  background: "rgba(255, 255, 255, 0.82)",
+  border: "1px solid rgba(0, 0, 0, 0.08)",
+  boxShadow: "0 18px 52px rgba(0, 0, 0, 0.07)",
+};
+
+const moodResultHeaderStyle: CSSProperties = {
+  display: "flex",
+  justifyContent: "space-between",
+  gap: 12,
+  alignItems: "flex-start",
+  marginBottom: 12,
+};
+
+const moodResultTitleStyle: CSSProperties = {
+  margin: 0,
+  fontSize: 22,
+  lineHeight: 1.05,
+  letterSpacing: "-0.04em",
+  fontWeight: 850,
+};
+
+const clearMoodButtonStyle: CSSProperties = {
+  border: "1px solid rgba(0, 0, 0, 0.1)",
+  borderRadius: 999,
+  padding: "8px 10px",
+  background: "#ffffff",
+  color: "#171717",
+  fontSize: 12,
+  fontWeight: 800,
+  cursor: "pointer",
+};
+
+const moodResultGridStyle: CSSProperties = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 220px), 1fr))",
+  gap: 10,
+};
+
+const moodResultCardStyle: CSSProperties = {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  gap: 12,
+  padding: 13,
+  borderRadius: 18,
+  background: "rgba(0, 0, 0, 0.04)",
+  color: "inherit",
+  textDecoration: "none",
+};
+
+const moodResultCityStyle: CSSProperties = {
+  fontSize: 15,
+  fontWeight: 850,
+};
+
+const moodResultMetaStyle: CSSProperties = {
+  marginTop: 3,
+  fontSize: 12,
+  opacity: 0.62,
+};
+
+const moodResultArrowStyle: CSSProperties = {
+  fontWeight: 850,
+  opacity: 0.62,
 };
 
 const spotDiscoveryCardStyle: CSSProperties = {
