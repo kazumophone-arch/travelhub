@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import { TravelVisual } from "@/components/TravelVisual";
+import { ReturnHomeLink } from "@/components/ReturnHomeLink";
 
 export async function generateMetadata({
   params,
@@ -41,6 +42,7 @@ export async function generateMetadata({
     },
   };
 }
+
 export default async function CityPage({
   params,
   searchParams,
@@ -59,13 +61,13 @@ export default async function CityPage({
   const city = cities[slug];
   if (!city) return notFound();
 
-  const hotelsHref = `/out/hotels?c=${encodeURIComponent(slug)}&src=${encodeURIComponent(
-    src
-  )}&v=${encodeURIComponent(v)}`;
+  const hotelsHref = `/out/hotels?c=${encodeURIComponent(
+    slug
+  )}&src=${encodeURIComponent(src)}&v=${encodeURIComponent(v)}`;
 
-  const toursHref = `/out/tours?c=${encodeURIComponent(slug)}&src=${encodeURIComponent(
-    src
-  )}&v=${encodeURIComponent(v)}`;
+  const toursHref = `/out/tours?c=${encodeURIComponent(
+    slug
+  )}&src=${encodeURIComponent(src)}&v=${encodeURIComponent(v)}`;
 
   const spotCards =
     city.spotDetails && city.spotDetails.length > 0
@@ -88,9 +90,7 @@ export default async function CityPage({
   return (
     <main style={pageStyle}>
       <section style={shellStyle}>
-        <Link href="/" style={homeLinkStyle}>
-          ← Home
-        </Link>
+        <ReturnHomeLink style={homeLinkStyle} />
 
         <section style={heroStyle}>
           <div style={eyebrowStyle}>Travel links for</div>
@@ -145,14 +145,16 @@ export default async function CityPage({
                     </div>
 
                     <div style={highlightWrapStyle}>
-                      {spot.highlights.slice(0, 3).map((highlight, highlightIndex) => (
-                        <span
-                          key={`${highlight}-${highlightIndex}`}
-                          style={highlightChipStyle}
-                        >
-                          {highlight}
-                        </span>
-                      ))}
+                      {spot.highlights
+                        .slice(0, 3)
+                        .map((highlight, highlightIndex) => (
+                          <span
+                            key={`${highlight}-${highlightIndex}`}
+                            style={highlightChipStyle}
+                          >
+                            {highlight}
+                          </span>
+                        ))}
                     </div>
 
                     {canOpenSpot ? (
@@ -175,9 +177,9 @@ export default async function CityPage({
               return (
                 <Link
                   key={cardKey}
-                  href={`/c/${slug}/spot/${spot.slug}?src=${encodeURIComponent(
-                    src
-                  )}&v=${encodeURIComponent(v)}`}
+                  href={`/c/${slug}/spot/${
+                    spot.slug
+                  }?src=${encodeURIComponent(src)}&v=${encodeURIComponent(v)}`}
                   style={spotCardLinkStyle}
                 >
                   {cardContent}
@@ -210,7 +212,8 @@ export default async function CityPage({
         </section>
 
         <p style={noteStyle}>
-          Some links may be affiliate links. Original 3D characters • AI-assisted visuals.
+          Some links may be affiliate links. Original 3D characters •
+          AI-assisted visuals.
         </p>
       </section>
     </main>
@@ -496,4 +499,3 @@ const noteStyle: CSSProperties = {
   lineHeight: 1.6,
   opacity: 0.52,
 };
-

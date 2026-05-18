@@ -4,6 +4,7 @@ import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import { cities } from "@/data/cities";
 import { TravelVisual } from "@/components/TravelVisual";
+import { ReturnHomeLink } from "@/components/ReturnHomeLink";
 
 export async function generateMetadata({
   params,
@@ -48,6 +49,7 @@ export async function generateMetadata({
     },
   };
 }
+
 export default async function SpotPage({
   params,
   searchParams,
@@ -69,13 +71,13 @@ export default async function SpotPage({
   const spot = city.spotDetails?.find((item) => item.slug === spotSlug);
   if (!spot) return notFound();
 
-  const hotelsHref = `/out/hotels?c=${encodeURIComponent(slug)}&src=${encodeURIComponent(
-    src
-  )}&v=${encodeURIComponent(v)}`;
+  const hotelsHref = `/out/hotels?c=${encodeURIComponent(
+    slug
+  )}&src=${encodeURIComponent(src)}&v=${encodeURIComponent(v)}`;
 
-  const toursHref = `/out/tours?c=${encodeURIComponent(slug)}&src=${encodeURIComponent(
-    src
-  )}&v=${encodeURIComponent(v)}`;
+  const toursHref = `/out/tours?c=${encodeURIComponent(
+    slug
+  )}&src=${encodeURIComponent(src)}&v=${encodeURIComponent(v)}`;
 
   const relatedSpots =
     city.spotDetails?.filter((item) => item.slug !== spot.slug) ?? [];
@@ -83,9 +85,13 @@ export default async function SpotPage({
   return (
     <main style={pageStyle}>
       <section style={shellStyle}>
-        <Link href={`/c/${slug}?src=${src}&v=${v}`} style={backLinkStyle}>
-          ← Back to {city.city}
-        </Link>
+        <nav style={navStyle}>
+          <ReturnHomeLink style={backLinkStyle} />
+
+          <Link href={`/c/${slug}?src=${src}&v=${v}`} style={backLinkStyle}>
+            Back to {city.city}
+          </Link>
+        </nav>
 
         <section style={heroCardStyle}>
           <TravelVisual
@@ -211,13 +217,19 @@ const shellStyle: CSSProperties = {
   padding: "22px 16px 48px",
 };
 
+const navStyle: CSSProperties = {
+  display: "flex",
+  gap: 14,
+  flexWrap: "wrap",
+  marginBottom: 18,
+};
+
 const backLinkStyle: CSSProperties = {
   display: "inline-flex",
-  marginBottom: 18,
   color: "inherit",
   textDecoration: "none",
   fontSize: 14,
-  fontWeight: 700,
+  fontWeight: 800,
   opacity: 0.72,
 };
 
