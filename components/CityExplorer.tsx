@@ -310,7 +310,13 @@ export function CityExplorer({ cities }: Props) {
   }, [cities, currentMonth]);
 
   const featuredCities = useMemo(() => {
-    return cities.slice(0, 8);
+  const manualFeatured = cities
+    .filter((city) => city.isFeatured)
+    .sort((a, b) => (a.featuredRank ?? 999) - (b.featuredRank ?? 999));
+
+  if (manualFeatured.length > 0) return manualFeatured.slice(0, 8);
+
+  return cities.slice(0, 8);
   }, [cities]);
 
   const discoverySpots = useMemo(() => {
