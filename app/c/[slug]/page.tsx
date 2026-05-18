@@ -5,7 +5,7 @@ import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import { TravelVisual } from "@/components/TravelVisual";
 import { ReturnHomeLink } from "@/components/ReturnHomeLink";
-import { isPublishedCity, isPublishedSpot, sortByRank } from "@/data/visibility";
+import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
 
 export async function generateMetadata({
   params,
@@ -60,33 +60,25 @@ export default async function CityPage({
   const v = typeof sp?.v === "string" ? sp.v : `hub_${slug}`;
 
   const city = cities[slug];
-if (!city || !isPublishedCity(city)) return notFound();
-
-  const hotelsHref = `/out/hotels?c=${encodeURIComponent(
-    slug
-  )}&src=${encodeURIComponent(src)}&v=${encodeURIComponent(v)}`;
-
-  const toursHref = `/out/tours?c=${encodeURIComponent(
-    slug
-  )}&src=${encodeURIComponent(src)}&v=${encodeURIComponent(v)}`;
+  if (!city) return notFound();
 
   const spotCards =
-  city.spotDetails && city.spotDetails.length > 0
-    ? sortByRank(city.spotDetails.filter(isPublishedSpot))
-    : city.stops.map((stop, index) => ({
-        slug:
-          stop
-            .toLowerCase()
-            .replaceAll(" ", "-")
-            .replace(/[^a-z0-9-]/g, "") || `spot-${index + 1}`,
-        name: stop,
-        summary: "A featured place from this city.",
-        highlights: ["Featured spot"],
-        bestFor: [],
-        imageUrl: undefined,
-        imageAlt: undefined,
-        imageCredit: undefined,
-      }));
+    city.spotDetails && city.spotDetails.length > 0
+      ? city.spotDetails
+      : city.stops.map((stop, index) => ({
+          slug:
+            stop
+              .toLowerCase()
+              .replaceAll(" ", "-")
+              .replace(/[^a-z0-9-]/g, "") || `spot-${index + 1}`,
+          name: stop,
+          summary: "A featured place from this city.",
+          highlights: ["Featured spot"],
+          bestFor: [],
+          imageUrl: undefined,
+          imageAlt: undefined,
+          imageCredit: undefined,
+        }));
 
   return (
     <main style={pageStyle}>
@@ -102,7 +94,7 @@ if (!city || !isPublishedCity(city)) return notFound();
 
           <p style={subtitleStyle}>
             Explore the featured spots from our travel shorts, then jump straight
-            to hotel and tour options.
+            to hotel, tour, and travel links.
           </p>
         </section>
 
@@ -193,28 +185,18 @@ if (!city || !isPublishedCity(city)) return notFound();
         <section style={ctaCardStyle}>
           <div>
             <div style={smallLabelStyle}>Ready to plan?</div>
-            <h2 style={ctaTitleStyle}>Find where to stay in {city.city}.</h2>
+            <h2 style={ctaTitleStyle}>Find travel options for {city.city}.</h2>
             <p style={ctaTextStyle}>
               Use these links after choosing the spots you want to visit.
             </p>
           </div>
 
-          <section style={buttonGroupStyle}>
-            <a href={hotelsHref} style={primaryButtonStyle}>
-              Find hotels in {city.city}
-            </a>
-
-            {city.affToursUrl && (
-              <a href={toursHref} style={secondaryButtonStyle}>
-                Book tours & activities
-              </a>
-            )}
-          </section>
+          <AffiliateButtonGroup city={city} src={src} v={v} />
         </section>
 
         <p style={noteStyle}>
-          Some links may be affiliate links. Original 3D characters •
-          AI-assisted visuals.
+          Some links may be affiliate links. We may earn a commission if you book
+          through them, at no extra cost to you.
         </p>
       </section>
     </main>
@@ -459,37 +441,6 @@ const ctaTextStyle: CSSProperties = {
   fontSize: 14,
   lineHeight: 1.6,
   opacity: 0.68,
-};
-
-const buttonGroupStyle: CSSProperties = {
-  display: "grid",
-  gap: 12,
-};
-
-const primaryButtonStyle: CSSProperties = {
-  display: "block",
-  padding: "16px 18px",
-  borderRadius: 18,
-  background: "#171717",
-  color: "#ffffff",
-  textAlign: "center",
-  textDecoration: "none",
-  fontWeight: 850,
-  fontSize: 16,
-  boxShadow: "0 16px 38px rgba(0, 0, 0, 0.16)",
-};
-
-const secondaryButtonStyle: CSSProperties = {
-  display: "block",
-  padding: "15px 18px",
-  borderRadius: 18,
-  background: "#ffffff",
-  color: "#171717",
-  textAlign: "center",
-  textDecoration: "none",
-  fontWeight: 750,
-  fontSize: 15,
-  border: "1px solid rgba(0, 0, 0, 0.12)",
 };
 
 const noteStyle: CSSProperties = {

@@ -8,6 +8,78 @@ export const size = {
 
 export const contentType = "image/png";
 
+function Spark({
+  left,
+  top,
+  size,
+}: {
+  left: number;
+  top: number;
+  size: number;
+}) {
+  return (
+    <div
+      style={{
+        position: "absolute",
+        left,
+        top,
+        width: size,
+        height: size,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <div
+        style={{
+          position: "absolute",
+          width: size * 0.32,
+          height: size,
+          borderRadius: size,
+          background: "#F2B84B",
+          transform: "rotate(45deg)",
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          width: size * 0.32,
+          height: size,
+          borderRadius: size,
+          background: "#F2B84B",
+          transform: "rotate(-45deg)",
+        }}
+      />
+    </div>
+  );
+}
+
+function Dot({
+  left,
+  top,
+  size,
+  opacity = 0.3,
+}: {
+  left: number;
+  top: number;
+  size: number;
+  opacity?: number;
+}) {
+  return (
+    <div
+      style={{
+        position: "absolute",
+        left,
+        top,
+        width: size,
+        height: size,
+        borderRadius: 999,
+        background: `rgba(23, 23, 23, ${opacity})`,
+      }}
+    />
+  );
+}
+
 export default function Image() {
   return new ImageResponse(
     (
@@ -61,18 +133,6 @@ export default function Image() {
           <div
             style={{
               position: "absolute",
-              width: 34,
-              height: 34,
-              borderRadius: 999,
-              background: "#171717",
-              left: 226,
-              top: 226,
-            }}
-          />
-
-          <div
-            style={{
-              position: "absolute",
               width: 72,
               height: 252,
               background: "#171717",
@@ -96,89 +156,21 @@ export default function Image() {
           <div
             style={{
               position: "absolute",
-              left: 104,
-              top: 112,
-              width: 14,
-              height: 14,
+              width: 34,
+              height: 34,
               borderRadius: 999,
-              background: "rgba(23, 23, 23, 0.34)",
+              background: "#171717",
             }}
           />
 
-          <div
-            style={{
-              position: "absolute",
-              right: 102,
-              top: 96,
-              width: 12,
-              height: 12,
-              borderRadius: 999,
-              background: "rgba(23, 23, 23, 0.32)",
-            }}
-          />
+          <Dot left={104} top={112} size={14} opacity={0.34} />
+          <Dot left={368} top={96} size={12} opacity={0.32} />
+          <Dot left={392} top={350} size={16} opacity={0.26} />
+          <Dot left={96} top={354} size={10} opacity={0.28} />
 
-          <div
-            style={{
-              position: "absolute",
-              right: 78,
-              bottom: 120,
-              width: 16,
-              height: 16,
-              borderRadius: 999,
-              background: "rgba(23, 23, 23, 0.26)",
-            }}
-          />
-
-          <div
-            style={{
-              position: "absolute",
-              left: 96,
-              bottom: 108,
-              width: 10,
-              height: 10,
-              borderRadius: 999,
-              background: "rgba(23, 23, 23, 0.28)",
-            }}
-          />
-
-          <div
-            style={{
-              position: "absolute",
-              right: 66,
-              top: 56,
-              color: "#F2B84B",
-              fontSize: 64,
-              fontWeight: 900,
-            }}
-          >
-            ✦
-          </div>
-
-          <div
-            style={{
-              position: "absolute",
-              left: 66,
-              bottom: 166,
-              color: "#F2B84B",
-              fontSize: 42,
-              fontWeight: 900,
-            }}
-          >
-            ✦
-          </div>
-
-          <div
-            style={{
-              position: "absolute",
-              right: 52,
-              bottom: 178,
-              color: "#F2B84B",
-              fontSize: 34,
-              fontWeight: 900,
-            }}
-          >
-            ✦
-          </div>
+          <Spark left={366} top={58} size={64} />
+          <Spark left={62} top={286} size={42} />
+          <Spark left={388} top={284} size={34} />
         </div>
 
         <div

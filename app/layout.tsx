@@ -14,6 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://travelhub-murex.vercel.app"),
   title: {
     default: "TravelHub | Find travel links by city",
     template: "%s",
