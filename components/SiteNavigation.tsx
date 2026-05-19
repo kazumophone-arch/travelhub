@@ -18,6 +18,15 @@ const navLinks = [
 
 function isActivePath(pathname: string, href: string) {
   if (href === "/") return pathname === "/";
+
+  if (href === "/cities") {
+    return pathname === "/cities" || /^\/c\/[^/]+$/.test(pathname);
+  }
+
+  if (href === "/spots") {
+    return pathname === "/spots" || pathname.includes("/spot/");
+  }
+
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
