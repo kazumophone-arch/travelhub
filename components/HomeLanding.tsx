@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import type { City } from "@/data/types";
 
@@ -163,6 +163,24 @@ function getSpotSearchResults(cities: City[], query: string) {
 export function HomeLanding({ cities }: Props) {
   const [query, setQuery] = useState("");
 
+  useEffect(() => {
+    const shouldRestore =
+      sessionStorage.getItem("travelhubRestoreHomeScroll") === "1";
+
+    if (!shouldRestore) return;
+
+    const savedY = Number(sessionStorage.getItem("travelhubHomeScrollY") ?? "0");
+
+    requestAnimationFrame(() => {
+      window.scrollTo({
+        top: savedY,
+        behavior: "auto",
+      });
+    });
+
+    sessionStorage.removeItem("travelhubRestoreHomeScroll");
+  }, []);
+
   const currentMonth = getCurrentMonth();
   const isSearching = query.trim().length > 0;
 
@@ -209,8 +227,8 @@ export function HomeLanding({ cities }: Props) {
             </h1>
 
             <p style={heroSubtitleStyle}>
-              Search cities and featured spots, then move to dedicated pages
-              when you want more detail.
+              Search cities and featured spots, or choose a focused page for
+              discovery, seasons, cities, and places.
             </p>
 
             <div id="home-search" style={searchBoxStyle}>
@@ -224,13 +242,13 @@ export function HomeLanding({ cities }: Props) {
             </div>
 
             <div style={heroActionsStyle}>
-              <Link href="/cities" style={primaryHeroButtonStyle}>
-                Browse cities
+              <Link href="/discover" style={primaryHeroButtonStyle}>
+                Discover by feeling
               </Link>
 
-              <a href="#seasonal-preview" style={secondaryHeroButtonStyle}>
-                Best in {currentMonth}
-              </a>
+              <Link href="/cities" style={secondaryHeroButtonStyle}>
+                Browse cities
+              </Link>
             </div>
           </div>
 
@@ -240,7 +258,7 @@ export function HomeLanding({ cities }: Props) {
                 <div style={floatingSmallTextStyle}>TravelHub</div>
                 <div style={floatingTitleStyle}>Compass for many places</div>
                 <div style={floatingSubStyle}>
-                  Cities · Spots · Seasons · Travel links
+                  Discover · Seasonal · Cities · Spots
                 </div>
               </div>
             </div>
@@ -324,29 +342,37 @@ export function HomeLanding({ cities }: Props) {
           </div>
 
           <div style={quickGridStyle}>
+            <Link href="/discover" style={quickCardStyle}>
+              <div style={quickLabelStyle}>Discover</div>
+              <h3 style={quickTitleStyle}>Find a trip by feeling</h3>
+              <p style={quickTextStyle}>
+                Use interactive tools when you know the mood, but not the city.
+              </p>
+            </Link>
+
+            <Link href="/seasonal" style={quickCardStyle}>
+              <div style={quickLabelStyle}>Seasonal</div>
+              <h3 style={quickTitleStyle}>Browse by month</h3>
+              <p style={quickTextStyle}>
+                Choose travel timing and see destinations that fit the season.
+              </p>
+            </Link>
+
             <Link href="/cities" style={quickCardStyle}>
               <div style={quickLabelStyle}>Cities</div>
               <h3 style={quickTitleStyle}>Browse destinations</h3>
               <p style={quickTextStyle}>
-                Use city, country, season, and travel-style filters.
+                Search and filter by city, country, season, and travel style.
               </p>
             </Link>
 
-            <a href="#home-search" style={quickCardStyle}>
-              <div style={quickLabelStyle}>Search</div>
-              <h3 style={quickTitleStyle}>Find a spot directly</h3>
+            <Link href="/spots" style={quickCardStyle}>
+              <div style={quickLabelStyle}>Spots</div>
+              <h3 style={quickTitleStyle}>Explore by place</h3>
               <p style={quickTextStyle}>
-                Search places like Trevi, Canal, Bamboo, Castle, or Sunset.
+                Start from a specific spot like a canal, castle, beach, or view.
               </p>
-            </a>
-
-            <a href="#seasonal-preview" style={quickCardStyle}>
-              <div style={quickLabelStyle}>Seasonal</div>
-              <h3 style={quickTitleStyle}>Best this month</h3>
-              <p style={quickTextStyle}>
-                Start with a short seasonal preview before opening city pages.
-              </p>
-            </a>
+            </Link>
           </div>
         </section>
 
@@ -357,8 +383,8 @@ export function HomeLanding({ cities }: Props) {
               <h2 style={sectionTitleStyle}>Best places in {currentMonth}</h2>
             </div>
 
-            <Link href="/cities" style={viewAllStyle}>
-              View all cities
+            <Link href="/seasonal" style={viewAllStyle}>
+              View seasonal
             </Link>
           </div>
 
@@ -679,7 +705,7 @@ const smallChipStyle: CSSProperties = {
 
 const quickGridStyle: CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 240px), 1fr))",
+  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 230px), 1fr))",
   gap: 14,
 };
 
