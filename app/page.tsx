@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { cities } from "@/data/cities";
-import { CityExplorer } from "@/components/CityExplorer";
+import { HomeLanding } from "@/components/HomeLanding";
 import { isPublishedCity, sortByRank } from "@/data/visibility";
 
 const title = "TravelHub | Find travel links by city";
@@ -28,5 +28,5 @@ export default function Home() {
     Object.values(cities).filter(isPublishedCity)
   );
 
-  return <CityExplorer cities={publishedCities} />;
+  return <HomeLanding cities={publishedCities} />;
 }
