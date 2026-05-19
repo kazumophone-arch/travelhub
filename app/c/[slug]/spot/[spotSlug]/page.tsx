@@ -4,7 +4,7 @@ import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import { cities } from "@/data/cities";
 import { TravelVisual } from "@/components/TravelVisual";
-import { ReturnHomeLink } from "@/components/ReturnHomeLink";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { isPublishedCity, isPublishedSpot, sortByRank } from "@/data/visibility";
 
 export async function generateMetadata({
@@ -88,14 +88,14 @@ if (!spot || !isPublishedSpot(spot)) return notFound();
 
   return (
     <main style={pageStyle}>
-      <section style={shellStyle}>
-        <nav style={navStyle}>
-          <ReturnHomeLink style={backLinkStyle} />
-
-          <Link href={`/c/${slug}?src=${src}&v=${v}`} style={backLinkStyle}>
-            Back to {city.city}
-          </Link>
-        </nav>
+      <section style={shellStyle}>        <Breadcrumbs
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Cities", href: "/cities" },
+            { label: city.city, href: `/c/${slug}?src=${src}&v=${v}` },
+            { label: spot.name },
+          ]}
+        />
 
         <section style={heroCardStyle}>
           <TravelVisual
@@ -462,3 +462,4 @@ const disclosureStyle: CSSProperties = {
   lineHeight: 1.6,
   opacity: 0.52,
 };
+

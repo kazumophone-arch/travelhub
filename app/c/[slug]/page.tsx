@@ -5,7 +5,7 @@ import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import type { City } from "@/data/types";
 import { TravelVisual } from "@/components/TravelVisual";
-import { ReturnHomeLink } from "@/components/ReturnHomeLink";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
 
 export async function generateMetadata({
@@ -84,7 +84,13 @@ export default async function CityPage({
   return (
     <main style={pageStyle}>
       <section style={shellStyle}>
-        <ReturnHomeLink style={homeLinkStyle} />
+        <Breadcrumbs
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Cities", href: "/cities" },
+            { label: `${city.city}, ${city.country}` },
+          ]}
+        />
 
         <section style={heroStyle}>
           <div style={eyebrowStyle}>Travel links for</div>
