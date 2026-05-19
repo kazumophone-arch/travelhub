@@ -1,12 +1,18 @@
 import Link from "next/link";
-import { cities } from "@/data/cities";
 import { notFound } from "next/navigation";
 import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import type { City } from "@/data/types";
+import { cities } from "@/data/cities";
 import { TravelVisual } from "@/components/TravelVisual";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
+
+type StayArea = {
+  name: string;
+  bestFor: string;
+  reason: string;
+};
 
 export async function generateMetadata({
   params,
@@ -26,7 +32,7 @@ export async function generateMetadata({
   const title = `${city.city}, ${city.country} | TravelHub`;
   const description =
     city.description ??
-    `Explore featured spots in ${city.city} and find hotel, tour, and travel links for your trip.`;
+    `Explore ${city.city}, featured spots, where to stay, and travel planning links.`;
 
   return {
     title,
@@ -57,15 +63,15 @@ export default async function CityPage({
   const { slug } = await params;
   const sp = await searchParams;
 
-  const src = typeof sp?.src === "string" ? sp.src : "hub";
-  const v = typeof sp?.v === "string" ? sp.v : `hub_${slug}`;
+  const src = typeof sp?.src === "string" ? sp.src : "city";
+  const v = typeof sp?.v === "string" ? sp.v : `city_${slug}`;
 
   const city = cities[slug];
   if (!city) return notFound();
 
   const spotCards =
     city.spotDetails && city.spotDetails.length > 0
-      ? city.spotDetails
+      ? city.spotDetails.filter((spot) => spot.isPublished !== false)
       : city.stops.map((stop, index) => ({
           slug:
             stop
@@ -76,10 +82,16 @@ export default async function CityPage({
           summary: "A featured place from this city.",
           highlights: ["Featured spot"],
           bestFor: [],
+          tags: [index === 0 ? "First stop" : "Travel spot"],
           imageUrl: undefined,
           imageAlt: undefined,
           imageCredit: undefined,
         }));
+
+  const stayAreas = getStayAreas(city);
+  const topStyles = city.travelStyles?.slice(0, 4) ?? [];
+  const bestMonths = city.months?.slice(0, 5) ?? [];
+  const themes = city.themes?.slice(0, 4) ?? [];
 
   return (
     <main style={pageStyle}>
@@ -93,60 +105,128 @@ export default async function CityPage({
         />
 
         <section style={heroStyle}>
-          <div style={eyebrowStyle}>Travel links for</div>
+          <div style={heroTextStyle}>
+            <div style={eyebrowStyle}>Travel planning guide</div>
 
-          <h1 style={titleStyle}>
-            {city.city}, {city.country}
-          </h1>
+            <h1 style={titleStyle}>
+              {city.city}, {city.country}
+            </h1>
 
-          <p style={subtitleStyle}>
-            {getCityIntro(city)}
-          </p>
+            <p style={subtitleStyle}>{getCityIntro(city)}</p>
+
+            <div style={heroChipWrapStyle}>
+              {(topStyles.length > 0 ? topStyles : ["First-time visitors"])
+                .slice(0, 3)
+                .map((style) => (
+                  <span key={style} style={heroChipStyle}>
+                    {style}
+                  </span>
+                ))}
+
+              {(bestMonths.length > 0 ? bestMonths : ["Seasonal timing"])
+                .slice(0, 2)
+                .map((month) => (
+                  <span key={month} style={heroChipStyle}>
+                    {month}
+                  </span>
+                ))}
+            </div>
+          </div>
+
+          <aside style={heroActionCardStyle}>
+            <div style={smallLabelStyle}>Plan with less guessing</div>
+            <h2 style={heroActionTitleStyle}>
+              Compare stays and tours after choosing your route.
+            </h2>
+            <p style={heroActionTextStyle}>
+              Start with the city highlights, then use the links when you know
+              what kind of trip fits you.
+            </p>
+
+            <AffiliateButtonGroup city={city} src={src} v={v} />
+          </aside>
         </section>
 
-        <section style={overviewCardStyle}>
-          <div style={overviewTextStyle}>
+        <section style={decisionGridStyle}>
+          <article style={decisionCardStyle}>
             <div style={smallLabelStyle}>Why visit</div>
-            <h2 style={overviewTitleStyle}>A quick travel snapshot.</h2>
-            <p style={overviewDescriptionStyle}>{getWhyVisitText(city)}</p>
+            <h2 style={sectionTitleStyle}>Why {city.city} works</h2>
+            <p style={bodyTextStyle}>{getWhyVisitText(city)}</p>
+          </article>
+
+          <article style={decisionCardStyle}>
+            <div style={smallLabelStyle}>Best for</div>
+            <h2 style={sectionTitleStyle}>Who this trip fits</h2>
+            <div style={tagWrapStyle}>
+              {(topStyles.length > 0
+                ? topStyles
+                : ["First-time visitors", "City walks", "Sightseeing"]
+              ).map((style) => (
+                <span key={style} style={tagStyle}>
+                  {style}
+                </span>
+              ))}
+            </div>
+          </article>
+
+          <article style={decisionCardStyle}>
+            <div style={smallLabelStyle}>Best months</div>
+            <h2 style={sectionTitleStyle}>When to consider going</h2>
+            <div style={tagWrapStyle}>
+              {(bestMonths.length > 0
+                ? bestMonths
+                : ["Spring", "Autumn", "Flexible timing"]
+              ).map((month) => (
+                <span key={month} style={tagStyle}>
+                  {month}
+                </span>
+              ))}
+            </div>
+          </article>
+        </section>
+
+        <section style={sectionStyle}>
+          <div style={sectionHeaderStyle}>
+            <div>
+              <div style={smallLabelStyle}>Where to stay</div>
+              <h2 style={largeSectionTitleStyle}>
+                Choose an area before comparing hotels.
+              </h2>
+            </div>
           </div>
 
-          <div style={snapshotGridStyle}>
-            <div style={snapshotItemStyle}>
-              <div style={snapshotLabelStyle}>Best months</div>
-              <div style={snapshotValueStyle}>
-                {formatList(city.months, "Seasonal timing coming soon")}
-              </div>
+          <p style={sectionLeadStyle}>
+            Hotel links work best after the stay area is clear. Use these areas
+            as a quick decision guide before comparing options.
+          </p>
+
+          <div style={stayGridStyle}>
+            {stayAreas.map((area) => (
+              <article key={area.name} style={stayCardStyle}>
+                <div style={stayAreaStyle}>{area.name}</div>
+                <h3 style={stayTitleStyle}>{area.bestFor}</h3>
+                <p style={stayTextStyle}>{area.reason}</p>
+              </article>
+            ))}
+          </div>
+
+          <div style={reasonCtaStyle}>
+            <div>
+              <div style={smallLabelStyle}>Planning to stay in {city.city}?</div>
+              <h3 style={ctaTitleStyle}>
+                Pick an area that fits your route, then compare hotel options.
+              </h3>
             </div>
 
-            <div style={snapshotItemStyle}>
-              <div style={snapshotLabelStyle}>Good for</div>
-              <div style={snapshotValueStyle}>
-                {formatList(city.travelStyles, "First-time travelers")}
-              </div>
-            </div>
-
-            <div style={snapshotItemStyle}>
-              <div style={snapshotLabelStyle}>Travel mood</div>
-              <div style={snapshotValueStyle}>
-                {formatList(city.themes, "Scenic city discovery")}
-              </div>
-            </div>
-
-            <div style={snapshotItemStyle}>
-              <div style={snapshotLabelStyle}>Start with</div>
-              <div style={snapshotValueStyle}>
-                {city.stops.slice(0, 3).join(" · ")}
-              </div>
-            </div>
+            <AffiliateButtonGroup city={city} src={src} v={`stay_${v}`} />
           </div>
         </section>
 
-        <section style={spotSectionStyle}>
+        <section style={sectionStyle}>
           <div style={sectionHeaderStyle}>
             <div>
               <div style={smallLabelStyle}>Featured spots</div>
-              <h2 style={sectionTitleStyle}>Start with these places</h2>
+              <h2 style={largeSectionTitleStyle}>Start with these places.</h2>
             </div>
             <span style={countStyle}>{spotCards.length} spots</span>
           </div>
@@ -157,9 +237,7 @@ export default async function CityPage({
                 city.spotDetails?.some((item) => item.slug === spot.slug) ??
                 false;
 
-              const cardKey = `${spot.slug}-${index}`;
-
-              const cardContent = (
+              const content = (
                 <>
                   <TravelVisual
                     imageUrl={spot.imageUrl}
@@ -172,71 +250,84 @@ export default async function CityPage({
                   </TravelVisual>
 
                   <div style={spotBodyStyle}>
-                    <div style={spotTopStyle}>
-                      <div style={spotTextStyle}>
-                        <h3 style={spotNameStyle}>{spot.name}</h3>
-                        <p style={spotSummaryStyle}>{spot.summary}</p>
-                      </div>
-
-                      {canOpenSpot && <div style={spotArrowStyle}>→</div>}
+                    <div style={spotMetaStyle}>
+                      {canOpenSpot ? "Spot guide" : "City highlight"}
                     </div>
 
-                    <div style={highlightWrapStyle}>
-                      {spot.highlights
+                    <h3 style={spotTitleStyle}>{spot.name}</h3>
+
+                    <p style={spotTextStyle}>{spot.summary}</p>
+
+                    <div style={tagWrapStyle}>
+                      {(spot.tags && spot.tags.length > 0
+                        ? spot.tags
+                        : spot.highlights
+                      )
                         .slice(0, 3)
-                        .map((highlight, highlightIndex) => (
-                          <span
-                            key={`${highlight}-${highlightIndex}`}
-                            style={highlightChipStyle}
-                          >
-                            {highlight}
+                        .map((tag) => (
+                          <span key={tag} style={smallTagStyle}>
+                            {tag}
                           </span>
                         ))}
                     </div>
 
-                    {canOpenSpot ? (
-                      <div style={viewSpotStyle}>View spot</div>
-                    ) : (
-                      <div style={disabledSpotStyle}>Spot page coming soon</div>
-                    )}
+                    <div style={openTextStyle}>
+                      {canOpenSpot ? "Open spot guide" : "Use city guide"}
+                    </div>
                   </div>
                 </>
               );
 
               if (!canOpenSpot) {
                 return (
-                  <article key={cardKey} style={spotCardStyle}>
-                    {cardContent}
+                  <article key={`${spot.slug}-${index}`} style={spotCardStyle}>
+                    {content}
                   </article>
                 );
               }
 
               return (
                 <Link
-                  key={cardKey}
-                  href={`/c/${slug}/spot/${
-                    spot.slug
-                  }?src=${encodeURIComponent(src)}&v=${encodeURIComponent(v)}`}
+                  key={`${spot.slug}-${index}`}
+                  href={`/c/${slug}/spot/${spot.slug}?src=${encodeURIComponent(
+                    src
+                  )}&v=${encodeURIComponent(v)}`}
                   style={spotCardLinkStyle}
                 >
-                  {cardContent}
+                  {content}
                 </Link>
               );
             })}
           </div>
         </section>
 
-        <section style={ctaCardStyle}>
+        <section style={sectionStyle}>
+          <div style={tourCtaStyle}>
+            <div>
+              <div style={smallLabelStyle}>Tours worth considering</div>
+              <h2 style={largeSectionTitleStyle}>
+                Use a tour when you want the route handled for you.
+              </h2>
+              <p style={sectionLeadStyle}>{getTourText(city)}</p>
+            </div>
+
+            <AffiliateButtonGroup city={city} src={src} v={`tour_${v}`} />
+          </div>
+        </section>
+
+        <section style={finalCtaStyle}>
           <div>
             <div style={smallLabelStyle}>Ready to plan?</div>
-            <h2 style={ctaTitleStyle}>Find travel options for {city.city}.</h2>
-            <p style={ctaTextStyle}>
-              After choosing the places you want to visit, use these links to
-              continue planning.
+            <h2 style={finalCtaTitleStyle}>
+              Turn {city.city} from an idea into a trip plan.
+            </h2>
+            <p style={finalCtaTextStyle}>
+              You have the key places, timing, stay-area logic, and planning
+              links in one place.
             </p>
           </div>
 
-          <AffiliateButtonGroup city={city} src={src} v={v} />
+          <AffiliateButtonGroup city={city} src={src} v={`final_${v}`} />
         </section>
 
         <p style={noteStyle}>
@@ -251,7 +342,7 @@ export default async function CityPage({
 function getCityIntro(city: City) {
   return (
     city.description ??
-    `Explore ${city.city} through featured spots, seasonal travel context, and quick links for hotels, tours, and trip planning.`
+    `Explore ${city.city} through featured spots, seasonal context, where-to-stay guidance, and quick travel planning links.`
   );
 }
 
@@ -268,12 +359,161 @@ function getWhyVisitText(city: City) {
     return `${city.city} is a strong pick for ${themes.toLowerCase()} travel. Start with ${stops}.`;
   }
 
-  return `${city.city} is a useful destination to explore through a few clear starting points: ${stops}.`;
+  return `${city.city} is easiest to plan when you begin with a few clear anchors: ${stops}.`;
 }
 
-function formatList(items: string[] | undefined, fallback: string) {
-  if (!items || items.length === 0) return fallback;
-  return items.slice(0, 5).join(" · ");
+function getStayAreas(city: City): StayArea[] {
+  const areas: Record<string, StayArea[]> = {
+    "rome-it": [
+      {
+        name: "Historic Center",
+        bestFor: "Best for first-time visitors",
+        reason:
+          "Stay here if you want the easiest access to major sights and want to reduce transport decisions.",
+      },
+      {
+        name: "Trastevere",
+        bestFor: "Best for restaurants and evening walks",
+        reason:
+          "A good fit if you care about atmosphere, food, and a more local-feeling night out.",
+      },
+      {
+        name: "Near Termini",
+        bestFor: "Best for budget and train access",
+        reason:
+          "Useful if you want simpler airport or train connections and usually more practical hotel options.",
+      },
+    ],
+    "venice-it": [
+      {
+        name: "San Marco",
+        bestFor: "Best for first-time sightseeing",
+        reason:
+          "Choose this area if you want to stay close to the most iconic sights and reduce walking time.",
+      },
+      {
+        name: "Dorsoduro",
+        bestFor: "Best for a calmer atmosphere",
+        reason:
+          "A useful base if you want galleries, canals, and a slightly less crowded evening feel.",
+      },
+      {
+        name: "Cannaregio",
+        bestFor: "Best for value and local routes",
+        reason:
+          "Good for travelers who want easier access from the station and a less polished tourist feel.",
+      },
+    ],
+    "kyoto-jp": [
+      {
+        name: "Downtown Kyoto",
+        bestFor: "Best for food and transport",
+        reason:
+          "A practical base if you want easy transit, restaurants, shopping, and access to multiple areas.",
+      },
+      {
+        name: "Higashiyama",
+        bestFor: "Best for classic Kyoto atmosphere",
+        reason:
+          "Choose this if temples, old streets, and scenic walks are the main reason for the trip.",
+      },
+      {
+        name: "Arashiyama",
+        bestFor: "Best for nature-focused stays",
+        reason:
+          "Works well if bamboo paths, riverside scenery, and a slower pace matter more than nightlife.",
+      },
+    ],
+    "paris-fr": [
+      {
+        name: "Saint-Germain",
+        bestFor: "Best for first-time visitors",
+        reason:
+          "A balanced area for classic Paris streets, cafes, museums, and central walking routes.",
+      },
+      {
+        name: "Le Marais",
+        bestFor: "Best for food, shops, and atmosphere",
+        reason:
+          "Good if you want a lively base with strong walking access and plenty to do nearby.",
+      },
+      {
+        name: "Near the Opera",
+        bestFor: "Best for transport and shopping",
+        reason:
+          "Useful if you want practical connections, department stores, and easy movement around the city.",
+      },
+    ],
+    "barcelona-es": [
+      {
+        name: "Eixample",
+        bestFor: "Best for first-time visitors",
+        reason:
+          "A practical base for architecture, restaurants, and easy access across the city grid.",
+      },
+      {
+        name: "Gothic Quarter",
+        bestFor: "Best for old streets and nightlife",
+        reason:
+          "Choose this if atmosphere, walkability, and historic lanes are the main appeal.",
+      },
+      {
+        name: "Gracia",
+        bestFor: "Best for a local-feeling stay",
+        reason:
+          "Good for travelers who want neighborhood plazas, cafes, and a less central hotel feel.",
+      },
+    ],
+    "amsterdam-nl": [
+      {
+        name: "Canal Belt",
+        bestFor: "Best for first-time visitors",
+        reason:
+          "Stay here if canals, museums, and scenic walking routes are the core of your trip.",
+      },
+      {
+        name: "Jordaan",
+        bestFor: "Best for atmosphere and cafes",
+        reason:
+          "A strong fit for slower walks, small streets, local shops, and a quieter evening base.",
+      },
+      {
+        name: "Museum Quarter",
+        bestFor: "Best for museums and calm stays",
+        reason:
+          "Useful if you want major museums nearby and a slightly more spacious neighborhood feel.",
+      },
+    ],
+  };
+
+  return (
+    areas[city.slug] ?? [
+      {
+        name: "Central area",
+        bestFor: "Best for first-time visitors",
+        reason:
+          "Choose a central base if you want to reduce transport decisions and stay close to the main route.",
+      },
+      {
+        name: "Station area",
+        bestFor: "Best for practical travel",
+        reason:
+          "Useful if you care about airport, train, or day-trip access more than atmosphere.",
+      },
+      {
+        name: "Old town or scenic area",
+        bestFor: "Best for atmosphere",
+        reason:
+          "A good fit if the main goal is walking, views, historic streets, and evening atmosphere.",
+      },
+    ]
+  );
+}
+
+function getTourText(city: City) {
+  const firstSpot = city.stops[0];
+
+  return `If ${firstSpot} is one of your main reasons to visit, a guided route or city experience can reduce planning effort and connect nearby sights more efficiently.`;
 }
 
 function visualForIndex(index: number) {
@@ -298,23 +538,22 @@ const pageStyle: CSSProperties = {
 
 const shellStyle: CSSProperties = {
   width: "100%",
-  maxWidth: 980,
+  maxWidth: 1040,
   margin: "0 auto",
-  padding: "22px 16px 48px",
-};
-
-const homeLinkStyle: CSSProperties = {
-  display: "inline-flex",
-  marginBottom: 22,
-  color: "inherit",
-  textDecoration: "none",
-  fontSize: 14,
-  fontWeight: 800,
-  opacity: 0.72,
+  padding: "34px 16px 48px",
 };
 
 const heroStyle: CSSProperties = {
-  marginBottom: 24,
+  display: "grid",
+  gridTemplateColumns: "minmax(0, 1.35fr) minmax(min(100%, 300px), 0.65fr)",
+  gap: 18,
+  alignItems: "stretch",
+  marginBottom: 22,
+};
+
+const heroTextStyle: CSSProperties = {
+  minWidth: 0,
+  padding: "16px 0",
 };
 
 const eyebrowStyle: CSSProperties = {
@@ -336,81 +575,35 @@ const titleStyle: CSSProperties = {
 
 const subtitleStyle: CSSProperties = {
   margin: 0,
-  maxWidth: 680,
+  maxWidth: 700,
   fontSize: "clamp(15px, 4vw, 17px)",
   lineHeight: 1.72,
   opacity: 0.72,
 };
 
-const overviewCardStyle: CSSProperties = {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))",
-  gap: 18,
-  alignItems: "start",
-  marginTop: 26,
-  marginBottom: 30,
-  padding: 22,
+const heroChipWrapStyle: CSSProperties = {
+  display: "flex",
+  flexWrap: "wrap",
+  gap: 8,
+  marginTop: 18,
+};
+
+const heroChipStyle: CSSProperties = {
+  padding: "8px 11px",
+  borderRadius: 999,
+  background: "rgba(255, 255, 255, 0.72)",
+  border: "1px solid rgba(0, 0, 0, 0.07)",
+  fontSize: 12,
+  fontWeight: 800,
+};
+
+const heroActionCardStyle: CSSProperties = {
+  padding: 18,
   borderRadius: 30,
-  background: "rgba(255, 255, 255, 0.86)",
+  background: "rgba(255, 255, 255, 0.82)",
   border: "1px solid rgba(0, 0, 0, 0.08)",
   boxShadow: "0 24px 74px rgba(0, 0, 0, 0.1)",
-};
-
-const overviewTextStyle: CSSProperties = {
-  minWidth: 0,
-};
-
-const overviewTitleStyle: CSSProperties = {
-  margin: 0,
-  fontSize: "clamp(24px, 6vw, 32px)",
-  lineHeight: 1.05,
-  letterSpacing: "-0.045em",
-  fontWeight: 850,
-};
-
-const overviewDescriptionStyle: CSSProperties = {
-  margin: "10px 0 0",
-  fontSize: 14,
-  lineHeight: 1.7,
-  opacity: 0.7,
-};
-
-const snapshotGridStyle: CSSProperties = {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 190px), 1fr))",
-  gap: 10,
-};
-
-const snapshotItemStyle: CSSProperties = {
-  padding: 14,
-  borderRadius: 20,
-  background: "rgba(0, 0, 0, 0.04)",
-};
-
-const snapshotLabelStyle: CSSProperties = {
-  fontSize: 12,
-  fontWeight: 850,
-  opacity: 0.56,
-  marginBottom: 7,
-};
-
-const snapshotValueStyle: CSSProperties = {
-  fontSize: 14,
-  lineHeight: 1.45,
-  fontWeight: 750,
-};
-
-const spotSectionStyle: CSSProperties = {
-  marginTop: 28,
-};
-
-const sectionHeaderStyle: CSSProperties = {
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "flex-end",
-  gap: 12,
-  flexWrap: "wrap",
-  marginBottom: 16,
+  alignSelf: "start",
 };
 
 const smallLabelStyle: CSSProperties = {
@@ -418,12 +611,159 @@ const smallLabelStyle: CSSProperties = {
   letterSpacing: "0.12em",
   textTransform: "uppercase",
   opacity: 0.5,
-  marginBottom: 6,
+  marginBottom: 7,
+};
+
+const heroActionTitleStyle: CSSProperties = {
+  margin: 0,
+  fontSize: 24,
+  lineHeight: 1.08,
+  letterSpacing: "-0.045em",
+  fontWeight: 850,
+};
+
+const heroActionTextStyle: CSSProperties = {
+  margin: "10px 0 16px",
+  fontSize: 14,
+  lineHeight: 1.55,
+  opacity: 0.68,
+};
+
+const decisionGridStyle: CSSProperties = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 250px), 1fr))",
+  gap: 14,
+  marginBottom: 34,
+};
+
+const decisionCardStyle: CSSProperties = {
+  padding: 18,
+  borderRadius: 26,
+  background: "rgba(255, 255, 255, 0.76)",
+  border: "1px solid rgba(0, 0, 0, 0.07)",
+  boxShadow: "0 18px 52px rgba(0, 0, 0, 0.06)",
+};
+
+const sectionStyle: CSSProperties = {
+  marginTop: 36,
+};
+
+const sectionHeaderStyle: CSSProperties = {
+  display: "flex",
+  justifyContent: "space-between",
+  gap: 12,
+  alignItems: "flex-end",
+  marginBottom: 16,
+  flexWrap: "wrap",
 };
 
 const sectionTitleStyle: CSSProperties = {
   margin: 0,
-  fontSize: "clamp(24px, 6vw, 30px)",
+  fontSize: 24,
+  lineHeight: 1.08,
+  letterSpacing: "-0.045em",
+  fontWeight: 850,
+};
+
+const largeSectionTitleStyle: CSSProperties = {
+  margin: 0,
+  maxWidth: 720,
+  fontSize: "clamp(26px, 6vw, 36px)",
+  lineHeight: 1.04,
+  letterSpacing: "-0.055em",
+  fontWeight: 850,
+};
+
+const bodyTextStyle: CSSProperties = {
+  margin: "10px 0 0",
+  fontSize: 14,
+  lineHeight: 1.68,
+  opacity: 0.7,
+};
+
+const sectionLeadStyle: CSSProperties = {
+  margin: "0 0 16px",
+  maxWidth: 720,
+  fontSize: 14,
+  lineHeight: 1.7,
+  opacity: 0.68,
+};
+
+const tagWrapStyle: CSSProperties = {
+  display: "flex",
+  flexWrap: "wrap",
+  gap: 8,
+};
+
+const tagStyle: CSSProperties = {
+  padding: "8px 10px",
+  borderRadius: 999,
+  background: "rgba(0, 0, 0, 0.055)",
+  fontSize: 12,
+  fontWeight: 800,
+};
+
+const smallTagStyle: CSSProperties = {
+  padding: "7px 9px",
+  borderRadius: 999,
+  background: "rgba(0, 0, 0, 0.055)",
+  fontSize: 12,
+  fontWeight: 750,
+};
+
+const stayGridStyle: CSSProperties = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 250px), 1fr))",
+  gap: 14,
+};
+
+const stayCardStyle: CSSProperties = {
+  padding: 18,
+  borderRadius: 26,
+  background: "rgba(255, 255, 255, 0.78)",
+  border: "1px solid rgba(0, 0, 0, 0.07)",
+  boxShadow: "0 18px 52px rgba(0, 0, 0, 0.06)",
+};
+
+const stayAreaStyle: CSSProperties = {
+  marginBottom: 8,
+  fontSize: 13,
+  fontWeight: 850,
+  opacity: 0.62,
+};
+
+const stayTitleStyle: CSSProperties = {
+  margin: 0,
+  fontSize: 22,
+  lineHeight: 1.08,
+  letterSpacing: "-0.04em",
+  fontWeight: 850,
+};
+
+const stayTextStyle: CSSProperties = {
+  margin: "10px 0 0",
+  fontSize: 14,
+  lineHeight: 1.6,
+  opacity: 0.68,
+};
+
+const reasonCtaStyle: CSSProperties = {
+  display: "grid",
+  gridTemplateColumns: "minmax(0, 1fr) minmax(min(100%, 300px), 0.7fr)",
+  gap: 16,
+  alignItems: "center",
+  marginTop: 16,
+  padding: 18,
+  borderRadius: 28,
+  background: "rgba(255, 255, 255, 0.84)",
+  border: "1px solid rgba(0, 0, 0, 0.08)",
+  boxShadow: "0 20px 58px rgba(0, 0, 0, 0.08)",
+};
+
+const ctaTitleStyle: CSSProperties = {
+  margin: 0,
+  fontSize: 24,
+  lineHeight: 1.08,
   letterSpacing: "-0.045em",
   fontWeight: 850,
 };
@@ -436,17 +776,17 @@ const countStyle: CSSProperties = {
 
 const spotGridStyle: CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))",
+  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 270px), 1fr))",
   gap: 16,
 };
 
 const spotCardStyle: CSSProperties = {
   display: "block",
-  borderRadius: 30,
+  borderRadius: 28,
   overflow: "hidden",
-  background: "rgba(255, 255, 255, 0.84)",
+  background: "rgba(255, 255, 255, 0.82)",
   border: "1px solid rgba(0, 0, 0, 0.08)",
-  boxShadow: "0 22px 64px rgba(0, 0, 0, 0.09)",
+  boxShadow: "0 20px 58px rgba(0, 0, 0, 0.08)",
 };
 
 const spotCardLinkStyle: CSSProperties = {
@@ -480,19 +820,16 @@ const spotBodyStyle: CSSProperties = {
   padding: 18,
 };
 
-const spotTopStyle: CSSProperties = {
-  display: "flex",
-  justifyContent: "space-between",
-  gap: 12,
-  alignItems: "flex-start",
-  marginBottom: 14,
+const spotMetaStyle: CSSProperties = {
+  marginBottom: 8,
+  fontSize: 12,
+  letterSpacing: "0.08em",
+  textTransform: "uppercase",
+  opacity: 0.46,
+  fontWeight: 850,
 };
 
-const spotTextStyle: CSSProperties = {
-  minWidth: 0,
-};
-
-const spotNameStyle: CSSProperties = {
+const spotTitleStyle: CSSProperties = {
   margin: 0,
   fontSize: "clamp(22px, 6vw, 26px)",
   lineHeight: 1.05,
@@ -500,78 +837,60 @@ const spotNameStyle: CSSProperties = {
   fontWeight: 850,
 };
 
-const spotSummaryStyle: CSSProperties = {
-  margin: "8px 0 0",
+const spotTextStyle: CSSProperties = {
+  margin: "8px 0 14px",
   fontSize: 14,
   lineHeight: 1.55,
   opacity: 0.66,
 };
 
-const spotArrowStyle: CSSProperties = {
-  width: 34,
-  height: 34,
-  display: "grid",
-  placeItems: "center",
-  borderRadius: "50%",
-  background: "#171717",
-  color: "#ffffff",
-  fontWeight: 850,
-  flexShrink: 0,
-};
-
-const highlightWrapStyle: CSSProperties = {
-  display: "flex",
-  flexWrap: "wrap",
-  gap: 8,
-  marginBottom: 16,
-};
-
-const highlightChipStyle: CSSProperties = {
-  padding: "7px 10px",
-  borderRadius: 999,
-  background: "rgba(0, 0, 0, 0.06)",
-  fontSize: 12,
-  fontWeight: 750,
-};
-
-const viewSpotStyle: CSSProperties = {
+const openTextStyle: CSSProperties = {
+  marginTop: 14,
   fontSize: 13,
   fontWeight: 850,
-  opacity: 0.8,
+  opacity: 0.76,
 };
 
-const disabledSpotStyle: CSSProperties = {
-  fontSize: 13,
-  fontWeight: 750,
-  opacity: 0.46,
-};
-
-const ctaCardStyle: CSSProperties = {
+const tourCtaStyle: CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))",
-  gap: 18,
+  gridTemplateColumns: "minmax(0, 1fr) minmax(min(100%, 300px), 0.7fr)",
+  gap: 16,
   alignItems: "center",
-  marginTop: 28,
   padding: 22,
   borderRadius: 30,
-  background: "rgba(255, 255, 255, 0.86)",
+  background: "rgba(255, 255, 255, 0.84)",
   border: "1px solid rgba(0, 0, 0, 0.08)",
   boxShadow: "0 24px 74px rgba(0, 0, 0, 0.1)",
 };
 
-const ctaTitleStyle: CSSProperties = {
+const finalCtaStyle: CSSProperties = {
+  display: "grid",
+  gridTemplateColumns: "minmax(0, 1fr) minmax(min(100%, 300px), 0.7fr)",
+  gap: 16,
+  alignItems: "center",
+  marginTop: 34,
+  padding: 22,
+  borderRadius: 32,
+  background: "rgba(23, 23, 23, 0.94)",
+  color: "#ffffff",
+  boxShadow: "0 26px 80px rgba(0, 0, 0, 0.18)",
+};
+
+const finalCtaTitleStyle: CSSProperties = {
   margin: 0,
-  fontSize: "clamp(24px, 6vw, 32px)",
-  lineHeight: 1.05,
-  letterSpacing: "-0.045em",
+  maxWidth: 680,
+  fontSize: "clamp(28px, 7vw, 40px)",
+  lineHeight: 1.04,
+  letterSpacing: "-0.055em",
   fontWeight: 850,
 };
 
-const ctaTextStyle: CSSProperties = {
+const finalCtaTextStyle: CSSProperties = {
   margin: "10px 0 0",
+  maxWidth: 620,
   fontSize: 14,
-  lineHeight: 1.6,
-  opacity: 0.68,
+  lineHeight: 1.65,
+  opacity: 0.72,
 };
 
 const noteStyle: CSSProperties = {
