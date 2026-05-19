@@ -71,14 +71,17 @@ export function SiteNavigation() {
 
         <button
           type="button"
-          className="travelhub-hamburger-button"
+          className="travelhub-explore-button"
           onClick={() => setIsOpen((current) => !current)}
           aria-label="Open navigation menu"
           aria-expanded={isOpen}
         >
-          <span />
-          <span />
-          <span />
+          <span className="travelhub-explore-text">Explore</span>
+          <span className="travelhub-menu-lines" aria-hidden="true">
+            <span />
+            <span />
+            <span />
+          </span>
         </button>
       </header>
 
@@ -94,7 +97,7 @@ export function SiteNavigation() {
           <nav className="travelhub-mobile-menu" aria-label="Mobile navigation">
             <div className="travelhub-mobile-menu-top">
               <div>
-                <div className="travelhub-mobile-menu-label">Menu</div>
+                <div className="travelhub-mobile-menu-label">Explore</div>
                 <div className="travelhub-mobile-menu-title">TravelHub</div>
               </div>
 

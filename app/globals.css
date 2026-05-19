@@ -91,20 +91,33 @@ body::before {
   font-size: 17px;
 }
 
-.travelhub-hamburger-button {
-  width: 44px;
+.travelhub-explore-button {
   height: 44px;
-  display: grid;
-  place-items: center;
-  gap: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 13px 0 15px;
   border: 1px solid rgba(0, 0, 0, 0.09);
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.84) !important;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.86) !important;
+  color: #171717 !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
   cursor: pointer;
 }
 
-.travelhub-hamburger-button span {
-  width: 18px;
+.travelhub-explore-text {
+  font-size: 13px;
+  font-weight: 850;
+  letter-spacing: -0.02em;
+}
+
+.travelhub-menu-lines {
+  display: grid;
+  gap: 4px;
+}
+
+.travelhub-menu-lines span {
+  width: 17px;
   height: 2px;
   display: block;
   border-radius: 999px;
@@ -270,5 +283,6 @@ body::before {
   }
 }
 /* TRAVELHUB_NAV_END */
+
 
 
