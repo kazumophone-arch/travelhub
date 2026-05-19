@@ -6,6 +6,7 @@ import { useState } from "react";
 const navLinks = [
   { href: "/", label: "Home" },
   { href: "/discover", label: "Discover" },
+  { href: "/seasonal", label: "Seasonal" },
   { href: "/cities", label: "Cities" },
   { href: "/spots", label: "Spots" },
   { href: "/about", label: "About" },
