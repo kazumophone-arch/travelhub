@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import type { City } from "@/data/types";
@@ -99,9 +100,12 @@ export function SeasonalDirectory({ cities }: Props) {
     <main style={pageStyle}>
       <section style={shellStyle}>
         <section style={heroStyle}>
-          <Link href="/" style={homeLinkStyle}>
-            ← Home
-          </Link>
+          <Breadcrumbs
+            items={[
+              { label: "Home", href: "/" },
+              { label: "Seasonal" },
+            ]}
+          />
 
           <div style={eyebrowStyle}>Seasonal travel</div>
 
@@ -433,3 +437,5 @@ const secondaryMiniStyle: CSSProperties = {
   fontSize: 12,
   fontWeight: 750,
 };
+
+

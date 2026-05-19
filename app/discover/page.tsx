@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 import type { Metadata } from "next";
 import type { CSSProperties } from "react";
 import { cities } from "@/data/cities";
@@ -20,9 +20,12 @@ export default function DiscoverPage() {
     <main style={pageStyle}>
       <section style={shellStyle}>
         <section style={heroStyle}>
-          <Link href="/" style={homeLinkStyle}>
-            ← Home
-          </Link>
+          <Breadcrumbs
+            items={[
+              { label: "Home", href: "/" },
+              { label: "Discover" },
+            ]}
+          />
 
           <div style={eyebrowStyle}>Interactive discovery</div>
 
@@ -94,3 +97,5 @@ const subtitleStyle: CSSProperties = {
   lineHeight: 1.72,
   opacity: 0.72,
 };
+
+

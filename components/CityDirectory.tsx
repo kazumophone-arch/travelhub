@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import type { City } from "@/data/types";
@@ -196,9 +197,12 @@ export function CityDirectory({ cities }: Props) {
     <main style={pageStyle}>
       <section style={shellStyle}>
         <section style={heroStyle}>
-          <Link href="/" style={homeLinkStyle}>
-            ← Home
-          </Link>
+          <Breadcrumbs
+            items={[
+              { label: "Home", href: "/" },
+              { label: "Cities" },
+            ]}
+          />
 
           <div style={eyebrowStyle}>City directory</div>
 
@@ -588,3 +592,4 @@ const emptyStyle: CSSProperties = {
   textAlign: "center",
   opacity: 0.72,
 };
+
