@@ -160,6 +160,30 @@ function getSpotSearchResults(cities: City[], query: string) {
   return results.slice(0, 8);
 }
 
+function getCitySearchResults(cities: City[], query: string) {
+  const normalizedQuery = query.trim().toLowerCase();
+
+  if (!normalizedQuery) return [];
+
+  return cities
+    .filter((city) => {
+      const searchableText = [
+        city.city,
+        city.country,
+        city.description ?? "",
+        ...city.stops,
+        ...(city.months ?? []),
+        ...(city.travelStyles ?? []),
+        ...(city.themes ?? []),
+        ...(city.categories ?? []),
+      ]
+        .join(" ")
+        .toLowerCase();
+
+      return searchableText.includes(normalizedQuery);
+    })
+    .slice(0, 4);
+}
 export function HomeLanding({ cities }: Props) {
   const [query, setQuery] = useState("");
 
@@ -191,6 +215,10 @@ export function HomeLanding({ cities }: Props) {
 
     return cities.slice(0, 4);
   }, [cities, currentMonth]);
+
+  const citySearchResults = useMemo(() => {
+    return getCitySearchResults(cities, query);
+  }, [cities, query]);
 
   const searchResults = useMemo(() => {
     return getSpotSearchResults(cities, query);
@@ -274,9 +302,44 @@ export function HomeLanding({ cities }: Props) {
               </div>
 
               <span style={mutedTextStyle}>
-                {searchResults.length} spot results
+                {citySearchResults.length} cities · {searchResults.length} spots
               </span>
             </div>
+
+            {citySearchResults.length > 0 && (
+              <div style={cityResultWrapStyle}>
+                <h3 style={miniSectionTitleStyle}>Matching cities</h3>
+
+                <div style={cityResultGridStyle}>
+                  {citySearchResults.map((city, index) => (
+                    <Link
+                      key={`${city.slug}-home-city-search-${index}`}
+                      href={`/c/${city.slug}?src=home&v=search_city_${city.slug}`}
+                      style={cityResultCardStyle}
+                    >
+                      <div
+                        style={{
+                          ...cityResultVisualStyle,
+                          background: visualForCity(city.slug),
+                        }}
+                      >
+                        <div style={visualBadgeStyle}>{city.country}</div>
+                      </div>
+
+                      <div style={cityResultBodyStyle}>
+                        <h3 style={cityResultTitleStyle}>{city.city}</h3>
+                        <p style={cityResultMetaStyle}>{city.country}</p>
+                        <p style={cityResultTextStyle}>
+                          {city.stops.slice(0, 3).join(" · ")}
+                        </p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <h3 style={miniSectionTitleStyle}>Matching spots</h3>
 
             {searchResults.length === 0 ? (
               <div style={emptyStyle}>
@@ -826,3 +889,63 @@ const disclosureStyle: CSSProperties = {
   lineHeight: 1.6,
   opacity: 0.52,
 };
+
+const cityResultWrapStyle: CSSProperties = {
+  marginBottom: 22,
+};
+
+const miniSectionTitleStyle: CSSProperties = {
+  margin: "0 0 12px",
+  fontSize: 17,
+  letterSpacing: "-0.025em",
+  fontWeight: 850,
+};
+
+const cityResultGridStyle: CSSProperties = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 230px), 1fr))",
+  gap: 14,
+};
+
+const cityResultCardStyle: CSSProperties = {
+  display: "block",
+  borderRadius: 26,
+  background: "rgba(255, 255, 255, 0.82)",
+  border: "1px solid rgba(0, 0, 0, 0.08)",
+  boxShadow: "0 18px 52px rgba(0, 0, 0, 0.07)",
+  color: "inherit",
+  textDecoration: "none",
+  overflow: "hidden",
+};
+
+const cityResultVisualStyle: CSSProperties = {
+  height: 120,
+  position: "relative",
+};
+
+const cityResultBodyStyle: CSSProperties = {
+  padding: 16,
+};
+
+const cityResultTitleStyle: CSSProperties = {
+  margin: 0,
+  fontSize: 23,
+  lineHeight: 1.05,
+  letterSpacing: "-0.04em",
+  fontWeight: 850,
+};
+
+const cityResultMetaStyle: CSSProperties = {
+  margin: "7px 0 0",
+  fontSize: 13,
+  opacity: 0.62,
+  fontWeight: 650,
+};
+
+const cityResultTextStyle: CSSProperties = {
+  margin: "10px 0 0",
+  fontSize: 13,
+  lineHeight: 1.45,
+  opacity: 0.7,
+};
+
