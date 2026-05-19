@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 const navLinks = [
@@ -15,39 +16,57 @@ const navLinks = [
   { href: "/contact", label: "Contact" },
 ];
 
+function isActivePath(pathname: string, href: string) {
+  if (href === "/") return pathname === "/";
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
 export function SiteNavigation() {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <>
-      <nav className="desktop-sidebar" aria-label="Main navigation">
-        <Link href="/" className="desktop-brand">
-          <span className="brand-mark">⌖</span>
+      <nav className="travelhub-desktop-sidebar" aria-label="Main navigation">
+        <Link href="/" className="travelhub-desktop-brand">
+          <span className="travelhub-brand-mark">⌖</span>
           <span>TravelHub</span>
         </Link>
 
-        <div className="desktop-link-list">
-          {navLinks.map((link) => (
-            <Link key={link.href} href={link.href} className="desktop-link">
-              {link.label}
-            </Link>
-          ))}
+        <div className="travelhub-desktop-link-list">
+          {navLinks.map((link) => {
+            const isActive = isActivePath(pathname, link.href);
+
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={
+                  isActive
+                    ? "travelhub-desktop-link travelhub-desktop-link-active"
+                    : "travelhub-desktop-link"
+                }
+              >
+                {link.label}
+              </Link>
+            );
+          })}
         </div>
 
-        <div className="desktop-note">
-          Find cities, spots, and travel links from short videos.
+        <div className="travelhub-desktop-note">
+          Find cities, spots, seasonal ideas, and travel links from short videos.
         </div>
       </nav>
 
-      <header className="mobile-header">
-        <Link href="/" className="mobile-brand">
-          <span className="brand-mark">⌖</span>
+      <header className="travelhub-mobile-header">
+        <Link href="/" className="travelhub-mobile-brand">
+          <span className="travelhub-brand-mark">⌖</span>
           <span>TravelHub</span>
         </Link>
 
         <button
           type="button"
-          className="hamburger-button"
+          className="travelhub-hamburger-button"
           onClick={() => setIsOpen((current) => !current)}
           aria-label="Open navigation menu"
           aria-expanded={isOpen}
@@ -59,24 +78,24 @@ export function SiteNavigation() {
       </header>
 
       {isOpen && (
-        <div className="mobile-menu-wrap">
+        <div className="travelhub-mobile-menu-wrap">
           <button
             type="button"
-            className="mobile-menu-backdrop"
+            className="travelhub-mobile-menu-backdrop"
             onClick={() => setIsOpen(false)}
             aria-label="Close navigation menu"
           />
 
-          <nav className="mobile-menu" aria-label="Mobile navigation">
-            <div className="mobile-menu-top">
+          <nav className="travelhub-mobile-menu" aria-label="Mobile navigation">
+            <div className="travelhub-mobile-menu-top">
               <div>
-                <div className="mobile-menu-label">Menu</div>
-                <div className="mobile-menu-title">TravelHub</div>
+                <div className="travelhub-mobile-menu-label">Menu</div>
+                <div className="travelhub-mobile-menu-title">TravelHub</div>
               </div>
 
               <button
                 type="button"
-                className="close-button"
+                className="travelhub-close-button"
                 onClick={() => setIsOpen(false)}
                 aria-label="Close navigation menu"
               >
@@ -84,21 +103,29 @@ export function SiteNavigation() {
               </button>
             </div>
 
-            <div className="mobile-link-list">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="mobile-link"
-                  onClick={() => setIsOpen(false)}
-                >
-                  {link.label}
-                </Link>
-              ))}
+            <div className="travelhub-mobile-link-list">
+              {navLinks.map((link) => {
+                const isActive = isActivePath(pathname, link.href);
+
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={
+                      isActive
+                        ? "travelhub-mobile-link travelhub-mobile-link-active"
+                        : "travelhub-mobile-link"
+                    }
+                    onClick={() => setIsOpen(false)}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
             </div>
 
-            <p className="mobile-note">
-              Discover cities, featured spots, hotel links, and tour links.
+            <p className="travelhub-mobile-note">
+              Discover cities, featured spots, seasonal timing, and travel links.
             </p>
           </nav>
         </div>

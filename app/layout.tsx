@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SiteFooter } from "@/components/SiteFooter";
+import { SiteNavigation } from "@/components/SiteNavigation";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -33,9 +34,13 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
-        {children}
-        <SiteFooter />
+      <body className="min-h-full">
+        <SiteNavigation />
+
+        <div className="travelhub-site-page-shell">
+          {children}
+          <SiteFooter />
+        </div>
       </body>
     </html>
   );
