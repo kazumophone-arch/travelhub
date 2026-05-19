@@ -10,10 +10,6 @@ const navLinks = [
   { href: "/seasonal", label: "Seasonal" },
   { href: "/cities", label: "Cities" },
   { href: "/spots", label: "Spots" },
-  { href: "/about", label: "About" },
-  { href: "/affiliate-disclosure", label: "Affiliate" },
-  { href: "/privacy", label: "Privacy" },
-  { href: "/contact", label: "Contact" },
 ];
 
 function isActivePath(pathname: string, href: string) {
@@ -63,7 +59,7 @@ export function SiteNavigation() {
         </div>
 
         <div className="travelhub-desktop-note">
-          Find cities, spots, seasonal ideas, and travel links from short videos.
+          Find destinations by mood, season, city, or featured spot.
         </div>
       </nav>
 
