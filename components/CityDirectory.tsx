@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import type { City } from "@/data/types";
+import { getCityImage } from "@/data/travel-images";
 import { getMapMagazineVisual } from "@/lib/mapMagazineVisuals";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { getDisplayStops } from "@/lib/displayText";
@@ -472,7 +473,9 @@ export function CityDirectory({ cities }: Props) {
                   <div
                     style={{
                       ...destinationVisualStyle,
-                      background: getMapMagazineVisual(city.slug),
+                      backgroundImage: `url("${getCityImage(city.slug).imageUrl}")`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
                     }}
                   >
                     <div style={countryBadgeStyle}>{city.country}</div>
@@ -932,6 +935,7 @@ const emptyStyle: CSSProperties = {
   textAlign: "center",
   opacity: 0.72,
 };
+
 
 
 

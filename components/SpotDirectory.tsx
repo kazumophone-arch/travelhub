@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import type { City } from "@/data/types";
+import { getSpotImage } from "@/data/travel-images";
 import { getMapMagazineSpotVisual } from "@/lib/mapMagazineVisuals";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { isValidDisplayText } from "@/lib/displayText";
@@ -400,7 +401,9 @@ export function SpotDirectory({ cities }: Props) {
                     <div
                       style={{
                         ...spotVisualStyle,
-                        background: getMapMagazineSpotVisual(index),
+                        backgroundImage: `url("${getSpotImage(spot.citySlug, spot.slug).imageUrl}")`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
                       }}
                     >
                       <div style={visualBadgeStyle}>{spot.cityName}</div>
@@ -765,6 +768,7 @@ const emptyStyle: CSSProperties = {
   textAlign: "center",
   opacity: 0.72,
 };
+
 
 
 
