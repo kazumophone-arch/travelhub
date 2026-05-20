@@ -413,14 +413,6 @@ export function HomeLanding({ cities }: Props) {
               </p>
             </Link>
 
-            <Link href="/seasonal" style={quickCardStyle}>
-              <div style={quickLabelStyle}>Seasonal</div>
-              <h3 style={quickTitleStyle}>Browse by month</h3>
-              <p style={quickTextStyle}>
-                Choose travel timing and see destinations that fit the season.
-              </p>
-            </Link>
-
             <Link href="/cities" style={quickCardStyle}>
               <div style={quickLabelStyle}>Cities</div>
               <h3 style={quickTitleStyle}>Browse destinations</h3>
@@ -446,8 +438,8 @@ export function HomeLanding({ cities }: Props) {
               <h2 style={sectionTitleStyle}>Best places in {currentMonth}</h2>
             </div>
 
-            <Link href="/seasonal" style={viewAllStyle}>
-              View seasonal
+            <Link href="/discover" style={viewAllStyle}>
+              Explore by season
             </Link>
           </div>
 
@@ -948,4 +940,5 @@ const cityResultTextStyle: CSSProperties = {
   lineHeight: 1.45,
   opacity: 0.7,
 };
+
 

@@ -1,14 +1,15 @@
-import { Breadcrumbs } from "@/components/Breadcrumbs";
 import type { Metadata } from "next";
 import type { CSSProperties } from "react";
 import { cities } from "@/data/cities";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { TravelDiscoveryTools } from "@/components/TravelDiscoveryTools";
+import { SeasonalDiscovery } from "@/components/SeasonalDiscovery";
 import { isPublishedCity, sortByRank } from "@/data/visibility";
 
 export const metadata: Metadata = {
   title: "Discover | TravelHub",
   description:
-    "Use TravelHub's interactive discovery tools to find a trip by feeling, mood, and travel style.",
+    "Find a TravelHub destination by feeling, season, travel style, and timing.",
 };
 
 export default function DiscoverPage() {
@@ -27,17 +28,20 @@ export default function DiscoverPage() {
             ]}
           />
 
-          <div style={eyebrowStyle}>Interactive discovery</div>
+          <div style={eyebrowStyle}>Trip discovery</div>
 
-          <h1 style={titleStyle}>Find a trip by feeling.</h1>
+          <h1 style={titleStyle}>Find your next trip.</h1>
 
           <p style={subtitleStyle}>
-            Use quick discovery tools to narrow down cities by mood, travel
-            style, and the kind of experience you want.
+            Use one page to explore by feeling, travel style, and season. This
+            keeps early discovery simple before moving into cities, spots, and
+            planning links.
           </p>
         </section>
 
         <TravelDiscoveryTools cities={publishedCities} />
+
+        <SeasonalDiscovery cities={publishedCities} />
       </section>
     </main>
   );
@@ -63,16 +67,6 @@ const heroStyle: CSSProperties = {
   marginBottom: 28,
 };
 
-const homeLinkStyle: CSSProperties = {
-  display: "inline-flex",
-  marginBottom: 22,
-  color: "inherit",
-  textDecoration: "none",
-  fontSize: 14,
-  fontWeight: 800,
-  opacity: 0.72,
-};
-
 const eyebrowStyle: CSSProperties = {
   fontSize: 12,
   letterSpacing: "0.14em",
@@ -92,10 +86,8 @@ const titleStyle: CSSProperties = {
 
 const subtitleStyle: CSSProperties = {
   margin: 0,
-  maxWidth: 640,
+  maxWidth: 680,
   fontSize: "clamp(15px, 4vw, 17px)",
   lineHeight: 1.72,
   opacity: 0.72,
 };
-
-
