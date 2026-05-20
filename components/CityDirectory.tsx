@@ -170,6 +170,22 @@ function getCityCategories(city: City) {
   return Array.from(categories);
 }
 
+
+function getDisplayStops(city: City) {
+  return city.stops
+    .filter((spot) => {
+      const normalized = spot.trim().toLowerCase();
+
+      return (
+        normalized !== "" &&
+        normalized !== "none" &&
+        normalized !== "n/a" &&
+        normalized !== "null" &&
+        normalized !== "-"
+      );
+    })
+    .slice(0, 3);
+}
 function getCityReason(city: City) {
   const categories = getCityCategories(city);
 
@@ -197,7 +213,9 @@ function getCityReason(city: City) {
     return "Good for old town wandering.";
   }
 
-  return `Start with ${city.stops[0]}.`;
+  const firstStop = getDisplayStops(city)[0];
+
+  return firstStop ? `Start with ${firstStop}.` : "Open the city guide to see the main travel ideas.";
 }
 
 function visualForCity(slug: string) {
@@ -486,7 +504,7 @@ export function CityDirectory({ cities }: Props) {
                     <p style={destinationReasonStyle}>{getCityReason(city)}</p>
 
                     <div style={spotsStyle}>
-                      {city.stops.slice(0, 3).map((spot, spotIndex) => (
+                      {getDisplayStops(city).map((spot, spotIndex) => (
                         <span key={`${spot}-${spotIndex}`}>{spot}</span>
                       ))}
                     </div>
@@ -923,6 +941,8 @@ const emptyStyle: CSSProperties = {
   textAlign: "center",
   opacity: 0.72,
 };
+
+
 
 
 
