@@ -384,16 +384,16 @@ const gridStyle: CSSProperties = {
 const quizCardStyle: CSSProperties = {
   borderRadius: 32,
   padding: 18,
-  background: "rgba(255, 255, 255, 0.82)",
-  border: "1px solid rgba(0, 0, 0, 0.08)",
+  background: "#ffffff",
+  border: "1px solid rgba(23, 32, 42, 0.08)",
   boxShadow: "0 24px 70px rgba(0, 0, 0, 0.1)",
 };
 
 const swipeCardStyle: CSSProperties = {
   borderRadius: 32,
   padding: 18,
-  background: "rgba(255, 255, 255, 0.82)",
-  border: "1px solid rgba(0, 0, 0, 0.08)",
+  background: "#ffffff",
+  border: "1px solid rgba(23, 32, 42, 0.08)",
   boxShadow: "0 24px 70px rgba(0, 0, 0, 0.1)",
 };
 
@@ -443,7 +443,7 @@ const optionStyle: CSSProperties = {
   border: "1px solid rgba(0, 0, 0, 0.1)",
   borderRadius: 999,
   padding: "9px 11px",
-  background: "rgba(255, 255, 255, 0.78)",
+  background: "#ffffff",
   color: "#171717",
   fontSize: 13,
   fontWeight: 750,
@@ -482,7 +482,7 @@ const resultItemStyle: CSSProperties = {
   gap: 10,
   padding: 12,
   borderRadius: 18,
-  background: "rgba(255, 255, 255, 0.82)",
+  background: "#ffffff",
   color: "inherit",
   textDecoration: "none",
 };
@@ -538,7 +538,7 @@ const visualBadgeStyle: CSSProperties = {
   left: 14,
   padding: "8px 11px",
   borderRadius: 999,
-  background: "rgba(255, 255, 255, 0.78)",
+  background: "#ffffff",
   backdropFilter: "blur(12px)",
   fontSize: 12,
   fontWeight: 800,
@@ -636,4 +636,5 @@ const emptyStyle: CSSProperties = {
   fontSize: 14,
   opacity: 0.68,
 };
+
 

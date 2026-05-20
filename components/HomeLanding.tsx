@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import type { City } from "@/data/types";
+import { getMapMagazineVisual } from "@/lib/mapMagazineVisuals";
 import { getDisplayStops } from "@/lib/displayText";
 import { homeCopyVariants, pickDailyVariant } from "@/lib/copyVariants";
 
@@ -318,7 +319,7 @@ export function HomeLanding({ cities }: Props) {
                       <div
                         style={{
                           ...cityResultVisualStyle,
-                          background: visualForCity(city.slug),
+                          background: getMapMagazineVisual(city.slug),
                         }}
                       >
                         <div style={visualBadgeStyle}>{city.country}</div>
@@ -445,7 +446,7 @@ export function HomeLanding({ cities }: Props) {
                 <div
                   style={{
                     ...largeRailVisualStyle,
-                    background: visualForCity(city.slug),
+                    background: getMapMagazineVisual(city.slug),
                   }}
                 >
                   <div style={visualBadgeStyle}>{currentMonth}</div>
@@ -472,7 +473,7 @@ const pageStyle: CSSProperties = {
   overflowX: "hidden",
   background:
     "radial-gradient(circle at 12% 0%, rgba(255, 221, 180, 0.72), transparent 30%), radial-gradient(circle at 88% 4%, rgba(175, 205, 255, 0.58), transparent 28%), linear-gradient(180deg, #fbf7f0 0%, #ffffff 44%, #eef4f8 100%)",
-  color: "#171717",
+  color: "#17202a",
   fontFamily:
     '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif',
 };
@@ -530,8 +531,8 @@ const searchBoxStyle: CSSProperties = {
   padding: "7px 8px 7px 16px",
   borderRadius: 24,
   background: "rgba(255, 255, 255, 0.88)",
-  border: "1px solid rgba(0, 0, 0, 0.08)",
-  boxShadow: "0 22px 60px rgba(0, 0, 0, 0.1)",
+  border: "1px solid rgba(23, 32, 42, 0.08)",
+  boxShadow: "0 8px 24px rgba(30, 64, 88, 0.08)",
   backdropFilter: "blur(18px)",
 };
 
@@ -549,7 +550,7 @@ const searchInputStyle: CSSProperties = {
   outline: "none",
   background: "transparent",
   fontSize: 16,
-  color: "#171717",
+  color: "#17202a",
 };
 
 const heroActionsStyle: CSSProperties = {
@@ -565,7 +566,7 @@ const primaryHeroButtonStyle: CSSProperties = {
   border: 0,
   padding: "13px 16px",
   borderRadius: 999,
-  background: "#171717",
+  background: "#138a72",
   color: "#ffffff",
   fontSize: 14,
   fontWeight: 850,
@@ -578,8 +579,8 @@ const secondaryHeroButtonStyle: CSSProperties = {
   border: "1px solid rgba(0, 0, 0, 0.1)",
   padding: "13px 16px",
   borderRadius: 999,
-  background: "rgba(255, 255, 255, 0.78)",
-  color: "#171717",
+  background: "#ffffff",
+  color: "#17202a",
   fontSize: 14,
   fontWeight: 800,
 };
@@ -606,7 +607,7 @@ const floatingCardStyle: CSSProperties = {
   bottom: 18,
   padding: 16,
   borderRadius: 22,
-  background: "rgba(255, 255, 255, 0.82)",
+  background: "#ffffff",
   backdropFilter: "blur(18px)",
   border: "1px solid rgba(255, 255, 255, 0.5)",
   boxShadow: "0 18px 48px rgba(0, 0, 0, 0.16)",
@@ -680,9 +681,9 @@ const resultGridStyle: CSSProperties = {
 const resultCardStyle: CSSProperties = {
   display: "block",
   borderRadius: 28,
-  background: "rgba(255, 255, 255, 0.82)",
-  border: "1px solid rgba(0, 0, 0, 0.08)",
-  boxShadow: "0 20px 58px rgba(0, 0, 0, 0.08)",
+  background: "#ffffff",
+  border: "1px solid rgba(23, 32, 42, 0.08)",
+  boxShadow: "0 8px 22px rgba(30, 64, 88, 0.07)",
   color: "inherit",
   textDecoration: "none",
   overflow: "hidden",
@@ -699,7 +700,7 @@ const visualBadgeStyle: CSSProperties = {
   left: 14,
   padding: "8px 11px",
   borderRadius: 999,
-  background: "rgba(255, 255, 255, 0.78)",
+  background: "#ffffff",
   backdropFilter: "blur(12px)",
   fontSize: 12,
   fontWeight: 800,
@@ -756,9 +757,9 @@ const quickCardStyle: CSSProperties = {
   padding: 20,
   minHeight: 168,
   borderRadius: 28,
-  background: "rgba(255, 255, 255, 0.82)",
-  border: "1px solid rgba(0, 0, 0, 0.08)",
-  boxShadow: "0 20px 58px rgba(0, 0, 0, 0.08)",
+  background: "#ffffff",
+  border: "1px solid rgba(23, 32, 42, 0.08)",
+  boxShadow: "0 8px 22px rgba(30, 64, 88, 0.07)",
   color: "inherit",
   textDecoration: "none",
 };
@@ -793,7 +794,7 @@ const viewAllStyle: CSSProperties = {
   padding: "9px 12px",
   borderRadius: 999,
   background: "rgba(255, 255, 255, 0.76)",
-  border: "1px solid rgba(0, 0, 0, 0.08)",
+  border: "1px solid rgba(23, 32, 42, 0.08)",
   fontSize: 12,
   fontWeight: 800,
 };
@@ -811,8 +812,8 @@ const largeRailCardStyle: CSSProperties = {
   minWidth: "min(78vw, 340px)",
   maxWidth: 360,
   borderRadius: 30,
-  background: "rgba(255, 255, 255, 0.82)",
-  border: "1px solid rgba(0, 0, 0, 0.08)",
+  background: "#ffffff",
+  border: "1px solid rgba(23, 32, 42, 0.08)",
   boxShadow: "0 24px 70px rgba(0, 0, 0, 0.1)",
   color: "inherit",
   textDecoration: "none",
@@ -853,8 +854,8 @@ const railCardReasonStyle: CSSProperties = {
 const emptyStyle: CSSProperties = {
   padding: 20,
   borderRadius: 24,
-  background: "rgba(255, 255, 255, 0.78)",
-  border: "1px solid rgba(0, 0, 0, 0.08)",
+  background: "#ffffff",
+  border: "1px solid rgba(23, 32, 42, 0.08)",
   fontSize: 14,
   lineHeight: 1.6,
   opacity: 0.72,
@@ -880,8 +881,8 @@ const cityResultGridStyle: CSSProperties = {
 const cityResultCardStyle: CSSProperties = {
   display: "block",
   borderRadius: 26,
-  background: "rgba(255, 255, 255, 0.82)",
-  border: "1px solid rgba(0, 0, 0, 0.08)",
+  background: "#ffffff",
+  border: "1px solid rgba(23, 32, 42, 0.08)",
   boxShadow: "0 18px 52px rgba(0, 0, 0, 0.07)",
   color: "inherit",
   textDecoration: "none",
@@ -918,6 +919,9 @@ const cityResultTextStyle: CSSProperties = {
   lineHeight: 1.45,
   opacity: 0.7,
 };
+
+
+
 
 
 

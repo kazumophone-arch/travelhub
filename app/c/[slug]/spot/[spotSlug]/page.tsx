@@ -6,6 +6,7 @@ import { cities } from "@/data/cities";
 import { TravelVisual } from "@/components/TravelVisual";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
+import { getMapMagazineSpotVisual } from "@/lib/mapMagazineVisuals";
 
 export async function generateMetadata({
   params,
@@ -129,7 +130,7 @@ export default async function SpotPage({
             imageUrl={spot.imageUrl}
             imageAlt={spot.imageAlt ?? spot.name}
             imageCredit={spot.imageCredit}
-            fallback={visualForIndex(0)}
+            fallback={getMapMagazineSpotVisual(0)}
             style={heroVisualStyle}
           >
             <div style={visualBadgeStyle}>{city.city}</div>
@@ -230,7 +231,7 @@ export default async function SpotPage({
                     imageUrl={related.imageUrl}
                     imageAlt={related.imageAlt ?? related.name}
                     imageCredit={related.imageCredit}
-                    fallback={visualForIndex(index + 1)}
+                    fallback={getMapMagazineSpotVisual(index + 1)}
                     style={relatedVisualStyle}
                   />
 
@@ -294,7 +295,7 @@ const pageStyle: CSSProperties = {
     '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif',
   background:
     "radial-gradient(circle at 12% 0%, rgba(255, 221, 180, 0.72), transparent 30%), radial-gradient(circle at 88% 4%, rgba(175, 205, 255, 0.58), transparent 28%), linear-gradient(180deg, #fbf7f0 0%, #ffffff 44%, #eef4f8 100%)",
-  color: "#171717",
+  color: "#17202a",
 };
 
 const shellStyle: CSSProperties = {
@@ -359,7 +360,7 @@ const heroChipStyle: CSSProperties = {
   padding: "8px 11px",
   borderRadius: 999,
   background: "rgba(255, 255, 255, 0.72)",
-  border: "1px solid rgba(0, 0, 0, 0.07)",
+  border: "1px solid rgba(23, 32, 42, 0.07)",
   fontSize: 12,
   fontWeight: 800,
 };
@@ -378,7 +379,7 @@ const visualBadgeStyle: CSSProperties = {
   left: 16,
   padding: "8px 11px",
   borderRadius: 999,
-  background: "rgba(255, 255, 255, 0.78)",
+  background: "#ffffff",
   backdropFilter: "blur(12px)",
   fontSize: 12,
   fontWeight: 800,
@@ -396,8 +397,8 @@ const decisionCardStyle: CSSProperties = {
   padding: 18,
   borderRadius: 26,
   background: "rgba(255, 255, 255, 0.76)",
-  border: "1px solid rgba(0, 0, 0, 0.07)",
-  boxShadow: "0 18px 52px rgba(0, 0, 0, 0.06)",
+  border: "1px solid rgba(23, 32, 42, 0.07)",
+  boxShadow: "0 8px 22px rgba(30, 64, 88, 0.06)",
 };
 
 const smallLabelStyle: CSSProperties = {
@@ -477,9 +478,9 @@ const highlightGridStyle: CSSProperties = {
 const highlightCardStyle: CSSProperties = {
   padding: 18,
   borderRadius: 26,
-  background: "rgba(255, 255, 255, 0.78)",
-  border: "1px solid rgba(0, 0, 0, 0.07)",
-  boxShadow: "0 18px 52px rgba(0, 0, 0, 0.06)",
+  background: "#ffffff",
+  border: "1px solid rgba(23, 32, 42, 0.07)",
+  boxShadow: "0 8px 22px rgba(30, 64, 88, 0.06)",
 };
 
 const numberStyle: CSSProperties = {
@@ -489,7 +490,7 @@ const numberStyle: CSSProperties = {
   placeItems: "center",
   marginBottom: 14,
   borderRadius: "50%",
-  background: "#171717",
+  background: "#138a72",
   color: "#ffffff",
   fontSize: 13,
   fontWeight: 850,
@@ -518,8 +519,8 @@ const planningCardStyle: CSSProperties = {
   padding: 22,
   borderRadius: 30,
   background: "rgba(255, 255, 255, 0.84)",
-  border: "1px solid rgba(0, 0, 0, 0.08)",
-  boxShadow: "0 24px 74px rgba(0, 0, 0, 0.1)",
+  border: "1px solid rgba(23, 32, 42, 0.08)",
+  boxShadow: "0 10px 28px rgba(30, 64, 88, 0.08)",
 };
 
 const relatedGridStyle: CSSProperties = {
@@ -531,9 +532,9 @@ const relatedGridStyle: CSSProperties = {
 const relatedCardStyle: CSSProperties = {
   display: "block",
   borderRadius: 28,
-  background: "rgba(255, 255, 255, 0.82)",
-  border: "1px solid rgba(0, 0, 0, 0.08)",
-  boxShadow: "0 20px 58px rgba(0, 0, 0, 0.08)",
+  background: "#ffffff",
+  border: "1px solid rgba(23, 32, 42, 0.08)",
+  boxShadow: "0 8px 22px rgba(30, 64, 88, 0.07)",
   color: "inherit",
   textDecoration: "none",
   overflow: "hidden",
@@ -578,7 +579,10 @@ const hotelCtaStyle: CSSProperties = {
   padding: 22,
   borderRadius: 30,
   background: "rgba(255, 255, 255, 0.84)",
-  border: "1px solid rgba(0, 0, 0, 0.08)",
-  boxShadow: "0 24px 74px rgba(0, 0, 0, 0.1)",
+  border: "1px solid rgba(23, 32, 42, 0.08)",
+  boxShadow: "0 10px 28px rgba(30, 64, 88, 0.08)",
 };
+
+
+
 

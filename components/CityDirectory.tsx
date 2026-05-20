@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import type { City } from "@/data/types";
+import { getMapMagazineVisual } from "@/lib/mapMagazineVisuals";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { getDisplayStops } from "@/lib/displayText";
 import { citiesCopyVariants, pickDailyVariant } from "@/lib/copyVariants";
@@ -471,7 +472,7 @@ export function CityDirectory({ cities }: Props) {
                   <div
                     style={{
                       ...destinationVisualStyle,
-                      background: visualForCity(city.slug),
+                      background: getMapMagazineVisual(city.slug),
                     }}
                   >
                     <div style={countryBadgeStyle}>{city.country}</div>
@@ -562,7 +563,7 @@ const pageStyle: CSSProperties = {
   overflowX: "hidden",
   background:
     "radial-gradient(circle at 12% 0%, rgba(255, 221, 180, 0.72), transparent 30%), radial-gradient(circle at 88% 4%, rgba(175, 205, 255, 0.58), transparent 28%), linear-gradient(180deg, #fbf7f0 0%, #ffffff 44%, #eef4f8 100%)",
-  color: "#171717",
+  color: "#17202a",
   fontFamily:
     '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif',
 };
@@ -610,8 +611,8 @@ const searchBoxStyle: CSSProperties = {
   padding: "7px 8px 7px 16px",
   borderRadius: 24,
   background: "rgba(255, 255, 255, 0.88)",
-  border: "1px solid rgba(0, 0, 0, 0.08)",
-  boxShadow: "0 22px 60px rgba(0, 0, 0, 0.1)",
+  border: "1px solid rgba(23, 32, 42, 0.08)",
+  boxShadow: "0 8px 24px rgba(30, 64, 88, 0.08)",
   backdropFilter: "blur(18px)",
 };
 
@@ -629,7 +630,7 @@ const searchInputStyle: CSSProperties = {
   outline: "none",
   background: "transparent",
   fontSize: 16,
-  color: "#171717",
+  color: "#17202a",
 };
 
 const filterPanelStyle: CSSProperties = {
@@ -637,7 +638,7 @@ const filterPanelStyle: CSSProperties = {
   padding: 18,
   borderRadius: 30,
   background: "rgba(255, 255, 255, 0.7)",
-  border: "1px solid rgba(0, 0, 0, 0.07)",
+  border: "1px solid rgba(23, 32, 42, 0.07)",
   boxShadow: "0 20px 58px rgba(0, 0, 0, 0.07)",
   backdropFilter: "blur(18px)",
 };
@@ -670,8 +671,8 @@ const resetButtonStyle: CSSProperties = {
   border: "1px solid rgba(0, 0, 0, 0.1)",
   borderRadius: 999,
   padding: "9px 12px",
-  background: "rgba(255, 255, 255, 0.78)",
-  color: "#171717",
+  background: "#ffffff",
+  color: "#17202a",
   fontSize: 12,
   fontWeight: 800,
   cursor: "pointer",
@@ -687,8 +688,8 @@ const shortcutWrapStyle: CSSProperties = {
 
 const shortcutButtonStyle: CSSProperties = {
   border: "1px solid rgba(0, 0, 0, 0.1)",
-  background: "rgba(255, 255, 255, 0.78)",
-  color: "#171717",
+  background: "#ffffff",
+  color: "#17202a",
   borderRadius: 999,
   padding: "11px 14px",
   fontSize: 13,
@@ -699,7 +700,7 @@ const shortcutButtonStyle: CSSProperties = {
 
 const activeShortcutButtonStyle: CSSProperties = {
   ...shortcutButtonStyle,
-  background: "#171717",
+  background: "#138a72",
   color: "#ffffff",
   border: "1px solid #171717",
 };
@@ -750,9 +751,9 @@ const filterWrapStyle: CSSProperties = {
 };
 
 const filterButtonStyle: CSSProperties = {
-  border: "1px solid rgba(0, 0, 0, 0.08)",
+  border: "1px solid rgba(23, 32, 42, 0.08)",
   background: "rgba(255, 255, 255, 0.76)",
-  color: "#171717",
+  color: "#17202a",
   borderRadius: 999,
   padding: "8px 10px",
   fontSize: 12,
@@ -811,9 +812,9 @@ const destinationGridStyle: CSSProperties = {
 const destinationCardStyle: CSSProperties = {
   display: "block",
   borderRadius: 28,
-  background: "rgba(255, 255, 255, 0.82)",
-  border: "1px solid rgba(0, 0, 0, 0.08)",
-  boxShadow: "0 20px 58px rgba(0, 0, 0, 0.08)",
+  background: "#ffffff",
+  border: "1px solid rgba(23, 32, 42, 0.08)",
+  boxShadow: "0 8px 22px rgba(30, 64, 88, 0.07)",
   color: "inherit",
   textDecoration: "none",
   overflow: "hidden",
@@ -880,7 +881,7 @@ const arrowStyle: CSSProperties = {
   display: "grid",
   placeItems: "center",
   borderRadius: "50%",
-  background: "#171717",
+  background: "#138a72",
   color: "#ffffff",
   fontWeight: 800,
   flexShrink: 0,
@@ -904,7 +905,7 @@ const actionRowStyle: CSSProperties = {
 const primaryMiniStyle: CSSProperties = {
   padding: "7px 10px",
   borderRadius: 999,
-  background: "#171717",
+  background: "#138a72",
   color: "#ffffff",
   fontSize: 12,
   fontWeight: 750,
@@ -914,7 +915,7 @@ const secondaryMiniStyle: CSSProperties = {
   padding: "7px 10px",
   borderRadius: 999,
   background: "rgba(0, 0, 0, 0.06)",
-  color: "#171717",
+  color: "#17202a",
   fontSize: 12,
   fontWeight: 750,
 };
@@ -923,10 +924,13 @@ const emptyStyle: CSSProperties = {
   padding: "28px",
   borderRadius: 24,
   background: "rgba(255, 255, 255, 0.76)",
-  border: "1px solid rgba(0, 0, 0, 0.08)",
+  border: "1px solid rgba(23, 32, 42, 0.08)",
   textAlign: "center",
   opacity: 0.72,
 };
+
+
+
 
 
 

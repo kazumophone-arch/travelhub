@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import type { City } from "@/data/types";
+import { getMapMagazineVisual } from "@/lib/mapMagazineVisuals";
 import { getDisplayStops } from "@/lib/displayText";
 
 type Props = {
@@ -144,7 +145,7 @@ export function TravelTimingDiscovery({ cities }: Props) {
             <div
               style={{
                 ...destinationVisualStyle,
-                background: visualForCity(city.slug),
+                background: getMapMagazineVisual(city.slug),
               }}
             >
               <div style={monthBadgeStyle}>{activeMonth}</div>
@@ -244,9 +245,9 @@ const destinationGridStyle: CSSProperties = {
 const destinationCardStyle: CSSProperties = {
   display: "block",
   borderRadius: 28,
-  background: "rgba(255, 255, 255, 0.82)",
-  border: "1px solid rgba(0, 0, 0, 0.08)",
-  boxShadow: "0 20px 58px rgba(0, 0, 0, 0.08)",
+  background: "#ffffff",
+  border: "1px solid rgba(23, 32, 42, 0.08)",
+  boxShadow: "0 8px 22px rgba(30, 64, 88, 0.07)",
   color: "inherit",
   textDecoration: "none",
   overflow: "hidden",
@@ -263,7 +264,7 @@ const monthBadgeStyle: CSSProperties = {
   left: 14,
   padding: "8px 11px",
   borderRadius: 999,
-  background: "rgba(255, 255, 255, 0.78)",
+  background: "#ffffff",
   backdropFilter: "blur(12px)",
   fontSize: 12,
   fontWeight: 800,
@@ -294,6 +295,8 @@ const destinationReasonStyle: CSSProperties = {
   opacity: 0.7,
   fontWeight: 650,
 };
+
+
 
 
 
