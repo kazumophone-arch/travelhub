@@ -301,11 +301,7 @@ export default async function CityPage({
             <AffiliateButtonGroup city={city} src={src} v={`tour_${v}`} primary="tours" variant="tour" />
           </div>
         </section>
-<p style={noteStyle}>
-          Some links may be affiliate links. We may earn a commission if you book
-          through them, at no extra cost to you.
-        </p>
-      </section>
+</section>
     </main>
   );
 }
@@ -860,20 +856,4 @@ const finalCtaTextStyle: CSSProperties = {
   lineHeight: 1.65,
   opacity: 0.72,
 };
-
-const noteStyle: CSSProperties = {
-  margin: "28px auto 0",
-  maxWidth: 560,
-  textAlign: "center",
-  fontSize: 12,
-  lineHeight: 1.6,
-  opacity: 0.52,
-};
-
-
-
-
-
-
-
 
