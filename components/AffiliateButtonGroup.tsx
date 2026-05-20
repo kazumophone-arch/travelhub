@@ -245,7 +245,7 @@ const secondaryLightToneCardStyle: CSSProperties = {
   padding: 15,
   borderRadius: 22,
   background: "rgba(255, 255, 255, 0.88)",
-  color: "#171717",
+  color: "#17202a",
   textDecoration: "none",
   border: "1px solid rgba(0, 0, 0, 0.08)",
   boxShadow: "0 14px 34px rgba(0, 0, 0, 0.08)",
@@ -256,7 +256,7 @@ const primaryDarkToneCardStyle: CSSProperties = {
   padding: 15,
   borderRadius: 22,
   background: "#ffffff",
-  color: "#171717",
+  color: "#17202a",
   textDecoration: "none",
   boxShadow: "0 18px 46px rgba(0, 0, 0, 0.18)",
 };
@@ -305,7 +305,7 @@ const arrowOnWhiteStyle: CSSProperties = {
   placeItems: "center",
   borderRadius: "50%",
   background: "rgba(0, 0, 0, 0.08)",
-  color: "#171717",
+  color: "#17202a",
   fontSize: 14,
   fontWeight: 850,
 };
@@ -330,5 +330,6 @@ const trustNoteStyle: CSSProperties = {
   lineHeight: 1.45,
   fontWeight: 750,
 };
+
 
 

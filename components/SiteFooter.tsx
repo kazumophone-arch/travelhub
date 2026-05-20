@@ -44,7 +44,7 @@ export function SiteFooter() {
 const footerStyle: CSSProperties = {
   padding: "34px 16px 42px",
   background: "transparent",
-  color: "#171717",
+  color: "#17202a",
 };
 
 const innerStyle: CSSProperties = {
@@ -52,9 +52,9 @@ const innerStyle: CSSProperties = {
   margin: "0 auto",
   padding: 22,
   borderRadius: 30,
-  background: "rgba(255, 255, 255, 0.58)",
-  border: "1px solid rgba(0, 0, 0, 0.07)",
-  boxShadow: "0 20px 58px rgba(0, 0, 0, 0.06)",
+  background: "rgba(255, 255, 255, 0.86)",
+  border: "1px solid rgba(23, 32, 42, 0.08)",
+  boxShadow: "0 12px 34px rgba(30, 64, 88, 0.08)",
   backdropFilter: "blur(18px)",
 };
 
@@ -91,7 +91,7 @@ const linkStyle: CSSProperties = {
   display: "inline-flex",
   padding: "8px 10px",
   borderRadius: 999,
-  background: "rgba(0, 0, 0, 0.045)",
+  background: "#eef8f5",
   color: "inherit",
   textDecoration: "none",
   fontSize: 12,
@@ -105,3 +105,4 @@ const noticeStyle: CSSProperties = {
   lineHeight: 1.6,
   opacity: 0.52,
 };
+
