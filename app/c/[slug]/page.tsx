@@ -6,6 +6,7 @@ import type { City } from "@/data/types";
 import { cities } from "@/data/cities";
 import { TravelVisual } from "@/components/TravelVisual";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { BookingConfidencePanel } from "@/components/BookingConfidencePanel";
 import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
 
 type StayArea = {
@@ -314,6 +315,8 @@ export default async function CityPage({
             <AffiliateButtonGroup city={city} src={src} v={`tour_${v}`} primary="tours" variant="tour" />
           </div>
         </section>
+
+        <BookingConfidencePanel cityName={city.city} variant="city" />
 
         <section style={finalCtaStyle}>
           <div>
@@ -901,5 +904,6 @@ const noteStyle: CSSProperties = {
   lineHeight: 1.6,
   opacity: 0.52,
 };
+
 
 
