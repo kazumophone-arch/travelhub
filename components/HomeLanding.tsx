@@ -250,13 +250,11 @@ export function HomeLanding({ cities }: Props) {
             <div style={eyebrowStyle}>Travel discovery hub</div>
 
             <h1 style={heroTitleStyle}>
-              Find your next destination without digging through endless travel
-              pages.
+              Discover places worth planning around.
             </h1>
 
             <p style={heroSubtitleStyle}>
-              Search cities and featured spots, or choose a focused page for
-              discovery, seasons, cities, and places.
+              Use TravelHub to move from travel inspiration to clearer city, spot, season, and route decisions.
             </p>
 
             <div id="home-search" style={searchBoxStyle}>
@@ -286,7 +284,7 @@ export function HomeLanding({ cities }: Props) {
                 <div style={floatingSmallTextStyle}>TravelHub</div>
                 <div style={floatingTitleStyle}>Compass for many places</div>
                 <div style={floatingSubStyle}>
-                  Discover · Seasonal · Cities · Spots
+                  Discover · Cities · Spots · Timing
                 </div>
               </div>
             </div>
@@ -470,7 +468,6 @@ export function HomeLanding({ cities }: Props) {
             ))}
           </div>
         </section>
-
         <p style={disclosureStyle}>
           Some links may be affiliate links. We may earn a commission if you book
           through them, at no extra cost to you.
@@ -940,6 +937,10 @@ const cityResultTextStyle: CSSProperties = {
   lineHeight: 1.45,
   opacity: 0.7,
 };
+
+
+
+
 
 
 
