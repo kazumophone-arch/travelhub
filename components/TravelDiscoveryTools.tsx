@@ -9,57 +9,128 @@ type Props = {
   cities: City[];
 };
 
-type QuizAnswer = {
-  style: string | null;
-  season: string | null;
-  mood: string | null;
-};
-
-const travelStyles = ["Couples", "Family", "Solo", "Friends"];
-const seasons = ["Spring", "Summer", "Autumn", "Winter"];
-const moods = [
-  "Romantic",
+const feelingFilters = [
+  "All",
   "Scenic",
   "Old Town",
-  "World Heritage",
-  "Beach",
-  "Nature",
+  "Culture",
   "Food",
+  "Nature",
+  "Couples",
+  "Family",
+  "Solo",
 ];
 
-function getCityTags(city: City) {
-  const tags = new Set<string>();
+function getCityCategories(city: City) {
+  const categories = new Set<string>();
 
-  city.seasons?.forEach((item) => tags.add(item));
-  city.months?.forEach((item) => tags.add(item));
-  city.travelStyles?.forEach((item) => tags.add(item));
-  city.themes?.forEach((item) => tags.add(item));
-  city.categories?.forEach((item) => tags.add(item));
+  city.travelStyles?.forEach((style) => categories.add(style));
+  city.themes?.forEach((theme) => categories.add(theme));
+  city.categories?.forEach((category) => categories.add(category));
 
-  if (city.country) tags.add(city.country);
+  const text = [
+    city.city,
+    city.country,
+    city.description ?? "",
+    ...city.stops,
+    ...(city.travelStyles ?? []),
+    ...(city.themes ?? []),
+    ...(city.categories ?? []),
+  ]
+    .join(" ")
+    .toLowerCase();
 
-  const joinedStops = city.stops.join(" ");
+  const includesAny = (words: string[]) =>
+    words.some((word) => text.includes(word.toLowerCase()));
 
   if (
-    joinedStops.includes("Old") ||
-    joinedStops.includes("Historic") ||
-    joinedStops.includes("Temple")
+    includesAny([
+      "view",
+      "sunset",
+      "scenic",
+      "canal",
+      "river",
+      "lagoon",
+      "beach",
+      "panorama",
+    ])
   ) {
-    tags.add("Old Town");
+    categories.add("Scenic");
   }
 
   if (
-    joinedStops.includes("Sunset") ||
-    joinedStops.includes("View") ||
-    joinedStops.includes("Canal") ||
-    joinedStops.includes("River") ||
-    joinedStops.includes("Beach") ||
-    joinedStops.includes("Lagoon")
+    includesAny([
+      "old town",
+      "historic",
+      "center",
+      "castle",
+      "bridge",
+      "square",
+      "temple",
+    ])
   ) {
-    tags.add("Scenic");
+    categories.add("Old Town");
+    categories.add("Culture");
   }
 
-  return Array.from(tags);
+  if (
+    includesAny([
+      "museum",
+      "palace",
+      "cathedral",
+      "church",
+      "heritage",
+      "ruins",
+      "monument",
+      "architecture",
+    ])
+  ) {
+    categories.add("Culture");
+  }
+
+  if (
+    includesAny([
+      "food",
+      "restaurant",
+      "market",
+      "cafe",
+      "wine",
+      "gourmet",
+    ])
+  ) {
+    categories.add("Food");
+  }
+
+  if (
+    includesAny([
+      "garden",
+      "park",
+      "forest",
+      "bamboo",
+      "mountain",
+      "nature",
+      "trail",
+    ])
+  ) {
+    categories.add("Nature");
+  }
+
+  return Array.from(categories);
+}
+
+function getCityReason(city: City, activeFeeling: string) {
+  if (activeFeeling !== "All") {
+    return `A good match for ${activeFeeling.toLowerCase()}-focused travel.`;
+  }
+
+  const categories = getCityCategories(city);
+
+  if (categories.includes("Scenic")) return "Good for scenic atmosphere and visual travel.";
+  if (categories.includes("Old Town")) return "Good for old streets and walkable routes.";
+  if (categories.includes("Culture")) return "Good for history, architecture, and landmarks.";
+  if (categories.includes("Nature")) return "Good for slower travel and outdoor scenery.";
+
+  return `Start with ${city.stops.slice(0, 2).join(" and ")}.`;
 }
 
 function visualForCity(slug: string) {
@@ -94,260 +165,98 @@ function visualForCity(slug: string) {
   );
 }
 
-function scoreCity(city: City, answer: QuizAnswer) {
-  const tags = getCityTags(city);
-  let score = 0;
-
-  if (answer.style && tags.includes(answer.style)) score += 4;
-  if (answer.season && tags.includes(answer.season)) score += 3;
-  if (answer.mood && tags.includes(answer.mood)) score += 4;
-
-  const searchable = [city.city, city.country, ...city.stops, ...tags]
-    .join(" ")
-    .toLowerCase();
-
-  if (answer.mood && searchable.includes(answer.mood.toLowerCase())) score += 1;
-  if (answer.style && searchable.includes(answer.style.toLowerCase())) score += 1;
-  if (answer.season && searchable.includes(answer.season.toLowerCase())) score += 1;
-
-  return score;
-}
-
 export function TravelDiscoveryTools({ cities }: Props) {
-  const [answer, setAnswer] = useState<QuizAnswer>({
-    style: "Couples",
-    season: "Spring",
-    mood: "Scenic",
-  });
+  const [activeFeeling, setActiveFeeling] = useState("All");
 
-  const [swipeIndex, setSwipeIndex] = useState(0);
-  const [pickedSlugs, setPickedSlugs] = useState<string[]>([]);
+  const filteredCities = useMemo(() => {
+    if (activeFeeling === "All") return cities.slice(0, 8);
 
-  const quizResults = useMemo(() => {
-    const hasAnyAnswer = Boolean(answer.style || answer.season || answer.mood);
-
-    if (!hasAnyAnswer) return cities.slice(0, 3);
-
-    const ranked = cities
-      .map((city) => ({
-        city,
-        score: scoreCity(city, answer),
-      }))
-      .sort((a, b) => b.score - a.score);
-
-    const matched = ranked.filter((item) => item.score > 0).slice(0, 3);
-
-    if (matched.length > 0) return matched.map((item) => item.city);
-
-    return cities.slice(0, 3);
-  }, [cities, answer]);
-
-  const swipeCity = cities.length > 0 ? cities[swipeIndex % cities.length] : null;
-
-  const pickedCities = useMemo(() => {
-    return pickedSlugs
-      .map((slug) => cities.find((city) => city.slug === slug))
-      .filter((city): city is City => Boolean(city));
-  }, [pickedSlugs, cities]);
-
-  function toggleAnswer(key: keyof QuizAnswer, value: string) {
-    setAnswer((current) => ({
-      ...current,
-      [key]: current[key] === value ? null : value,
-    }));
-  }
-
-  function nextSwipe() {
-    if (cities.length === 0) return;
-    setSwipeIndex((current) => (current + 1) % cities.length);
-  }
-
-  function pickCurrentCity() {
-    if (!swipeCity) return;
-
-    setPickedSlugs((current) => {
-      if (current.includes(swipeCity.slug)) return current;
-      return [...current, swipeCity.slug].slice(-5);
-    });
-
-    nextSwipe();
-  }
+    return cities
+      .filter((city) => getCityCategories(city).includes(activeFeeling))
+      .slice(0, 8);
+  }, [cities, activeFeeling]);
 
   return (
     <section style={wrapStyle}>
-      <section style={sectionHeaderStyle}>
+      <div style={sectionHeaderStyle}>
         <div>
-          <div style={smallLabelStyle}>Interactive discovery</div>
-          <h2 style={sectionTitleStyle}>
-            Find a trip by feeling, not just by city.
-          </h2>
+          <div style={smallLabelStyle}>By feeling</div>
+          <h2 style={sectionTitleStyle}>Choose the kind of trip you want.</h2>
         </div>
-      </section>
 
-      <div style={gridStyle}>
-        <section style={quizCardStyle}>
-          <div style={toolHeaderStyle}>
-            <div>
-              <div style={smallLabelStyle}>Travel quiz</div>
-              <h3 style={toolTitleStyle}>What kind of trip fits you?</h3>
-            </div>
-            <div style={toolBadgeStyle}>3 picks</div>
-          </div>
+        <span style={mutedTextStyle}>{activeFeeling}</span>
+      </div>
 
-          <div style={resultBoxStyle}>
-            <div style={resultTitleStyle}>Your matches</div>
+      <p style={leadStyle}>
+        Use this when you know the mood of the trip, but not the destination
+        yet.
+      </p>
 
-            <div style={resultListStyle}>
-              {quizResults.map((city, index) => (
-                <Link
-                  key={`${city.slug}-quiz-${index}`}
-                  href={`/c/${city.slug}?src=home&v=quiz_${city.slug}`}
-                  style={resultItemStyle}
-                >
-                  <div style={resultRankStyle}>{index + 1}</div>
+      <div style={filterWrapStyle}>
+        {feelingFilters.map((filter) => {
+          const isActive = filter === activeFeeling;
 
-                  <div style={resultTextStyle}>
-                    <div style={resultCityStyle}>{city.city}</div>
-                    <div style={resultMetaStyle}>
-                      {city.country} · {getCityTags(city).slice(0, 2).join(" · ")}
-                    </div>
-                  </div>
+          return (
+            <button
+              key={filter}
+              type="button"
+              onClick={() => setActiveFeeling(filter)}
+              style={isActive ? activeFilterButtonStyle : filterButtonStyle}
+            >
+              {filter}
+            </button>
+          );
+        })}
+      </div>
 
-                  <div style={resultArrowStyle}>→</div>
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          <div style={questionBlockStyle}>
-            <div style={questionLabelStyle}>Who are you traveling with?</div>
-            <div style={optionRowStyle}>
-              {travelStyles.map((style) => (
-                <button
-                  key={style}
-                  type="button"
-                  onClick={() => toggleAnswer("style", style)}
-                  style={answer.style === style ? activeOptionStyle : optionStyle}
-                >
-                  {style}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div style={questionBlockStyle}>
-            <div style={questionLabelStyle}>When do you want to go?</div>
-            <div style={optionRowStyle}>
-              {seasons.map((season) => (
-                <button
-                  key={season}
-                  type="button"
-                  onClick={() => toggleAnswer("season", season)}
-                  style={answer.season === season ? activeOptionStyle : optionStyle}
-                >
-                  {season}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div style={questionBlockStyle}>
-            <div style={questionLabelStyle}>What mood do you want?</div>
-            <div style={optionRowStyle}>
-              {moods.map((mood) => (
-                <button
-                  key={mood}
-                  type="button"
-                  onClick={() => toggleAnswer("mood", mood)}
-                  style={answer.mood === mood ? activeOptionStyle : optionStyle}
-                >
-                  {mood}
-                </button>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section style={swipeCardStyle}>
-          <div style={toolHeaderStyle}>
-            <div>
-              <div style={smallLabelStyle}>Swipe / Pick</div>
-              <h3 style={toolTitleStyle}>Would you visit this city?</h3>
-            </div>
-            <div style={toolBadgeStyle}>Pick list</div>
-          </div>
-
-          {swipeCity ? (
-            <>
+      {filteredCities.length === 0 ? (
+        <div style={emptyStyle}>
+          No destinations found for this feeling yet. Try All or another mood.
+        </div>
+      ) : (
+        <div style={gridStyle}>
+          {filteredCities.map((city, index) => (
+            <Link
+              key={`${city.slug}-discover-${activeFeeling}-${index}`}
+              href={`/c/${city.slug}?src=discover&v=feeling_${activeFeeling}_${city.slug}`}
+              style={cardStyle}
+            >
               <div
                 style={{
-                  ...swipeVisualStyle,
-                  background: visualForCity(swipeCity.slug),
+                  ...visualStyle,
+                  background: visualForCity(city.slug),
                 }}
               >
-                <div style={visualBadgeStyle}>{swipeCity.country}</div>
+                <div style={badgeStyle}>{city.country}</div>
               </div>
 
-              <div style={swipeBodyStyle}>
-                <h3 style={swipeCityStyle}>{swipeCity.city}</h3>
-                <p style={swipeReasonStyle}>
-                  {swipeCity.stops[0]} · {swipeCity.stops[1]} ·{" "}
-                  {swipeCity.stops[2]}
-                </p>
+              <div style={bodyStyle}>
+                <h3 style={cardTitleStyle}>{city.city}</h3>
+                <p style={countryStyle}>{city.country}</p>
 
-                <div style={swipeButtonRowStyle}>
-                  <button type="button" onClick={nextSwipe} style={skipButtonStyle}>
-                    Skip
-                  </button>
+                <p style={reasonStyle}>{getCityReason(city, activeFeeling)}</p>
 
-                  <button
-                    type="button"
-                    onClick={pickCurrentCity}
-                    style={pickButtonStyle}
-                  >
-                    Looks good
-                  </button>
+                <div style={chipWrapStyle}>
+                  {getCityCategories(city)
+                    .filter((category) => feelingFilters.includes(category))
+                    .slice(0, 3)
+                    .map((category) => (
+                      <span key={category} style={chipStyle}>
+                        {category}
+                      </span>
+                    ))}
                 </div>
-
-                <Link
-                  href={`/c/${swipeCity.slug}?src=home&v=swipe_${swipeCity.slug}`}
-                  style={viewCityLinkStyle}
-                >
-                  View city page →
-                </Link>
               </div>
-            </>
-          ) : (
-            <div style={emptyStyle}>No cities available.</div>
-          )}
-
-          <div style={pickedBoxStyle}>
-            <div style={resultTitleStyle}>Your picks</div>
-
-            {pickedCities.length === 0 ? (
-              <div style={pickedEmptyStyle}>Pick cities you might want to visit.</div>
-            ) : (
-              <div style={pickedListStyle}>
-                {pickedCities.map((city) => (
-                  <Link
-                    key={`picked-${city.slug}`}
-                    href={`/c/${city.slug}?src=home&v=picked_${city.slug}`}
-                    style={pickedItemStyle}
-                  >
-                    {city.city}
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
-      </div>
+            </Link>
+          ))}
+        </div>
+      )}
     </section>
   );
 }
 
 const wrapStyle: CSSProperties = {
-  marginBottom: 42,
+  marginTop: 10,
 };
 
 const sectionHeaderStyle: CSSProperties = {
@@ -355,7 +264,7 @@ const sectionHeaderStyle: CSSProperties = {
   justifyContent: "space-between",
   gap: 12,
   alignItems: "flex-end",
-  marginBottom: 16,
+  marginBottom: 10,
   flexWrap: "wrap",
 };
 
@@ -369,169 +278,78 @@ const smallLabelStyle: CSSProperties = {
 
 const sectionTitleStyle: CSSProperties = {
   margin: 0,
-  fontSize: "clamp(24px, 6vw, 32px)",
-  letterSpacing: "-0.045em",
+  maxWidth: 720,
+  fontSize: "clamp(26px, 6vw, 36px)",
+  lineHeight: 1.04,
+  letterSpacing: "-0.055em",
   fontWeight: 850,
 };
 
-const gridStyle: CSSProperties = {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 340px), 1fr))",
-  gap: 16,
-};
-
-const quizCardStyle: CSSProperties = {
-  borderRadius: 32,
-  padding: 18,
-  background: "rgba(255, 255, 255, 0.82)",
-  border: "1px solid rgba(0, 0, 0, 0.08)",
-  boxShadow: "0 24px 70px rgba(0, 0, 0, 0.1)",
-};
-
-const swipeCardStyle: CSSProperties = {
-  borderRadius: 32,
-  padding: 18,
-  background: "rgba(255, 255, 255, 0.82)",
-  border: "1px solid rgba(0, 0, 0, 0.08)",
-  boxShadow: "0 24px 70px rgba(0, 0, 0, 0.1)",
-};
-
-const toolHeaderStyle: CSSProperties = {
-  display: "flex",
-  justifyContent: "space-between",
-  gap: 12,
-  alignItems: "flex-start",
-  marginBottom: 14,
-};
-
-const toolTitleStyle: CSSProperties = {
-  margin: 0,
-  fontSize: 24,
-  lineHeight: 1.05,
-  letterSpacing: "-0.045em",
-  fontWeight: 850,
-};
-
-const toolBadgeStyle: CSSProperties = {
-  padding: "8px 10px",
-  borderRadius: 999,
-  background: "rgba(0, 0, 0, 0.06)",
-  fontSize: 12,
-  fontWeight: 800,
+const mutedTextStyle: CSSProperties = {
+  fontSize: 13,
+  opacity: 0.6,
   whiteSpace: "nowrap",
 };
 
-const questionBlockStyle: CSSProperties = {
+const leadStyle: CSSProperties = {
+  margin: "0 0 16px",
+  maxWidth: 680,
+  fontSize: 14,
+  lineHeight: 1.7,
+  opacity: 0.68,
+};
+
+const filterWrapStyle: CSSProperties = {
+  display: "flex",
+  gap: 8,
+  overflowX: "auto",
+  paddingBottom: 14,
   marginBottom: 16,
 };
 
-const questionLabelStyle: CSSProperties = {
-  fontSize: 13,
-  fontWeight: 800,
-  opacity: 0.68,
-  marginBottom: 8,
-};
-
-const optionRowStyle: CSSProperties = {
-  display: "flex",
-  flexWrap: "wrap",
-  gap: 8,
-};
-
-const optionStyle: CSSProperties = {
+const filterButtonStyle: CSSProperties = {
   border: "1px solid rgba(0, 0, 0, 0.1)",
-  borderRadius: 999,
-  padding: "9px 11px",
-  background: "rgba(255, 255, 255, 0.78)",
+  background: "rgba(255, 255, 255, 0.74)",
   color: "#171717",
+  borderRadius: 999,
+  padding: "10px 13px",
   fontSize: 13,
-  fontWeight: 750,
+  fontWeight: 700,
+  whiteSpace: "nowrap",
   cursor: "pointer",
+  boxShadow: "0 10px 28px rgba(0, 0, 0, 0.04)",
 };
 
-const activeOptionStyle: CSSProperties = {
-  ...optionStyle,
+const activeFilterButtonStyle: CSSProperties = {
+  ...filterButtonStyle,
   background: "#171717",
   color: "#ffffff",
   border: "1px solid #171717",
 };
 
-const resultBoxStyle: CSSProperties = {
-  marginBottom: 18,
-  padding: 14,
-  borderRadius: 24,
-  background: "rgba(0, 0, 0, 0.04)",
-};
-
-const resultTitleStyle: CSSProperties = {
-  fontSize: 13,
-  fontWeight: 850,
-  opacity: 0.72,
-  marginBottom: 10,
-};
-
-const resultListStyle: CSSProperties = {
+const gridStyle: CSSProperties = {
   display: "grid",
-  gap: 8,
+  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 240px), 1fr))",
+  gap: 16,
 };
 
-const resultItemStyle: CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-  gap: 10,
-  padding: 12,
-  borderRadius: 18,
+const cardStyle: CSSProperties = {
+  display: "block",
+  borderRadius: 28,
   background: "rgba(255, 255, 255, 0.82)",
+  border: "1px solid rgba(0, 0, 0, 0.08)",
+  boxShadow: "0 20px 58px rgba(0, 0, 0, 0.08)",
   color: "inherit",
   textDecoration: "none",
-};
-
-const resultRankStyle: CSSProperties = {
-  width: 28,
-  height: 28,
-  display: "grid",
-  placeItems: "center",
-  borderRadius: "50%",
-  background: "#171717",
-  color: "#ffffff",
-  fontSize: 12,
-  fontWeight: 850,
-  flexShrink: 0,
-};
-
-const resultTextStyle: CSSProperties = {
-  minWidth: 0,
-};
-
-const resultCityStyle: CSSProperties = {
-  fontSize: 15,
-  fontWeight: 850,
-};
-
-const resultMetaStyle: CSSProperties = {
-  marginTop: 3,
-  fontSize: 12,
-  opacity: 0.62,
-  whiteSpace: "nowrap",
   overflow: "hidden",
-  textOverflow: "ellipsis",
 };
 
-const resultArrowStyle: CSSProperties = {
-  marginLeft: "auto",
-  fontWeight: 850,
-  opacity: 0.6,
-};
-
-const swipeVisualStyle: CSSProperties = {
-  height: "clamp(220px, 58vw, 320px)",
-  borderRadius: 26,
+const visualStyle: CSSProperties = {
+  height: "clamp(130px, 38vw, 160px)",
   position: "relative",
-  overflow: "hidden",
-  marginBottom: 16,
 };
 
-const visualBadgeStyle: CSSProperties = {
+const badgeStyle: CSSProperties = {
   position: "absolute",
   top: 14,
   left: 14,
@@ -543,95 +361,51 @@ const visualBadgeStyle: CSSProperties = {
   fontWeight: 800,
 };
 
-const swipeBodyStyle: CSSProperties = {
-  padding: "0 2px",
+const bodyStyle: CSSProperties = {
+  padding: 18,
 };
 
-const swipeCityStyle: CSSProperties = {
+const cardTitleStyle: CSSProperties = {
   margin: 0,
-  fontSize: "clamp(28px, 8vw, 38px)",
-  lineHeight: 1.02,
-  letterSpacing: "-0.055em",
+  fontSize: "clamp(22px, 6vw, 25px)",
+  lineHeight: 1.05,
+  letterSpacing: "-0.035em",
   fontWeight: 850,
 };
 
-const swipeReasonStyle: CSSProperties = {
-  margin: "10px 0 16px",
+const countryStyle: CSSProperties = {
+  margin: "7px 0 0",
   fontSize: 14,
-  lineHeight: 1.55,
-  opacity: 0.68,
+  opacity: 0.62,
 };
 
-const swipeButtonRowStyle: CSSProperties = {
-  display: "grid",
-  gridTemplateColumns: "1fr 1fr",
-  gap: 10,
-};
-
-const skipButtonStyle: CSSProperties = {
-  border: "1px solid rgba(0, 0, 0, 0.1)",
-  borderRadius: 18,
-  padding: "14px 12px",
-  background: "#ffffff",
-  color: "#171717",
-  fontSize: 14,
-  fontWeight: 850,
-  cursor: "pointer",
-};
-
-const pickButtonStyle: CSSProperties = {
-  border: 0,
-  borderRadius: 18,
-  padding: "14px 12px",
-  background: "#171717",
-  color: "#ffffff",
-  fontSize: 14,
-  fontWeight: 850,
-  cursor: "pointer",
-};
-
-const viewCityLinkStyle: CSSProperties = {
-  display: "block",
-  marginTop: 13,
-  color: "inherit",
-  textDecoration: "none",
+const reasonStyle: CSSProperties = {
+  margin: "12px 0 14px",
   fontSize: 13,
-  fontWeight: 850,
-  opacity: 0.72,
+  lineHeight: 1.5,
+  opacity: 0.7,
+  fontWeight: 650,
 };
 
-const pickedBoxStyle: CSSProperties = {
-  marginTop: 18,
-  padding: 14,
-  borderRadius: 24,
-  background: "rgba(0, 0, 0, 0.04)",
-};
-
-const pickedEmptyStyle: CSSProperties = {
-  fontSize: 13,
-  opacity: 0.58,
-};
-
-const pickedListStyle: CSSProperties = {
+const chipWrapStyle: CSSProperties = {
   display: "flex",
+  gap: 7,
   flexWrap: "wrap",
-  gap: 8,
 };
 
-const pickedItemStyle: CSSProperties = {
-  padding: "8px 10px",
+const chipStyle: CSSProperties = {
+  padding: "7px 9px",
   borderRadius: 999,
-  background: "#171717",
-  color: "#ffffff",
-  textDecoration: "none",
+  background: "rgba(0, 0, 0, 0.06)",
   fontSize: 12,
-  fontWeight: 800,
+  fontWeight: 750,
 };
 
 const emptyStyle: CSSProperties = {
-  padding: 18,
-  borderRadius: 20,
-  background: "rgba(0, 0, 0, 0.04)",
-  fontSize: 14,
-  opacity: 0.68,
+  padding: "24px",
+  borderRadius: 24,
+  background: "rgba(255, 255, 255, 0.76)",
+  border: "1px solid rgba(0, 0, 0, 0.08)",
+  textAlign: "center",
+  opacity: 0.72,
 };
