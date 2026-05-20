@@ -51,45 +51,12 @@ function slugify(value: string) {
       .replace(/^-+|-+$/g, "") || "spot"
   );
 }
-
-function visualForCity(slug: string) {
-  const visuals: Record<string, string> = {
-    "rome-it":
-      "linear-gradient(135deg, #d9a76f 0%, #b86b4b 42%, #3b2f2f 100%)",
-    "venice-it":
-      "linear-gradient(135deg, #9cc9d7 0%, #e7c389 46%, #8b5f4d 100%)",
-    "florence-it":
-      "linear-gradient(135deg, #d7a65f 0%, #b65f4a 48%, #2e2a32 100%)",
-    "prague-cz":
-      "linear-gradient(135deg, #d7b06f 0%, #6f8da8 46%, #2e3543 100%)",
-    "dubrovnik-hr":
-      "linear-gradient(135deg, #d58b5a 0%, #2f8da8 48%, #183747 100%)",
-    "vienna-at":
-      "linear-gradient(135deg, #e1c8a4 0%, #b98e65 48%, #42352f 100%)",
-    "edinburgh-uk":
-      "linear-gradient(135deg, #8e99a8 0%, #5c6675 46%, #252a33 100%)",
-    "paris-fr":
-      "linear-gradient(135deg, #c7d4df 0%, #d3b58d 44%, #4b4b58 100%)",
-    "barcelona-es":
-      "linear-gradient(135deg, #f0b45f 0%, #d95850 45%, #2e6f89 100%)",
-    "kyoto-jp":
-      "linear-gradient(135deg, #c6a96b 0%, #8da36f 48%, #2f3a2f 100%)",
-    "amsterdam-nl":
-      "linear-gradient(135deg, #8eb6c7 0%, #d9a35f 45%, #38465a 100%)",
-  };
-
-  return (
-    visuals[slug] ??
-    "linear-gradient(135deg, #e5c7a5 0%, #9fb8c9 48%, #30394a 100%)"
-  );
-}
-
 function visualForIndex(index: number) {
   const visuals = [
-    "linear-gradient(135deg, #d9a76f 0%, #b86b4b 44%, #3b2f2f 100%)",
-    "linear-gradient(135deg, #9cc9d7 0%, #e7c389 46%, #8b5f4d 100%)",
-    "linear-gradient(135deg, #c7d4df 0%, #d3b58d 44%, #4b4b58 100%)",
-    "linear-gradient(135deg, #f0b45f 0%, #d95850 45%, #2e6f89 100%)",
+    "#f4faf8",
+    "#f4faf8",
+    "#f4faf8",
+    "#f4faf8",
   ];
 
   return visuals[index % visuals.length];
@@ -280,11 +247,6 @@ export function HomeLanding({ cities }: Props) {
               </Link>
             </div>
           </div>
-
-          <div style={heroPreviewStyle}>
-            <div style={heroImageStyle}>
-            </div>
-          </div>
         </section>
 
         {isSearching && (
@@ -467,7 +429,7 @@ const pageStyle: CSSProperties = {
   minHeight: "100vh",
   overflowX: "hidden",
   background:
-    "radial-gradient(circle at 12% 0%, rgba(255, 221, 180, 0.72), transparent 30%), radial-gradient(circle at 88% 4%, rgba(175, 205, 255, 0.58), transparent 28%), linear-gradient(180deg, #fbf7f0 0%, #ffffff 44%, #eef4f8 100%)",
+    "#f4faf8",
   color: "#17202a",
   fontFamily:
     '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif',
@@ -480,11 +442,10 @@ const shellStyle: CSSProperties = {
 };
 
 const heroStyle: CSSProperties = {
-  display: "grid",
-  gridTemplateColumns: "minmax(0, 1.08fr) minmax(min(100%, 330px), 0.92fr)",
-  gap: 24,
-  alignItems: "center",
+  display: "block",
+  maxWidth: 760,
   marginBottom: 34,
+  padding: "18px 0 4px",
 };
 
 const heroTextStyle: CSSProperties = {
@@ -501,33 +462,32 @@ const eyebrowStyle: CSSProperties = {
 };
 
 const heroTitleStyle: CSSProperties = {
-  margin: "0 0 16px",
-  maxWidth: 760,
-  fontSize: "clamp(38px, 9vw, 66px)",
-  lineHeight: 1.02,
-  letterSpacing: "-0.055em",
+  margin: "0 0 14px",
+  maxWidth: 700,
+  fontSize: "clamp(34px, 8vw, 56px)",
+  lineHeight: 1.04,
+  letterSpacing: "-0.05em",
   fontWeight: 850,
 };
 
 const heroSubtitleStyle: CSSProperties = {
-  margin: "0 0 24px",
-  maxWidth: 660,
-  fontSize: "clamp(15px, 3.8vw, 17px)",
-  lineHeight: 1.78,
+  margin: "0 0 22px",
+  maxWidth: 620,
+  fontSize: "clamp(14px, 3.6vw, 16px)",
+  lineHeight: 1.72,
   color: "#607080",
 };
 
 const searchBoxStyle: CSSProperties = {
-  maxWidth: 590,
+  maxWidth: 560,
   display: "flex",
   alignItems: "center",
   gap: 10,
-  padding: "7px 8px 7px 16px",
-  borderRadius: 24,
-  background: "rgba(255, 255, 255, 0.88)",
+  padding: "7px 8px 7px 15px",
+  borderRadius: 22,
+  background: "#ffffff",
   border: "1px solid rgba(23, 32, 42, 0.08)",
   boxShadow: "0 8px 24px rgba(30, 64, 88, 0.08)",
-  backdropFilter: "blur(18px)",
 };
 
 const searchIconStyle: CSSProperties = {
@@ -577,29 +537,6 @@ const secondaryHeroButtonStyle: CSSProperties = {
   color: "#17202a",
   fontSize: 14,
   fontWeight: 800,
-};
-
-const heroPreviewStyle: CSSProperties = {
-  position: "relative",
-  minWidth: 0,
-};
-
-const heroImageStyle: CSSProperties = {
-  minHeight: "clamp(250px, 68vw, 420px)",
-  borderRadius: 32,
-  background:
-    "linear-gradient(135deg, #d9a76f 0%, #b86b4b 42%, #3b2f2f 100%)",
-  boxShadow: "0 30px 80px rgba(0, 0, 0, 0.2)",
-  position: "relative",
-  overflow: "hidden",
-};
-
-const floatingSmallTextStyle: CSSProperties = {
-  fontSize: 12,
-  textTransform: "uppercase",
-  letterSpacing: "0.12em",
-  opacity: 0.55,
-  marginBottom: 8,
 };
 
 const feedSectionStyle: CSSProperties = {
@@ -895,6 +832,12 @@ const cityResultTextStyle: CSSProperties = {
   lineHeight: 1.45,
   opacity: 0.7,
 };
+
+
+
+
+
+
 
 
 
