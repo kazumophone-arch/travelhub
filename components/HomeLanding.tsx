@@ -436,7 +436,7 @@ export function HomeLanding({ cities }: Props) {
               <h2 style={sectionTitleStyle}>Best places in {currentMonth}</h2>
             </div>
 
-            <Link href="/discover" style={viewAllStyle}>
+            <Link href="/discover#travel-timing" style={viewAllStyle}>
               Explore by season
             </Link>
           </div>
@@ -924,3 +924,4 @@ const cityResultTextStyle: CSSProperties = {
   lineHeight: 1.45,
   opacity: 0.7,
 };
+

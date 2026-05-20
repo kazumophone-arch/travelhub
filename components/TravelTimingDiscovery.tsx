@@ -96,7 +96,7 @@ export function TravelTimingDiscovery({ cities }: Props) {
   }, [cities, activeMonth]);
 
   return (
-    <section style={wrapStyle}>
+    <section id="travel-timing" style={wrapStyle}>
       <div style={sectionHeaderStyle}>
         <div>
           <div style={smallLabelStyle}>By season</div>
@@ -288,5 +288,6 @@ const destinationReasonStyle: CSSProperties = {
   opacity: 0.7,
   fontWeight: 650,
 };
+
 
 
