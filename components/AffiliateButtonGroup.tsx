@@ -74,6 +74,7 @@ export function AffiliateButtonGroup({
         const arrowStyle = getArrowStyle(isPrimary, tone);
         const labelStyle = getLabelStyle(isPrimary, tone);
         const textStyle = getTextStyle(isPrimary, tone);
+        const trustStyle = getTrustStyle(isPrimary, tone);
 
         return (
           <Link key={item.key} href={item.href} style={cardStyle}>
@@ -85,6 +86,10 @@ export function AffiliateButtonGroup({
             <div style={titleStyle}>{item.title}</div>
 
             <p style={textStyle}>{item.text}</p>
+
+            <div style={trustStyle}>
+              Affiliate link · No extra cost · Compare before booking
+            </div>
           </Link>
         );
       })}
@@ -206,6 +211,20 @@ function getTextStyle(isPrimary: boolean, tone: AffiliateTone): CSSProperties {
   };
 }
 
+function getTrustStyle(isPrimary: boolean, tone: AffiliateTone): CSSProperties {
+  const isDarkPrimary = isPrimary && tone === "light";
+
+  return {
+    ...trustNoteStyle,
+    color: isDarkPrimary ? "#ffffff" : "inherit",
+    borderTop:
+      isDarkPrimary || tone === "dark"
+        ? "1px solid rgba(255, 255, 255, 0.14)"
+        : "1px solid rgba(0, 0, 0, 0.08)",
+    opacity: isDarkPrimary ? 0.62 : 0.58,
+  };
+}
+
 const wrapStyle: CSSProperties = {
   display: "grid",
   gap: 10,
@@ -302,4 +321,12 @@ const baseTextStyle: CSSProperties = {
   margin: "8px 0 0",
   fontSize: 13,
   lineHeight: 1.5,
+};
+
+const trustNoteStyle: CSSProperties = {
+  marginTop: 12,
+  paddingTop: 10,
+  fontSize: 11,
+  lineHeight: 1.45,
+  fontWeight: 750,
 };
