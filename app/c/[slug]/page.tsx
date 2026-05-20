@@ -8,6 +8,7 @@ import { TravelVisual } from "@/components/TravelVisual";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { BookingConfidencePanel } from "@/components/BookingConfidencePanel";
 import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
+import { StickyAffiliateBar } from "@/components/StickyAffiliateBar";
 
 type StayArea = {
   name: string;
@@ -332,6 +333,8 @@ export default async function CityPage({
 
           <AffiliateButtonGroup city={city} src={src} v={`final_${v}`} tone="dark" variant="final" />
         </section>
+
+        <StickyAffiliateBar city={city} src={src} v={`sticky_${v}`} primary="hotels" />
 
         <p style={noteStyle}>
           Some links may be affiliate links. We may earn a commission if you book
@@ -904,6 +907,7 @@ const noteStyle: CSSProperties = {
   lineHeight: 1.6,
   opacity: 0.52,
 };
+
 
 
 

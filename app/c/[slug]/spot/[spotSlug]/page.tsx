@@ -7,6 +7,7 @@ import { TravelVisual } from "@/components/TravelVisual";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { BookingConfidencePanel } from "@/components/BookingConfidencePanel";
 import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
+import { StickyAffiliateBar } from "@/components/StickyAffiliateBar";
 
 export async function generateMetadata({
   params,
@@ -286,6 +287,8 @@ export default async function SpotPage({
 
           <AffiliateButtonGroup city={city} src={src} v={`final_${v}`} primary="tours" tone="dark" variant="final" />
         </section>
+
+        <StickyAffiliateBar city={city} src={src} v={`sticky_${v}`} primary="tours" />
 
         <p style={noteStyle}>
           Some links may be affiliate links. We may earn a commission if you book
@@ -648,6 +651,7 @@ const noteStyle: CSSProperties = {
   lineHeight: 1.6,
   opacity: 0.52,
 };
+
 
 
 
