@@ -163,21 +163,6 @@ function getSpotSearchResults(cities: City[], query: string) {
 }
 
 
-function getDisplayStops(city: City) {
-  return city.stops
-    .filter((spot) => {
-      const normalized = spot.trim().toLowerCase();
-
-      return (
-        normalized !== "" &&
-        normalized !== "none" &&
-        normalized !== "n/a" &&
-        normalized !== "null" &&
-        normalized !== "-"
-      );
-    })
-    .slice(0, 3);
-}
 function getCitySearchResults(cities: City[], query: string) {
   const normalizedQuery = query.trim().toLowerCase();
 
@@ -933,6 +918,7 @@ const cityResultTextStyle: CSSProperties = {
   lineHeight: 1.45,
   opacity: 0.7,
 };
+
 
 
 

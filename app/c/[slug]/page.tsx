@@ -73,7 +73,7 @@ export default async function CityPage({
   const spotCards =
     city.spotDetails && city.spotDetails.length > 0
       ? city.spotDetails.filter((spot) => spot.isPublished !== false)
-      : city.stops.map((stop, index) => ({
+      : getDisplayStops(city).map((stop, index) => ({
           slug:
             stop
               .toLowerCase()
@@ -308,21 +308,6 @@ export default async function CityPage({
 }
 
 
-function getDisplayStops(city: City) {
-  return city.stops
-    .filter((spot) => {
-      const normalized = spot.trim().toLowerCase();
-
-      return (
-        normalized !== "" &&
-        normalized !== "none" &&
-        normalized !== "n/a" &&
-        normalized !== "null" &&
-        normalized !== "-"
-      );
-    })
-    .slice(0, 3);
-}
 function getCityIntro(city: City) {
   return (
     city.description ??
@@ -817,6 +802,8 @@ const tourCtaStyle: CSSProperties = {
   border: "1px solid rgba(0, 0, 0, 0.08)",
   boxShadow: "0 24px 74px rgba(0, 0, 0, 0.1)",
 };
+
+
 
 
 

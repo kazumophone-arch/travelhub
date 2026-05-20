@@ -62,21 +62,6 @@ function visualForCity(slug: string) {
 }
 
 
-function getDisplayStops(city: City) {
-  return city.stops
-    .filter((spot) => {
-      const normalized = spot.trim().toLowerCase();
-
-      return (
-        normalized !== "" &&
-        normalized !== "none" &&
-        normalized !== "n/a" &&
-        normalized !== "null" &&
-        normalized !== "-"
-      );
-    })
-    .slice(0, 3);
-}
 function getMonthReason(city: City, month: string) {
   if (city.months?.includes(month)) {
     return `${month} is a strong timing window for ${city.city}.`;
@@ -309,6 +294,8 @@ const destinationReasonStyle: CSSProperties = {
   opacity: 0.7,
   fontWeight: 650,
 };
+
+
 
 
 

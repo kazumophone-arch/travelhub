@@ -172,21 +172,6 @@ function getCityCategories(city: City) {
 }
 
 
-function getDisplayStops(city: City) {
-  return city.stops
-    .filter((spot) => {
-      const normalized = spot.trim().toLowerCase();
-
-      return (
-        normalized !== "" &&
-        normalized !== "none" &&
-        normalized !== "n/a" &&
-        normalized !== "null" &&
-        normalized !== "-"
-      );
-    })
-    .slice(0, 3);
-}
 function getCityReason(city: City) {
   const categories = getCityCategories(city);
 
@@ -942,6 +927,7 @@ const emptyStyle: CSSProperties = {
   textAlign: "center",
   opacity: 0.72,
 };
+
 
 
 
