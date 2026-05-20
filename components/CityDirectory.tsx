@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import type { City } from "@/data/types";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 
 type Props = {
   cities: City[];
@@ -29,8 +29,24 @@ const asiaCountries = new Set([
   "Singapore",
 ]);
 
-const preferredOrder = [
+const quickFilters = [
+  "All",
+  "Europe",
+  "Asia",
   "World Heritage",
+  "Scenic",
+  "Family",
+  "Solo",
+  "Couples",
+];
+
+const preferredDetailOrder = [
+  "Italy",
+  "France",
+  "Spain",
+  "Japan",
+  "United Kingdom",
+  "Netherlands",
   "Spring",
   "Summer",
   "Autumn",
@@ -47,26 +63,13 @@ const preferredOrder = [
   "October",
   "November",
   "December",
-  "Couples",
-  "Family",
-  "Solo",
-  "Friends",
-  "Weekend",
-  "Luxury",
-  "Budget",
-  "Europe",
-  "Asia",
   "Old Town",
-  "Scenic",
   "Beach",
   "Nature",
   "Food",
-  "Italy",
-  "France",
-  "Spain",
-  "Japan",
-  "United Kingdom",
-  "Netherlands",
+  "Luxury",
+  "Budget",
+  "Weekend",
 ];
 
 function getCityCategories(city: City) {
@@ -86,7 +89,7 @@ function getCityCategories(city: City) {
   const oldTownWords = ["Old Town", "Historic", "Center", "Castle", "Temple"];
   if (
     city.stops.some((spot) =>
-      oldTownWords.some((word) => spot.includes(word))
+      oldTownWords.some((word) => spot.toLowerCase().includes(word.toLowerCase()))
     )
   ) {
     categories.add("Old Town");
@@ -95,7 +98,7 @@ function getCityCategories(city: City) {
   const scenicWords = ["Sunset", "View", "Lagoon", "River", "Canal", "Beach"];
   if (
     city.stops.some((spot) =>
-      scenicWords.some((word) => spot.includes(word))
+      scenicWords.some((word) => spot.toLowerCase().includes(word.toLowerCase()))
     )
   ) {
     categories.add("Scenic");
@@ -107,14 +110,14 @@ function getCityCategories(city: City) {
 function getCityReason(city: City) {
   const categories = getCityCategories(city);
 
-  if (categories.includes("Romantic")) return "For romantic city walks";
-  if (categories.includes("Family")) return "Easy pick for family trips";
-  if (categories.includes("Solo")) return "Walkable pick for solo travel";
-  if (categories.includes("World Heritage")) return "Historic and cultural route";
-  if (categories.includes("Scenic")) return "For scenic views and atmosphere";
-  if (categories.includes("Old Town")) return "Best for old town wandering";
+  if (categories.includes("Romantic")) return "Good for romantic city walks.";
+  if (categories.includes("Family")) return "Easy pick for family trips.";
+  if (categories.includes("Solo")) return "Walkable pick for solo travel.";
+  if (categories.includes("World Heritage")) return "Strong for historic and cultural routes.";
+  if (categories.includes("Scenic")) return "Good for scenic views and atmosphere.";
+  if (categories.includes("Old Town")) return "Good for old town wandering.";
 
-  return `Start with ${city.stops[0]}`;
+  return `Start with ${city.stops[0]}.`;
 }
 
 function visualForCity(slug: string) {
@@ -151,18 +154,23 @@ function visualForCity(slug: string) {
 
 export function CityDirectory({ cities }: Props) {
   const [query, setQuery] = useState("");
-  const [activeCategory, setActiveCategory] = useState("All");
+  const [activeQuickFilter, setActiveQuickFilter] = useState("All");
+  const [activeDetailFilter, setActiveDetailFilter] = useState("All");
 
-  const categories = useMemo(() => {
+  const detailFilters = useMemo(() => {
     const set = new Set<string>();
 
     cities.forEach((city) => {
-      getCityCategories(city).forEach((category) => set.add(category));
+      getCityCategories(city).forEach((category) => {
+        if (!quickFilters.includes(category)) {
+          set.add(category);
+        }
+      });
     });
 
-    const ordered = preferredOrder.filter((category) => set.has(category));
+    const ordered = preferredDetailOrder.filter((category) => set.has(category));
     const rest = Array.from(set)
-      .filter((category) => !preferredOrder.includes(category))
+      .filter((category) => !preferredDetailOrder.includes(category))
       .sort();
 
     return ["All", ...ordered, ...rest];
@@ -174,12 +182,16 @@ export function CityDirectory({ cities }: Props) {
     return cities.filter((city) => {
       const cityCategories = getCityCategories(city);
 
-      const matchesCategory =
-        activeCategory === "All" || cityCategories.includes(activeCategory);
+      const matchesQuick =
+        activeQuickFilter === "All" || cityCategories.includes(activeQuickFilter);
+
+      const matchesDetail =
+        activeDetailFilter === "All" || cityCategories.includes(activeDetailFilter);
 
       const searchableText = [
         city.city,
         city.country,
+        city.description ?? "",
         ...city.stops,
         ...cityCategories,
       ]
@@ -189,9 +201,15 @@ export function CityDirectory({ cities }: Props) {
       const matchesSearch =
         normalizedQuery === "" || searchableText.includes(normalizedQuery);
 
-      return matchesCategory && matchesSearch;
+      return matchesQuick && matchesDetail && matchesSearch;
     });
-  }, [cities, query, activeCategory]);
+  }, [cities, query, activeQuickFilter, activeDetailFilter]);
+
+  function resetFilters() {
+    setQuery("");
+    setActiveQuickFilter("All");
+    setActiveDetailFilter("All");
+  }
 
   return (
     <main style={pageStyle}>
@@ -209,8 +227,8 @@ export function CityDirectory({ cities }: Props) {
           <h1 style={titleStyle}>Browse destinations.</h1>
 
           <p style={subtitleStyle}>
-            Search and filter cities by country, season, mood, travel style, and
-            featured spots.
+            Start with a broad filter, then narrow the list by country, month,
+            season, mood, travel style, or featured spot.
           </p>
 
           <div style={searchBoxStyle}>
@@ -224,11 +242,44 @@ export function CityDirectory({ cities }: Props) {
           </div>
         </section>
 
-        <section style={contentStyle}>
+        <section style={filterSectionStyle}>
           <div style={sectionHeaderStyle}>
             <div>
-              <div style={smallLabelStyle}>All destinations</div>
-              <h2 style={sectionTitleStyle}>Choose a city</h2>
+              <div style={smallLabelStyle}>Quick filters</div>
+              <h2 style={sectionTitleStyle}>Choose a broad direction</h2>
+            </div>
+
+            <button type="button" onClick={resetFilters} style={resetButtonStyle}>
+              Reset
+            </button>
+          </div>
+
+          <div style={filterWrapStyle}>
+            {quickFilters.map((filter) => {
+              const isActive = filter === activeQuickFilter;
+
+              return (
+                <button
+                  key={filter}
+                  type="button"
+                  onClick={() => {
+                    setActiveQuickFilter(filter);
+                    setActiveDetailFilter("All");
+                  }}
+                  style={isActive ? activeFilterButtonStyle : filterButtonStyle}
+                >
+                  {filter}
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
+        <section style={filterSectionStyle}>
+          <div style={sectionHeaderStyle}>
+            <div>
+              <div style={smallLabelStyle}>Detailed filters</div>
+              <h2 style={sectionTitleStyle}>Narrow by timing or theme</h2>
             </div>
 
             <span style={mutedTextStyle}>
@@ -236,30 +287,40 @@ export function CityDirectory({ cities }: Props) {
             </span>
           </div>
 
-          <div style={categoryWrapStyle}>
-            {categories.map((category) => {
-              const isActive = category === activeCategory;
+          <div style={filterWrapStyle}>
+            {detailFilters.map((filter) => {
+              const isActive = filter === activeDetailFilter;
 
               return (
                 <button
-                  key={category}
+                  key={filter}
                   type="button"
-                  onClick={() =>
-                    setActiveCategory((current) =>
-                      current === category ? "All" : category
-                    )
-                  }
-                  style={isActive ? activeCategoryStyle : categoryButtonStyle}
+                  onClick={() => setActiveDetailFilter(filter)}
+                  style={isActive ? activeFilterButtonStyle : filterButtonStyle}
                 >
-                  {category}
+                  {filter}
                 </button>
               );
             })}
           </div>
+        </section>
+
+        <section style={contentStyle}>
+          <div style={sectionHeaderStyle}>
+            <div>
+              <div style={smallLabelStyle}>Results</div>
+              <h2 style={sectionTitleStyle}>Choose a city</h2>
+            </div>
+
+            <span style={mutedTextStyle}>
+              {activeQuickFilter}
+              {activeDetailFilter !== "All" ? ` · ${activeDetailFilter}` : ""}
+            </span>
+          </div>
 
           {filteredCities.length === 0 ? (
             <div style={emptyStyle}>
-              No cities found. Try another keyword or category.
+              No cities found. Try another keyword or reset the filters.
             </div>
           ) : (
             <section style={destinationGridStyle}>
@@ -291,9 +352,9 @@ export function CityDirectory({ cities }: Props) {
                     <p style={destinationReasonStyle}>{getCityReason(city)}</p>
 
                     <div style={spotsStyle}>
-                      <span>{city.stops[0]}</span>
-                      <span>{city.stops[1]}</span>
-                      <span>{city.stops[2]}</span>
+                      {city.stops.slice(0, 3).map((spot) => (
+                        <span key={spot}>{spot}</span>
+                      ))}
                     </div>
 
                     <div style={actionRowStyle}>
@@ -338,16 +399,6 @@ const shellStyle: CSSProperties = {
 
 const heroStyle: CSSProperties = {
   marginBottom: 34,
-};
-
-const homeLinkStyle: CSSProperties = {
-  display: "inline-flex",
-  marginBottom: 22,
-  color: "inherit",
-  textDecoration: "none",
-  fontSize: 14,
-  fontWeight: 800,
-  opacity: 0.72,
 };
 
 const eyebrowStyle: CSSProperties = {
@@ -405,8 +456,8 @@ const searchInputStyle: CSSProperties = {
   color: "#171717",
 };
 
-const contentStyle: CSSProperties = {
-  marginTop: 10,
+const filterSectionStyle: CSSProperties = {
+  marginBottom: 28,
 };
 
 const sectionHeaderStyle: CSSProperties = {
@@ -439,15 +490,14 @@ const mutedTextStyle: CSSProperties = {
   whiteSpace: "nowrap",
 };
 
-const categoryWrapStyle: CSSProperties = {
+const filterWrapStyle: CSSProperties = {
   display: "flex",
   gap: 8,
   overflowX: "auto",
   paddingBottom: 14,
-  marginBottom: 8,
 };
 
-const categoryButtonStyle: CSSProperties = {
+const filterButtonStyle: CSSProperties = {
   border: "1px solid rgba(0, 0, 0, 0.1)",
   background: "rgba(255, 255, 255, 0.74)",
   color: "#171717",
@@ -460,11 +510,26 @@ const categoryButtonStyle: CSSProperties = {
   boxShadow: "0 10px 28px rgba(0, 0, 0, 0.04)",
 };
 
-const activeCategoryStyle: CSSProperties = {
-  ...categoryButtonStyle,
+const activeFilterButtonStyle: CSSProperties = {
+  ...filterButtonStyle,
   background: "#171717",
   color: "#ffffff",
   border: "1px solid #171717",
+};
+
+const resetButtonStyle: CSSProperties = {
+  border: "1px solid rgba(0, 0, 0, 0.1)",
+  borderRadius: 999,
+  padding: "9px 12px",
+  background: "rgba(255, 255, 255, 0.78)",
+  color: "#171717",
+  fontSize: 12,
+  fontWeight: 800,
+  cursor: "pointer",
+};
+
+const contentStyle: CSSProperties = {
+  marginTop: 10,
 };
 
 const destinationGridStyle: CSSProperties = {
@@ -592,4 +657,3 @@ const emptyStyle: CSSProperties = {
   textAlign: "center",
   opacity: 0.72,
 };
-
