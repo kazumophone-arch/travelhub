@@ -29,28 +29,7 @@ const asiaCountries = new Set([
   "Singapore",
 ]);
 
-const quickFilters = [
-  "All",
-  "Europe",
-  "Asia",
-  "World Heritage",
-  "Scenic",
-  "Family",
-  "Solo",
-  "Couples",
-];
-
-const preferredDetailOrder = [
-  "Italy",
-  "France",
-  "Spain",
-  "Japan",
-  "United Kingdom",
-  "Netherlands",
-  "Spring",
-  "Summer",
-  "Autumn",
-  "Winter",
+const monthNames = [
   "January",
   "February",
   "March",
@@ -63,13 +42,37 @@ const preferredDetailOrder = [
   "October",
   "November",
   "December",
+];
+
+const shortcutFilters = [
+  "All",
+  "Europe",
+  "Asia",
+  "Scenic",
+  "World Heritage",
+  "Couples",
+  "Family",
+  "Solo",
+];
+
+const preferredStyleOrder = [
+  "World Heritage",
+  "Scenic",
   "Old Town",
-  "Beach",
-  "Nature",
+  "Couples",
+  "Family",
+  "Solo",
+  "Friends",
   "Food",
+  "Nature",
+  "Beach",
+  "Weekend",
   "Luxury",
   "Budget",
-  "Weekend",
+  "Romantic",
+  "History",
+  "Culture",
+  "Architecture",
 ];
 
 function getCityCategories(city: City) {
@@ -89,7 +92,9 @@ function getCityCategories(city: City) {
   const oldTownWords = ["Old Town", "Historic", "Center", "Castle", "Temple"];
   if (
     city.stops.some((spot) =>
-      oldTownWords.some((word) => spot.toLowerCase().includes(word.toLowerCase()))
+      oldTownWords.some((word) =>
+        spot.toLowerCase().includes(word.toLowerCase())
+      )
     )
   ) {
     categories.add("Old Town");
@@ -98,7 +103,9 @@ function getCityCategories(city: City) {
   const scenicWords = ["Sunset", "View", "Lagoon", "River", "Canal", "Beach"];
   if (
     city.stops.some((spot) =>
-      scenicWords.some((word) => spot.toLowerCase().includes(word.toLowerCase()))
+      scenicWords.some((word) =>
+        spot.toLowerCase().includes(word.toLowerCase())
+      )
     )
   ) {
     categories.add("Scenic");
@@ -110,12 +117,29 @@ function getCityCategories(city: City) {
 function getCityReason(city: City) {
   const categories = getCityCategories(city);
 
-  if (categories.includes("Romantic")) return "Good for romantic city walks.";
-  if (categories.includes("Family")) return "Easy pick for family trips.";
-  if (categories.includes("Solo")) return "Walkable pick for solo travel.";
-  if (categories.includes("World Heritage")) return "Strong for historic and cultural routes.";
-  if (categories.includes("Scenic")) return "Good for scenic views and atmosphere.";
-  if (categories.includes("Old Town")) return "Good for old town wandering.";
+  if (categories.includes("Romantic") || categories.includes("Couples")) {
+    return "Good for romantic city walks and atmosphere.";
+  }
+
+  if (categories.includes("Family")) {
+    return "Easy pick for family trips.";
+  }
+
+  if (categories.includes("Solo")) {
+    return "Walkable pick for solo travel.";
+  }
+
+  if (categories.includes("World Heritage")) {
+    return "Strong for historic and cultural routes.";
+  }
+
+  if (categories.includes("Scenic")) {
+    return "Good for scenic views and atmosphere.";
+  }
+
+  if (categories.includes("Old Town")) {
+    return "Good for old town wandering.";
+  }
 
   return `Start with ${city.stops[0]}.`;
 }
@@ -154,27 +178,54 @@ function visualForCity(slug: string) {
 
 export function CityDirectory({ cities }: Props) {
   const [query, setQuery] = useState("");
-  const [activeQuickFilter, setActiveQuickFilter] = useState("All");
-  const [activeDetailFilter, setActiveDetailFilter] = useState("All");
+  const [activeRegion, setActiveRegion] = useState("All");
+  const [activeMonth, setActiveMonth] = useState("All");
+  const [activeStyle, setActiveStyle] = useState("All");
 
-  const detailFilters = useMemo(() => {
+  const regionOptions = useMemo(() => {
+    const countries = Array.from(new Set(cities.map((city) => city.country))).sort();
+
+    return ["All", "Europe", "Asia", ...countries];
+  }, [cities]);
+
+  const monthOptions = useMemo(() => {
+    const months = new Set<string>();
+
+    cities.forEach((city) => {
+      city.months?.forEach((month) => months.add(month));
+    });
+
+    return ["All", ...monthNames.filter((month) => months.has(month))];
+  }, [cities]);
+
+  const styleOptions = useMemo(() => {
+    const regionSet = new Set(regionOptions);
+    const monthSet = new Set(monthNames);
     const set = new Set<string>();
 
     cities.forEach((city) => {
       getCityCategories(city).forEach((category) => {
-        if (!quickFilters.includes(category)) {
-          set.add(category);
-        }
+        if (regionSet.has(category)) return;
+        if (monthSet.has(category)) return;
+        if (["Spring", "Summer", "Autumn", "Winter"].includes(category)) return;
+
+        set.add(category);
       });
     });
 
-    const ordered = preferredDetailOrder.filter((category) => set.has(category));
+    const ordered = preferredStyleOrder.filter((style) => set.has(style));
     const rest = Array.from(set)
-      .filter((category) => !preferredDetailOrder.includes(category))
+      .filter((style) => !preferredStyleOrder.includes(style))
       .sort();
 
     return ["All", ...ordered, ...rest];
-  }, [cities]);
+  }, [cities, regionOptions]);
+
+  const activeFilters = [
+    activeRegion !== "All" ? activeRegion : null,
+    activeMonth !== "All" ? activeMonth : null,
+    activeStyle !== "All" ? activeStyle : null,
+  ].filter(Boolean);
 
   const filteredCities = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -182,11 +233,14 @@ export function CityDirectory({ cities }: Props) {
     return cities.filter((city) => {
       const cityCategories = getCityCategories(city);
 
-      const matchesQuick =
-        activeQuickFilter === "All" || cityCategories.includes(activeQuickFilter);
+      const matchesRegion =
+        activeRegion === "All" || cityCategories.includes(activeRegion);
 
-      const matchesDetail =
-        activeDetailFilter === "All" || cityCategories.includes(activeDetailFilter);
+      const matchesMonth =
+        activeMonth === "All" || city.months?.includes(activeMonth);
+
+      const matchesStyle =
+        activeStyle === "All" || cityCategories.includes(activeStyle);
 
       const searchableText = [
         city.city,
@@ -201,14 +255,33 @@ export function CityDirectory({ cities }: Props) {
       const matchesSearch =
         normalizedQuery === "" || searchableText.includes(normalizedQuery);
 
-      return matchesQuick && matchesDetail && matchesSearch;
+      return matchesRegion && matchesMonth && matchesStyle && matchesSearch;
     });
-  }, [cities, query, activeQuickFilter, activeDetailFilter]);
+  }, [cities, query, activeRegion, activeMonth, activeStyle]);
 
   function resetFilters() {
     setQuery("");
-    setActiveQuickFilter("All");
-    setActiveDetailFilter("All");
+    setActiveRegion("All");
+    setActiveMonth("All");
+    setActiveStyle("All");
+  }
+
+  function applyShortcut(filter: string) {
+    if (filter === "All") {
+      resetFilters();
+      return;
+    }
+
+    if (filter === "Europe" || filter === "Asia") {
+      setActiveRegion(filter);
+      setActiveMonth("All");
+      setActiveStyle("All");
+      return;
+    }
+
+    setActiveStyle(filter);
+    setActiveRegion("All");
+    setActiveMonth("All");
   }
 
   return (
@@ -227,8 +300,8 @@ export function CityDirectory({ cities }: Props) {
           <h1 style={titleStyle}>Browse destinations.</h1>
 
           <p style={subtitleStyle}>
-            Start with a broad filter, then narrow the list by country, month,
-            season, mood, travel style, or featured spot.
+            Start broad with recommended filters, then refine by region, month,
+            or travel style.
           </p>
 
           <div style={searchBoxStyle}>
@@ -242,66 +315,75 @@ export function CityDirectory({ cities }: Props) {
           </div>
         </section>
 
-        <section style={filterSectionStyle}>
+        <section style={filterPanelStyle}>
           <div style={sectionHeaderStyle}>
             <div>
-              <div style={smallLabelStyle}>Quick filters</div>
-              <h2 style={sectionTitleStyle}>Choose a broad direction</h2>
+              <div style={smallLabelStyle}>Recommended filters</div>
+              <h2 style={sectionTitleStyle}>Start with a simple direction</h2>
             </div>
 
             <button type="button" onClick={resetFilters} style={resetButtonStyle}>
-              Reset
+              Clear all
             </button>
           </div>
 
-          <div style={filterWrapStyle}>
-            {quickFilters.map((filter) => {
-              const isActive = filter === activeQuickFilter;
+          <div style={shortcutWrapStyle}>
+            {shortcutFilters
+              .filter((filter) => filter === "All" || styleOptions.includes(filter) || regionOptions.includes(filter))
+              .map((filter) => {
+                const isActive =
+                  filter === "All"
+                    ? activeFilters.length === 0 && query.trim() === ""
+                    : activeRegion === filter || activeStyle === filter;
 
-              return (
-                <button
-                  key={filter}
-                  type="button"
-                  onClick={() => {
-                    setActiveQuickFilter(filter);
-                    setActiveDetailFilter("All");
-                  }}
-                  style={isActive ? activeFilterButtonStyle : filterButtonStyle}
-                >
-                  {filter}
-                </button>
-              );
-            })}
-          </div>
-        </section>
-
-        <section style={filterSectionStyle}>
-          <div style={sectionHeaderStyle}>
-            <div>
-              <div style={smallLabelStyle}>Detailed filters</div>
-              <h2 style={sectionTitleStyle}>Narrow by timing or theme</h2>
-            </div>
-
-            <span style={mutedTextStyle}>
-              {filteredCities.length} / {cities.length} cities
-            </span>
+                return (
+                  <button
+                    key={filter}
+                    type="button"
+                    onClick={() => applyShortcut(filter)}
+                    style={isActive ? activeShortcutButtonStyle : shortcutButtonStyle}
+                  >
+                    {filter}
+                  </button>
+                );
+              })}
           </div>
 
-          <div style={filterWrapStyle}>
-            {detailFilters.map((filter) => {
-              const isActive = filter === activeDetailFilter;
+          <div style={filterGridStyle}>
+            <FilterGroup
+              label="Region / Country"
+              value={activeRegion}
+              options={regionOptions}
+              onChange={setActiveRegion}
+            />
 
-              return (
-                <button
-                  key={filter}
-                  type="button"
-                  onClick={() => setActiveDetailFilter(filter)}
-                  style={isActive ? activeFilterButtonStyle : filterButtonStyle}
-                >
-                  {filter}
-                </button>
-              );
-            })}
+            <FilterGroup
+              label="Month"
+              value={activeMonth}
+              options={monthOptions}
+              onChange={setActiveMonth}
+            />
+
+            <FilterGroup
+              label="Style / Theme"
+              value={activeStyle}
+              options={styleOptions}
+              onChange={setActiveStyle}
+            />
+          </div>
+
+          <div style={activeSummaryStyle}>
+            <span style={activeSummaryLabelStyle}>Active filters</span>
+
+            {activeFilters.length === 0 && query.trim() === "" ? (
+              <span style={activeSummaryTextStyle}>None</span>
+            ) : (
+              <span style={activeSummaryTextStyle}>
+                {[query.trim() ? `Search: ${query.trim()}` : null, ...activeFilters]
+                  .filter(Boolean)
+                  .join(" · ")}
+              </span>
+            )}
           </div>
         </section>
 
@@ -313,14 +395,13 @@ export function CityDirectory({ cities }: Props) {
             </div>
 
             <span style={mutedTextStyle}>
-              {activeQuickFilter}
-              {activeDetailFilter !== "All" ? ` · ${activeDetailFilter}` : ""}
+              {filteredCities.length} / {cities.length} cities
             </span>
           </div>
 
           {filteredCities.length === 0 ? (
             <div style={emptyStyle}>
-              No cities found. Try another keyword or reset the filters.
+              No cities found. Try another keyword or clear the filters.
             </div>
           ) : (
             <section style={destinationGridStyle}>
@@ -381,6 +462,44 @@ export function CityDirectory({ cities }: Props) {
   );
 }
 
+function FilterGroup({
+  label,
+  value,
+  options,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  options: string[];
+  onChange: (value: string) => void;
+}) {
+  return (
+    <div style={filterGroupStyle}>
+      <div style={filterGroupTopStyle}>
+        <span style={filterGroupLabelStyle}>{label}</span>
+        <span style={filterGroupValueStyle}>{value}</span>
+      </div>
+
+      <div style={filterWrapStyle}>
+        {options.map((option) => {
+          const isActive = option === value;
+
+          return (
+            <button
+              key={option}
+              type="button"
+              onClick={() => onChange(option)}
+              style={isActive ? activeFilterButtonStyle : filterButtonStyle}
+            >
+              {option}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 const pageStyle: CSSProperties = {
   minHeight: "100vh",
   overflowX: "hidden",
@@ -398,7 +517,7 @@ const shellStyle: CSSProperties = {
 };
 
 const heroStyle: CSSProperties = {
-  marginBottom: 34,
+  marginBottom: 28,
 };
 
 const eyebrowStyle: CSSProperties = {
@@ -456,8 +575,14 @@ const searchInputStyle: CSSProperties = {
   color: "#171717",
 };
 
-const filterSectionStyle: CSSProperties = {
-  marginBottom: 28,
+const filterPanelStyle: CSSProperties = {
+  marginBottom: 34,
+  padding: 18,
+  borderRadius: 30,
+  background: "rgba(255, 255, 255, 0.7)",
+  border: "1px solid rgba(0, 0, 0, 0.07)",
+  boxShadow: "0 20px 58px rgba(0, 0, 0, 0.07)",
+  backdropFilter: "blur(18px)",
 };
 
 const sectionHeaderStyle: CSSProperties = {
@@ -484,39 +609,6 @@ const sectionTitleStyle: CSSProperties = {
   fontWeight: 850,
 };
 
-const mutedTextStyle: CSSProperties = {
-  fontSize: 13,
-  opacity: 0.6,
-  whiteSpace: "nowrap",
-};
-
-const filterWrapStyle: CSSProperties = {
-  display: "flex",
-  gap: 8,
-  overflowX: "auto",
-  paddingBottom: 14,
-};
-
-const filterButtonStyle: CSSProperties = {
-  border: "1px solid rgba(0, 0, 0, 0.1)",
-  background: "rgba(255, 255, 255, 0.74)",
-  color: "#171717",
-  borderRadius: 999,
-  padding: "10px 13px",
-  fontSize: 13,
-  fontWeight: 700,
-  whiteSpace: "nowrap",
-  cursor: "pointer",
-  boxShadow: "0 10px 28px rgba(0, 0, 0, 0.04)",
-};
-
-const activeFilterButtonStyle: CSSProperties = {
-  ...filterButtonStyle,
-  background: "#171717",
-  color: "#ffffff",
-  border: "1px solid #171717",
-};
-
 const resetButtonStyle: CSSProperties = {
   border: "1px solid rgba(0, 0, 0, 0.1)",
   borderRadius: 999,
@@ -528,8 +620,129 @@ const resetButtonStyle: CSSProperties = {
   cursor: "pointer",
 };
 
+const shortcutWrapStyle: CSSProperties = {
+  display: "flex",
+  gap: 8,
+  overflowX: "auto",
+  paddingBottom: 14,
+  marginBottom: 6,
+};
+
+const shortcutButtonStyle: CSSProperties = {
+  border: "1px solid rgba(0, 0, 0, 0.1)",
+  background: "rgba(255, 255, 255, 0.78)",
+  color: "#171717",
+  borderRadius: 999,
+  padding: "11px 14px",
+  fontSize: 13,
+  fontWeight: 800,
+  whiteSpace: "nowrap",
+  cursor: "pointer",
+};
+
+const activeShortcutButtonStyle: CSSProperties = {
+  ...shortcutButtonStyle,
+  background: "#171717",
+  color: "#ffffff",
+  border: "1px solid #171717",
+};
+
+const filterGridStyle: CSSProperties = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 260px), 1fr))",
+  gap: 12,
+  marginTop: 8,
+};
+
+const filterGroupStyle: CSSProperties = {
+  minWidth: 0,
+  padding: 14,
+  borderRadius: 22,
+  background: "rgba(255, 255, 255, 0.58)",
+  border: "1px solid rgba(0, 0, 0, 0.06)",
+};
+
+const filterGroupTopStyle: CSSProperties = {
+  display: "flex",
+  justifyContent: "space-between",
+  gap: 10,
+  alignItems: "center",
+  marginBottom: 10,
+};
+
+const filterGroupLabelStyle: CSSProperties = {
+  fontSize: 12,
+  letterSpacing: "0.1em",
+  textTransform: "uppercase",
+  fontWeight: 850,
+  opacity: 0.5,
+};
+
+const filterGroupValueStyle: CSSProperties = {
+  fontSize: 12,
+  fontWeight: 850,
+  opacity: 0.62,
+  whiteSpace: "nowrap",
+};
+
+const filterWrapStyle: CSSProperties = {
+  display: "flex",
+  gap: 7,
+  overflowX: "auto",
+  paddingBottom: 2,
+};
+
+const filterButtonStyle: CSSProperties = {
+  border: "1px solid rgba(0, 0, 0, 0.08)",
+  background: "rgba(255, 255, 255, 0.76)",
+  color: "#171717",
+  borderRadius: 999,
+  padding: "8px 10px",
+  fontSize: 12,
+  fontWeight: 750,
+  whiteSpace: "nowrap",
+  cursor: "pointer",
+};
+
+const activeFilterButtonStyle: CSSProperties = {
+  ...filterButtonStyle,
+  background: "rgba(248, 225, 184, 0.95)",
+  border: "1px solid rgba(0, 0, 0, 0.1)",
+};
+
+const activeSummaryStyle: CSSProperties = {
+  display: "flex",
+  gap: 8,
+  flexWrap: "wrap",
+  alignItems: "center",
+  marginTop: 14,
+  paddingTop: 14,
+  borderTop: "1px solid rgba(0, 0, 0, 0.07)",
+};
+
+const activeSummaryLabelStyle: CSSProperties = {
+  fontSize: 11,
+  letterSpacing: "0.12em",
+  textTransform: "uppercase",
+  fontWeight: 850,
+  opacity: 0.46,
+};
+
+const activeSummaryTextStyle: CSSProperties = {
+  fontSize: 13,
+  lineHeight: 1.4,
+  fontWeight: 750,
+  opacity: 0.7,
+};
+
 const contentStyle: CSSProperties = {
   marginTop: 10,
+};
+
+const mutedTextStyle: CSSProperties = {
+  fontSize: 13,
+  opacity: 0.6,
+  whiteSpace: "nowrap",
 };
 
 const destinationGridStyle: CSSProperties = {
