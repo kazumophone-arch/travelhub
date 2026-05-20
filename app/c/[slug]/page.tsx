@@ -133,19 +133,6 @@ export default async function CityPage({
                 ))}
             </div>
           </div>
-
-          <aside style={heroActionCardStyle}>
-            <div style={smallLabelStyle}>Plan with less guessing</div>
-            <h2 style={heroActionTitleStyle}>
-              Compare stays and tours after choosing your route.
-            </h2>
-            <p style={heroActionTextStyle}>
-              Start with the city highlights, then use the links when you know
-              what kind of trip fits you.
-            </p>
-
-            <AffiliateButtonGroup city={city} src={src} v={v} variant="city" />
-          </aside>
         </section>
 
         <section style={decisionGridStyle}>
@@ -531,11 +518,8 @@ const shellStyle: CSSProperties = {
 };
 
 const heroStyle: CSSProperties = {
-  display: "grid",
-  gridTemplateColumns: "minmax(0, 1.35fr) minmax(min(100%, 300px), 0.65fr)",
-  gap: 18,
-  alignItems: "stretch",
-  marginBottom: 22,
+  display: "block",
+  marginBottom: 28,
 };
 
 const heroTextStyle: CSSProperties = {
@@ -888,6 +872,7 @@ const noteStyle: CSSProperties = {
   lineHeight: 1.6,
   opacity: 0.52,
 };
+
 
 
 
