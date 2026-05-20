@@ -283,11 +283,6 @@ export function HomeLanding({ cities }: Props) {
 
           <div style={heroPreviewStyle}>
             <div style={heroImageStyle}>
-              <div style={floatingCardStyle}>
-                <div style={floatingSmallTextStyle}>TravelHub</div>
-                <div style={floatingTitleStyle}>{homeCopy.previewTitle}</div>
-                <div style={floatingSubStyle}>{homeCopy.previewSub}</div>
-              </div>
             </div>
           </div>
         </section>
@@ -599,38 +594,12 @@ const heroImageStyle: CSSProperties = {
   overflow: "hidden",
 };
 
-const floatingCardStyle: CSSProperties = {
-  position: "absolute",
-  left: 18,
-  right: 18,
-  bottom: 18,
-  padding: 16,
-  borderRadius: 22,
-  background: "#ffffff",
-  backdropFilter: "blur(18px)",
-  border: "1px solid rgba(255, 255, 255, 0.5)",
-  boxShadow: "0 18px 48px rgba(0, 0, 0, 0.16)",
-};
-
 const floatingSmallTextStyle: CSSProperties = {
   fontSize: 12,
   textTransform: "uppercase",
   letterSpacing: "0.12em",
   opacity: 0.55,
   marginBottom: 8,
-};
-
-const floatingTitleStyle: CSSProperties = {
-  fontSize: "clamp(22px, 7vw, 28px)",
-  fontWeight: 850,
-  letterSpacing: "-0.035em",
-};
-
-const floatingSubStyle: CSSProperties = {
-  marginTop: 6,
-  fontSize: 13,
-  opacity: 0.65,
-  fontWeight: 650,
 };
 
 const feedSectionStyle: CSSProperties = {
@@ -926,6 +895,8 @@ const cityResultTextStyle: CSSProperties = {
   lineHeight: 1.45,
   opacity: 0.7,
 };
+
+
 
 
 
