@@ -635,12 +635,11 @@ const searchInputStyle: CSSProperties = {
 
 const filterPanelStyle: CSSProperties = {
   marginBottom: 34,
-  padding: 18,
-  borderRadius: 30,
-  background: "rgba(255, 255, 255, 0.7)",
-  border: "1px solid rgba(23, 32, 42, 0.07)",
-  boxShadow: "0 20px 58px rgba(0, 0, 0, 0.07)",
-  backdropFilter: "blur(18px)",
+  padding: 16,
+  borderRadius: 26,
+  background: "#ffffff",
+  border: "1px solid rgba(23, 32, 42, 0.08)",
+  boxShadow: "0 7px 20px rgba(30, 64, 88, 0.05)",
 };
 
 const sectionHeaderStyle: CSSProperties = {
@@ -714,10 +713,10 @@ const filterGridStyle: CSSProperties = {
 
 const filterGroupStyle: CSSProperties = {
   minWidth: 0,
-  padding: 14,
-  borderRadius: 22,
-  background: "rgba(255, 255, 255, 0.58)",
-  border: "1px solid rgba(0, 0, 0, 0.06)",
+  padding: 13,
+  borderRadius: 20,
+  background: "#f7fbfc",
+  border: "1px solid rgba(23, 32, 42, 0.06)",
 };
 
 const filterGroupTopStyle: CSSProperties = {
@@ -764,8 +763,9 @@ const filterButtonStyle: CSSProperties = {
 
 const activeFilterButtonStyle: CSSProperties = {
   ...filterButtonStyle,
-  background: "rgba(248, 225, 184, 0.95)",
-  border: "1px solid rgba(0, 0, 0, 0.1)",
+  background: "#eef8f5",
+  color: "#138a72",
+  border: "1px solid rgba(19, 138, 114, 0.18)",
 };
 
 const activeSummaryStyle: CSSProperties = {
@@ -811,34 +811,37 @@ const destinationGridStyle: CSSProperties = {
 
 const destinationCardStyle: CSSProperties = {
   display: "block",
-  borderRadius: 28,
+  borderRadius: 24,
   background: "#ffffff",
   border: "1px solid rgba(23, 32, 42, 0.08)",
-  boxShadow: "0 8px 22px rgba(30, 64, 88, 0.07)",
+  boxShadow: "0 7px 20px rgba(30, 64, 88, 0.06)",
   color: "inherit",
   textDecoration: "none",
   overflow: "hidden",
 };
 
 const destinationVisualStyle: CSSProperties = {
-  height: "clamp(140px, 40vw, 160px)",
+  height: "clamp(118px, 34vw, 148px)",
   position: "relative",
+  borderBottom: "1px solid rgba(23, 32, 42, 0.06)",
 };
 
 const countryBadgeStyle: CSSProperties = {
   position: "absolute",
-  top: 14,
-  left: 14,
+  top: 12,
+  left: 12,
   padding: "7px 10px",
   borderRadius: 999,
-  background: "rgba(255, 255, 255, 0.76)",
-  backdropFilter: "blur(12px)",
+  background: "rgba(255, 255, 255, 0.86)",
+  border: "1px solid rgba(23, 32, 42, 0.07)",
+  backdropFilter: "blur(10px)",
   fontSize: 12,
-  fontWeight: 750,
+  color: "#138a72",
+  fontWeight: 850,
 };
 
 const destinationBodyStyle: CSSProperties = {
-  padding: 18,
+  padding: 17,
 };
 
 const destinationTopStyle: CSSProperties = {
@@ -855,45 +858,46 @@ const destinationTextStyle: CSSProperties = {
 
 const destinationTitleStyle: CSSProperties = {
   margin: 0,
-  fontSize: "clamp(22px, 6vw, 25px)",
-  lineHeight: 1.05,
+  fontSize: "clamp(21px, 5.4vw, 24px)",
+  lineHeight: 1.08,
   letterSpacing: "-0.035em",
   overflowWrap: "break-word",
+  color: "#17202a",
 };
 
 const destinationCountryStyle: CSSProperties = {
-  margin: "7px 0 0",
-  fontSize: 14,
-  opacity: 0.62,
+  margin: "6px 0 0",
+  fontSize: 13,
+  color: "#607080",
 };
 
 const destinationReasonStyle: CSSProperties = {
   margin: "0 0 14px",
   fontSize: 13,
-  lineHeight: 1.45,
-  opacity: 0.7,
+  lineHeight: 1.5,
+  color: "#607080",
   fontWeight: 650,
 };
 
 const arrowStyle: CSSProperties = {
-  width: 34,
-  height: 34,
+  width: 32,
+  height: 32,
   display: "grid",
   placeItems: "center",
   borderRadius: "50%",
-  background: "#138a72",
-  color: "#ffffff",
-  fontWeight: 800,
+  background: "#eef8f5",
+  color: "#138a72",
+  fontWeight: 850,
   flexShrink: 0,
 };
 
 const spotsStyle: CSSProperties = {
   display: "grid",
-  gap: 7,
-  fontSize: 14,
-  lineHeight: 1.35,
-  opacity: 0.74,
-  marginBottom: 16,
+  gap: 6,
+  fontSize: 13,
+  lineHeight: 1.4,
+  color: "#607080",
+  marginBottom: 15,
 };
 
 const actionRowStyle: CSSProperties = {
@@ -905,17 +909,17 @@ const actionRowStyle: CSSProperties = {
 const primaryMiniStyle: CSSProperties = {
   padding: "7px 10px",
   borderRadius: 999,
-  background: "#138a72",
-  color: "#ffffff",
+  background: "#eef8f5",
+  color: "#138a72",
   fontSize: 12,
-  fontWeight: 750,
+  fontWeight: 800,
 };
 
 const secondaryMiniStyle: CSSProperties = {
   padding: "7px 10px",
   borderRadius: 999,
-  background: "rgba(0, 0, 0, 0.06)",
-  color: "#17202a",
+  background: "#f3f8fa",
+  color: "#607080",
   fontSize: 12,
   fontWeight: 750,
 };
@@ -928,6 +932,8 @@ const emptyStyle: CSSProperties = {
   textAlign: "center",
   opacity: 0.72,
 };
+
+
 
 
 
