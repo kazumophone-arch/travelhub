@@ -1,69 +1,115 @@
+import Link from "next/link";
 import type { CSSProperties } from "react";
 import type { City } from "@/data/types";
-import { getAffiliateLinks } from "@/data/affiliate-links";
 
 type Props = {
   city: City;
-  src: string;
-  v: string;
-  spotSlug?: string;
+  src?: string;
+  v?: string;
 };
 
-export function AffiliateButtonGroup({ city, src, v, spotSlug }: Props) {
-  const links = getAffiliateLinks(city);
+export function AffiliateButtonGroup({ city, src = "site", v = "default" }: Props) {
+  const encodedCity = encodeURIComponent(city.slug);
+  const encodedSrc = encodeURIComponent(src);
+  const encodedV = encodeURIComponent(v);
 
-  if (links.length === 0) return null;
+  const hotelsHref = `/out/hotels?c=${encodedCity}&src=${encodedSrc}&v=${encodedV}`;
+  const toursHref = `/out/tours?c=${encodedCity}&src=${encodedSrc}&v=${encodedV}`;
 
   return (
-    <section style={buttonGroupStyle}>
-      {links.map((link, index) => {
-        const href = `/out/${link.type}?c=${encodeURIComponent(
-          city.slug
-        )}&src=${encodeURIComponent(src)}&v=${encodeURIComponent(v)}${
-          spotSlug ? `&s=${encodeURIComponent(spotSlug)}` : ""
-        }`;
+    <div style={wrapStyle}>
+      <Link href={hotelsHref} style={primaryCardStyle}>
+        <div style={cardTopStyle}>
+          <span style={labelStyle}>Hotels</span>
+          <span style={arrowStyle}>→</span>
+        </div>
 
-        return (
-          <a
-            key={link.type}
-            href={href}
-            style={index === 0 ? primaryButtonStyle : secondaryButtonStyle}
-          >
-            {link.label}
-          </a>
-        );
-      })}
-    </section>
+        <div style={titleStyle}>Find stays in {city.city}</div>
+
+        <p style={textStyle}>
+          Compare hotel options after choosing the area that fits your route.
+        </p>
+      </Link>
+
+      <Link href={toursHref} style={secondaryCardStyle}>
+        <div style={cardTopStyle}>
+          <span style={labelStyle}>Tours</span>
+          <span style={arrowStyle}>→</span>
+        </div>
+
+        <div style={titleStyle}>View {city.city} tours</div>
+
+        <p style={textStyle}>
+          Use a guided route when you want the planning handled for you.
+        </p>
+      </Link>
+    </div>
   );
 }
 
-const buttonGroupStyle: CSSProperties = {
+const wrapStyle: CSSProperties = {
   display: "grid",
-  gap: 12,
+  gap: 10,
 };
 
-const primaryButtonStyle: CSSProperties = {
+const primaryCardStyle: CSSProperties = {
   display: "block",
-  padding: "16px 18px",
-  borderRadius: 18,
+  padding: 15,
+  borderRadius: 22,
   background: "#171717",
   color: "#ffffff",
-  textAlign: "center",
   textDecoration: "none",
-  fontWeight: 850,
-  fontSize: 16,
-  boxShadow: "0 16px 38px rgba(0, 0, 0, 0.16)",
+  boxShadow: "0 18px 46px rgba(0, 0, 0, 0.16)",
 };
 
-const secondaryButtonStyle: CSSProperties = {
+const secondaryCardStyle: CSSProperties = {
   display: "block",
-  padding: "15px 18px",
-  borderRadius: 18,
-  background: "#ffffff",
+  padding: 15,
+  borderRadius: 22,
+  background: "rgba(255, 255, 255, 0.88)",
   color: "#171717",
-  textAlign: "center",
   textDecoration: "none",
-  fontWeight: 750,
-  fontSize: 15,
-  border: "1px solid rgba(0, 0, 0, 0.12)",
+  border: "1px solid rgba(0, 0, 0, 0.08)",
+  boxShadow: "0 14px 34px rgba(0, 0, 0, 0.08)",
+};
+
+const cardTopStyle: CSSProperties = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  gap: 10,
+  marginBottom: 10,
+};
+
+const labelStyle: CSSProperties = {
+  fontSize: 12,
+  letterSpacing: "0.12em",
+  textTransform: "uppercase",
+  fontWeight: 850,
+  opacity: 0.62,
+};
+
+const arrowStyle: CSSProperties = {
+  width: 26,
+  height: 26,
+  display: "grid",
+  placeItems: "center",
+  borderRadius: "50%",
+  background: "rgba(255, 255, 255, 0.18)",
+  fontSize: 14,
+  fontWeight: 850,
+};
+
+const titleStyle: CSSProperties = {
+  fontSize: 18,
+  lineHeight: 1.08,
+  letterSpacing: "-0.04em",
+  fontWeight: 850,
+};
+
+const textStyle: CSSProperties = {
+  margin: "8px 0 0",
+  fontSize: 13,
+  lineHeight: 1.5,
+  opacity: 0.68,
 };
