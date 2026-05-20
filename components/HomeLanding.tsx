@@ -161,6 +161,22 @@ function getSpotSearchResults(cities: City[], query: string) {
   return results.slice(0, 8);
 }
 
+
+function getDisplayStops(city: City) {
+  return city.stops
+    .filter((spot) => {
+      const normalized = spot.trim().toLowerCase();
+
+      return (
+        normalized !== "" &&
+        normalized !== "none" &&
+        normalized !== "n/a" &&
+        normalized !== "null" &&
+        normalized !== "-"
+      );
+    })
+    .slice(0, 3);
+}
 function getCitySearchResults(cities: City[], query: string) {
   const normalizedQuery = query.trim().toLowerCase();
 
@@ -326,7 +342,7 @@ export function HomeLanding({ cities }: Props) {
                         <h3 style={cityResultTitleStyle}>{city.city}</h3>
                         <p style={cityResultMetaStyle}>{city.country}</p>
                         <p style={cityResultTextStyle}>
-                          {city.stops.slice(0, 3).join(" · ")}
+                          {getDisplayStops(city).join(" · ")}
                         </p>
                       </div>
                     </Link>
@@ -916,5 +932,6 @@ const cityResultTextStyle: CSSProperties = {
   lineHeight: 1.45,
   opacity: 0.7,
 };
+
 
 

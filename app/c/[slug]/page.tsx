@@ -306,6 +306,22 @@ export default async function CityPage({
   );
 }
 
+
+function getDisplayStops(city: City) {
+  return city.stops
+    .filter((spot) => {
+      const normalized = spot.trim().toLowerCase();
+
+      return (
+        normalized !== "" &&
+        normalized !== "none" &&
+        normalized !== "n/a" &&
+        normalized !== "null" &&
+        normalized !== "-"
+      );
+    })
+    .slice(0, 3);
+}
 function getCityIntro(city: City) {
   return (
     city.description ??
@@ -316,7 +332,7 @@ function getCityIntro(city: City) {
 function getWhyVisitText(city: City) {
   const themes = city.themes?.slice(0, 3).join(", ");
   const styles = city.travelStyles?.slice(0, 3).join(", ");
-  const stops = city.stops.slice(0, 3).join(", ");
+  const stops = getDisplayStops(city).join(", ");
 
   if (themes && styles) {
     return `${city.city} works well for ${styles.toLowerCase()} trips, especially if you want ${themes.toLowerCase()} experiences. Start with ${stops}.`;
@@ -478,7 +494,7 @@ function getStayAreas(city: City): StayArea[] {
 }
 
 function getTourText(city: City) {
-  const firstSpot = city.stops[0];
+  const firstSpot = getDisplayStops(city)[0] ?? city.city;
 
   return `If ${firstSpot} is one of your main reasons to visit, a guided route or city experience can reduce planning effort and connect nearby sights more efficiently.`;
 }
@@ -800,4 +816,5 @@ const tourCtaStyle: CSSProperties = {
   border: "1px solid rgba(0, 0, 0, 0.08)",
   boxShadow: "0 24px 74px rgba(0, 0, 0, 0.1)",
 };
+
 
