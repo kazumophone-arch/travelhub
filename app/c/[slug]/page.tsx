@@ -143,7 +143,7 @@ export default async function CityPage({
               what kind of trip fits you.
             </p>
 
-            <AffiliateButtonGroup city={city} src={src} v={v} />
+            <AffiliateButtonGroup city={city} src={src} v={v} variant="city" />
           </aside>
         </section>
 
@@ -218,7 +218,7 @@ export default async function CityPage({
               </h3>
             </div>
 
-            <AffiliateButtonGroup city={city} src={src} v={`stay_${v}`} />
+            <AffiliateButtonGroup city={city} src={src} v={`stay_${v}`} variant="stay" />
           </div>
         </section>
 
@@ -311,7 +311,7 @@ export default async function CityPage({
               <p style={sectionLeadStyle}>{getTourText(city)}</p>
             </div>
 
-            <AffiliateButtonGroup city={city} src={src} v={`tour_${v}`} primary="tours" />
+            <AffiliateButtonGroup city={city} src={src} v={`tour_${v}`} primary="tours" variant="tour" />
           </div>
         </section>
 
@@ -327,7 +327,7 @@ export default async function CityPage({
             </p>
           </div>
 
-          <AffiliateButtonGroup city={city} src={src} v={`final_${v}`} tone="dark" />
+          <AffiliateButtonGroup city={city} src={src} v={`final_${v}`} tone="dark" variant="final" />
         </section>
 
         <p style={noteStyle}>
@@ -901,4 +901,5 @@ const noteStyle: CSSProperties = {
   lineHeight: 1.6,
   opacity: 0.52,
 };
+
 

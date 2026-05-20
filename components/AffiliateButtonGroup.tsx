@@ -4,6 +4,13 @@ import type { City } from "@/data/types";
 
 type AffiliatePrimary = "hotels" | "tours";
 type AffiliateTone = "light" | "dark";
+type AffiliateVariant =
+  | "city"
+  | "stay"
+  | "tour"
+  | "spot-tour"
+  | "spot-hotel"
+  | "final";
 
 type Props = {
   city: City;
@@ -11,6 +18,7 @@ type Props = {
   v?: string;
   primary?: AffiliatePrimary;
   tone?: AffiliateTone;
+  variant?: AffiliateVariant;
 };
 
 type AffiliateItem = {
@@ -27,25 +35,29 @@ export function AffiliateButtonGroup({
   v = "default",
   primary = "hotels",
   tone = "light",
+  variant = "city",
 }: Props) {
   const encodedCity = encodeURIComponent(city.slug);
   const encodedSrc = encodeURIComponent(src);
   const encodedV = encodeURIComponent(v);
+
+  const hotelCopy = getHotelCopy(city, variant);
+  const tourCopy = getTourCopy(city, variant);
 
   const items: AffiliateItem[] = [
     {
       key: "hotels",
       href: `/out/hotels?c=${encodedCity}&src=${encodedSrc}&v=${encodedV}`,
       label: "Hotels",
-      title: `Find stays in ${city.city}`,
-      text: "Compare hotel options after choosing the area that fits your route.",
+      title: hotelCopy.title,
+      text: hotelCopy.text,
     },
     {
       key: "tours",
       href: `/out/tours?c=${encodedCity}&src=${encodedSrc}&v=${encodedV}`,
       label: "Tours",
-      title: `View ${city.city} tours`,
-      text: "Use a guided route when you want the planning handled for you.",
+      title: tourCopy.title,
+      text: tourCopy.text,
     },
   ];
 
@@ -78,6 +90,90 @@ export function AffiliateButtonGroup({
       })}
     </div>
   );
+}
+
+function getHotelCopy(city: City, variant: AffiliateVariant) {
+  if (variant === "stay") {
+    return {
+      title: `Compare ${city.city} hotels by area`,
+      text: "Use your preferred stay area as the filter before comparing options.",
+    };
+  }
+
+  if (variant === "tour") {
+    return {
+      title: `Find a base in ${city.city}`,
+      text: "Choose a stay that makes your main route and tour meeting points easier.",
+    };
+  }
+
+  if (variant === "spot-tour") {
+    return {
+      title: `Stay near your ${city.city} route`,
+      text: "Compare stays after deciding which spots you want to connect.",
+    };
+  }
+
+  if (variant === "spot-hotel") {
+    return {
+      title: `Find stays in ${city.city}`,
+      text: "Choose your hotel area after checking which places are part of your route.",
+    };
+  }
+
+  if (variant === "final") {
+    return {
+      title: `Compare stays in ${city.city}`,
+      text: "Use the guide first, then check hotels when your route is clearer.",
+    };
+  }
+
+  return {
+    title: `Find stays in ${city.city}`,
+    text: "Compare hotel options after choosing the area that fits your route.",
+  };
+}
+
+function getTourCopy(city: City, variant: AffiliateVariant) {
+  if (variant === "stay") {
+    return {
+      title: `View ${city.city} tours`,
+      text: "Use a tour when you want the sightseeing route handled after choosing your base.",
+    };
+  }
+
+  if (variant === "tour") {
+    return {
+      title: `View ${city.city} tours`,
+      text: "Use a guided route when you want nearby highlights connected for you.",
+    };
+  }
+
+  if (variant === "spot-tour") {
+    return {
+      title: `View ${city.city} tours including this area`,
+      text: "Use a tour when this spot is one of your route anchors.",
+    };
+  }
+
+  if (variant === "spot-hotel") {
+    return {
+      title: `Add a ${city.city} tour`,
+      text: "Use a guided route if you want to connect this spot with nearby highlights.",
+    };
+  }
+
+  if (variant === "final") {
+    return {
+      title: `View ${city.city} tours`,
+      text: "Turn the places you saved into a route with less planning effort.",
+    };
+  }
+
+  return {
+    title: `View ${city.city} tours`,
+    text: "Use a guided route when you want the planning handled for you.",
+  };
 }
 
 function getCardStyle(isPrimary: boolean, tone: AffiliateTone): CSSProperties {

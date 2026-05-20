@@ -202,7 +202,7 @@ export default async function SpotPage({
               </p>
             </div>
 
-            <AffiliateButtonGroup city={city} src={src} v={`tour_${v}`} primary="tours" />
+            <AffiliateButtonGroup city={city} src={src} v={`tour_${v}`} primary="tours" variant="spot-tour" />
           </div>
         </section>
 
@@ -260,7 +260,7 @@ export default async function SpotPage({
               </p>
             </div>
 
-            <AffiliateButtonGroup city={city} src={src} v={`hotel_${v}`} />
+            <AffiliateButtonGroup city={city} src={src} v={`hotel_${v}`} variant="spot-hotel" />
           </div>
         </section>
 
@@ -277,7 +277,7 @@ export default async function SpotPage({
             </p>
           </div>
 
-          <AffiliateButtonGroup city={city} src={src} v={`final_${v}`} primary="tours" tone="dark" />
+          <AffiliateButtonGroup city={city} src={src} v={`final_${v}`} primary="tours" tone="dark" variant="final" />
         </section>
 
         <p style={noteStyle}>
@@ -641,4 +641,5 @@ const noteStyle: CSSProperties = {
   lineHeight: 1.6,
   opacity: 0.52,
 };
+
 
