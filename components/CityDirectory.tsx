@@ -484,8 +484,8 @@ export function CityDirectory({ cities }: Props) {
                     <p style={destinationReasonStyle}>{getCityReason(city)}</p>
 
                     <div style={spotsStyle}>
-                      {city.stops.slice(0, 3).map((spot) => (
-                        <span key={spot}>{spot}</span>
+                      {city.stops.slice(0, 3).map((spot, spotIndex) => (
+                        <span key={`${spot}-${spotIndex}`}>{spot}</span>
                       ))}
                     </div>
 
@@ -921,4 +921,5 @@ const emptyStyle: CSSProperties = {
   textAlign: "center",
   opacity: 0.72,
 };
+
 

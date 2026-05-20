@@ -407,9 +407,9 @@ export function HomeLanding({ cities }: Props) {
           <div style={quickGridStyle}>
             <Link href="/discover" style={quickCardStyle}>
               <div style={quickLabelStyle}>Discover</div>
-              <h3 style={quickTitleStyle}>Find a trip by feeling</h3>
+              <h3 style={quickTitleStyle}>Find by feeling or season</h3>
               <p style={quickTextStyle}>
-                Use interactive tools when you know the mood, but not the city.
+                Use Discover when you know the mood or timing, but not the city.
               </p>
             </Link>
 
@@ -940,5 +940,6 @@ const cityResultTextStyle: CSSProperties = {
   lineHeight: 1.45,
   opacity: 0.7,
 };
+
 
 
