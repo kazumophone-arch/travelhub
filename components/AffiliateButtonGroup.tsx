@@ -88,7 +88,7 @@ export function AffiliateButtonGroup({
             <p style={textStyle}>{item.text}</p>
 
             <div style={trustStyle}>
-              Affiliate link · No extra cost · Compare before booking
+              Comparison link · No extra cost · Check details before booking
             </div>
           </Link>
         );
@@ -330,3 +330,4 @@ const trustNoteStyle: CSSProperties = {
   lineHeight: 1.45,
   fontWeight: 750,
 };
+

@@ -8,7 +8,6 @@ import { TravelVisual } from "@/components/TravelVisual";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { BookingConfidencePanel } from "@/components/BookingConfidencePanel";
 import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
-import { StickyAffiliateBar } from "@/components/StickyAffiliateBar";
 
 type StayArea = {
   name: string;
@@ -318,25 +317,7 @@ export default async function CityPage({
         </section>
 
         <BookingConfidencePanel cityName={city.city} variant="city" />
-
-        <section style={finalCtaStyle}>
-          <div>
-            <div style={smallLabelStyle}>Ready to plan?</div>
-            <h2 style={finalCtaTitleStyle}>
-              Turn {city.city} from an idea into a trip plan.
-            </h2>
-            <p style={finalCtaTextStyle}>
-              You have the key places, timing, stay-area logic, and planning
-              links in one place.
-            </p>
-          </div>
-
-          <AffiliateButtonGroup city={city} src={src} v={`final_${v}`} tone="dark" variant="final" />
-        </section>
-
-        <StickyAffiliateBar city={city} src={src} v={`sticky_${v}`} primary="hotels" />
-
-        <p style={noteStyle}>
+<p style={noteStyle}>
           Some links may be affiliate links. We may earn a commission if you book
           through them, at no extra cost to you.
         </p>
@@ -907,6 +888,8 @@ const noteStyle: CSSProperties = {
   lineHeight: 1.6,
   opacity: 0.52,
 };
+
+
 
 
 

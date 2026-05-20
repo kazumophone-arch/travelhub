@@ -7,7 +7,6 @@ import { TravelVisual } from "@/components/TravelVisual";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { BookingConfidencePanel } from "@/components/BookingConfidencePanel";
 import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
-import { StickyAffiliateBar } from "@/components/StickyAffiliateBar";
 
 export async function generateMetadata({
   params,
@@ -271,26 +270,7 @@ export default async function SpotPage({
           spotName={spot.name}
           variant="spot"
         />
-
-        <section style={finalCtaStyle}>
-          <div>
-            <div style={smallLabelStyle}>Next step</div>
-            <h2 style={finalCtaTitleStyle}>
-              Turn {spot.name} into part of a real {city.city} plan.
-            </h2>
-
-            <p style={finalCtaTextStyle}>
-              Use the spot as your anchor, then compare tours or stays when the
-              route starts to make sense.
-            </p>
-          </div>
-
-          <AffiliateButtonGroup city={city} src={src} v={`final_${v}`} primary="tours" tone="dark" variant="final" />
-        </section>
-
-        <StickyAffiliateBar city={city} src={src} v={`sticky_${v}`} primary="tours" />
-
-        <p style={noteStyle}>
+<p style={noteStyle}>
           Some links may be affiliate links. We may earn a commission if you book
           through them, at no extra cost to you.
         </p>
@@ -651,6 +631,8 @@ const noteStyle: CSSProperties = {
   lineHeight: 1.6,
   opacity: 0.52,
 };
+
+
 
 
 
