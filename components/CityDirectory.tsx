@@ -10,25 +10,81 @@ type Props = {
   cities: City[];
 };
 
-const europeCountries = new Set([
-  "Italy",
-  "France",
-  "Spain",
-  "Czech Republic",
-  "Croatia",
-  "Austria",
-  "United Kingdom",
-  "Netherlands",
-]);
+const regionCountryMap: Record<string, string[]> = {
+  Europe: [
+    "Italy",
+    "France",
+    "Spain",
+    "Czech Republic",
+    "Croatia",
+    "Austria",
+    "United Kingdom",
+    "Netherlands",
+    "Germany",
+    "Portugal",
+    "Greece",
+    "Switzerland",
+    "Belgium",
+    "Norway",
+    "Sweden",
+    "Denmark",
+    "Finland",
+    "Iceland",
+  ],
+  Asia: [
+    "Japan",
+    "South Korea",
+    "China",
+    "Thailand",
+    "Singapore",
+    "Vietnam",
+    "Indonesia",
+    "Malaysia",
+    "Taiwan",
+    "Hong Kong",
+  ],
+  "North America": [
+    "United States",
+    "Canada",
+    "Mexico",
+  ],
+  Oceania: [
+    "Australia",
+    "New Zealand",
+  ],
+  Africa: [
+    "Morocco",
+    "Egypt",
+    "South Africa",
+    "Kenya",
+    "Tanzania",
+  ],
+  "Middle East": [
+    "United Arab Emirates",
+    "Turkey",
+    "Qatar",
+    "Jordan",
+    "Israel",
+  ],
+};
 
-const asiaCountries = new Set([
-  "Japan",
-  "South Korea",
-  "China",
-  "Thailand",
-  "Singapore",
-]);
+const broadRegionOptions = [
+  "All",
+  "Europe",
+  "Asia",
+  "North America",
+  "Oceania",
+  "Africa",
+  "Middle East",
+];
 
+function getRegionForCountry(country: string) {
+  const entry = Object.entries(regionCountryMap).find(([, countries]) =>
+    countries.includes(country)
+  );
+
+  return entry?.[0];
+}
 const monthNames = [
   "January",
   "February",
@@ -78,10 +134,9 @@ const preferredStyleOrder = [
 function getCityCategories(city: City) {
   const categories = new Set<string>();
 
-  if (europeCountries.has(city.country)) categories.add("Europe");
-  if (asiaCountries.has(city.country)) categories.add("Asia");
+  const region = getRegionForCountry(city.country);
 
-  categories.add(city.country);
+  if (region) categories.add(region);
 
   city.seasons?.forEach((season) => categories.add(season));
   city.months?.forEach((month) => categories.add(month));
@@ -182,11 +237,7 @@ export function CityDirectory({ cities }: Props) {
   const [activeMonth, setActiveMonth] = useState("All");
   const [activeStyle, setActiveStyle] = useState("All");
 
-  const regionOptions = useMemo(() => {
-    const countries = Array.from(new Set(cities.map((city) => city.country))).sort();
-
-    return ["All", "Europe", "Asia", ...countries];
-  }, [cities]);
+  const regionOptions = useMemo(() => broadRegionOptions, []);
 
   const monthOptions = useMemo(() => {
     const months = new Set<string>();
@@ -351,7 +402,7 @@ export function CityDirectory({ cities }: Props) {
 
           <div style={filterGridStyle}>
             <FilterGroup
-              label="Region / Country"
+              label="Region"
               value={activeRegion}
               options={regionOptions}
               onChange={setActiveRegion}
@@ -870,3 +921,4 @@ const emptyStyle: CSSProperties = {
   textAlign: "center",
   opacity: 0.72,
 };
+
