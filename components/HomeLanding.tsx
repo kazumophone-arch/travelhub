@@ -428,8 +428,7 @@ export function HomeLanding({ cities }: Props) {
 const pageStyle: CSSProperties = {
   minHeight: "100vh",
   overflowX: "hidden",
-  background:
-    "#f4faf8",
+  background: "#f8faf7",
   color: "#17202a",
   fontFamily:
     '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif',
@@ -479,20 +478,20 @@ const heroSubtitleStyle: CSSProperties = {
 };
 
 const searchBoxStyle: CSSProperties = {
-  maxWidth: 560,
+  maxWidth: 570,
   display: "flex",
   alignItems: "center",
   gap: 10,
-  padding: "7px 8px 7px 15px",
+  padding: "7px 8px 7px 16px",
   borderRadius: 22,
-  background: "#ffffff",
-  border: "1px solid rgba(23, 32, 42, 0.08)",
-  boxShadow: "0 8px 24px rgba(30, 64, 88, 0.08)",
+  background: "#fffdf8",
+  border: "1px solid rgba(168, 116, 50, 0.14)",
+  boxShadow: "0 10px 30px rgba(96, 76, 48, 0.08)",
 };
 
 const searchIconStyle: CSSProperties = {
   fontSize: 22,
-  opacity: 0.5,
+  color: "#9a6a2f",
   flexShrink: 0,
 };
 
@@ -662,12 +661,12 @@ const quickGridStyle: CSSProperties = {
 
 const quickCardStyle: CSSProperties = {
   display: "block",
-  minHeight: 138,
+  minHeight: 142,
   padding: 18,
   borderRadius: 22,
-  background: "#ffffff",
-  border: "1px solid rgba(23, 32, 42, 0.08)",
-  boxShadow: "0 5px 16px rgba(30, 64, 88, 0.05)",
+  background: "#fffdf8",
+  border: "1px solid rgba(168, 116, 50, 0.14)",
+  boxShadow: "0 8px 24px rgba(96, 76, 48, 0.07)",
   color: "inherit",
   textDecoration: "none",
 };
@@ -678,8 +677,9 @@ const quickLabelStyle: CSSProperties = {
   marginBottom: 13,
   padding: "6px 9px",
   borderRadius: 999,
-  background: "#eef8f5",
-  color: "#138a72",
+  background: "#f7efe2",
+  border: "1px solid rgba(168, 116, 50, 0.14)",
+  color: "#9a6a2f",
   fontSize: 11,
   letterSpacing: "0.11em",
   textTransform: "uppercase",
@@ -698,7 +698,7 @@ const quickTitleStyle: CSSProperties = {
 const quickTextStyle: CSSProperties = {
   margin: "9px 0 0",
   fontSize: 14,
-  lineHeight: 1.58,
+  lineHeight: 1.6,
   color: "#607080",
 };
 
@@ -798,19 +798,19 @@ const cityResultGridStyle: CSSProperties = {
 const cityResultCardStyle: CSSProperties = {
   display: "block",
   borderRadius: 22,
-  background: "#ffffff",
-  border: "1px solid rgba(23, 32, 42, 0.08)",
-  boxShadow: "0 5px 16px rgba(30, 64, 88, 0.05)",
+  background: "#fffdf8",
+  border: "1px solid rgba(168, 116, 50, 0.13)",
+  boxShadow: "0 8px 24px rgba(96, 76, 48, 0.07)",
   color: "inherit",
   textDecoration: "none",
   overflow: "hidden",
 };
 
 const cityResultVisualStyle: CSSProperties = {
-  height: 104,
+  height: "clamp(110px, 32vw, 142px)",
   position: "relative",
   background: "#f4faf8",
-  borderBottom: "1px solid rgba(23, 32, 42, 0.06)",
+  borderBottom: "1px solid rgba(168, 116, 50, 0.10)",
 };
 
 const cityResultBodyStyle: CSSProperties = {
@@ -839,6 +839,11 @@ const cityResultTextStyle: CSSProperties = {
   lineHeight: 1.48,
   color: "#607080",
 };
+
+
+
+
+
 
 
 
