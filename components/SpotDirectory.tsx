@@ -396,16 +396,14 @@ export function SpotDirectory({ cities }: Props) {
                   <Link
                     key={`${spot.citySlug}-${spot.slug}-${index}`}
                     href={href}
-                    style={spotCardStyle}
+                    style={{
+                      ...spotCardStyle,
+                      backgroundImage: `linear-gradient(180deg, rgba(10, 18, 24, 0.04) 0%, rgba(10, 18, 24, 0.28) 48%, rgba(10, 18, 24, 0.72) 100%), url("${getSpotImage(spot.citySlug, spot.slug).imageUrl}")`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                    }}
                   >
-                    <div
-                      style={{
-                        ...spotVisualStyle,
-                        backgroundImage: `url("${getSpotImage(spot.citySlug, spot.slug).imageUrl}")`,
-                        backgroundSize: "cover",
-                        backgroundPosition: "center",
-                      }}
-                    >
+                    <div style={spotVisualStyle}>
                       <div style={visualBadgeStyle}>{spot.cityName}</div>
                     </div>
 
@@ -680,19 +678,18 @@ const spotGridStyle: CSSProperties = {
 
 const spotCardStyle: CSSProperties = {
   display: "block",
+  minHeight: 380,
   borderRadius: 24,
-  background: "#ffffff",
-  border: "1px solid rgba(23, 32, 42, 0.08)",
-  boxShadow: "0 7px 20px rgba(30, 64, 88, 0.06)",
-  color: "inherit",
+  color: "#ffffff",
   textDecoration: "none",
   overflow: "hidden",
+  border: "1px solid rgba(255, 255, 255, 0.22)",
+  boxShadow: "0 12px 34px rgba(30, 64, 88, 0.16)",
 };
 
 const spotVisualStyle: CSSProperties = {
-  height: "clamp(132px, 38vw, 166px)",
+  height: "clamp(160px, 42vw, 205px)",
   position: "relative",
-  borderBottom: "1px solid rgba(23, 32, 42, 0.06)",
 };
 
 const visualBadgeStyle: CSSProperties = {
@@ -701,16 +698,24 @@ const visualBadgeStyle: CSSProperties = {
   left: 12,
   padding: "7px 10px",
   borderRadius: 999,
-  background: "rgba(255, 255, 255, 0.86)",
-  border: "1px solid rgba(23, 32, 42, 0.07)",
-  backdropFilter: "blur(10px)",
+  background: "rgba(255, 255, 255, 0.82)",
+  border: "1px solid rgba(255, 255, 255, 0.28)",
+  backdropFilter: "blur(12px)",
+  WebkitBackdropFilter: "blur(12px)",
   fontSize: 12,
-  color: "#138a72",
+  color: "#17202a",
   fontWeight: 850,
 };
 
 const spotBodyStyle: CSSProperties = {
-  padding: 17,
+  margin: "0 12px 12px",
+  padding: 16,
+  borderRadius: 20,
+  background: "rgba(12, 22, 30, 0.46)",
+  border: "1px solid rgba(255, 255, 255, 0.22)",
+  boxShadow: "0 10px 26px rgba(0, 0, 0, 0.12)",
+  backdropFilter: "blur(18px)",
+  WebkitBackdropFilter: "blur(18px)",
 };
 
 const spotMetaStyle: CSSProperties = {
@@ -718,7 +723,7 @@ const spotMetaStyle: CSSProperties = {
   fontSize: 12,
   letterSpacing: "0.08em",
   textTransform: "uppercase",
-  color: "#138a72",
+  color: "rgba(255, 255, 255, 0.78)",
   fontWeight: 850,
 };
 
@@ -728,14 +733,15 @@ const spotTitleStyle: CSSProperties = {
   lineHeight: 1.08,
   letterSpacing: "-0.04em",
   fontWeight: 850,
-  color: "#17202a",
+  color: "#ffffff",
+  textShadow: "0 1px 10px rgba(0, 0, 0, 0.24)",
 };
 
 const spotTextStyle: CSSProperties = {
   margin: "10px 0 14px",
   fontSize: 13,
   lineHeight: 1.55,
-  color: "#607080",
+  color: "rgba(255, 255, 255, 0.82)",
 };
 
 const chipRowStyle: CSSProperties = {
@@ -747,8 +753,9 @@ const chipRowStyle: CSSProperties = {
 const chipStyle: CSSProperties = {
   padding: "7px 9px",
   borderRadius: 999,
-  background: "#eef8f5",
-  color: "#138a72",
+  background: "rgba(255, 255, 255, 0.16)",
+  color: "#ffffff",
+  border: "1px solid rgba(255, 255, 255, 0.22)",
   fontSize: 12,
   fontWeight: 800,
 };
@@ -757,7 +764,7 @@ const openTextStyle: CSSProperties = {
   marginTop: 15,
   fontSize: 13,
   fontWeight: 850,
-  color: "#138a72",
+  color: "#ffffff",
 };
 
 const emptyStyle: CSSProperties = {
@@ -768,6 +775,8 @@ const emptyStyle: CSSProperties = {
   textAlign: "center",
   opacity: 0.72,
 };
+
+
 
 
 

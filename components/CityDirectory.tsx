@@ -468,16 +468,14 @@ export function CityDirectory({ cities }: Props) {
                 <Link
                   key={`${city.slug}-city-directory-${index}`}
                   href={`/c/${city.slug}?src=cities&v=cities_${city.slug}`}
-                  style={destinationCardStyle}
+                  style={{
+                    ...destinationCardStyle,
+                    backgroundImage: `linear-gradient(180deg, rgba(10, 18, 24, 0.04) 0%, rgba(10, 18, 24, 0.28) 48%, rgba(10, 18, 24, 0.72) 100%), url("${getCityImage(city.slug).imageUrl}")`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                  }}
                 >
-                  <div
-                    style={{
-                      ...destinationVisualStyle,
-                      backgroundImage: `url("${getCityImage(city.slug).imageUrl}")`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                    }}
-                  >
+                  <div style={destinationVisualStyle}>
                     <div style={countryBadgeStyle}>{city.country}</div>
                   </div>
 
@@ -814,19 +812,18 @@ const destinationGridStyle: CSSProperties = {
 
 const destinationCardStyle: CSSProperties = {
   display: "block",
+  minHeight: 360,
   borderRadius: 24,
-  background: "#ffffff",
-  border: "1px solid rgba(23, 32, 42, 0.08)",
-  boxShadow: "0 7px 20px rgba(30, 64, 88, 0.06)",
-  color: "inherit",
+  color: "#ffffff",
   textDecoration: "none",
   overflow: "hidden",
+  border: "1px solid rgba(255, 255, 255, 0.22)",
+  boxShadow: "0 12px 34px rgba(30, 64, 88, 0.16)",
 };
 
 const destinationVisualStyle: CSSProperties = {
-  height: "clamp(118px, 34vw, 148px)",
+  height: "clamp(150px, 38vw, 190px)",
   position: "relative",
-  borderBottom: "1px solid rgba(23, 32, 42, 0.06)",
 };
 
 const countryBadgeStyle: CSSProperties = {
@@ -835,16 +832,24 @@ const countryBadgeStyle: CSSProperties = {
   left: 12,
   padding: "7px 10px",
   borderRadius: 999,
-  background: "rgba(255, 255, 255, 0.86)",
-  border: "1px solid rgba(23, 32, 42, 0.07)",
-  backdropFilter: "blur(10px)",
+  background: "rgba(255, 255, 255, 0.82)",
+  border: "1px solid rgba(255, 255, 255, 0.28)",
+  backdropFilter: "blur(12px)",
+  WebkitBackdropFilter: "blur(12px)",
   fontSize: 12,
-  color: "#138a72",
+  color: "#17202a",
   fontWeight: 850,
 };
 
 const destinationBodyStyle: CSSProperties = {
-  padding: 17,
+  margin: "0 12px 12px",
+  padding: 16,
+  borderRadius: 20,
+  background: "rgba(12, 22, 30, 0.46)",
+  border: "1px solid rgba(255, 255, 255, 0.22)",
+  boxShadow: "0 10px 26px rgba(0, 0, 0, 0.12)",
+  backdropFilter: "blur(18px)",
+  WebkitBackdropFilter: "blur(18px)",
 };
 
 const destinationTopStyle: CSSProperties = {
@@ -861,24 +866,26 @@ const destinationTextStyle: CSSProperties = {
 
 const destinationTitleStyle: CSSProperties = {
   margin: 0,
-  fontSize: "clamp(21px, 5.4vw, 24px)",
-  lineHeight: 1.08,
-  letterSpacing: "-0.035em",
+  fontSize: "clamp(22px, 5.8vw, 26px)",
+  lineHeight: 1.06,
+  letterSpacing: "-0.04em",
   overflowWrap: "break-word",
-  color: "#17202a",
+  color: "#ffffff",
+  textShadow: "0 1px 10px rgba(0, 0, 0, 0.24)",
 };
 
 const destinationCountryStyle: CSSProperties = {
   margin: "6px 0 0",
   fontSize: 13,
-  color: "#607080",
+  color: "rgba(255, 255, 255, 0.82)",
+  fontWeight: 750,
 };
 
 const destinationReasonStyle: CSSProperties = {
   margin: "0 0 14px",
   fontSize: 13,
   lineHeight: 1.5,
-  color: "#607080",
+  color: "rgba(255, 255, 255, 0.82)",
   fontWeight: 650,
 };
 
@@ -888,7 +895,7 @@ const arrowStyle: CSSProperties = {
   display: "grid",
   placeItems: "center",
   borderRadius: "50%",
-  background: "#eef8f5",
+  background: "rgba(255, 255, 255, 0.86)",
   color: "#138a72",
   fontWeight: 850,
   flexShrink: 0,
@@ -899,7 +906,7 @@ const spotsStyle: CSSProperties = {
   gap: 6,
   fontSize: 13,
   lineHeight: 1.4,
-  color: "#607080",
+  color: "rgba(255, 255, 255, 0.82)",
   marginBottom: 15,
 };
 
@@ -912,8 +919,9 @@ const actionRowStyle: CSSProperties = {
 const primaryMiniStyle: CSSProperties = {
   padding: "7px 10px",
   borderRadius: 999,
-  background: "#eef8f5",
-  color: "#138a72",
+  background: "rgba(255, 255, 255, 0.18)",
+  color: "#ffffff",
+  border: "1px solid rgba(255, 255, 255, 0.24)",
   fontSize: 12,
   fontWeight: 800,
 };
@@ -921,8 +929,9 @@ const primaryMiniStyle: CSSProperties = {
 const secondaryMiniStyle: CSSProperties = {
   padding: "7px 10px",
   borderRadius: 999,
-  background: "#f3f8fa",
-  color: "#607080",
+  background: "rgba(255, 255, 255, 0.14)",
+  color: "rgba(255, 255, 255, 0.86)",
+  border: "1px solid rgba(255, 255, 255, 0.20)",
   fontSize: 12,
   fontWeight: 750,
 };
@@ -935,6 +944,8 @@ const emptyStyle: CSSProperties = {
   textAlign: "center",
   opacity: 0.72,
 };
+
+
 
 
 
