@@ -7,6 +7,7 @@ import { cities } from "@/data/cities";
 import { TravelVisual } from "@/components/TravelVisual";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
+import { getDisplayStops } from "@/lib/displayText";
 
 type StayArea = {
   name: string;
@@ -816,5 +817,6 @@ const tourCtaStyle: CSSProperties = {
   border: "1px solid rgba(0, 0, 0, 0.08)",
   boxShadow: "0 24px 74px rgba(0, 0, 0, 0.1)",
 };
+
 
 

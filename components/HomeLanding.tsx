@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import type { City } from "@/data/types";
+import { getDisplayStops } from "@/lib/displayText";
 import { homeCopyVariants, pickDailyVariant } from "@/lib/copyVariants";
 
 type Props = {
@@ -932,6 +933,7 @@ const cityResultTextStyle: CSSProperties = {
   lineHeight: 1.45,
   opacity: 0.7,
 };
+
 
 
 

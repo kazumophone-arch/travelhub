@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import type { City } from "@/data/types";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { getDisplayStops } from "@/lib/displayText";
 import { citiesCopyVariants, pickDailyVariant } from "@/lib/copyVariants";
 
 type Props = {
@@ -941,6 +942,7 @@ const emptyStyle: CSSProperties = {
   textAlign: "center",
   opacity: 0.72,
 };
+
 
 
 
