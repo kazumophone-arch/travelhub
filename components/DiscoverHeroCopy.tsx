@@ -58,3 +58,5 @@ const subtitleStyle: CSSProperties = {
   lineHeight: 1.72,
   opacity: 0.72,
 };
+
+

@@ -294,7 +294,7 @@ const pageStyle: CSSProperties = {
   fontFamily:
     '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif',
   background:
-    "radial-gradient(circle at 12% 0%, rgba(255, 221, 180, 0.72), transparent 30%), radial-gradient(circle at 88% 4%, rgba(175, 205, 255, 0.58), transparent 28%), linear-gradient(180deg, #fbf7f0 0%, #ffffff 44%, #eef4f8 100%)",
+    "linear-gradient(180deg, #f6fbff 0%, #ffffff 42%, #f4faf8 100%)",
   color: "#17202a",
 };
 
@@ -302,15 +302,15 @@ const shellStyle: CSSProperties = {
   width: "100%",
   maxWidth: 1040,
   margin: "0 auto",
-  padding: "34px 16px 48px",
+  padding: "34px 16px 52px",
 };
 
 const heroStyle: CSSProperties = {
   display: "grid",
   gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 320px), 1fr))",
-  gap: 20,
+  gap: 22,
   alignItems: "center",
-  marginBottom: 28,
+  marginBottom: 30,
 };
 
 const heroTextStyle: CSSProperties = {
@@ -321,32 +321,34 @@ const eyebrowStyle: CSSProperties = {
   fontSize: 12,
   letterSpacing: "0.14em",
   textTransform: "uppercase",
-  opacity: 0.58,
+  color: "#138a72",
+  fontWeight: 850,
   marginBottom: 12,
 };
 
 const titleStyle: CSSProperties = {
   margin: "0 0 10px",
   maxWidth: 760,
-  fontSize: "clamp(42px, 11vw, 76px)",
+  fontSize: "clamp(40px, 9vw, 68px)",
   lineHeight: 1.02,
   letterSpacing: "-0.055em",
   fontWeight: 850,
+  color: "#17202a",
 };
 
 const metaStyle: CSSProperties = {
   margin: "0 0 14px",
   fontSize: 15,
   fontWeight: 800,
-  opacity: 0.56,
+  color: "#138a72",
 };
 
 const subtitleStyle: CSSProperties = {
   margin: 0,
   maxWidth: 700,
-  fontSize: "clamp(15px, 4vw, 17px)",
-  lineHeight: 1.72,
-  opacity: 0.72,
+  fontSize: "clamp(15px, 3.8vw, 17px)",
+  lineHeight: 1.78,
+  color: "#607080",
 };
 
 const heroChipWrapStyle: CSSProperties = {
@@ -359,30 +361,34 @@ const heroChipWrapStyle: CSSProperties = {
 const heroChipStyle: CSSProperties = {
   padding: "8px 11px",
   borderRadius: 999,
-  background: "rgba(255, 255, 255, 0.72)",
-  border: "1px solid rgba(23, 32, 42, 0.07)",
+  background: "#eef8f5",
+  border: "1px solid rgba(19, 138, 114, 0.14)",
+  color: "#138a72",
   fontSize: 12,
-  fontWeight: 800,
+  fontWeight: 850,
 };
 
 const heroVisualStyle: CSSProperties = {
-  minHeight: "clamp(260px, 56vw, 430px)",
-  borderRadius: 32,
+  minHeight: "clamp(240px, 54vw, 390px)",
+  borderRadius: 26,
   overflow: "hidden",
   position: "relative",
-  boxShadow: "0 28px 80px rgba(0, 0, 0, 0.16)",
+  border: "1px solid rgba(23, 32, 42, 0.08)",
+  boxShadow: "0 10px 28px rgba(30, 64, 88, 0.09)",
 };
 
 const visualBadgeStyle: CSSProperties = {
   position: "absolute",
-  top: 16,
-  left: 16,
+  top: 14,
+  left: 14,
   padding: "8px 11px",
   borderRadius: 999,
-  background: "#ffffff",
-  backdropFilter: "blur(12px)",
+  background: "rgba(255, 255, 255, 0.88)",
+  border: "1px solid rgba(23, 32, 42, 0.07)",
+  backdropFilter: "blur(10px)",
+  color: "#138a72",
   fontSize: 12,
-  fontWeight: 800,
+  fontWeight: 850,
   zIndex: 2,
 };
 
@@ -395,10 +401,10 @@ const decisionGridStyle: CSSProperties = {
 
 const decisionCardStyle: CSSProperties = {
   padding: 18,
-  borderRadius: 26,
-  background: "rgba(255, 255, 255, 0.76)",
-  border: "1px solid rgba(23, 32, 42, 0.07)",
-  boxShadow: "0 8px 22px rgba(30, 64, 88, 0.06)",
+  borderRadius: 24,
+  background: "#ffffff",
+  border: "1px solid rgba(23, 32, 42, 0.08)",
+  boxShadow: "0 7px 20px rgba(30, 64, 88, 0.05)",
 };
 
 const smallLabelStyle: CSSProperties = {
@@ -421,7 +427,7 @@ const bodyTextStyle: CSSProperties = {
   margin: "10px 0 0",
   fontSize: 14,
   lineHeight: 1.68,
-  opacity: 0.7,
+  color: "#607080",
 };
 
 const sectionStyle: CSSProperties = {
@@ -451,7 +457,7 @@ const sectionLeadStyle: CSSProperties = {
   maxWidth: 720,
   fontSize: 14,
   lineHeight: 1.7,
-  opacity: 0.68,
+  color: "#607080",
 };
 
 const tagWrapStyle: CSSProperties = {
@@ -477,10 +483,10 @@ const highlightGridStyle: CSSProperties = {
 
 const highlightCardStyle: CSSProperties = {
   padding: 18,
-  borderRadius: 26,
+  borderRadius: 24,
   background: "#ffffff",
-  border: "1px solid rgba(23, 32, 42, 0.07)",
-  boxShadow: "0 8px 22px rgba(30, 64, 88, 0.06)",
+  border: "1px solid rgba(23, 32, 42, 0.08)",
+  boxShadow: "0 7px 20px rgba(30, 64, 88, 0.05)",
 };
 
 const numberStyle: CSSProperties = {
@@ -490,8 +496,8 @@ const numberStyle: CSSProperties = {
   placeItems: "center",
   marginBottom: 14,
   borderRadius: "50%",
-  background: "#138a72",
-  color: "#ffffff",
+  background: "#eef8f5",
+  color: "#138a72",
   fontSize: 13,
   fontWeight: 850,
 };
@@ -508,7 +514,7 @@ const highlightTextStyle: CSSProperties = {
   margin: "10px 0 0",
   fontSize: 14,
   lineHeight: 1.58,
-  opacity: 0.68,
+  color: "#607080",
 };
 
 const planningCardStyle: CSSProperties = {
@@ -516,11 +522,11 @@ const planningCardStyle: CSSProperties = {
   gridTemplateColumns: "minmax(0, 1fr) minmax(min(100%, 300px), 0.7fr)",
   gap: 16,
   alignItems: "center",
-  padding: 22,
-  borderRadius: 30,
-  background: "rgba(255, 255, 255, 0.84)",
+  padding: 20,
+  borderRadius: 24,
+  background: "#f7fbfc",
   border: "1px solid rgba(23, 32, 42, 0.08)",
-  boxShadow: "0 10px 28px rgba(30, 64, 88, 0.08)",
+  boxShadow: "0 7px 20px rgba(30, 64, 88, 0.05)",
 };
 
 const relatedGridStyle: CSSProperties = {
@@ -531,10 +537,10 @@ const relatedGridStyle: CSSProperties = {
 
 const relatedCardStyle: CSSProperties = {
   display: "block",
-  borderRadius: 28,
+  borderRadius: 24,
   background: "#ffffff",
   border: "1px solid rgba(23, 32, 42, 0.08)",
-  boxShadow: "0 8px 22px rgba(30, 64, 88, 0.07)",
+  boxShadow: "0 7px 20px rgba(30, 64, 88, 0.06)",
   color: "inherit",
   textDecoration: "none",
   overflow: "hidden",
@@ -561,14 +567,14 @@ const relatedTextStyle: CSSProperties = {
   margin: "10px 0 0",
   fontSize: 13,
   lineHeight: 1.5,
-  opacity: 0.7,
+  color: "#607080",
 };
 
 const openTextStyle: CSSProperties = {
   marginTop: 14,
   fontSize: 13,
   fontWeight: 850,
-  opacity: 0.78,
+  color: "#607080",
 };
 
 const hotelCtaStyle: CSSProperties = {
@@ -576,12 +582,15 @@ const hotelCtaStyle: CSSProperties = {
   gridTemplateColumns: "minmax(0, 1fr) minmax(min(100%, 300px), 0.7fr)",
   gap: 16,
   alignItems: "center",
-  padding: 22,
-  borderRadius: 30,
-  background: "rgba(255, 255, 255, 0.84)",
+  padding: 20,
+  borderRadius: 24,
+  background: "#f7fbfc",
   border: "1px solid rgba(23, 32, 42, 0.08)",
-  boxShadow: "0 10px 28px rgba(30, 64, 88, 0.08)",
+  boxShadow: "0 7px 20px rgba(30, 64, 88, 0.05)",
 };
+
+
+
 
 
 

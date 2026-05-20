@@ -78,3 +78,4 @@ const creditStyle: CSSProperties = {
   lineHeight: 1.2,
   backdropFilter: "blur(10px)",
 };
+

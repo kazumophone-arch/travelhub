@@ -16,3 +16,5 @@ export default function SpotsPage() {
 
   return <SpotDirectory cities={publishedCities} />;
 }
+
+

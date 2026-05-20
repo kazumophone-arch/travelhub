@@ -47,3 +47,5 @@ export default function TermsPage() {
     </InfoPageShell>
   );
 }
+
+
