@@ -3,7 +3,7 @@ import type { CSSProperties } from "react";
 import { cities } from "@/data/cities";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { TravelDiscoveryTools } from "@/components/TravelDiscoveryTools";
-import { SeasonalDiscovery } from "@/components/SeasonalDiscovery";
+import { TravelTimingDiscovery } from "@/components/TravelTimingDiscovery";
 import { isPublishedCity, sortByRank } from "@/data/visibility";
 
 export const metadata: Metadata = {
@@ -41,7 +41,7 @@ export default function DiscoverPage() {
 
         <TravelDiscoveryTools cities={publishedCities} />
 
-        <SeasonalDiscovery cities={publishedCities} />
+        <TravelTimingDiscovery cities={publishedCities} />
       </section>
     </main>
   );
@@ -91,3 +91,5 @@ const subtitleStyle: CSSProperties = {
   lineHeight: 1.72,
   opacity: 0.72,
 };
+
+

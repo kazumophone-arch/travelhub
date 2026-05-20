@@ -84,7 +84,7 @@ function getMonthReason(city: City, month: string) {
   return `Start with ${city.stops.slice(0, 3).join(" · ")}.`;
 }
 
-export function SeasonalDiscovery({ cities }: Props) {
+export function TravelTimingDiscovery({ cities }: Props) {
   const [activeMonth, setActiveMonth] = useState(getCurrentMonth());
 
   const matchingCities = useMemo(() => {
@@ -288,3 +288,5 @@ const destinationReasonStyle: CSSProperties = {
   opacity: 0.7,
   fontWeight: 650,
 };
+
+
