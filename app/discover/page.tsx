@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import type { CSSProperties } from "react";
 import { cities } from "@/data/cities";
-import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { DiscoverHeroCopy } from "@/components/DiscoverHeroCopy";
 import { TravelDiscoveryTools } from "@/components/TravelDiscoveryTools";
 import { TravelTimingDiscovery } from "@/components/TravelTimingDiscovery";
 import { isPublishedCity, sortByRank } from "@/data/visibility";
@@ -20,26 +20,8 @@ export default function DiscoverPage() {
   return (
     <main style={pageStyle}>
       <section style={shellStyle}>
-        <section style={heroStyle}>
-          <Breadcrumbs
-            items={[
-              { label: "Home", href: "/" },
-              { label: "Discover" },
-            ]}
-          />
-
-          <div style={eyebrowStyle}>Trip discovery</div>
-
-          <h1 style={titleStyle}>Find your next trip.</h1>
-
-          <p style={subtitleStyle}>
-            Use one page to explore by feeling, travel style, and season. This
-            keeps early discovery simple before moving into cities, spots, and
-            planning links.
-          </p>
-        </section>
-
-        <TravelDiscoveryTools cities={publishedCities} />
+        <DiscoverHeroCopy />
+<TravelDiscoveryTools cities={publishedCities} />
 
         <TravelTimingDiscovery cities={publishedCities} />
       </section>
@@ -91,5 +73,6 @@ const subtitleStyle: CSSProperties = {
   lineHeight: 1.72,
   opacity: 0.72,
 };
+
 
 

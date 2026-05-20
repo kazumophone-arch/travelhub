@@ -163,3 +163,108 @@ export function pickDailyVariant<T>(items: T[], key: string) {
 
   return items[index];
 }
+
+export type SimplePageCopyVariant = {
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+};
+
+export const discoverCopyVariants: SimplePageCopyVariant[] = [
+  {
+    eyebrow: "Trip discovery",
+    title: "Find a trip direction.",
+    subtitle:
+      "Use Discover when you know the mood, style, or timing of the trip, but have not chosen the city yet.",
+  },
+  {
+    eyebrow: "Start broad",
+    title: "Explore before choosing the city.",
+    subtitle:
+      "Browse ideas by feeling and travel timing before narrowing down to destinations and spots.",
+  },
+  {
+    eyebrow: "Early travel ideas",
+    title: "Find the shape of your next trip.",
+    subtitle:
+      "Use broad signals like mood, season, and travel style before moving into city guides.",
+  },
+  {
+    eyebrow: "Travel inspiration",
+    title: "Start with the kind of trip you want.",
+    subtitle:
+      "Use Discover when the atmosphere of the trip is clearer than the destination name.",
+  },
+  {
+    eyebrow: "Trip direction",
+    title: "Choose the mood before the map.",
+    subtitle:
+      "Find destinations by feeling and timing, then open the city or spot that starts to make sense.",
+  },
+];
+
+export const citiesCopyVariants: SimplePageCopyVariant[] = [
+  {
+    eyebrow: "City directory",
+    title: "Choose a city.",
+    subtitle:
+      "Browse destinations by broad region, timing, and travel style without opening every city page.",
+  },
+  {
+    eyebrow: "Destination list",
+    title: "Compare cities at a glance.",
+    subtitle:
+      "Use filters to narrow the list before opening a full guide.",
+  },
+  {
+    eyebrow: "Browse destinations",
+    title: "Find a city that fits the trip.",
+    subtitle:
+      "Start with broad region, month, or style, then open the cities that match.",
+  },
+  {
+    eyebrow: "City guides",
+    title: "Move from options to one destination.",
+    subtitle:
+      "Use this page when you want to compare possible cities without too much detail at once.",
+  },
+  {
+    eyebrow: "Destination search",
+    title: "Narrow the world into a short list.",
+    subtitle:
+      "Search by region, timing, travel style, or specific places you want to see.",
+  },
+];
+
+export const spotsCopyVariants: SimplePageCopyVariant[] = [
+  {
+    eyebrow: "Spot directory",
+    title: "Start from a place.",
+    subtitle:
+      "Use this page when a specific spot, view, landmark, canal, beach, or old town catches your attention first.",
+  },
+  {
+    eyebrow: "Place search",
+    title: "Find a trip through one spot.",
+    subtitle:
+      "Start with the place that interests you, then open the related city guide.",
+  },
+  {
+    eyebrow: "Spot guides",
+    title: "Choose the scene before the city.",
+    subtitle:
+      "Browse places by type, city, or keyword when the visual idea comes first.",
+  },
+  {
+    eyebrow: "Travel anchors",
+    title: "Build a route around a place.",
+    subtitle:
+      "Use one landmark, view, canal, beach, temple, or old town as the first clue.",
+  },
+  {
+    eyebrow: "Explore by place",
+    title: "Let one place lead the trip.",
+    subtitle:
+      "Find spots that can become the anchor for a city route or travel idea.",
+  },
+];

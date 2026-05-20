@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import type { City } from "@/data/types";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { spotsCopyVariants, pickDailyVariant } from "@/lib/copyVariants";
 
 type Props = {
   cities: City[];
@@ -197,8 +198,13 @@ function getSpotCategories(spot: SpotItem) {
 
 export function SpotDirectory({ cities }: Props) {
   const [query, setQuery] = useState("");
+  const [pageCopy, setPageCopy] = useState(spotsCopyVariants[0]);
   const [activeSpotType, setActiveSpotType] = useState("All");
   const [activeCitySlug, setActiveCitySlug] = useState("all");
+
+  useEffect(() => {
+    setPageCopy(pickDailyVariant(spotsCopyVariants, "spots"));
+  }, []);
 
   const allSpots = useMemo(() => collectSpots(cities), [cities]);
 
@@ -263,7 +269,7 @@ export function SpotDirectory({ cities }: Props) {
             ]}
           />
 
-          <div style={eyebrowStyle}>Spot directory</div>
+          <div style={eyebrowStyle}>{pageCopy.eyebrow}</div>
 
           <h1 style={titleStyle}>Explore by place.</h1>
 
@@ -750,3 +756,4 @@ const emptyStyle: CSSProperties = {
   textAlign: "center",
   opacity: 0.72,
 };
+

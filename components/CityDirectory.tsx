@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import type { City } from "@/data/types";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { citiesCopyVariants, pickDailyVariant } from "@/lib/copyVariants";
 
 type Props = {
   cities: City[];
@@ -233,6 +234,7 @@ function visualForCity(slug: string) {
 
 export function CityDirectory({ cities }: Props) {
   const [query, setQuery] = useState("");
+  const [pageCopy, setPageCopy] = useState(citiesCopyVariants[0]);
   const [activeRegion, setActiveRegion] = useState("All");
   const [activeMonth, setActiveMonth] = useState("All");
   const [activeStyle, setActiveStyle] = useState("All");
@@ -346,7 +348,7 @@ export function CityDirectory({ cities }: Props) {
             ]}
           />
 
-          <div style={eyebrowStyle}>City directory</div>
+          <div style={eyebrowStyle}>{pageCopy.eyebrow}</div>
 
           <h1 style={titleStyle}>Browse destinations.</h1>
 
@@ -921,5 +923,6 @@ const emptyStyle: CSSProperties = {
   textAlign: "center",
   opacity: 0.72,
 };
+
 
 
