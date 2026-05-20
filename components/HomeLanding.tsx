@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import type { City } from "@/data/types";
+import { homeCopyVariants, pickDailyVariant } from "@/lib/copyVariants";
 
 type Props = {
   cities: City[];
@@ -186,8 +187,11 @@ function getCitySearchResults(cities: City[], query: string) {
 }
 export function HomeLanding({ cities }: Props) {
   const [query, setQuery] = useState("");
+  const [homeCopy, setHomeCopy] = useState(homeCopyVariants[0]);
 
   useEffect(() => {
+    setHomeCopy(pickDailyVariant(homeCopyVariants, "home"));
+
     const shouldRestore =
       sessionStorage.getItem("travelhubRestoreHomeScroll") === "1";
 
@@ -249,13 +253,9 @@ export function HomeLanding({ cities }: Props) {
           <div style={heroTextStyle}>
             <div style={eyebrowStyle}>Travel discovery hub</div>
 
-            <h1 style={heroTitleStyle}>
-              Discover places worth planning around.
-            </h1>
+            <h1 style={heroTitleStyle}>{homeCopy.heroTitle}</h1>
 
-            <p style={heroSubtitleStyle}>
-              Use TravelHub to move from travel inspiration to clearer city, spot, season, and route decisions.
-            </p>
+            <p style={heroSubtitleStyle}>{homeCopy.heroSubtitle}</p>
 
             <div id="home-search" style={searchBoxStyle}>
               <span style={searchIconStyle}>⌕</span>
@@ -282,10 +282,8 @@ export function HomeLanding({ cities }: Props) {
             <div style={heroImageStyle}>
               <div style={floatingCardStyle}>
                 <div style={floatingSmallTextStyle}>TravelHub</div>
-                <div style={floatingTitleStyle}>Compass for many places</div>
-                <div style={floatingSubStyle}>
-                  Discover · Cities · Spots · Timing
-                </div>
+                <div style={floatingTitleStyle}>{homeCopy.previewTitle}</div>
+                <div style={floatingSubStyle}>{homeCopy.previewSub}</div>
               </div>
             </div>
           </div>
@@ -405,26 +403,20 @@ export function HomeLanding({ cities }: Props) {
           <div style={quickGridStyle}>
             <Link href="/discover" style={quickCardStyle}>
               <div style={quickLabelStyle}>Discover</div>
-              <h3 style={quickTitleStyle}>Find by feeling or season</h3>
-              <p style={quickTextStyle}>
-                Use Discover when you know the mood or timing, but not the city.
-              </p>
+              <h3 style={quickTitleStyle}>{homeCopy.discoverTitle}</h3>
+              <p style={quickTextStyle}>{homeCopy.discoverText}</p>
             </Link>
 
             <Link href="/cities" style={quickCardStyle}>
               <div style={quickLabelStyle}>Cities</div>
-              <h3 style={quickTitleStyle}>Browse destinations</h3>
-              <p style={quickTextStyle}>
-                Search and filter by city, country, season, and travel style.
-              </p>
+              <h3 style={quickTitleStyle}>{homeCopy.citiesTitle}</h3>
+              <p style={quickTextStyle}>{homeCopy.citiesText}</p>
             </Link>
 
             <Link href="/spots" style={quickCardStyle}>
               <div style={quickLabelStyle}>Spots</div>
-              <h3 style={quickTitleStyle}>Explore by place</h3>
-              <p style={quickTextStyle}>
-                Start from a specific spot like a canal, castle, beach, or view.
-              </p>
+              <h3 style={quickTitleStyle}>{homeCopy.spotsTitle}</h3>
+              <p style={quickTextStyle}>{homeCopy.spotsText}</p>
             </Link>
           </div>
         </section>
@@ -924,4 +916,5 @@ const cityResultTextStyle: CSSProperties = {
   lineHeight: 1.45,
   opacity: 0.7,
 };
+
 
