@@ -468,10 +468,6 @@ export function HomeLanding({ cities }: Props) {
             ))}
           </div>
         </section>
-        <p style={disclosureStyle}>
-          Some links may be affiliate links. We may earn a commission if you book
-          through them, at no extra cost to you.
-        </p>
       </section>
     </main>
   );
@@ -870,15 +866,6 @@ const emptyStyle: CSSProperties = {
   opacity: 0.72,
 };
 
-const disclosureStyle: CSSProperties = {
-  margin: "34px auto 0",
-  maxWidth: 560,
-  textAlign: "center",
-  fontSize: 12,
-  lineHeight: 1.6,
-  opacity: 0.52,
-};
-
 const cityResultWrapStyle: CSSProperties = {
   marginBottom: 22,
 };
@@ -937,11 +924,3 @@ const cityResultTextStyle: CSSProperties = {
   lineHeight: 1.45,
   opacity: 0.7,
 };
-
-
-
-
-
-
-
-
