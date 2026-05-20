@@ -153,12 +153,21 @@ function hashString(value: string) {
   return Math.abs(hash);
 }
 
+function getLocalDateKey() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
 export function pickDailyVariant<T>(items: T[], key: string) {
   if (items.length === 0) {
     throw new Error("pickDailyVariant requires at least one item.");
   }
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = getLocalDateKey();
   const index = hashString(`${key}-${today}`) % items.length;
 
   return items[index];
@@ -268,3 +277,4 @@ export const spotsCopyVariants: SimplePageCopyVariant[] = [
       "Find spots that can become the anchor for a city route or travel idea.",
   },
 ];
+
