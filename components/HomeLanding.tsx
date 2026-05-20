@@ -486,10 +486,10 @@ const shellStyle: CSSProperties = {
 
 const heroStyle: CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 360px), 1fr))",
+  gridTemplateColumns: "minmax(0, 1.08fr) minmax(min(100%, 330px), 0.92fr)",
   gap: 24,
   alignItems: "center",
-  marginBottom: 38,
+  marginBottom: 34,
 };
 
 const heroTextStyle: CSSProperties = {
@@ -506,21 +506,20 @@ const eyebrowStyle: CSSProperties = {
 };
 
 const heroTitleStyle: CSSProperties = {
-  margin: "0 0 18px",
+  margin: "0 0 16px",
   maxWidth: 760,
-  fontSize: "clamp(36px, 10vw, 74px)",
+  fontSize: "clamp(38px, 9vw, 66px)",
   lineHeight: 1.02,
-  letterSpacing: "-0.04em",
+  letterSpacing: "-0.055em",
   fontWeight: 850,
-  overflowWrap: "break-word",
 };
 
 const heroSubtitleStyle: CSSProperties = {
   margin: "0 0 24px",
-  maxWidth: 580,
-  fontSize: "clamp(15px, 4vw, 17px)",
-  lineHeight: 1.65,
-  opacity: 0.72,
+  maxWidth: 660,
+  fontSize: "clamp(15px, 3.8vw, 17px)",
+  lineHeight: 1.78,
+  color: "#607080",
 };
 
 const searchBoxStyle: CSSProperties = {
@@ -655,14 +654,16 @@ const smallLabelStyle: CSSProperties = {
   fontSize: 12,
   letterSpacing: "0.12em",
   textTransform: "uppercase",
-  opacity: 0.5,
-  marginBottom: 6,
+  color: "#138a72",
+  fontWeight: 850,
+  marginBottom: 7,
 };
 
 const sectionTitleStyle: CSSProperties = {
   margin: 0,
-  fontSize: "clamp(24px, 6vw, 30px)",
-  letterSpacing: "-0.04em",
+  fontSize: "clamp(24px, 5.6vw, 32px)",
+  lineHeight: 1.08,
+  letterSpacing: "-0.045em",
   fontWeight: 850,
 };
 
@@ -741,7 +742,7 @@ const chipRowStyle: CSSProperties = {
 const smallChipStyle: CSSProperties = {
   padding: "7px 9px",
   borderRadius: 999,
-  background: "rgba(0, 0, 0, 0.06)",
+  background: "#eef8f5",
   fontSize: 12,
   fontWeight: 750,
 };
@@ -754,38 +755,44 @@ const quickGridStyle: CSSProperties = {
 
 const quickCardStyle: CSSProperties = {
   display: "block",
-  padding: 20,
-  minHeight: 168,
-  borderRadius: 28,
+  minHeight: 150,
+  padding: 18,
+  borderRadius: 24,
   background: "#ffffff",
   border: "1px solid rgba(23, 32, 42, 0.08)",
-  boxShadow: "0 8px 22px rgba(30, 64, 88, 0.07)",
+  boxShadow: "0 8px 22px rgba(30, 64, 88, 0.06)",
   color: "inherit",
   textDecoration: "none",
 };
 
 const quickLabelStyle: CSSProperties = {
-  marginBottom: 12,
+  display: "inline-flex",
+  alignItems: "center",
+  gap: 6,
+  marginBottom: 14,
+  padding: "7px 10px",
+  borderRadius: 999,
+  background: "#eef8f5",
+  color: "#138a72",
   fontSize: 12,
-  letterSpacing: "0.12em",
+  letterSpacing: "0.1em",
   textTransform: "uppercase",
-  opacity: 0.52,
-  fontWeight: 800,
+  fontWeight: 850,
 };
 
 const quickTitleStyle: CSSProperties = {
   margin: 0,
-  fontSize: 25,
-  lineHeight: 1.05,
-  letterSpacing: "-0.045em",
+  fontSize: 23,
+  lineHeight: 1.08,
+  letterSpacing: "-0.04em",
   fontWeight: 850,
 };
 
 const quickTextStyle: CSSProperties = {
-  margin: "12px 0 0",
+  margin: "10px 0 0",
   fontSize: 14,
-  lineHeight: 1.55,
-  opacity: 0.68,
+  lineHeight: 1.6,
+  color: "#607080",
 };
 
 const viewAllStyle: CSSProperties = {
@@ -919,6 +926,12 @@ const cityResultTextStyle: CSSProperties = {
   lineHeight: 1.45,
   opacity: 0.7,
 };
+
+
+
+
+
+
 
 
 
