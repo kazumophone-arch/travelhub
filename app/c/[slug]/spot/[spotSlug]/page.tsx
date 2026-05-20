@@ -582,33 +582,3 @@ const hotelCtaStyle: CSSProperties = {
   boxShadow: "0 24px 74px rgba(0, 0, 0, 0.1)",
 };
 
-const finalCtaStyle: CSSProperties = {
-  display: "grid",
-  gridTemplateColumns: "minmax(0, 1fr) minmax(min(100%, 300px), 0.7fr)",
-  gap: 16,
-  alignItems: "center",
-  marginTop: 34,
-  padding: 22,
-  borderRadius: 32,
-  background: "rgba(23, 23, 23, 0.94)",
-  color: "#ffffff",
-  boxShadow: "0 26px 80px rgba(0, 0, 0, 0.18)",
-};
-
-const finalCtaTitleStyle: CSSProperties = {
-  margin: 0,
-  maxWidth: 680,
-  fontSize: "clamp(28px, 7vw, 40px)",
-  lineHeight: 1.04,
-  letterSpacing: "-0.055em",
-  fontWeight: 850,
-};
-
-const finalCtaTextStyle: CSSProperties = {
-  margin: "10px 0 0",
-  maxWidth: 620,
-  fontSize: 14,
-  lineHeight: 1.65,
-  opacity: 0.72,
-};
-
