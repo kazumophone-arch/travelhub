@@ -22,6 +22,16 @@ type SpotItem = {
   canOpen: boolean;
 };
 
+const spotTypeFilters = [
+  "All",
+  "Scenic",
+  "Old Town",
+  "Culture",
+  "Water",
+  "Nature",
+  "Viewpoint",
+];
+
 function slugify(value: string) {
   return (
     value
@@ -85,8 +95,109 @@ function collectSpots(cities: City[]) {
   return spots;
 }
 
+function getSpotCategories(spot: SpotItem) {
+  const categories = new Set<string>();
+  const text = [
+    spot.name,
+    spot.summary,
+    ...spot.highlights,
+    ...spot.tags,
+    spot.cityName,
+    spot.country,
+  ]
+    .join(" ")
+    .toLowerCase();
+
+  const includesAny = (words: string[]) =>
+    words.some((word) => text.includes(word.toLowerCase()));
+
+  if (
+    includesAny([
+      "view",
+      "sunset",
+      "scenic",
+      "panorama",
+      "lookout",
+      "overlook",
+      "skyline",
+    ])
+  ) {
+    categories.add("Scenic");
+    categories.add("Viewpoint");
+  }
+
+  if (
+    includesAny([
+      "old town",
+      "historic",
+      "center",
+      "castle",
+      "square",
+      "bridge",
+      "gate",
+    ])
+  ) {
+    categories.add("Old Town");
+    categories.add("Culture");
+  }
+
+  if (
+    includesAny([
+      "temple",
+      "shrine",
+      "church",
+      "cathedral",
+      "museum",
+      "palace",
+      "ruins",
+      "heritage",
+      "monument",
+    ])
+  ) {
+    categories.add("Culture");
+  }
+
+  if (
+    includesAny([
+      "canal",
+      "river",
+      "beach",
+      "lagoon",
+      "lake",
+      "harbor",
+      "water",
+      "fountain",
+    ])
+  ) {
+    categories.add("Water");
+    categories.add("Scenic");
+  }
+
+  if (
+    includesAny([
+      "garden",
+      "park",
+      "forest",
+      "bamboo",
+      "mountain",
+      "nature",
+      "trail",
+    ])
+  ) {
+    categories.add("Nature");
+    categories.add("Scenic");
+  }
+
+  if (categories.size === 0) {
+    categories.add("Culture");
+  }
+
+  return Array.from(categories);
+}
+
 export function SpotDirectory({ cities }: Props) {
   const [query, setQuery] = useState("");
+  const [activeSpotType, setActiveSpotType] = useState("All");
   const [activeCitySlug, setActiveCitySlug] = useState("all");
 
   const allSpots = useMemo(() => collectSpots(cities), [cities]);
@@ -96,7 +207,7 @@ export function SpotDirectory({ cities }: Props) {
       { slug: "all", label: "All cities" },
       ...cities.map((city) => ({
         slug: city.slug,
-        label: city.city,
+        label: `${city.city}, ${city.country}`,
       })),
     ];
   }, [cities]);
@@ -105,14 +216,20 @@ export function SpotDirectory({ cities }: Props) {
     const normalizedQuery = query.trim().toLowerCase();
 
     return allSpots.filter((spot) => {
+      const spotCategories = getSpotCategories(spot);
+
       const matchesCity =
         activeCitySlug === "all" || spot.citySlug === activeCitySlug;
+
+      const matchesType =
+        activeSpotType === "All" || spotCategories.includes(activeSpotType);
 
       const searchableText = [
         spot.name,
         spot.summary,
         ...spot.highlights,
         ...spot.tags,
+        ...spotCategories,
         spot.cityName,
         spot.country,
       ]
@@ -122,9 +239,18 @@ export function SpotDirectory({ cities }: Props) {
       const matchesSearch =
         normalizedQuery === "" || searchableText.includes(normalizedQuery);
 
-      return matchesCity && matchesSearch;
+      return matchesCity && matchesType && matchesSearch;
     });
-  }, [allSpots, query, activeCitySlug]);
+  }, [allSpots, query, activeCitySlug, activeSpotType]);
+
+  function resetFilters() {
+    setQuery("");
+    setActiveSpotType("All");
+    setActiveCitySlug("all");
+  }
+
+  const activeCityLabel =
+    cityOptions.find((city) => city.slug === activeCitySlug)?.label ?? "All cities";
 
   return (
     <main style={pageStyle}>
@@ -142,8 +268,8 @@ export function SpotDirectory({ cities }: Props) {
           <h1 style={titleStyle}>Explore by place.</h1>
 
           <p style={subtitleStyle}>
-            Search featured travel spots directly, then open the related city or
-            spot page for more context.
+            Start from a specific place, visual mood, or city. Use broad spot
+            types first, then narrow by city if needed.
           </p>
 
           <div style={searchBoxStyle}>
@@ -157,11 +283,85 @@ export function SpotDirectory({ cities }: Props) {
           </div>
         </section>
 
-        <section style={filterSectionStyle}>
+        <section style={filterPanelStyle}>
           <div style={sectionHeaderStyle}>
             <div>
-              <div style={smallLabelStyle}>Filter by city</div>
-              <h2 style={sectionTitleStyle}>Narrow the spot list</h2>
+              <div style={smallLabelStyle}>Spot filters</div>
+              <h2 style={sectionTitleStyle}>Start broad, then narrow</h2>
+            </div>
+
+            <button type="button" onClick={resetFilters} style={resetButtonStyle}>
+              Clear all
+            </button>
+          </div>
+
+          <div style={filterGridStyle}>
+            <div style={filterGroupStyle}>
+              <div style={filterGroupTopStyle}>
+                <span style={filterGroupLabelStyle}>Spot type</span>
+                <span style={filterGroupValueStyle}>{activeSpotType}</span>
+              </div>
+
+              <div style={filterWrapStyle}>
+                {spotTypeFilters.map((filter) => {
+                  const isActive = filter === activeSpotType;
+
+                  return (
+                    <button
+                      key={filter}
+                      type="button"
+                      onClick={() => setActiveSpotType(filter)}
+                      style={
+                        isActive ? activeFilterButtonStyle : filterButtonStyle
+                      }
+                    >
+                      {filter}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div style={filterGroupStyle}>
+              <div style={filterGroupTopStyle}>
+                <span style={filterGroupLabelStyle}>City</span>
+                <span style={filterGroupValueStyle}>{activeCityLabel}</span>
+              </div>
+
+              <select
+                value={activeCitySlug}
+                onChange={(event) => setActiveCitySlug(event.target.value)}
+                style={selectStyle}
+              >
+                {cityOptions.map((city) => (
+                  <option key={city.slug} value={city.slug}>
+                    {city.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div style={activeSummaryStyle}>
+            <span style={activeSummaryLabelStyle}>Active filters</span>
+
+            <span style={activeSummaryTextStyle}>
+              {[
+                query.trim() ? `Search: ${query.trim()}` : null,
+                activeSpotType !== "All" ? activeSpotType : null,
+                activeCitySlug !== "all" ? activeCityLabel : null,
+              ]
+                .filter(Boolean)
+                .join(" · ") || "None"}
+            </span>
+          </div>
+        </section>
+
+        <section style={contentStyle}>
+          <div style={sectionHeaderStyle}>
+            <div>
+              <div style={smallLabelStyle}>Results</div>
+              <h2 style={sectionTitleStyle}>Choose a place</h2>
             </div>
 
             <span style={mutedTextStyle}>
@@ -169,47 +369,10 @@ export function SpotDirectory({ cities }: Props) {
             </span>
           </div>
 
-          <div style={filterWrapStyle}>
-            {cityOptions.map((city) => {
-              const isActive = city.slug === activeCitySlug;
-
-              return (
-                <button
-                  key={city.slug}
-                  type="button"
-                  onClick={() => setActiveCitySlug(city.slug)}
-                  style={isActive ? activeFilterButtonStyle : filterButtonStyle}
-                >
-                  {city.label}
-                </button>
-              );
-            })}
-          </div>
-        </section>
-
-        <section style={contentStyle}>
-          <div style={sectionHeaderStyle}>
-            <div>
-              <div style={smallLabelStyle}>All spots</div>
-              <h2 style={sectionTitleStyle}>Choose a place</h2>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => {
-                setQuery("");
-                setActiveCitySlug("all");
-              }}
-              style={resetButtonStyle}
-            >
-              Reset
-            </button>
-          </div>
-
           {filteredSpots.length === 0 ? (
             <div style={emptyStyle}>
-              No spots found. Try a broader keyword like canal, castle, beach,
-              old town, sunset, or the city name.
+              No spots found. Try a broader keyword, another spot type, or clear
+              the filters.
             </div>
           ) : (
             <div style={spotGridStyle}>
@@ -217,6 +380,8 @@ export function SpotDirectory({ cities }: Props) {
                 const href = spot.canOpen
                   ? `/c/${spot.citySlug}/spot/${spot.slug}?src=spots&v=spots_${spot.citySlug}_${spot.slug}`
                   : `/c/${spot.citySlug}?src=spots&v=spots_${spot.citySlug}`;
+
+                const categories = getSpotCategories(spot);
 
                 return (
                   <Link
@@ -243,20 +408,15 @@ export function SpotDirectory({ cities }: Props) {
                       <p style={spotTextStyle}>{spot.summary}</p>
 
                       <div style={chipRowStyle}>
-                        {(spot.tags.length > 0 ? spot.tags : spot.highlights)
-                          .slice(0, 3)
-                          .map((tag, tagIndex) => (
-                            <span
-                              key={`${tag}-${tagIndex}`}
-                              style={chipStyle}
-                            >
-                              {tag}
-                            </span>
-                          ))}
+                        {categories.slice(0, 3).map((tag) => (
+                          <span key={tag} style={chipStyle}>
+                            {tag}
+                          </span>
+                        ))}
                       </div>
 
                       <div style={openTextStyle}>
-                        {spot.canOpen ? "Open spot" : "Open city"}
+                        {spot.canOpen ? "Open spot guide" : "Open city guide"}
                       </div>
                     </div>
                   </Link>
@@ -287,7 +447,7 @@ const shellStyle: CSSProperties = {
 };
 
 const heroStyle: CSSProperties = {
-  marginBottom: 34,
+  marginBottom: 28,
 };
 
 const eyebrowStyle: CSSProperties = {
@@ -345,8 +505,14 @@ const searchInputStyle: CSSProperties = {
   color: "#171717",
 };
 
-const filterSectionStyle: CSSProperties = {
-  marginBottom: 28,
+const filterPanelStyle: CSSProperties = {
+  marginBottom: 34,
+  padding: 18,
+  borderRadius: 30,
+  background: "rgba(255, 255, 255, 0.7)",
+  border: "1px solid rgba(0, 0, 0, 0.07)",
+  boxShadow: "0 20px 58px rgba(0, 0, 0, 0.07)",
+  backdropFilter: "blur(18px)",
 };
 
 const sectionHeaderStyle: CSSProperties = {
@@ -373,43 +539,6 @@ const sectionTitleStyle: CSSProperties = {
   fontWeight: 850,
 };
 
-const mutedTextStyle: CSSProperties = {
-  fontSize: 13,
-  opacity: 0.6,
-  whiteSpace: "nowrap",
-};
-
-const filterWrapStyle: CSSProperties = {
-  display: "flex",
-  gap: 8,
-  overflowX: "auto",
-  paddingBottom: 14,
-};
-
-const filterButtonStyle: CSSProperties = {
-  border: "1px solid rgba(0, 0, 0, 0.1)",
-  background: "rgba(255, 255, 255, 0.74)",
-  color: "#171717",
-  borderRadius: 999,
-  padding: "10px 13px",
-  fontSize: 13,
-  fontWeight: 700,
-  whiteSpace: "nowrap",
-  cursor: "pointer",
-  boxShadow: "0 10px 28px rgba(0, 0, 0, 0.04)",
-};
-
-const activeFilterButtonStyle: CSSProperties = {
-  ...filterButtonStyle,
-  background: "#171717",
-  color: "#ffffff",
-  border: "1px solid #171717",
-};
-
-const contentStyle: CSSProperties = {
-  marginTop: 10,
-};
-
 const resetButtonStyle: CSSProperties = {
   border: "1px solid rgba(0, 0, 0, 0.1)",
   borderRadius: 999,
@@ -419,6 +548,117 @@ const resetButtonStyle: CSSProperties = {
   fontSize: 12,
   fontWeight: 800,
   cursor: "pointer",
+};
+
+const filterGridStyle: CSSProperties = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 260px), 1fr))",
+  gap: 12,
+};
+
+const filterGroupStyle: CSSProperties = {
+  minWidth: 0,
+  padding: 14,
+  borderRadius: 22,
+  background: "rgba(255, 255, 255, 0.58)",
+  border: "1px solid rgba(0, 0, 0, 0.06)",
+};
+
+const filterGroupTopStyle: CSSProperties = {
+  display: "flex",
+  justifyContent: "space-between",
+  gap: 10,
+  alignItems: "center",
+  marginBottom: 10,
+};
+
+const filterGroupLabelStyle: CSSProperties = {
+  fontSize: 12,
+  letterSpacing: "0.1em",
+  textTransform: "uppercase",
+  fontWeight: 850,
+  opacity: 0.5,
+};
+
+const filterGroupValueStyle: CSSProperties = {
+  fontSize: 12,
+  fontWeight: 850,
+  opacity: 0.62,
+  whiteSpace: "nowrap",
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+};
+
+const filterWrapStyle: CSSProperties = {
+  display: "flex",
+  gap: 7,
+  overflowX: "auto",
+  paddingBottom: 2,
+};
+
+const filterButtonStyle: CSSProperties = {
+  border: "1px solid rgba(0, 0, 0, 0.08)",
+  background: "rgba(255, 255, 255, 0.76)",
+  color: "#171717",
+  borderRadius: 999,
+  padding: "8px 10px",
+  fontSize: 12,
+  fontWeight: 750,
+  whiteSpace: "nowrap",
+  cursor: "pointer",
+};
+
+const activeFilterButtonStyle: CSSProperties = {
+  ...filterButtonStyle,
+  background: "rgba(248, 225, 184, 0.95)",
+  border: "1px solid rgba(0, 0, 0, 0.1)",
+};
+
+const selectStyle: CSSProperties = {
+  width: "100%",
+  padding: "12px 12px",
+  borderRadius: 16,
+  border: "1px solid rgba(0, 0, 0, 0.08)",
+  background: "rgba(255, 255, 255, 0.78)",
+  color: "#171717",
+  fontSize: 14,
+  fontWeight: 750,
+  outline: "none",
+};
+
+const activeSummaryStyle: CSSProperties = {
+  display: "flex",
+  gap: 8,
+  flexWrap: "wrap",
+  alignItems: "center",
+  marginTop: 14,
+  paddingTop: 14,
+  borderTop: "1px solid rgba(0, 0, 0, 0.07)",
+};
+
+const activeSummaryLabelStyle: CSSProperties = {
+  fontSize: 11,
+  letterSpacing: "0.12em",
+  textTransform: "uppercase",
+  fontWeight: 850,
+  opacity: 0.46,
+};
+
+const activeSummaryTextStyle: CSSProperties = {
+  fontSize: 13,
+  lineHeight: 1.4,
+  fontWeight: 750,
+  opacity: 0.7,
+};
+
+const contentStyle: CSSProperties = {
+  marginTop: 10,
+};
+
+const mutedTextStyle: CSSProperties = {
+  fontSize: 13,
+  opacity: 0.6,
+  whiteSpace: "nowrap",
 };
 
 const spotGridStyle: CSSProperties = {
