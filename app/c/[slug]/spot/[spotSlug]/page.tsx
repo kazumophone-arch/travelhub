@@ -5,7 +5,6 @@ import type { Metadata } from "next";
 import { cities } from "@/data/cities";
 import { TravelVisual } from "@/components/TravelVisual";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { BookingConfidencePanel } from "@/components/BookingConfidencePanel";
 import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
 
 export async function generateMetadata({
@@ -264,12 +263,6 @@ export default async function SpotPage({
             <AffiliateButtonGroup city={city} src={src} v={`hotel_${v}`} variant="spot-hotel" />
           </div>
         </section>
-
-        <BookingConfidencePanel
-          cityName={city.city}
-          spotName={spot.name}
-          variant="spot"
-        />
 <p style={noteStyle}>
           Some links may be affiliate links. We may earn a commission if you book
           through them, at no extra cost to you.
@@ -631,6 +624,7 @@ const noteStyle: CSSProperties = {
   lineHeight: 1.6,
   opacity: 0.52,
 };
+
 
 
 
