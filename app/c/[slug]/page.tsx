@@ -7,7 +7,9 @@ import { cities } from "@/data/cities";
 import { TravelVisual } from "@/components/TravelVisual";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
+import { DetailHeroImage } from "@/components/DetailHeroImage";
 import { getDisplayStops } from "@/lib/displayText";
+import { getCityImage } from "@/data/travel-images";
 import { getMapMagazineSpotVisual } from "@/lib/mapMagazineVisuals";
 
 type StayArea = {
@@ -135,6 +137,10 @@ export default async function CityPage({
             </div>
           </div>
         </section>
+        <DetailHeroImage
+          image={getCityImage(city.slug)}
+          label={city.city + ", " + city.country}
+        />
 
         <section style={decisionGridStyle}>
           <article style={decisionCardStyle}>
@@ -815,6 +821,8 @@ const tourCtaStyle: CSSProperties = {
   border: "1px solid rgba(23, 32, 42, 0.08)",
   boxShadow: "0 7px 20px rgba(30, 64, 88, 0.05)",
 };
+
+
 
 
 
