@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import type { City } from "@/data/types";
+import { HomeSearchResults } from "@/components/HomeSearchResults";
 import { HomeSeasonalPicks } from "@/components/HomeSeasonalPicks";
 import { getCityImage } from "@/data/travel-images";
 import { getMapMagazineVisual } from "@/lib/mapMagazineVisuals";
@@ -263,103 +264,12 @@ export function HomeLanding({ cities }: Props) {
             </div>
           </div>
         </section>
-
         {isSearching && (
-          <section style={feedSectionStyle}>
-            <div style={sectionHeaderStyle}>
-              <div>
-                <div style={smallLabelStyle}>Search results</div>
-                <h2 style={sectionTitleStyle}>Matching spots</h2>
-              </div>
-
-              <span style={mutedTextStyle}>
-                {citySearchResults.length} cities · {searchResults.length} spots
-              </span>
-            </div>
-
-            {citySearchResults.length > 0 && (
-              <div style={cityResultWrapStyle}>
-                <h3 style={miniSectionTitleStyle}>Matching cities</h3>
-
-                <div style={cityResultGridStyle}>
-                  {citySearchResults.map((city, index) => (
-                    <Link
-                      key={`${city.slug}-home-city-search-${index}`}
-                      href={`/c/${city.slug}?src=home&v=search_city_${city.slug}`}
-                      style={getHomePhotoCardStyle(city, cityResultCardStyle)}
-                    >
-                      <div style={cityResultVisualStyle}>
-                        <div style={visualBadgeStyle}>{city.country}</div>
-                      </div>
-
-                      <div style={cityResultBodyStyle}>
-                        <h3 style={cityResultTitleStyle}>{city.city}</h3>
-                        <p style={cityResultMetaStyle}>{city.country}</p>
-                        <p style={cityResultTextStyle}>
-                          {getDisplayStops(city).join(" · ")}
-                        </p>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <h3 style={miniSectionTitleStyle}>Matching spots</h3>
-
-            {searchResults.length === 0 ? (
-              <div style={emptyStyle}>
-                No matching spots found. Try a city, mood, season, or broader
-                keyword.
-              </div>
-            ) : (
-              <div style={resultGridStyle}>
-                {searchResults.map((spot, index) => {
-                  const href = spot.canOpen
-                    ? `/c/${spot.citySlug}/spot/${spot.slug}?src=home&v=search_${spot.citySlug}_${spot.slug}`
-                    : `/c/${spot.citySlug}?src=home&v=search_${spot.citySlug}`;
-
-                  return (
-                    <Link
-                      key={`${spot.citySlug}-${spot.slug}-${index}`}
-                      href={href}
-                      style={resultCardStyle}
-                    >
-                      <div
-                        style={{
-                          ...resultVisualStyle,
-                          background: visualForIndex(index),
-                        }}
-                      >
-                        <div style={visualBadgeStyle}>{spot.cityName}</div>
-                      </div>
-
-                      <div style={resultBodyStyle}>
-                        <div style={resultMetaStyle}>
-                          {spot.cityName}, {spot.country}
-                        </div>
-
-                        <h3 style={resultTitleStyle}>{spot.name}</h3>
-
-                        <p style={resultTextStyle}>{spot.summary}</p>
-
-                        <div style={chipRowStyle}>
-                          {spot.tags.slice(0, 3).map((tag, tagIndex) => (
-                            <span
-                              key={`${tag}-${tagIndex}`}
-                              style={smallChipStyle}
-                            >
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    </Link>
-                  );
-                })}
-              </div>
-            )}
-          </section>
+          <HomeSearchResults
+            cityResults={citySearchResults}
+            spotResults={searchResults}
+            query={query.trim()}
+          />
         )}
 
         <section style={quickSectionStyle}>
@@ -913,6 +823,8 @@ const countryBadgeStyle: CSSProperties = {
   fontSize: 12,
   fontWeight: 850,
 };
+
+
 
 
 
