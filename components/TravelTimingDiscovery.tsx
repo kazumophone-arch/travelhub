@@ -1,17 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
-import type { CSSProperties } from "react";
+import { useMemo, useState, type CSSProperties } from "react";
 import type { City } from "@/data/types";
-import { getMapMagazineVisual } from "@/lib/mapMagazineVisuals";
+import { getCityImage } from "@/data/travel-images";
 import { getDisplayStops } from "@/lib/displayText";
 
 type Props = {
   cities: City[];
 };
 
-const monthNames = [
+const months = [
   "January",
   "February",
   "March",
@@ -27,99 +26,64 @@ const monthNames = [
 ];
 
 function getCurrentMonth() {
-  return monthNames[new Date().getMonth()];
+  return months[new Date().getMonth()];
 }
-
-function visualForCity(slug: string) {
-  const visuals: Record<string, string> = {
-    "rome-it":
-      "linear-gradient(135deg, #d9a76f 0%, #b86b4b 42%, #3b2f2f 100%)",
-    "venice-it":
-      "linear-gradient(135deg, #9cc9d7 0%, #e7c389 46%, #8b5f4d 100%)",
-    "florence-it":
-      "linear-gradient(135deg, #d7a65f 0%, #b65f4a 48%, #2e2a32 100%)",
-    "prague-cz":
-      "linear-gradient(135deg, #d7b06f 0%, #6f8da8 46%, #2e3543 100%)",
-    "dubrovnik-hr":
-      "linear-gradient(135deg, #d58b5a 0%, #2f8da8 48%, #183747 100%)",
-    "vienna-at":
-      "linear-gradient(135deg, #e1c8a4 0%, #b98e65 48%, #42352f 100%)",
-    "edinburgh-uk":
-      "linear-gradient(135deg, #8e99a8 0%, #5c6675 46%, #252a33 100%)",
-    "paris-fr":
-      "linear-gradient(135deg, #c7d4df 0%, #d3b58d 44%, #4b4b58 100%)",
-    "barcelona-es":
-      "linear-gradient(135deg, #f0b45f 0%, #d95850 45%, #2e6f89 100%)",
-    "kyoto-jp":
-      "linear-gradient(135deg, #c6a96b 0%, #8da36f 48%, #2f3a2f 100%)",
-    "amsterdam-nl":
-      "linear-gradient(135deg, #8eb6c7 0%, #d9a35f 45%, #38465a 100%)",
-  };
-
-  return (
-    visuals[slug] ??
-    "linear-gradient(135deg, #e5c7a5 0%, #9fb8c9 48%, #30394a 100%)"
-  );
-}
-
 
 function getMonthReason(city: City, month: string) {
-  if (city.months?.includes(month)) {
-    return `${month} is a strong timing window for ${city.city}.`;
+  const stops = getDisplayStops(city, 2);
+
+  if (city.travelStyles && city.travelStyles.length > 0) {
+    return `Good timing for ${city.travelStyles
+      .slice(0, 2)
+      .join(" and ")
+      .toLowerCase()} trips.`;
   }
 
-  if (city.seasons?.includes("Spring")) {
-    return "Works well for spring-style city walks and scenic travel.";
+  if (stops.length > 0) {
+    return `Start with ${stops.join(" and ")}.`;
   }
 
-  if (city.seasons?.includes("Summer")) {
-    return "Works well for bright outdoor travel and longer daylight.";
-  }
+  return `Open the ${city.city} guide to see why it fits ${month}.`;
+}
 
-  if (city.seasons?.includes("Autumn")) {
-    return "Works well for mild weather, old streets, and atmospheric views.";
-  }
+function getPhotoCardStyle(city: City): CSSProperties {
+  const image = getCityImage(city.slug);
 
-  if (city.seasons?.includes("Winter")) {
-    return "Works well for colder-season atmosphere and slower city travel.";
-  }
-
-  const displayStops = getDisplayStops(city);
-
-  return displayStops.length > 0
-    ? `Start with ${displayStops.join(" · ")}.`
-    : `Open the ${city.city} guide to see the main travel ideas.`;
+  return {
+    ...cityCardStyle,
+    backgroundImage: `linear-gradient(180deg, rgba(10, 18, 24, 0.04) 0%, rgba(10, 18, 24, 0.28) 45%, rgba(10, 18, 24, 0.76) 100%), url("${image.imageUrl}")`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+  };
 }
 
 export function TravelTimingDiscovery({ cities }: Props) {
   const [activeMonth, setActiveMonth] = useState(getCurrentMonth());
 
   const matchingCities = useMemo(() => {
-    const exact = cities.filter((city) => city.months?.includes(activeMonth));
+    const monthly = cities.filter((city) => city.months?.includes(activeMonth));
 
-    if (exact.length > 0) return exact;
+    if (monthly.length > 0) {
+      return monthly.slice(0, 9);
+    }
 
-    return cities.slice(0, 8);
+    return cities.slice(0, 9);
   }, [cities, activeMonth]);
 
   return (
-    <section id="travel-timing" style={wrapStyle}>
+    <section id="travel-timing" style={sectionStyle}>
       <div style={sectionHeaderStyle}>
         <div>
           <div style={smallLabelStyle}>By season</div>
-          <h2 style={sectionTitleStyle}>Browse by travel timing</h2>
+          <h2 style={sectionTitleStyle}>Find places by travel timing</h2>
+          <p style={sectionLeadStyle}>
+            Choose a month first, then browse destinations that fit the season.
+          </p>
         </div>
-
-        <span style={mutedTextStyle}>{activeMonth}</span>
       </div>
 
-      <p style={leadStyle}>
-        Use this when you know roughly when you want to travel, but not the city
-        yet.
-      </p>
-
       <div style={monthGridStyle}>
-        {monthNames.map((month) => {
+        {months.map((month) => {
           const isActive = month === activeMonth;
 
           return (
@@ -135,38 +99,54 @@ export function TravelTimingDiscovery({ cities }: Props) {
         })}
       </div>
 
-      <div style={destinationGridStyle}>
-        {matchingCities.map((city, index) => (
-          <Link
-            key={`${city.slug}-${activeMonth}-${index}`}
-            href={`/c/${city.slug}?src=discover&v=seasonal_${activeMonth}_${city.slug}`}
-            style={destinationCardStyle}
-          >
-            <div
-              style={{
-                ...destinationVisualStyle,
-                background: getMapMagazineVisual(city.slug),
-              }}
-            >
-              <div style={monthBadgeStyle}>{activeMonth}</div>
-            </div>
+      <div style={resultTopStyle}>
+        <div>
+          <div style={smallLabelStyle}>Seasonal picks</div>
+          <h3 style={miniTitleStyle}>Best places in {activeMonth}</h3>
+        </div>
 
-            <div style={destinationBodyStyle}>
-              <h3 style={destinationTitleStyle}>{city.city}</h3>
-              <p style={destinationCountryStyle}>{city.country}</p>
-              <p style={destinationReasonStyle}>
-                {getMonthReason(city, activeMonth)}
-              </p>
-            </div>
-          </Link>
-        ))}
+        <span style={countStyle}>{matchingCities.length} ideas</span>
+      </div>
+
+      <div style={cityGridStyle}>
+        {matchingCities.map((city) => {
+          const stops = getDisplayStops(city, 3);
+
+          return (
+            <Link
+              key={`${city.slug}-${activeMonth}-season-card`}
+              href={`/c/${city.slug}?src=discover&v=season_${activeMonth}_${city.slug}`}
+              style={getPhotoCardStyle(city)}
+            >
+              <div style={badgeStyle}>{activeMonth}</div>
+
+              <div style={textPanelStyle}>
+                <div style={metaStyle}>{city.country}</div>
+
+                <h3 style={cardTitleStyle}>{city.city}</h3>
+
+                <p style={cardTextStyle}>{getMonthReason(city, activeMonth)}</p>
+
+                {stops.length > 0 && (
+                  <div style={chipRowStyle}>
+                    {stops.map((stop, index) => (
+                      <span key={`${city.slug}-${stop}-${index}`} style={chipStyle}>
+                        {stop}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </Link>
+          );
+        })}
       </div>
     </section>
   );
 }
 
-const wrapStyle: CSSProperties = {
-  marginTop: 42,
+const sectionStyle: CSSProperties = {
+  marginTop: 34,
 };
 
 const sectionHeaderStyle: CSSProperties = {
@@ -174,7 +154,7 @@ const sectionHeaderStyle: CSSProperties = {
   justifyContent: "space-between",
   gap: 12,
   alignItems: "flex-end",
-  marginBottom: 10,
+  marginBottom: 16,
   flexWrap: "wrap",
 };
 
@@ -182,127 +162,170 @@ const smallLabelStyle: CSSProperties = {
   fontSize: 12,
   letterSpacing: "0.12em",
   textTransform: "uppercase",
-  opacity: 0.5,
-  marginBottom: 6,
+  color: "#9a6a2f",
+  fontWeight: 850,
+  marginBottom: 7,
 };
 
 const sectionTitleStyle: CSSProperties = {
   margin: 0,
-  fontSize: "clamp(26px, 6vw, 36px)",
-  lineHeight: 1.04,
-  letterSpacing: "-0.055em",
+  fontSize: "clamp(26px, 5.8vw, 36px)",
+  lineHeight: 1.06,
+  letterSpacing: "-0.05em",
   fontWeight: 850,
+  color: "#17202a",
 };
 
-const mutedTextStyle: CSSProperties = {
-  fontSize: 13,
-  opacity: 0.6,
-  whiteSpace: "nowrap",
-};
-
-const leadStyle: CSSProperties = {
-  margin: "0 0 16px",
+const sectionLeadStyle: CSSProperties = {
+  margin: "10px 0 0",
   maxWidth: 680,
   fontSize: 14,
   lineHeight: 1.7,
-  opacity: 0.68,
+  color: "#607080",
 };
 
 const monthGridStyle: CSSProperties = {
   display: "flex",
-  gap: 8,
-  overflowX: "auto",
-  paddingBottom: 14,
-  marginBottom: 16,
+  flexWrap: "wrap",
+  gap: 9,
+  marginBottom: 24,
 };
 
 const monthButtonStyle: CSSProperties = {
-  border: "1px solid rgba(0, 0, 0, 0.1)",
-  background: "rgba(255, 255, 255, 0.74)",
-  color: "#171717",
+  border: "1px solid rgba(23, 32, 42, 0.08)",
   borderRadius: 999,
-  padding: "10px 13px",
+  padding: "9px 12px",
+  background: "#ffffff",
+  color: "#607080",
   fontSize: 13,
-  fontWeight: 700,
-  whiteSpace: "nowrap",
+  fontWeight: 800,
   cursor: "pointer",
-  boxShadow: "0 10px 28px rgba(0, 0, 0, 0.04)",
 };
 
 const activeMonthButtonStyle: CSSProperties = {
   ...monthButtonStyle,
-  background: "#171717",
-  color: "#ffffff",
-  border: "1px solid #171717",
+  background: "#f7efe2",
+  border: "1px solid rgba(168, 116, 50, 0.18)",
+  color: "#9a6a2f",
+  boxShadow: "0 8px 22px rgba(96, 76, 48, 0.08)",
 };
 
-const destinationGridStyle: CSSProperties = {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 240px), 1fr))",
-  gap: 16,
+const resultTopStyle: CSSProperties = {
+  display: "flex",
+  alignItems: "flex-end",
+  justifyContent: "space-between",
+  gap: 12,
+  marginBottom: 15,
+  flexWrap: "wrap",
 };
 
-const destinationCardStyle: CSSProperties = {
-  display: "block",
-  borderRadius: 28,
-  background: "#ffffff",
-  border: "1px solid rgba(23, 32, 42, 0.08)",
-  boxShadow: "0 8px 22px rgba(30, 64, 88, 0.07)",
-  color: "inherit",
-  textDecoration: "none",
-  overflow: "hidden",
+const miniTitleStyle: CSSProperties = {
+  margin: 0,
+  fontSize: "clamp(22px, 5vw, 28px)",
+  lineHeight: 1.08,
+  letterSpacing: "-0.04em",
+  color: "#17202a",
 };
 
-const destinationVisualStyle: CSSProperties = {
-  height: "clamp(130px, 38vw, 160px)",
-  position: "relative",
-};
-
-const monthBadgeStyle: CSSProperties = {
-  position: "absolute",
-  top: 14,
-  left: 14,
+const countStyle: CSSProperties = {
   padding: "8px 11px",
   borderRadius: 999,
-  background: "#ffffff",
-  backdropFilter: "blur(12px)",
+  background: "#fffdf8",
+  border: "1px solid rgba(168, 116, 50, 0.14)",
+  color: "#9a6a2f",
   fontSize: 12,
-  fontWeight: 800,
-};
-
-const destinationBodyStyle: CSSProperties = {
-  padding: 18,
-};
-
-const destinationTitleStyle: CSSProperties = {
-  margin: 0,
-  fontSize: "clamp(22px, 6vw, 25px)",
-  lineHeight: 1.05,
-  letterSpacing: "-0.035em",
   fontWeight: 850,
 };
 
-const destinationCountryStyle: CSSProperties = {
-  margin: "7px 0 0",
-  fontSize: 14,
-  opacity: 0.62,
+const cityGridStyle: CSSProperties = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 250px), 1fr))",
+  gap: 16,
 };
 
-const destinationReasonStyle: CSSProperties = {
-  margin: "12px 0 0",
+const cityCardStyle: CSSProperties = {
+  position: "relative",
+  minHeight: 370,
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "flex-end",
+  borderRadius: 26,
+  overflow: "hidden",
+  textDecoration: "none",
+  color: "#ffffff",
+  backgroundColor: "#17202a",
+  border: "1px solid rgba(255, 255, 255, 0.22)",
+  boxShadow: "0 14px 36px rgba(30, 64, 88, 0.16)",
+};
+
+const badgeStyle: CSSProperties = {
+  position: "absolute",
+  top: 14,
+  left: 14,
+  zIndex: 3,
+  padding: "7px 10px",
+  borderRadius: 999,
+  background: "rgba(255, 255, 255, 0.84)",
+  border: "1px solid rgba(255, 255, 255, 0.28)",
+  backdropFilter: "blur(12px)",
+  WebkitBackdropFilter: "blur(12px)",
+  color: "#17202a",
+  fontSize: 12,
+  fontWeight: 850,
+};
+
+const textPanelStyle: CSSProperties = {
+  position: "relative",
+  zIndex: 2,
+  margin: 12,
+  padding: 16,
+  borderRadius: 20,
+  background: "rgba(12, 22, 30, 0.54)",
+  border: "1px solid rgba(255, 255, 255, 0.24)",
+  boxShadow: "0 10px 26px rgba(0, 0, 0, 0.14)",
+  backdropFilter: "blur(18px)",
+  WebkitBackdropFilter: "blur(18px)",
+};
+
+const metaStyle: CSSProperties = {
+  marginBottom: 7,
+  fontSize: 12,
+  letterSpacing: "0.1em",
+  textTransform: "uppercase",
+  color: "rgba(255, 255, 255, 0.76)",
+  fontWeight: 850,
+};
+
+const cardTitleStyle: CSSProperties = {
+  margin: 0,
+  fontSize: "clamp(23px, 5.8vw, 28px)",
+  lineHeight: 1.04,
+  letterSpacing: "-0.045em",
+  color: "#ffffff",
+  fontWeight: 850,
+  textShadow: "0 1px 10px rgba(0, 0, 0, 0.26)",
+};
+
+const cardTextStyle: CSSProperties = {
+  margin: "10px 0 0",
   fontSize: 13,
-  lineHeight: 1.5,
-  opacity: 0.7,
-  fontWeight: 650,
+  lineHeight: 1.55,
+  color: "rgba(255, 255, 255, 0.84)",
 };
 
+const chipRowStyle: CSSProperties = {
+  display: "flex",
+  flexWrap: "wrap",
+  gap: 7,
+  marginTop: 14,
+};
 
-
-
-
-
-
-
-
-
-
+const chipStyle: CSSProperties = {
+  padding: "7px 9px",
+  borderRadius: 999,
+  background: "rgba(255, 255, 255, 0.16)",
+  color: "#ffffff",
+  border: "1px solid rgba(255, 255, 255, 0.22)",
+  fontSize: 12,
+  fontWeight: 800,
+};
