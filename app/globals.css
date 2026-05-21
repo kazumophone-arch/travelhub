@@ -94,17 +94,7 @@ body::before {
   letter-spacing: -0.035em;
 }
 
-.travelhub-brand-mark {
-  width: 30px;
-  height: 30px;
-  display: grid;
-  place-items: center;
-  border-radius: 11px;
-  background: linear-gradient(135deg, #dff5ee 0%, #eff8ff 52%, #f8dcae 100%);
-  box-shadow: 0 8px 20px rgba(30, 64, 88, 0.10);
-  color: var(--travelhub-accent) !important;
-  font-size: 17px;
-}
+
 
 .travelhub-explore-button {
   height: 44px;
@@ -299,6 +289,21 @@ body::before {
 }
 /* TRAVELHUB_NAV_END */
 
-
-
-
+.travelhub-brand-mark {
+  width: 32px;
+  height: 32px;
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  border-radius: 13px;
+  background-color: #eef8f5;
+  background-image: url("/icon.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 22px 22px;
+  border: 1px solid rgba(19, 138, 114, 0.14);
+  box-shadow: 0 8px 20px rgba(30, 64, 88, 0.08);
+  color: transparent !important;
+  font-size: 0;
+  overflow: hidden;
+}
