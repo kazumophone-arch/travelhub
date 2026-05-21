@@ -141,16 +141,6 @@ export default async function SpotPage({
               ))}
             </div>
           </div>
-
-          <TravelVisual
-            imageUrl={spot.imageUrl}
-            imageAlt={spot.imageAlt ?? spot.name}
-            imageCredit={spot.imageCredit}
-            fallback={getMapMagazineSpotVisual(0)}
-            style={heroVisualStyle}
-          >
-            <div style={visualBadgeStyle}>{city.city}</div>
-          </TravelVisual>
         </section>
         <DetailHeroImage
           image={{
@@ -384,30 +374,6 @@ const heroChipStyle: CSSProperties = {
   fontWeight: 850,
 };
 
-const heroVisualStyle: CSSProperties = {
-  minHeight: "clamp(240px, 54vw, 390px)",
-  borderRadius: 26,
-  overflow: "hidden",
-  position: "relative",
-  border: "1px solid rgba(23, 32, 42, 0.08)",
-  boxShadow: "0 10px 28px rgba(30, 64, 88, 0.09)",
-};
-
-const visualBadgeStyle: CSSProperties = {
-  position: "absolute",
-  top: 14,
-  left: 14,
-  padding: "8px 11px",
-  borderRadius: 999,
-  background: "rgba(255, 255, 255, 0.88)",
-  border: "1px solid rgba(23, 32, 42, 0.07)",
-  backdropFilter: "blur(10px)",
-  color: "#138a72",
-  fontSize: 12,
-  fontWeight: 850,
-  zIndex: 2,
-};
-
 const decisionGridStyle: CSSProperties = {
   display: "grid",
   gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 250px), 1fr))",
@@ -627,6 +593,10 @@ const relatedMetaStyle: CSSProperties = {
   color: "rgba(255, 255, 255, 0.78)",
   fontWeight: 850,
 };
+
+
+
+
 
 
 
