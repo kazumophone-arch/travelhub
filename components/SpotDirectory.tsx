@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import type { City } from "@/data/types";
-import { getSpotImage } from "@/data/travel-images";
 import { getMapMagazineSpotVisual } from "@/lib/mapMagazineVisuals";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { isValidDisplayText } from "@/lib/displayText";
@@ -200,14 +199,14 @@ function getSpotCategories(spot: SpotItem) {
 }
 
 
+
 function getSpotPhotoCardStyle(spot: SpotItem): CSSProperties {
-  const image = getSpotImage(spot.citySlug, spot.slug);
+  const seed = encodeURIComponent(`travelhub-spot-${spot.citySlug}-${spot.slug}`);
+  const imageUrl = `https://picsum.photos/seed/${seed}/1000/700`;
 
   return {
     ...spotCardStyle,
-    backgroundImage: `linear-gradient(180deg, rgba(10, 18, 24, 0.05) 0%, rgba(10, 18, 24, 0.24) 42%, rgba(10, 18, 24, 0.76) 100%), url("${image.imageUrl}")`,
-    backgroundSize: "cover",
-    backgroundPosition: "center",
+    background: `linear-gradient(180deg, rgba(10, 18, 24, 0.05) 0%, rgba(10, 18, 24, 0.24) 42%, rgba(10, 18, 24, 0.76) 100%), url("${imageUrl}") center / cover no-repeat`,
   };
 }
 export function SpotDirectory({ cities }: Props) {
@@ -789,6 +788,11 @@ const emptyStyle: CSSProperties = {
   textAlign: "center",
   opacity: 0.72,
 };
+
+
+
+
+
 
 
 

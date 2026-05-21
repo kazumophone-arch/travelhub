@@ -50,6 +50,20 @@ export async function generateMetadata({
   };
 }
 
+
+function getNearbyIdeaPhotoCardStyle(
+  citySlug: string,
+  spotKey: string,
+  baseStyle: CSSProperties
+): CSSProperties {
+  const seed = encodeURIComponent(`travelhub-nearby-idea-${citySlug}-${spotKey}`);
+  const imageUrl = `https://picsum.photos/seed/${seed}/1000/700`;
+
+  return {
+    ...baseStyle,
+    background: `linear-gradient(180deg, rgba(10, 18, 24, 0.05) 0%, rgba(10, 18, 24, 0.24) 42%, rgba(10, 18, 24, 0.76) 100%), url("${imageUrl}") center / cover no-repeat`,
+  };
+}
 export default async function SpotPage({
   params,
   searchParams,
@@ -231,7 +245,7 @@ export default async function SpotPage({
                   href={`/c/${slug}/spot/${related.slug}?src=${encodeURIComponent(
                     src
                   )}&v=${encodeURIComponent(`related_${v}`)}`}
-                  style={relatedCardStyle}
+                  style={getNearbyIdeaPhotoCardStyle(city.slug, related.slug ?? related.name ?? String(index), relatedCardStyle)}
                 >
                   <TravelVisual
                     imageUrl={related.imageUrl}
@@ -542,38 +556,52 @@ const relatedGridStyle: CSSProperties = {
 };
 
 const relatedCardStyle: CSSProperties = {
-  display: "block",
+  position: "relative",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "flex-end",
+  minHeight: 360,
   borderRadius: 24,
-  background: "#ffffff",
-  border: "1px solid rgba(23, 32, 42, 0.08)",
-  boxShadow: "0 7px 20px rgba(30, 64, 88, 0.06)",
-  color: "inherit",
+  backgroundColor: "#17202a",
+  border: "1px solid rgba(255, 255, 255, 0.22)",
+  boxShadow: "0 12px 34px rgba(30, 64, 88, 0.16)",
+  color: "#ffffff",
   textDecoration: "none",
   overflow: "hidden",
 };
 
 const relatedVisualStyle: CSSProperties = {
-  height: 160,
-  position: "relative",
+  display: "none",
 };
 
 const relatedBodyStyle: CSSProperties = {
-  padding: 17,
+  position: "relative",
+  zIndex: 2,
+  margin: "auto 12px 12px",
+  padding: 16,
+  borderRadius: 20,
+  background: "rgba(12, 22, 30, 0.54)",
+  border: "1px solid rgba(255, 255, 255, 0.24)",
+  boxShadow: "0 10px 26px rgba(0, 0, 0, 0.14)",
+  backdropFilter: "blur(18px)",
+  WebkitBackdropFilter: "blur(18px)",
 };
 
 const relatedTitleStyle: CSSProperties = {
   margin: 0,
-  fontSize: 23,
-  lineHeight: 1.05,
+  fontSize: 22,
+  lineHeight: 1.08,
   letterSpacing: "-0.04em",
   fontWeight: 850,
+  color: "#ffffff",
+  textShadow: "0 1px 10px rgba(0, 0, 0, 0.26)",
 };
 
 const relatedTextStyle: CSSProperties = {
-  margin: "10px 0 0",
+  margin: "9px 0 0",
   fontSize: 13,
   lineHeight: 1.5,
-  color: "#607080",
+  color: "rgba(255, 255, 255, 0.84)",
 };
 
 const openTextStyle: CSSProperties = {
@@ -595,11 +623,14 @@ const hotelCtaStyle: CSSProperties = {
   boxShadow: "0 7px 20px rgba(30, 64, 88, 0.05)",
 };
 
-
-
-
-
-
+const relatedMetaStyle: CSSProperties = {
+  marginBottom: 8,
+  fontSize: 12,
+  letterSpacing: "0.08em",
+  textTransform: "uppercase",
+  color: "rgba(255, 255, 255, 0.78)",
+  fontWeight: 850,
+};
 
 
 

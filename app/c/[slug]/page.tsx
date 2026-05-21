@@ -55,6 +55,20 @@ export async function generateMetadata({
   };
 }
 
+
+function getFeaturedSpotPhotoCardStyle(
+  citySlug: string,
+  spotKey: string,
+  baseStyle: CSSProperties
+): CSSProperties {
+  const seed = encodeURIComponent(`travelhub-featured-spot-${citySlug}-${spotKey}`);
+  const imageUrl = `https://picsum.photos/seed/${seed}/1000/700`;
+
+  return {
+    ...baseStyle,
+    background: `linear-gradient(180deg, rgba(10, 18, 24, 0.05) 0%, rgba(10, 18, 24, 0.24) 42%, rgba(10, 18, 24, 0.76) 100%), url("${imageUrl}") center / cover no-repeat`,
+  };
+}
 export default async function CityPage({
   params,
   searchParams,
@@ -275,7 +289,7 @@ export default async function CityPage({
 
               if (!canOpenSpot) {
                 return (
-                  <article key={`${spot.slug}-${index}`} style={spotCardStyle}>
+                  <article key={`${spot.slug}-${index}`} style={getFeaturedSpotPhotoCardStyle(city.slug, spot.slug ?? spot.name ?? String(index), spotCardStyle)}>
                     {content}
                   </article>
                 );
@@ -660,8 +674,9 @@ const tagStyle: CSSProperties = {
 const smallTagStyle: CSSProperties = {
   padding: "7px 9px",
   borderRadius: 999,
-  background: "#eef8f5",
-  color: "#138a72",
+  background: "rgba(255, 255, 255, 0.16)",
+  color: "#ffffff",
+  border: "1px solid rgba(255, 255, 255, 0.22)",
   fontSize: 12,
   fontWeight: 800,
 };
@@ -737,12 +752,18 @@ const spotGridStyle: CSSProperties = {
 };
 
 const spotCardStyle: CSSProperties = {
-  display: "block",
+  position: "relative",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "flex-end",
+  minHeight: 390,
   borderRadius: 24,
   overflow: "hidden",
-  background: "#ffffff",
-  border: "1px solid rgba(23, 32, 42, 0.08)",
-  boxShadow: "0 7px 20px rgba(30, 64, 88, 0.06)",
+  color: "#ffffff",
+  textDecoration: "none",
+  border: "1px solid rgba(255, 255, 255, 0.22)",
+  boxShadow: "0 12px 34px rgba(30, 64, 88, 0.16)",
+  backgroundColor: "#17202a",
 };
 
 const spotCardLinkStyle: CSSProperties = {
@@ -752,30 +773,39 @@ const spotCardLinkStyle: CSSProperties = {
 };
 
 const spotVisualStyle: CSSProperties = {
-  height: "clamp(142px, 38vw, 180px)",
-  position: "relative",
-  borderBottom: "1px solid rgba(23, 32, 42, 0.06)",
+  display: "none",
 };
 
 const spotNumberBadgeStyle: CSSProperties = {
   position: "absolute",
   top: 12,
   left: 12,
+  zIndex: 3,
   width: 34,
   height: 34,
   display: "grid",
   placeItems: "center",
   borderRadius: "50%",
-  background: "rgba(255, 255, 255, 0.88)",
-  border: "1px solid rgba(23, 32, 42, 0.07)",
-  color: "#138a72",
+  background: "rgba(255, 255, 255, 0.84)",
+  border: "1px solid rgba(255, 255, 255, 0.28)",
+  backdropFilter: "blur(12px)",
+  WebkitBackdropFilter: "blur(12px)",
+  color: "#17202a",
   fontSize: 13,
   fontWeight: 850,
-  zIndex: 2,
 };
 
 const spotBodyStyle: CSSProperties = {
-  padding: 18,
+  position: "relative",
+  zIndex: 2,
+  margin: "auto 12px 12px",
+  padding: 16,
+  borderRadius: 20,
+  background: "rgba(12, 22, 30, 0.54)",
+  border: "1px solid rgba(255, 255, 255, 0.24)",
+  boxShadow: "0 10px 26px rgba(0, 0, 0, 0.14)",
+  backdropFilter: "blur(18px)",
+  WebkitBackdropFilter: "blur(18px)",
 };
 
 const spotMetaStyle: CSSProperties = {
@@ -783,7 +813,7 @@ const spotMetaStyle: CSSProperties = {
   fontSize: 12,
   letterSpacing: "0.08em",
   textTransform: "uppercase",
-  color: "#138a72",
+  color: "rgba(255, 255, 255, 0.78)",
   fontWeight: 850,
 };
 
@@ -793,21 +823,22 @@ const spotTitleStyle: CSSProperties = {
   lineHeight: 1.08,
   letterSpacing: "-0.04em",
   fontWeight: 850,
-  color: "#17202a",
+  color: "#ffffff",
+  textShadow: "0 1px 10px rgba(0, 0, 0, 0.26)",
 };
 
 const spotTextStyle: CSSProperties = {
   margin: "8px 0 14px",
   fontSize: 14,
   lineHeight: 1.55,
-  color: "#607080",
+  color: "rgba(255, 255, 255, 0.84)",
 };
 
 const openTextStyle: CSSProperties = {
   marginTop: 14,
   fontSize: 13,
   fontWeight: 850,
-  color: "#138a72",
+  color: "#ffffff",
 };
 
 const tourCtaStyle: CSSProperties = {
@@ -821,6 +852,11 @@ const tourCtaStyle: CSSProperties = {
   border: "1px solid rgba(23, 32, 42, 0.08)",
   boxShadow: "0 7px 20px rgba(30, 64, 88, 0.05)",
 };
+
+
+
+
+
 
 
 

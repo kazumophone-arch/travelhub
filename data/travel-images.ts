@@ -81,8 +81,26 @@ export const cityImages: Record<string, TravelImageAsset> = {
 
 export const spotImages: Record<string, TravelImageAsset> = {
   "rome-it/trevi-fountain": {
-    imageUrl: placeholderImage("travelhub-rome-it-trevi-fountain"),
+    imageUrl: placeholderImage("travelhub-spot-rome-trevi-fountain"),
     alt: "Travel placeholder image for Trevi Fountain",
+    sourceName: "Picsum",
+    sourceUrl: "https://picsum.photos/",
+  },
+  "rome-it/colosseum": {
+    imageUrl: placeholderImage("travelhub-spot-rome-colosseum"),
+    alt: "Travel placeholder image for Colosseum",
+    sourceName: "Picsum",
+    sourceUrl: "https://picsum.photos/",
+  },
+  "kyoto-jp/fushimi-inari-taisha": {
+    imageUrl: placeholderImage("travelhub-spot-kyoto-fushimi-inari"),
+    alt: "Travel placeholder image for Fushimi Inari Taisha",
+    sourceName: "Picsum",
+    sourceUrl: "https://picsum.photos/",
+  },
+  "paris-fr/eiffel-tower": {
+    imageUrl: placeholderImage("travelhub-spot-paris-eiffel-tower"),
+    alt: "Travel placeholder image for Eiffel Tower",
     sourceName: "Picsum",
     sourceUrl: "https://picsum.photos/",
   },
@@ -111,3 +129,4 @@ export function getSpotImage(citySlug: string, spotSlug: string) {
     }
   );
 }
+
