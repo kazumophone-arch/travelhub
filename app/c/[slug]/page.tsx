@@ -715,9 +715,9 @@ const stayTextStyle: CSSProperties = {
 
 const reasonCtaStyle: CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "minmax(0, 1fr) minmax(min(100%, 300px), 0.7fr)",
+  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))",
   gap: 16,
-  alignItems: "center",
+  alignItems: "start",
   marginTop: 16,
   padding: 18,
   borderRadius: 24,
@@ -836,15 +836,16 @@ const openTextStyle: CSSProperties = {
 
 const tourCtaStyle: CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "minmax(0, 1fr) minmax(min(100%, 300px), 0.7fr)",
+  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))",
   gap: 16,
-  alignItems: "center",
+  alignItems: "start",
   padding: 20,
   borderRadius: 24,
   background: "#f7fbfc",
   border: "1px solid rgba(23, 32, 42, 0.08)",
   boxShadow: "0 7px 20px rgba(30, 64, 88, 0.05)",
 };
+
 
 
 

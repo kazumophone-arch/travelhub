@@ -501,9 +501,9 @@ const highlightTextStyle: CSSProperties = {
 
 const planningCardStyle: CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "minmax(0, 1fr) minmax(min(100%, 300px), 0.7fr)",
+  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))",
   gap: 16,
-  alignItems: "center",
+  alignItems: "start",
   padding: 20,
   borderRadius: 24,
   background: "#f7fbfc",
@@ -575,9 +575,9 @@ const openTextStyle: CSSProperties = {
 
 const hotelCtaStyle: CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "minmax(0, 1fr) minmax(min(100%, 300px), 0.7fr)",
+  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))",
   gap: 16,
-  alignItems: "center",
+  alignItems: "start",
   padding: 20,
   borderRadius: 24,
   background: "#f7fbfc",
@@ -593,6 +593,7 @@ const relatedMetaStyle: CSSProperties = {
   color: "rgba(255, 255, 255, 0.78)",
   fontWeight: 850,
 };
+
 
 
 
