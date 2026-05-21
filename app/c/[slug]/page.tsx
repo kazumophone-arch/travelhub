@@ -7,6 +7,8 @@ import { cities } from "@/data/cities";
 import { TravelVisual } from "@/components/TravelVisual";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
+import { FeaturedSpotImageGrid } from "@/components/FeaturedSpotImageGrid";
+import { DetailPlaceImageCard } from "@/components/DetailPlaceImageCard";
 import { DetailHeroImage } from "@/components/DetailHeroImage";
 import { getDisplayStops } from "@/lib/displayText";
 import { getCityImage } from "@/data/travel-images";
@@ -69,6 +71,20 @@ function getFeaturedSpotPhotoCardStyle(
     background: `linear-gradient(180deg, rgba(10, 18, 24, 0.05) 0%, rgba(10, 18, 24, 0.24) 42%, rgba(10, 18, 24, 0.76) 100%), url("${imageUrl}") center / cover no-repeat`,
   };
 }
+
+function getFeaturedSpotVisualStyle(
+  citySlug: string,
+  spotKey: string,
+  index: number
+): CSSProperties {
+  const seed = encodeURIComponent(`travelhub-featured-spot-${citySlug}-${spotKey}-${index}`);
+  const imageUrl = `https://picsum.photos/seed/${seed}/1000/700`;
+
+  return {
+    ...spotVisualStyle,
+    background: `linear-gradient(180deg, rgba(10, 18, 24, 0.02) 0%, rgba(10, 18, 24, 0.20) 100%), url("${imageUrl}") center / cover no-repeat`,
+  };
+}
 export default async function CityPage({
   params,
   searchParams,
@@ -110,6 +126,21 @@ export default async function CityPage({
   const topStyles = city.travelStyles?.slice(0, 4) ?? [];
   const bestMonths = city.months?.slice(0, 5) ?? [];
   const themes = city.themes?.slice(0, 4) ?? [];
+  const featuredSpots =
+    city.spotDetails && city.spotDetails.length > 0
+      ? city.spotDetails.slice(0, 6).map((spot) => ({
+          name: spot.name,
+          slug: spot.slug,
+          summary:
+            spot.summary ??
+            `Open this spot from the ${city.city} guide.`,
+          categories: city.themes?.slice(0, 3) ?? [],
+        }))
+      : getDisplayStops(city, 6).map((spotName) => ({
+          name: spotName,
+          summary: `Start with ${spotName} when planning ${city.city}.`,
+          categories: city.themes?.slice(0, 3) ?? [],
+        }));
 
   return (
     <main style={pageStyle}>
@@ -240,74 +271,7 @@ export default async function CityPage({
             <span style={countStyle}>{spotCards.length} spots</span>
           </div>
 
-          <div style={spotGridStyle}>
-            {spotCards.map((spot, index) => {
-              const canOpenSpot =
-                city.spotDetails?.some((item) => item.slug === spot.slug) ??
-                false;
-
-              const content = (
-                <>
-                  <TravelVisual
-                    imageUrl={spot.imageUrl}
-                    imageAlt={spot.imageAlt ?? spot.name}
-                    imageCredit={spot.imageCredit}
-                    fallback={getMapMagazineSpotVisual(index)}
-                    style={spotVisualStyle}
-                  >
-                    <div style={spotNumberBadgeStyle}>{index + 1}</div>
-                  </TravelVisual>
-
-                  <div style={spotBodyStyle}>
-                    <div style={spotMetaStyle}>
-                      {canOpenSpot ? "Spot guide" : "City highlight"}
-                    </div>
-
-                    <h3 style={spotTitleStyle}>{spot.name}</h3>
-
-                    <p style={spotTextStyle}>{spot.summary}</p>
-
-                    <div style={tagWrapStyle}>
-                      {(spot.tags && spot.tags.length > 0
-                        ? spot.tags
-                        : spot.highlights
-                      )
-                        .slice(0, 3)
-                        .map((tag) => (
-                          <span key={tag} style={smallTagStyle}>
-                            {tag}
-                          </span>
-                        ))}
-                    </div>
-
-                    <div style={openTextStyle}>
-                      {canOpenSpot ? "Open spot guide" : "Use city guide"}
-                    </div>
-                  </div>
-                </>
-              );
-
-              if (!canOpenSpot) {
-                return (
-                  <article key={`${spot.slug}-${index}`} style={getFeaturedSpotPhotoCardStyle(city.slug, spot.slug ?? spot.name ?? String(index), spotCardStyle)}>
-                    {content}
-                  </article>
-                );
-              }
-
-              return (
-                <Link
-                  key={`${spot.slug}-${index}`}
-                  href={`/c/${slug}/spot/${spot.slug}?src=${encodeURIComponent(
-                    src
-                  )}&v=${encodeURIComponent(v)}`}
-                  style={spotCardLinkStyle}
-                >
-                  {content}
-                </Link>
-              );
-            })}
-          </div>
+          <FeaturedSpotImageGrid city={city} spots={featuredSpots} />
         </section>
 
         <section style={sectionStyle}>
@@ -330,6 +294,22 @@ export default async function CityPage({
 
 
 function getCityIntro(city: City) {
+  const featuredSpots =
+    city.spotDetails && city.spotDetails.length > 0
+      ? city.spotDetails.slice(0, 6).map((spot) => ({
+          name: spot.name,
+          slug: spot.slug,
+          summary:
+            spot.summary ??
+            `Open this spot from the ${city.city} guide.`,
+          categories: city.themes?.slice(0, 3) ?? [],
+        }))
+      : getDisplayStops(city, 6).map((spotName) => ({
+          name: spotName,
+          summary: `Start with ${spotName} when planning ${city.city}.`,
+          categories: city.themes?.slice(0, 3) ?? [],
+        }));
+
   return (
     city.description ??
     `Explore ${city.city} through featured spots, seasonal context, where-to-stay guidance, and quick travel planning links.`
@@ -475,6 +455,21 @@ function getStayAreas(city: City): StayArea[] {
       },
     ],
   };
+  const featuredSpots =
+    city.spotDetails && city.spotDetails.length > 0
+      ? city.spotDetails.slice(0, 6).map((spot) => ({
+          name: spot.name,
+          slug: spot.slug,
+          summary:
+            spot.summary ??
+            `Open this spot from the ${city.city} guide.`,
+          categories: city.themes?.slice(0, 3) ?? [],
+        }))
+      : getDisplayStops(city, 6).map((spotName) => ({
+          name: spotName,
+          summary: `Start with ${spotName} when planning ${city.city}.`,
+          categories: city.themes?.slice(0, 3) ?? [],
+        }));
 
   return (
     areas[city.slug] ?? [
@@ -752,11 +747,7 @@ const spotGridStyle: CSSProperties = {
 };
 
 const spotCardStyle: CSSProperties = {
-  position: "relative",
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "flex-end",
-  minHeight: 390,
+  display: "block",
   borderRadius: 24,
   overflow: "hidden",
   color: "#ffffff",
@@ -773,7 +764,9 @@ const spotCardLinkStyle: CSSProperties = {
 };
 
 const spotVisualStyle: CSSProperties = {
-  display: "none",
+  minHeight: "clamp(150px, 38vw, 190px)",
+  position: "relative",
+  borderBottom: "1px solid rgba(255, 255, 255, 0.14)",
 };
 
 const spotNumberBadgeStyle: CSSProperties = {
@@ -798,7 +791,7 @@ const spotNumberBadgeStyle: CSSProperties = {
 const spotBodyStyle: CSSProperties = {
   position: "relative",
   zIndex: 2,
-  margin: "auto 12px 12px",
+  margin: "0 12px 12px",
   padding: 16,
   borderRadius: 20,
   background: "rgba(12, 22, 30, 0.54)",
@@ -852,6 +845,16 @@ const tourCtaStyle: CSSProperties = {
   border: "1px solid rgba(23, 32, 42, 0.08)",
   boxShadow: "0 7px 20px rgba(30, 64, 88, 0.05)",
 };
+
+
+
+
+
+
+
+
+
+
 
 
 

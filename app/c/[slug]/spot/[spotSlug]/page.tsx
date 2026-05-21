@@ -6,7 +6,7 @@ import { cities } from "@/data/cities";
 import { TravelVisual } from "@/components/TravelVisual";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
-import { getSpotImage } from "@/data/travel-images";
+import { DetailPlaceImageCard } from "@/components/DetailPlaceImageCard";
 import { DetailHeroImage } from "@/components/DetailHeroImage";
 import { getMapMagazineSpotVisual } from "@/lib/mapMagazineVisuals";
 
@@ -153,7 +153,12 @@ export default async function SpotPage({
           </TravelVisual>
         </section>
         <DetailHeroImage
-          image={getSpotImage(city.slug, spot.slug)}
+          image={{
+            imageUrl: `https://picsum.photos/seed/${encodeURIComponent(`travelhub-detail-spot-${city.slug}-${spot.slug}`)}/1400/900`,
+            alt: `${spot.name} in ${city.city}`,
+            sourceName: "Picsum",
+            sourceUrl: "https://picsum.photos/",
+          }}
           label={spot.name + " · " + city.city}
         />
 
@@ -240,27 +245,18 @@ export default async function SpotPage({
 
             <div style={relatedGridStyle}>
               {relatedSpots.map((related, index) => (
-                <Link
-                  key={related.slug}
-                  href={`/c/${slug}/spot/${related.slug}?src=${encodeURIComponent(
-                    src
-                  )}&v=${encodeURIComponent(`related_${v}`)}`}
-                  style={getNearbyIdeaPhotoCardStyle(city.slug, related.slug ?? related.name ?? String(index), relatedCardStyle)}
-                >
-                  <TravelVisual
-                    imageUrl={related.imageUrl}
-                    imageAlt={related.imageAlt ?? related.name}
-                    imageCredit={related.imageCredit}
-                    fallback={getMapMagazineSpotVisual(index + 1)}
-                    style={relatedVisualStyle}
+                <DetailPlaceImageCard
+                    key={`${city.slug}-nearby-${related.slug ?? index}`}
+                    title={related.name}
+                    meta={`Nearby idea · ${city.city}`}
+                    text="Open this nearby idea from the guide."
+                    seed={`nearby-${city.slug}-${related.slug ?? related.name ?? index}`}
+                    href={
+                      related.slug
+                        ? `/c/${city.slug}/spot/${related.slug}?src=spot&v=nearby_${city.slug}_${related.slug}`
+                        : undefined
+                    }
                   />
-
-                  <div style={relatedBodyStyle}>
-                    <h3 style={relatedTitleStyle}>{related.name}</h3>
-                    <p style={relatedTextStyle}>{related.summary}</p>
-                    <div style={openTextStyle}>Open spot guide</div>
-                  </div>
-                </Link>
               ))}
             </div>
           </section>
@@ -631,6 +627,11 @@ const relatedMetaStyle: CSSProperties = {
   color: "rgba(255, 255, 255, 0.78)",
   fontWeight: 850,
 };
+
+
+
+
+
 
 
 

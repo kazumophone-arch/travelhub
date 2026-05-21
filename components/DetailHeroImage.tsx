@@ -6,12 +6,24 @@ type Props = {
   label: string;
 };
 
+function getSafeImageUrl(image: TravelImageAsset, label: string) {
+  if (image.imageUrl && image.imageUrl.trim().length > 0) {
+    return image.imageUrl;
+  }
+
+  const seed = encodeURIComponent(`travelhub-detail-hero-${label}`);
+
+  return `https://picsum.photos/seed/${seed}/1400/900`;
+}
+
 export function DetailHeroImage({ image, label }: Props) {
+  const imageUrl = getSafeImageUrl(image, label);
+
   return (
     <div
       style={{
         ...wrapStyle,
-        backgroundImage: `url("${image.imageUrl}")`,
+        backgroundImage: `linear-gradient(180deg, rgba(10, 18, 24, 0.05) 0%, rgba(10, 18, 24, 0.20) 44%, rgba(10, 18, 24, 0.62) 100%), url("${imageUrl}")`,
       }}
       aria-label={image.alt}
     >
