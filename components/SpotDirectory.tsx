@@ -199,6 +199,17 @@ function getSpotCategories(spot: SpotItem) {
   return Array.from(categories);
 }
 
+
+function getSpotPhotoCardStyle(spot: SpotItem): CSSProperties {
+  const image = getSpotImage(spot.citySlug, spot.slug);
+
+  return {
+    ...spotCardStyle,
+    backgroundImage: `linear-gradient(180deg, rgba(10, 18, 24, 0.05) 0%, rgba(10, 18, 24, 0.24) 42%, rgba(10, 18, 24, 0.76) 100%), url("${image.imageUrl}")`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+  };
+}
 export function SpotDirectory({ cities }: Props) {
   const [query, setQuery] = useState("");
   const [pageCopy, setPageCopy] = useState(spotsCopyVariants[0]);
@@ -396,12 +407,7 @@ export function SpotDirectory({ cities }: Props) {
                   <Link
                     key={`${spot.citySlug}-${spot.slug}-${index}`}
                     href={href}
-                    style={{
-                      ...spotCardStyle,
-                      backgroundImage: `linear-gradient(180deg, rgba(10, 18, 24, 0.04) 0%, rgba(10, 18, 24, 0.28) 48%, rgba(10, 18, 24, 0.72) 100%), url("${getSpotImage(spot.citySlug, spot.slug).imageUrl}")`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                    }}
+                    style={getSpotPhotoCardStyle(spot)}
                   >
                     <div style={spotVisualStyle}>
                       <div style={visualBadgeStyle}>{spot.cityName}</div>
@@ -677,28 +683,34 @@ const spotGridStyle: CSSProperties = {
 };
 
 const spotCardStyle: CSSProperties = {
-  display: "block",
-  minHeight: 380,
+  position: "relative",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "flex-end",
+  minHeight: 390,
   borderRadius: 24,
   color: "#ffffff",
   textDecoration: "none",
   overflow: "hidden",
   border: "1px solid rgba(255, 255, 255, 0.22)",
   boxShadow: "0 12px 34px rgba(30, 64, 88, 0.16)",
+  backgroundColor: "#17202a",
 };
 
 const spotVisualStyle: CSSProperties = {
-  height: "clamp(160px, 42vw, 205px)",
+  minHeight: 170,
   position: "relative",
+  flex: 1,
 };
 
 const visualBadgeStyle: CSSProperties = {
   position: "absolute",
   top: 12,
   left: 12,
+  zIndex: 3,
   padding: "7px 10px",
   borderRadius: 999,
-  background: "rgba(255, 255, 255, 0.82)",
+  background: "rgba(255, 255, 255, 0.84)",
   border: "1px solid rgba(255, 255, 255, 0.28)",
   backdropFilter: "blur(12px)",
   WebkitBackdropFilter: "blur(12px)",
@@ -708,12 +720,14 @@ const visualBadgeStyle: CSSProperties = {
 };
 
 const spotBodyStyle: CSSProperties = {
+  position: "relative",
+  zIndex: 2,
   margin: "0 12px 12px",
   padding: 16,
   borderRadius: 20,
-  background: "rgba(12, 22, 30, 0.46)",
-  border: "1px solid rgba(255, 255, 255, 0.22)",
-  boxShadow: "0 10px 26px rgba(0, 0, 0, 0.12)",
+  background: "rgba(12, 22, 30, 0.52)",
+  border: "1px solid rgba(255, 255, 255, 0.24)",
+  boxShadow: "0 10px 26px rgba(0, 0, 0, 0.14)",
   backdropFilter: "blur(18px)",
   WebkitBackdropFilter: "blur(18px)",
 };
@@ -775,6 +789,9 @@ const emptyStyle: CSSProperties = {
   textAlign: "center",
   opacity: 0.72,
 };
+
+
+
 
 
 

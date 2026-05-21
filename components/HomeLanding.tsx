@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import type { City } from "@/data/types";
+import { HomeSeasonalPicks } from "@/components/HomeSeasonalPicks";
+import { getCityImage } from "@/data/travel-images";
 import { getMapMagazineVisual } from "@/lib/mapMagazineVisuals";
 import { getDisplayStops } from "@/lib/displayText";
 import { homeCopyVariants, pickDailyVariant } from "@/lib/copyVariants";
@@ -155,6 +157,19 @@ function getCitySearchResults(cities: City[], query: string) {
     })
     .slice(0, 4);
 }
+
+
+
+function getHomePhotoCardStyle(city: City, baseStyle: CSSProperties): CSSProperties {
+  const image = getCityImage(city.slug);
+
+  return {
+    ...baseStyle,
+    backgroundImage: `url("${image.imageUrl}")`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+  };
+}
 export function HomeLanding({ cities }: Props) {
   const [query, setQuery] = useState("");
   const [homeCopy, setHomeCopy] = useState(homeCopyVariants[0]);
@@ -271,14 +286,9 @@ export function HomeLanding({ cities }: Props) {
                     <Link
                       key={`${city.slug}-home-city-search-${index}`}
                       href={`/c/${city.slug}?src=home&v=search_city_${city.slug}`}
-                      style={cityResultCardStyle}
+                      style={getHomePhotoCardStyle(city, cityResultCardStyle)}
                     >
-                      <div
-                        style={{
-                          ...cityResultVisualStyle,
-                          background: getMapMagazineVisual(city.slug),
-                        }}
-                      >
+                      <div style={cityResultVisualStyle}>
                         <div style={visualBadgeStyle}>{city.country}</div>
                       </div>
 
@@ -380,46 +390,7 @@ export function HomeLanding({ cities }: Props) {
             </Link>
           </div>
         </section>
-
-        <section id="seasonal-preview" style={feedSectionStyle}>
-          <div style={sectionHeaderStyle}>
-            <div>
-              <div style={smallLabelStyle}>This month</div>
-              <h2 style={sectionTitleStyle}>Best places in {currentMonth}</h2>
-            </div>
-
-            <Link href="/discover#travel-timing" style={viewAllStyle}>
-              Explore by season
-            </Link>
-          </div>
-
-          <div style={horizontalRailStyle}>
-            {thisMonthCities.map((city, index) => (
-              <Link
-                key={`${city.slug}-home-month-${index}`}
-                href={`/c/${city.slug}?src=home&v=home_month_${city.slug}`}
-                style={largeRailCardStyle}
-              >
-                <div
-                  style={{
-                    ...largeRailVisualStyle,
-                    background: getMapMagazineVisual(city.slug),
-                  }}
-                >
-                  <div style={visualBadgeStyle}>{currentMonth}</div>
-                </div>
-
-                <div style={railCardBodyStyle}>
-                  <h3 style={railCardTitleStyle}>{city.city}</h3>
-                  <p style={railCardCountryStyle}>{city.country}</p>
-                  <p style={railCardReasonStyle}>
-                    {city.stops.slice(0, 3).join(" · ")}
-                  </p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </section>
+        <HomeSeasonalPicks cities={thisMonthCities} currentMonth={currentMonth} />
       </section>
     </main>
   );
@@ -796,77 +767,152 @@ const cityResultGridStyle: CSSProperties = {
 };
 
 const cityResultCardStyle: CSSProperties = {
-  display: "block",
-  borderRadius: 22,
-  background: "#fffdf8",
-  border: "1px solid rgba(168, 116, 50, 0.13)",
-  boxShadow: "0 8px 24px rgba(96, 76, 48, 0.07)",
-  color: "inherit",
+  position: "relative",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "flex-end",
+  minHeight: 340,
+  borderRadius: 24,
+  color: "#ffffff",
   textDecoration: "none",
   overflow: "hidden",
+  border: "1px solid rgba(255, 255, 255, 0.22)",
+  boxShadow: "0 12px 34px rgba(30, 64, 88, 0.16)",
+  backgroundColor: "#17202a",
 };
 
 const cityResultVisualStyle: CSSProperties = {
-  height: "clamp(110px, 32vw, 142px)",
+  minHeight: 145,
+  flex: 1,
   position: "relative",
-  background: "#f4faf8",
-  borderBottom: "1px solid rgba(168, 116, 50, 0.10)",
 };
 
 const cityResultBodyStyle: CSSProperties = {
-  padding: 15,
+  position: "relative",
+  zIndex: 2,
+  margin: "0 12px 12px",
+  padding: 16,
+  borderRadius: 20,
+  background: "rgba(12, 22, 30, 0.54)",
+  border: "1px solid rgba(255, 255, 255, 0.24)",
+  boxShadow: "0 10px 26px rgba(0, 0, 0, 0.14)",
+  backdropFilter: "blur(18px)",
+  WebkitBackdropFilter: "blur(18px)",
 };
 
 const cityResultTitleStyle: CSSProperties = {
   margin: 0,
-  fontSize: 22,
-  lineHeight: 1.08,
+  fontSize: 23,
+  lineHeight: 1.06,
   letterSpacing: "-0.04em",
   fontWeight: 850,
-  color: "#17202a",
+  color: "#ffffff",
+  textShadow: "0 1px 10px rgba(0, 0, 0, 0.26)",
 };
 
 const cityResultMetaStyle: CSSProperties = {
   margin: "6px 0 0",
   fontSize: 13,
-  color: "#138a72",
-  fontWeight: 800,
+  color: "rgba(255, 255, 255, 0.84)",
+  fontWeight: 750,
 };
 
 const cityResultTextStyle: CSSProperties = {
   margin: "9px 0 0",
   fontSize: 13,
   lineHeight: 1.48,
-  color: "#607080",
+  color: "rgba(255, 255, 255, 0.84)",
 };
 
+const destinationCardStyle: CSSProperties = {
+  position: "relative",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "flex-end",
+  minHeight: 360,
+  borderRadius: 24,
+  color: "#ffffff",
+  textDecoration: "none",
+  overflow: "hidden",
+  border: "1px solid rgba(255, 255, 255, 0.22)",
+  boxShadow: "0 12px 34px rgba(30, 64, 88, 0.16)",
+  backgroundColor: "#17202a",
+};
 
+const destinationVisualStyle: CSSProperties = {
+  minHeight: 160,
+  flex: 1,
+  position: "relative",
+};
 
+const destinationBodyStyle: CSSProperties = {
+  position: "relative",
+  zIndex: 2,
+  margin: "0 12px 12px",
+  padding: 16,
+  borderRadius: 20,
+  background: "rgba(12, 22, 30, 0.54)",
+  border: "1px solid rgba(255, 255, 255, 0.24)",
+  boxShadow: "0 10px 26px rgba(0, 0, 0, 0.14)",
+  backdropFilter: "blur(18px)",
+  WebkitBackdropFilter: "blur(18px)",
+};
 
+const destinationTitleStyle: CSSProperties = {
+  margin: 0,
+  fontSize: "clamp(22px, 5.8vw, 26px)",
+  lineHeight: 1.06,
+  letterSpacing: "-0.04em",
+  fontWeight: 850,
+  color: "#ffffff",
+  textShadow: "0 1px 10px rgba(0, 0, 0, 0.26)",
+};
 
+const destinationCountryStyle: CSSProperties = {
+  margin: "6px 0 0",
+  fontSize: 13,
+  color: "rgba(255, 255, 255, 0.84)",
+  fontWeight: 750,
+};
 
+const destinationReasonStyle: CSSProperties = {
+  margin: "10px 0 0",
+  fontSize: 13,
+  lineHeight: 1.5,
+  color: "rgba(255, 255, 255, 0.84)",
+};
 
+const monthBadgeStyle: CSSProperties = {
+  position: "absolute",
+  top: 12,
+  left: 12,
+  zIndex: 3,
+  padding: "7px 10px",
+  borderRadius: 999,
+  background: "rgba(255, 255, 255, 0.84)",
+  border: "1px solid rgba(255, 255, 255, 0.28)",
+  backdropFilter: "blur(12px)",
+  WebkitBackdropFilter: "blur(12px)",
+  color: "#17202a",
+  fontSize: 12,
+  fontWeight: 850,
+};
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+const countryBadgeStyle: CSSProperties = {
+  position: "absolute",
+  top: 12,
+  left: 12,
+  zIndex: 3,
+  padding: "7px 10px",
+  borderRadius: 999,
+  background: "rgba(255, 255, 255, 0.84)",
+  border: "1px solid rgba(255, 255, 255, 0.28)",
+  backdropFilter: "blur(12px)",
+  WebkitBackdropFilter: "blur(12px)",
+  color: "#17202a",
+  fontSize: 12,
+  fontWeight: 850,
+};
 
 
 
