@@ -6,6 +6,8 @@ import { cities } from "@/data/cities";
 import { TravelVisual } from "@/components/TravelVisual";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
+import { getSpotImage } from "@/data/travel-images";
+import { DetailHeroImage } from "@/components/DetailHeroImage";
 import { getMapMagazineSpotVisual } from "@/lib/mapMagazineVisuals";
 
 export async function generateMetadata({
@@ -136,6 +138,10 @@ export default async function SpotPage({
             <div style={visualBadgeStyle}>{city.city}</div>
           </TravelVisual>
         </section>
+        <DetailHeroImage
+          image={getSpotImage(city.slug, spot.slug)}
+          label={spot.name + " · " + city.city}
+        />
 
         <section style={decisionGridStyle}>
           <article style={decisionCardStyle}>
@@ -588,6 +594,8 @@ const hotelCtaStyle: CSSProperties = {
   border: "1px solid rgba(23, 32, 42, 0.08)",
   boxShadow: "0 7px 20px rgba(30, 64, 88, 0.05)",
 };
+
+
 
 
 
