@@ -76,6 +76,7 @@ export function AdminSpotCreator({ cities }: Props) {
   const [canOpen, setCanOpen] = useState(true);
   const [drafts, setDrafts] = useState<SpotDraft[]>([]);
   const [publishStatus, setPublishStatus] = useState("");
+  const [publishedHref, setPublishedHref] = useState("");
 
   const selectedCity =
     cityList.find((city) => city.slug === citySlug) ?? firstCity;
@@ -162,6 +163,7 @@ export function AdminSpotCreator({ cities }: Props) {
 
       saveDraft();
       setPublishStatus("Published to data/admin-spots.json");
+      setPublishedHref(`/c/${currentDraft.citySlug}/spot/${currentDraft.slug}`);
     } catch (error) {
       setPublishStatus(
         error instanceof Error ? error.message : "Failed to publish spot."
@@ -179,6 +181,7 @@ export function AdminSpotCreator({ cities }: Props) {
     setImageSeed(draft.imageSeed);
     setCanOpen(draft.canOpen);
     setPublishStatus("");
+    setPublishedHref("");
   }
 
   function newDraft() {
@@ -190,6 +193,7 @@ export function AdminSpotCreator({ cities }: Props) {
     setImageSeed("");
     setCanOpen(true);
     setPublishStatus("");
+    setPublishedHref("");
   }
 
   function deleteDraft(id: string) {
@@ -375,6 +379,12 @@ export function AdminSpotCreator({ cities }: Props) {
             </div>
 
             {publishStatus && <div style={statusStyle}>{publishStatus}</div>}
+
+            {publishedHref && (
+              <Link href={publishedHref} style={viewPublishedStyle}>
+                View published spot →
+              </Link>
+            )}
           </div>
 
           <section style={previewWrapStyle}>
@@ -817,4 +827,18 @@ const emptyStyle: CSSProperties = {
   background: "#fffdf8",
   border: "1px solid rgba(168, 116, 50, 0.14)",
   color: "#607080",
+};
+
+const viewPublishedStyle: CSSProperties = {
+  display: "inline-flex",
+  width: "fit-content",
+  marginTop: 10,
+  padding: "10px 13px",
+  borderRadius: 999,
+  background: "#17202a",
+  border: "1px solid rgba(23, 32, 42, 0.12)",
+  color: "#ffffff",
+  textDecoration: "none",
+  fontSize: 13,
+  fontWeight: 850,
 };

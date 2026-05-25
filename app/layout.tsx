@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteNavigation } from "@/components/SiteNavigation";
 import "./globals.css";
+import { TemporaryAdminTab } from "@/components/TemporaryAdminTab";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,11 +40,13 @@ export default function RootLayout({
 
         <div className="travelhub-site-page-shell">
           {children}
+        <TemporaryAdminTab />
           <SiteFooter />
         </div>
       </body>
     </html>
   );
 }
+
 
 
