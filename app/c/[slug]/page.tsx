@@ -4,6 +4,7 @@ import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import type { City } from "@/data/types";
 import { cities } from "@/data/cities";
+import { getCityWithAdminSpots } from "@/data/admin-spots";
 import { TravelVisual } from "@/components/TravelVisual";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
@@ -26,7 +27,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const city = cities[slug];
+  const city = getCityWithAdminSpots(cities, slug);
 
   if (!city) {
     return {
@@ -100,7 +101,7 @@ export default async function CityPage({
   const src = typeof sp?.src === "string" ? sp.src : "city";
   const v = typeof sp?.v === "string" ? sp.v : `city_${slug}`;
 
-  const city = cities[slug];
+  const city = getCityWithAdminSpots(cities, slug);
   if (!city) return notFound();
 
   const spotCards =
@@ -845,6 +846,7 @@ const tourCtaStyle: CSSProperties = {
   border: "1px solid rgba(23, 32, 42, 0.08)",
   boxShadow: "0 7px 20px rgba(30, 64, 88, 0.05)",
 };
+
 
 
 

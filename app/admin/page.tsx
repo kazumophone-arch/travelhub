@@ -17,6 +17,12 @@ const adminItems = [
     href: "/cities",
   },
   {
+    title: "Create spot",
+    label: "Content",
+    description: "Create a new spot draft, preview the card, and copy JSON or TypeScript snippets.",
+    href: "/admin/spots/new",
+  },
+  {
     title: "Spots",
     label: "Content",
     description: "Review spot cards, featured places, nearby ideas, and spot detail pages.",
@@ -239,4 +245,5 @@ const noteTextStyle: CSSProperties = {
   lineHeight: 1.7,
   color: "#607080",
 };
+
 

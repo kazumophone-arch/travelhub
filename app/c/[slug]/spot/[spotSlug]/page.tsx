@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import { cities } from "@/data/cities";
+import { getCityWithAdminSpots } from "@/data/admin-spots";
 import { TravelVisual } from "@/components/TravelVisual";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
@@ -16,7 +17,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string; spotSlug: string }>;
 }): Promise<Metadata> {
   const { slug, spotSlug } = await params;
-  const city = cities[slug];
+  const city = getCityWithAdminSpots(cities, slug);
   const spot = city?.spotDetails?.find(
     (item) => item.slug === spotSlug && item.isPublished !== false
   );
@@ -79,7 +80,7 @@ export default async function SpotPage({
   const src = typeof sp?.src === "string" ? sp.src : "spot";
   const v = typeof sp?.v === "string" ? sp.v : `spot_${slug}_${spotSlug}`;
 
-  const city = cities[slug];
+  const city = getCityWithAdminSpots(cities, slug);
   if (!city) return notFound();
 
   const spot = city.spotDetails?.find(
@@ -593,6 +594,8 @@ const relatedMetaStyle: CSSProperties = {
   color: "rgba(255, 255, 255, 0.78)",
   fontWeight: 850,
 };
+
+
 
 
 

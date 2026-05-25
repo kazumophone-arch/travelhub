@@ -17,3 +17,4 @@ export default function CitiesPage() {
   return <CityDirectory cities={publishedCities} />;
 }
 
+
