@@ -206,37 +206,6 @@ function getCityReason(city: City) {
   return firstStop ? `Start with ${firstStop}.` : "Open the city guide to see the main travel ideas.";
 }
 
-function visualForCity(slug: string) {
-  const visuals: Record<string, string> = {
-    "rome-it":
-      "linear-gradient(135deg, #d9a76f 0%, #b86b4b 42%, #3b2f2f 100%)",
-    "venice-it":
-      "linear-gradient(135deg, #9cc9d7 0%, #e7c389 46%, #8b5f4d 100%)",
-    "florence-it":
-      "linear-gradient(135deg, #d7a65f 0%, #b65f4a 48%, #2e2a32 100%)",
-    "prague-cz":
-      "linear-gradient(135deg, #d7b06f 0%, #6f8da8 46%, #2e3543 100%)",
-    "dubrovnik-hr":
-      "linear-gradient(135deg, #d58b5a 0%, #2f8da8 48%, #183747 100%)",
-    "vienna-at":
-      "linear-gradient(135deg, #e1c8a4 0%, #b98e65 48%, #42352f 100%)",
-    "edinburgh-uk":
-      "linear-gradient(135deg, #8e99a8 0%, #5c6675 46%, #252a33 100%)",
-    "paris-fr":
-      "linear-gradient(135deg, #c7d4df 0%, #d3b58d 44%, #4b4b58 100%)",
-    "barcelona-es":
-      "linear-gradient(135deg, #f0b45f 0%, #d95850 45%, #2e6f89 100%)",
-    "kyoto-jp":
-      "linear-gradient(135deg, #c6a96b 0%, #8da36f 48%, #2f3a2f 100%)",
-    "amsterdam-nl":
-      "linear-gradient(135deg, #8eb6c7 0%, #d9a35f 45%, #38465a 100%)",
-  };
-
-  return (
-    visuals[slug] ??
-    "linear-gradient(135deg, #e5c7a5 0%, #9fb8c9 48%, #30394a 100%)"
-  );
-}
 
 
 function getCityPhotoCardStyle(city: City): CSSProperties {
@@ -958,6 +927,7 @@ const emptyStyle: CSSProperties = {
   textAlign: "center",
   opacity: 0.72,
 };
+
 
 
 
