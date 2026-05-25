@@ -23,6 +23,12 @@ const adminItems = [
     href: "/spots",
   },
   {
+    title: "Card editor",
+    label: "Content",
+    description: "Edit card titles, text, image seeds, links, and preview card layouts as local drafts.",
+    href: "/admin/cards",
+  },
+  {
     title: "Images",
     label: "Media",
     description: "Track placeholder images, future licensed images, credits, and source URLs.",
@@ -233,3 +239,4 @@ const noteTextStyle: CSSProperties = {
   lineHeight: 1.7,
   color: "#607080",
 };
+
