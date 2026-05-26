@@ -1,5 +1,5 @@
-import { PublicPublishedSpots } from "@/components/PublicPublishedSpots";
 import type { Metadata } from "next";
+import { PublicSupabaseSpots } from "@/components/PublicSupabaseSpots";
 import { cities } from "@/data/cities";
 import { SpotDirectory } from "@/components/SpotDirectory";
 import { isPublishedCity, sortByRank } from "@/data/visibility";
@@ -17,6 +17,7 @@ export default function SpotsPage() {
 
   return <SpotDirectory cities={publishedCities} />;
 }
+
 
 
 
