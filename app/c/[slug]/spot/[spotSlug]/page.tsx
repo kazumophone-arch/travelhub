@@ -10,7 +10,26 @@ import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
 import { DetailPlaceImageCard } from "@/components/DetailPlaceImageCard";
 import { DetailHeroImage } from "@/components/DetailHeroImage";
 import { getMapMagazineSpotVisual } from "@/lib/mapMagazineVisuals";
+import { getPublishedSupabaseSpot, type SupabasePublicSpot } from "@/data/supabase-public-spots";
 
+
+function toPageSpot(spot: SupabasePublicSpot) {
+  return {
+    name: spot.name,
+    slug: spot.slug,
+    summary: spot.summary,
+    description: spot.description,
+    imageUrl: spot.image_url,
+    imageAlt: spot.image_alt || spot.name,
+    imageCredit: spot.image_credit,
+    imageSourceUrl: spot.image_source_url,
+    tags: [],
+    highlights: [],
+    isPublished: spot.is_published,
+    affiliateHotelUrl: spot.affiliate_hotel_url,
+    affiliateTourUrl: spot.affiliate_tour_url,
+  };
+}
 export async function generateMetadata({
   params,
 }: {
@@ -18,9 +37,15 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug, spotSlug } = await params;
   const city = getCityWithAdminSpots(cities, slug);
-  const spot = city?.spotDetails?.find(
+  const staticSpot = city?.spotDetails?.find(
     (item) => item.slug === spotSlug && item.isPublished !== false
   );
+
+  const supabaseSpot = staticSpot
+    ? null
+    : await getPublishedSupabaseSpot(slug, spotSlug);
+
+  const spot = staticSpot ?? (supabaseSpot ? toPageSpot(supabaseSpot) : null);
 
   if (!city || !spot) {
     return {
@@ -83,9 +108,15 @@ export default async function SpotPage({
   const city = getCityWithAdminSpots(cities, slug);
   if (!city) return notFound();
 
-  const spot = city.spotDetails?.find(
+  const staticSpot = city.spotDetails?.find(
     (item) => item.slug === spotSlug && item.isPublished !== false
   );
+
+  const supabaseSpot = staticSpot
+    ? null
+    : await getPublishedSupabaseSpot(slug, spotSlug);
+
+  const spot = staticSpot ?? (supabaseSpot ? toPageSpot(supabaseSpot) : null);
 
   if (!spot) return notFound();
 
@@ -594,6 +625,10 @@ const relatedMetaStyle: CSSProperties = {
   color: "rgba(255, 255, 255, 0.78)",
   fontWeight: 850,
 };
+
+
+
+
 
 
 
