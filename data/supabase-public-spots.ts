@@ -35,3 +35,38 @@ export async function getPublishedSupabaseSpot(
 
   return data as SupabasePublicSpot;
 }
+
+export async function getPublishedSupabaseSpotsForCity(
+  citySlug: string
+): Promise<SupabasePublicSpot[]> {
+  const { data, error } = await supabase
+    .from("spots")
+    .select("*")
+    .eq("city_slug", citySlug)
+    .eq("is_published", true)
+    .order("created_at", { ascending: false });
+
+  if (error || !data) {
+    return [];
+  }
+
+  return data as SupabasePublicSpot[];
+}
+
+export function toCitySpotFromSupabase(spot: SupabasePublicSpot) {
+  return {
+    name: spot.name,
+    slug: spot.slug,
+    summary: spot.summary,
+    description: spot.description,
+    imageUrl: spot.image_url,
+    imageAlt: spot.image_alt || spot.name,
+    imageCredit: spot.image_credit,
+    imageSourceUrl: spot.image_source_url,
+    tags: [],
+    highlights: [],
+    isPublished: spot.is_published,
+    affiliateHotelUrl: spot.affiliate_hotel_url,
+    affiliateTourUrl: spot.affiliate_tour_url,
+  };
+}

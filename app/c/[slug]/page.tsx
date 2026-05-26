@@ -14,6 +14,7 @@ import { DetailHeroImage } from "@/components/DetailHeroImage";
 import { getDisplayStops } from "@/lib/displayText";
 import { getCityImage } from "@/data/travel-images";
 import { getMapMagazineSpotVisual } from "@/lib/mapMagazineVisuals";
+import { getPublishedSupabaseSpotsForCity, toCitySpotFromSupabase } from "@/data/supabase-public-spots";
 
 type StayArea = {
   name: string;
@@ -846,6 +847,9 @@ const tourCtaStyle: CSSProperties = {
   border: "1px solid rgba(23, 32, 42, 0.08)",
   boxShadow: "0 7px 20px rgba(30, 64, 88, 0.05)",
 };
+
+
+
 
 
 
