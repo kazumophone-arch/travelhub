@@ -20,7 +20,7 @@ export async function SupabaseCityDetail({ city }: Props) {
   const { data } = await supabase
     .from("spots")
     .select("id, city_slug, name, slug, summary, image_url")
-    .eq("city_slug", city.slug)
+    .eq("city_id", city.id)
     .eq("is_published", true)
     .order("created_at", { ascending: false });
 
@@ -216,3 +216,4 @@ const emptyStyle: CSSProperties = {
   border: "1px solid rgba(168,116,50,.14)",
   color: "#607080",
 };
+

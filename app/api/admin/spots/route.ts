@@ -47,6 +47,7 @@ export async function POST(request: Request) {
   const body = await request.json();
 
   const citySlug = String(body.citySlug ?? "").trim();
+  const cityId = String(body.cityId ?? "").trim();
   const name = String(body.name ?? "").trim();
   const slug = slugify(String(body.slug ?? body.name ?? ""));
 
@@ -59,6 +60,7 @@ export async function POST(request: Request) {
 
   const payload = {
     city_slug: citySlug,
+    city_id: cityId || null,
     name,
     slug,
     summary: String(body.summary ?? ""),
@@ -101,6 +103,7 @@ export async function PATCH(request: Request) {
   }
 
   const citySlug = String(body.citySlug ?? "").trim();
+  const cityId = String(body.cityId ?? "").trim();
   const name = String(body.name ?? "").trim();
   const slug = slugify(String(body.slug ?? body.name ?? ""));
 
@@ -113,6 +116,7 @@ export async function PATCH(request: Request) {
 
   const payload = {
     city_slug: citySlug,
+    city_id: cityId || null,
     name,
     slug,
     summary: String(body.summary ?? ""),
@@ -163,3 +167,4 @@ export async function DELETE(request: Request) {
 
   return NextResponse.json({ ok: true });
 }
+

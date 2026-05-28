@@ -11,6 +11,7 @@ type CityOption = {
 };
 
 type SpotForm = {
+  cityId: string;
   citySlug: string;
   name: string;
   slug: string;
@@ -26,6 +27,7 @@ type SpotForm = {
 };
 
 const initialForm: SpotForm = {
+  cityId: "",
   citySlug: "",
   name: "",
   slug: "",
@@ -69,6 +71,7 @@ export function AdminNewSpotForm() {
 
       setForm((current) => ({
         ...current,
+        cityId: current.cityId || nextCities[0]?.id || "",
         citySlug: current.citySlug || nextCities[0]?.slug || "",
       }));
 
@@ -77,6 +80,16 @@ export function AdminNewSpotForm() {
 
     loadCities();
   }, []);
+
+  function updateCity(cityId: string) {
+    const selectedCity = cities.find((city) => city.id === cityId);
+
+    setForm((current) => ({
+      ...current,
+      cityId,
+      citySlug: selectedCity?.slug ?? "",
+    }));
+  }
 
   function update<K extends keyof SpotForm>(key: K, value: SpotForm[K]) {
     setForm((current) => ({
@@ -121,12 +134,12 @@ export function AdminNewSpotForm() {
         <label style={labelStyle}>
           City
           <select
-            value={form.citySlug}
-            onChange={(event) => update("citySlug", event.target.value)}
+            value={form.cityId}
+            onChange={(event) => updateCity(event.target.value)}
             style={inputStyle}
           >
             {cities.map((city) => (
-              <option key={city.id} value={city.slug}>
+              <option key={city.id} value={city.id}>
                 {city.city}, {city.country}
                 {city.is_published ? "" : " — Draft"}
               </option>
@@ -424,3 +437,5 @@ const cardTextStyle: CSSProperties = {
   lineHeight: 1.55,
   color: "rgba(255,255,255,.84)",
 };
+
+

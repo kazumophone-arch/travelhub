@@ -18,6 +18,8 @@ import { getCityImage } from "@/data/travel-images";
 import { getMapMagazineSpotVisual } from "@/lib/mapMagazineVisuals";
 import { getPublishedSupabaseSpotsForCity, toCitySpotFromSupabase } from "@/data/supabase-public-spots";
 
+export const dynamic = "force-dynamic";
+
 type StayArea = {
   name: string;
   bestFor: string;
@@ -105,7 +107,16 @@ export default async function CityPage({
   const v = typeof sp?.v === "string" ? sp.v : `city_${slug}`;
 
   const city = getCityWithAdminSpots(cities, slug);
-  if (!city) return notFound();
+
+  if (!city) {
+    const supabaseCity = await getPublishedSupabaseCity(slug);
+
+    if (supabaseCity) {
+      return <SupabaseCityDetail city={supabaseCity} />;
+    }
+
+    return notFound();
+  }
 
   const spotCards =
     city.spotDetails && city.spotDetails.length > 0
@@ -849,6 +860,9 @@ const tourCtaStyle: CSSProperties = {
   border: "1px solid rgba(23, 32, 42, 0.08)",
   boxShadow: "0 7px 20px rgba(30, 64, 88, 0.05)",
 };
+
+
+
 
 
 

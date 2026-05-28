@@ -17,6 +17,7 @@ type CityOption = {
 
 type SpotForm = {
   id: string;
+  cityId: string;
   citySlug: string;
   name: string;
   slug: string;
@@ -33,6 +34,7 @@ type SpotForm = {
 
 const emptyForm: SpotForm = {
   id: "",
+  cityId: "",
   citySlug: "",
   name: "",
   slug: "",
@@ -86,6 +88,7 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
 
       setForm({
         id: spot.id,
+        cityId: spot.city_id ?? "",
         citySlug: spot.city_slug ?? "",
         name: spot.name ?? "",
         slug: spot.slug ?? "",
@@ -105,6 +108,16 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
 
     loadSpot();
   }, [id]);
+
+  function updateCity(cityId: string) {
+    const selectedCity = cityOptions.find((city) => city.id === cityId);
+
+    setForm((current) => ({
+      ...current,
+      cityId,
+      citySlug: selectedCity?.slug ?? "",
+    }));
+  }
 
   function update<K extends keyof SpotForm>(key: K, value: SpotForm[K]) {
     setForm((current) => ({
@@ -147,12 +160,12 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
         <label style={labelStyle}>
           City
           <select
-            value={form.citySlug}
-            onChange={(event) => update("citySlug", event.target.value)}
+            value={form.cityId}
+            onChange={(event) => updateCity(event.target.value)}
             style={inputStyle}
           >
             {cityOptions.map((city) => (
-              <option key={city.id} value={city.slug}>
+              <option key={city.id} value={city.id}>
                 {city.city}, {city.country}
                 {city.is_published ? "" : " — Draft"}
               </option>
@@ -458,6 +471,8 @@ const emptyStyle: CSSProperties = {
   background: "#fffdf8",
   color: "#607080",
 };
+
+
 
 
 

@@ -7,22 +7,6 @@ type Props = {
   id: string;
 };
 
-type CityApiRow = {
-  id?: string;
-  city?: string;
-  slug?: string;
-  country?: string;
-  region?: string;
-  summary?: string;
-  description?: string;
-  image_url?: string;
-  image_alt?: string;
-  image_credit?: string;
-  image_source_url?: string;
-  is_published?: boolean;
-  sort_rank?: number;
-};
-
 type CityForm = {
   id: string;
   city: string;
@@ -38,6 +22,8 @@ type CityForm = {
   isPublished: boolean;
   sortRank: number;
 };
+
+type CityApiRow = Record<string, any>;
 
 const emptyForm: CityForm = {
   id: "",
@@ -64,21 +50,38 @@ function slugify(value: string) {
     .replace(/^-+|-+$/g, "");
 }
 
+async function readResponse(response: Response) {
+  const text = await response.text();
+
+  try {
+    return text ? JSON.parse(text) : {};
+  } catch {
+    return { error: text || "Invalid server response." };
+  }
+}
+
 export function AdminEditCityForm({ id }: Props) {
   const [form, setForm] = useState<CityForm>(emptyForm);
   const [status, setStatus] = useState("Loading...");
 
   useEffect(() => {
     async function loadCity() {
+      setStatus("Loading...");
+
       const response = await fetch(`/api/admin/cities?id=${id}`);
-      const data = await response.json();
+      const data = await readResponse(response);
 
       if (!response.ok) {
         setStatus(data.error ?? "Failed to load city.");
         return;
       }
 
-      const cityData = data.city as Record<string, any>;
+      const cityData = data.city as CityApiRow | null;
+
+      if (!cityData) {
+        setStatus("City not found.");
+        return;
+      }
 
       setForm({
         id: String(cityData.id ?? ""),
@@ -123,7 +126,7 @@ export function AdminEditCityForm({ id }: Props) {
       body: JSON.stringify(form),
     });
 
-    const data = await response.json();
+    const data = await readResponse(response);
 
     if (!response.ok) {
       setStatus(data.error ?? "Failed to save city.");
@@ -212,36 +215,13 @@ export function AdminEditCityForm({ id }: Props) {
 
         {status && <p style={statusStyle}>{status}</p>}
       </section>
-
-      <section style={previewStyle}>
-        <div style={previewLabelStyle}>Preview</div>
-
-        <div
-          style={{
-            ...cardStyle,
-            backgroundImage: form.imageUrl
-              ? `linear-gradient(180deg, rgba(10,18,24,.05), rgba(10,18,24,.76)), url("${form.imageUrl}")`
-              : "linear-gradient(135deg, #dfeeea, #f7efe2)",
-          }}
-        >
-          <div style={badgeStyle}>{form.country || "Country"}</div>
-
-          <div style={panelStyle}>
-            <div style={metaStyle}>{form.isPublished ? "Published" : "Draft"}</div>
-            <h2 style={cardTitleStyle}>{form.city || "City"}</h2>
-            <p style={cardTextStyle}>{form.summary || "No summary yet."}</p>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }
 
 const wrapStyle: CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "minmax(0, 1fr) minmax(min(100%, 360px), 0.75fr)",
   gap: 18,
-  alignItems: "start",
 };
 
 const formStyle: CSSProperties = {
@@ -320,82 +300,9 @@ const statusStyle: CSSProperties = {
   fontWeight: 850,
 };
 
-const previewStyle: CSSProperties = {
-  display: "grid",
-  gap: 10,
-};
-
-const previewLabelStyle: CSSProperties = {
-  fontSize: 12,
-  color: "#9a6a2f",
-  fontWeight: 850,
-  textTransform: "uppercase",
-  letterSpacing: ".12em",
-};
-
-const cardStyle: CSSProperties = {
-  minHeight: 430,
-  position: "relative",
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "flex-end",
-  borderRadius: 26,
-  overflow: "hidden",
-  backgroundSize: "cover",
-  backgroundPosition: "center",
-  color: "#ffffff",
-};
-
-const badgeStyle: CSSProperties = {
-  position: "absolute",
-  top: 14,
-  left: 14,
-  padding: "7px 10px",
-  borderRadius: 999,
-  background: "rgba(255,255,255,.84)",
-  color: "#17202a",
-  fontSize: 12,
-  fontWeight: 850,
-};
-
-const panelStyle: CSSProperties = {
-  margin: 12,
-  padding: 16,
-  borderRadius: 20,
-  background: "rgba(12,22,30,.54)",
-  border: "1px solid rgba(255,255,255,.24)",
-  backdropFilter: "blur(18px)",
-  WebkitBackdropFilter: "blur(18px)",
-};
-
-const metaStyle: CSSProperties = {
-  marginBottom: 7,
-  fontSize: 12,
-  color: "rgba(255,255,255,.76)",
-  fontWeight: 850,
-  textTransform: "uppercase",
-  letterSpacing: ".1em",
-};
-
-const cardTitleStyle: CSSProperties = {
-  margin: 0,
-  fontSize: 28,
-  lineHeight: 1.04,
-  letterSpacing: "-.045em",
-};
-
-const cardTextStyle: CSSProperties = {
-  margin: "10px 0 0",
-  fontSize: 13,
-  lineHeight: 1.55,
-  color: "rgba(255,255,255,.84)",
-};
-
 const emptyStyle: CSSProperties = {
   padding: 18,
   borderRadius: 22,
   background: "#fffdf8",
   color: "#607080",
 };
-
-
