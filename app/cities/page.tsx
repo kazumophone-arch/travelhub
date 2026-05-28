@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
-import { PublicSupabaseCities } from "@/components/PublicSupabaseCities";
+import type { City } from "@/data/types";
 import { cities } from "@/data/cities";
 import { CityDirectory } from "@/components/CityDirectory";
 import { isPublishedCity, sortByRank } from "@/data/visibility";
+import { supabase } from "@/lib/supabase";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Cities | TravelHub",
@@ -10,13 +13,72 @@ export const metadata: Metadata = {
     "Browse TravelHub cities by country, season, mood, travel style, and featured spots.",
 };
 
-export default function CitiesPage() {
-  const publishedCities = sortByRank(
+type SupabaseCityRow = {
+  id: string;
+  slug: string;
+  city: string;
+  country: string;
+  region: string;
+  summary: string;
+  description: string;
+  image_url: string;
+  image_alt: string;
+  image_credit: string;
+  image_source_url: string;
+  is_published: boolean;
+  sort_rank: number;
+};
+
+function toDirectoryCity(row: SupabaseCityRow): City {
+  return {
+    id: row.id,
+    slug: row.slug,
+    city: row.city,
+    country: row.country,
+    region: row.region,
+    summary: row.summary,
+    description: row.description,
+    imageUrl: row.image_url,
+    imageAlt: row.image_alt || row.city,
+    imageCredit: row.image_credit,
+    imageSourceUrl: row.image_source_url,
+    rank: row.sort_rank ?? 999,
+    isPublished: row.is_published,
+    seasons: ["All year"],
+    travelStyles: [row.region || "City break"],
+    themes: [row.region || "Travel city"],
+    bestFor: ["First-time visitors"],
+    stops: [],
+    spotDetails: [],
+  } as unknown as City;
+}
+
+async function getSupabasePublishedCities() {
+  const { data, error } = await supabase
+    .from("cities")
+    .select("*")
+    .eq("is_published", true)
+    .order("sort_rank", { ascending: true })
+    .order("created_at", { ascending: false });
+
+  if (error || !data) return [];
+
+  return (data as SupabaseCityRow[]).map(toDirectoryCity);
+}
+
+export default async function CitiesPage() {
+  const staticCities = sortByRank(
     Object.values(cities).filter(isPublishedCity)
   );
 
-  return <CityDirectory cities={publishedCities} />;
+  const supabaseCities = await getSupabasePublishedCities();
+
+  const staticSlugs = new Set(staticCities.map((city) => city.slug));
+
+  const mergedCities = sortByRank([
+    ...staticCities,
+    ...supabaseCities.filter((city) => !staticSlugs.has(city.slug)),
+  ]);
+
+  return <CityDirectory cities={mergedCities} />;
 }
-
-
-
