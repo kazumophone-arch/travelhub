@@ -2,11 +2,17 @@
 
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import Link from "next/link";
-import type { City } from "@/data/types";
 
 type Props = {
   id: string;
-  cities: City[];
+};
+
+type CityOption = {
+  id: string;
+  slug: string;
+  city: string;
+  country: string;
+  is_published: boolean;
 };
 
 type SpotForm = {
@@ -50,25 +56,26 @@ function slugify(value: string) {
     .replace(/^-+|-+$/g, "");
 }
 
-export function AdminSupabaseEditSpotForm({ id, cities }: Props) {
+export function AdminSupabaseEditSpotForm({ id }: Props) {
+  const [cityOptions, setCityOptions] = useState<CityOption[]>([]);
   const [form, setForm] = useState<SpotForm>(emptyForm);
   const [status, setStatus] = useState("Loading...");
 
-  const cityOptions = useMemo(
-    () =>
-      cities
-        .map((city) => ({
-          slug: city.slug,
-          label: `${city.city}, ${city.country}`,
-        }))
-        .sort((a, b) => a.label.localeCompare(b.label)),
-    [cities]
-  );
-
   useEffect(() => {
     async function loadSpot() {
-      const response = await fetch(`/api/admin/spots?id=${id}`);
-      const data = await response.json();
+      const [spotResponse, citiesResponse] = await Promise.all([
+        fetch(`/api/admin/spots?id=${id}`),
+        fetch("/api/admin/cities"),
+      ]);
+
+      const data = await spotResponse.json();
+      const citiesData = await citiesResponse.json();
+
+      if (citiesResponse.ok) {
+        setCityOptions(citiesData.cities ?? []);
+      }
+
+      const response = spotResponse;
 
       if (!response.ok) {
         setStatus(data.error ?? "Failed to load spot.");
@@ -145,8 +152,9 @@ export function AdminSupabaseEditSpotForm({ id, cities }: Props) {
             style={inputStyle}
           >
             {cityOptions.map((city) => (
-              <option key={city.slug} value={city.slug}>
-                {city.label}
+              <option key={city.id} value={city.slug}>
+                {city.city}, {city.country}
+                {city.is_published ? "" : " — Draft"}
               </option>
             ))}
           </select>
@@ -450,3 +458,6 @@ const emptyStyle: CSSProperties = {
   background: "#fffdf8",
   color: "#607080",
 };
+
+
+

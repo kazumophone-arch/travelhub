@@ -1,8 +1,6 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import { AdminNewSpotForm } from "@/components/AdminNewSpotForm";
-import { cities } from "@/data/cities";
-import type { City } from "@/data/types";
 
 export const metadata = {
   title: "New spot | TravelHub Admin",
@@ -13,8 +11,6 @@ export const metadata = {
 };
 
 export default function NewSpotPage() {
-  const cityList = Object.values(cities) as City[];
-
   return (
     <main style={pageStyle}>
       <section style={shellStyle}>
@@ -24,7 +20,7 @@ export default function NewSpotPage() {
         <p style={textStyle}>
           Create a spot draft using the final database-style fields.
         </p>
-        <AdminNewSpotForm cities={cityList} />
+        <AdminNewSpotForm />
       </section>
     </main>
   );
@@ -80,4 +76,5 @@ const textStyle: CSSProperties = {
   lineHeight: 1.75,
   color: "#607080",
 };
+
 

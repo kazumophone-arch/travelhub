@@ -10,6 +10,8 @@ import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
 import { DetailPlaceImageCard } from "@/components/DetailPlaceImageCard";
 import { DetailHeroImage } from "@/components/DetailHeroImage";
 import { getMapMagazineSpotVisual } from "@/lib/mapMagazineVisuals";
+import { getPublishedSupabaseCity } from "@/data/supabase-public-cities";
+import { SupabaseSpotDetail } from "@/components/SupabaseSpotDetail";
 import { getPublishedSupabaseSpot, type SupabasePublicSpot } from "@/data/supabase-public-spots";
 
 
@@ -107,7 +109,17 @@ export default async function SpotPage({
   const v = typeof sp?.v === "string" ? sp.v : `spot_${slug}_${spotSlug}`;
 
   const city = getCityWithAdminSpots(cities, slug);
-  if (!city) return notFound();
+
+  if (!city) {
+    const supabaseCity = await getPublishedSupabaseCity(slug);
+    const supabaseOnlySpot = await getPublishedSupabaseSpot(slug, spotSlug);
+
+    if (supabaseCity && supabaseOnlySpot) {
+      return <SupabaseSpotDetail city={supabaseCity} spot={supabaseOnlySpot} />;
+    }
+
+    return notFound();
+  }
 
   const staticSpot = city.spotDetails?.find(
     (item) => item.slug === spotSlug && item.isPublished !== false
@@ -626,6 +638,7 @@ const relatedMetaStyle: CSSProperties = {
   color: "rgba(255, 255, 255, 0.78)",
   fontWeight: 850,
 };
+
 
 
 

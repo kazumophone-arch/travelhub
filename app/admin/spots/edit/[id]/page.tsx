@@ -1,8 +1,6 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import { AdminSupabaseEditSpotForm } from "@/components/AdminSupabaseEditSpotForm";
-import { cities } from "@/data/cities";
-import type { City } from "@/data/types";
 
 export const metadata = {
   title: "Edit spot | TravelHub Admin",
@@ -20,8 +18,6 @@ type Props = {
 
 export default async function EditSpotPage({ params }: Props) {
   const { id } = await params;
-  const cityList = Object.values(cities) as City[];
-
   return (
     <main style={pageStyle}>
       <section style={shellStyle}>
@@ -29,7 +25,7 @@ export default async function EditSpotPage({ params }: Props) {
         <div style={eyebrowStyle}>Edit</div>
         <h1 style={titleStyle}>Edit spot</h1>
         <p style={textStyle}>Edit a saved local draft.</p>
-        <AdminSupabaseEditSpotForm id={id} cities={cityList} />
+        <AdminSupabaseEditSpotForm id={id} />
       </section>
     </main>
   );
@@ -85,5 +81,6 @@ const textStyle: CSSProperties = {
   lineHeight: 1.75,
   color: "#607080",
 };
+
 
 

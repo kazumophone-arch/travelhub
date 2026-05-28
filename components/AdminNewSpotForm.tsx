@@ -1,10 +1,13 @@
 "use client";
 
-import { useMemo, useState, type CSSProperties } from "react";
-import type { City } from "@/data/types";
+import { useEffect, useState, type CSSProperties } from "react";
 
-type Props = {
-  cities: City[];
+type CityOption = {
+  id: string;
+  slug: string;
+  city: string;
+  country: string;
+  is_published: boolean;
 };
 
 type SpotForm = {
@@ -12,6 +15,7 @@ type SpotForm = {
   name: string;
   slug: string;
   summary: string;
+  description: string;
   imageUrl: string;
   imageAlt: string;
   imageCredit: string;
@@ -21,13 +25,12 @@ type SpotForm = {
   isPublished: boolean;
 };
 
-const STORAGE_KEY = "travelhub_spot_drafts_v1";
-
 const initialForm: SpotForm = {
   citySlug: "",
   name: "",
   slug: "",
   summary: "",
+  description: "",
   imageUrl: "",
   imageAlt: "",
   imageCredit: "",
@@ -46,23 +49,34 @@ function slugify(value: string) {
     .replace(/^-+|-+$/g, "");
 }
 
-export function AdminNewSpotForm({ cities }: Props) {
-  const cityOptions = useMemo(
-    () =>
-      cities
-        .map((city) => ({
-          slug: city.slug,
-          label: `${city.city}, ${city.country}`,
-        }))
-        .sort((a, b) => a.label.localeCompare(b.label)),
-    [cities]
-  );
+export function AdminNewSpotForm() {
+  const [cities, setCities] = useState<CityOption[]>([]);
+  const [form, setForm] = useState<SpotForm>(initialForm);
+  const [status, setStatus] = useState("Loading cities...");
 
-  const [form, setForm] = useState<SpotForm>({
-    ...initialForm,
-    citySlug: cityOptions[0]?.slug ?? "",
-  });
-  const [status, setStatus] = useState("");
+  useEffect(() => {
+    async function loadCities() {
+      const response = await fetch("/api/admin/cities");
+      const data = await response.json();
+
+      if (!response.ok) {
+        setStatus(data.error ?? "Failed to load cities.");
+        return;
+      }
+
+      const nextCities = data.cities ?? [];
+      setCities(nextCities);
+
+      setForm((current) => ({
+        ...current,
+        citySlug: current.citySlug || nextCities[0]?.slug || "",
+      }));
+
+      setStatus("");
+    }
+
+    loadCities();
+  }, []);
 
   function update<K extends keyof SpotForm>(key: K, value: SpotForm[K]) {
     setForm((current) => ({
@@ -73,7 +87,6 @@ export function AdminNewSpotForm({ cities }: Props) {
         : {}),
     }));
   }
-
 
   async function createInSupabase() {
     setStatus("Creating in Supabase...");
@@ -95,27 +108,16 @@ export function AdminNewSpotForm({ cities }: Props) {
 
     setStatus("Created in Supabase.");
   }
-  function saveDraft() {
-    const saved = window.localStorage.getItem(STORAGE_KEY);
-    const drafts = saved ? JSON.parse(saved) : [];
-
-    const next = [
-      {
-        ...form,
-        id: `spot-${Date.now()}`,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-      ...drafts,
-    ];
-
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-    setStatus("Draft saved locally.");
-  }
 
   return (
     <div style={wrapStyle}>
       <section style={formStyle}>
+        {cities.length === 0 && !status ? (
+          <div style={emptyStyle}>
+            No cities found. Create a city first.
+          </div>
+        ) : null}
+
         <label style={labelStyle}>
           City
           <select
@@ -123,9 +125,10 @@ export function AdminNewSpotForm({ cities }: Props) {
             onChange={(event) => update("citySlug", event.target.value)}
             style={inputStyle}
           >
-            {cityOptions.map((city) => (
-              <option key={city.slug} value={city.slug}>
-                {city.label}
+            {cities.map((city) => (
+              <option key={city.id} value={city.slug}>
+                {city.city}, {city.country}
+                {city.is_published ? "" : " — Draft"}
               </option>
             ))}
           </select>
@@ -156,8 +159,17 @@ export function AdminNewSpotForm({ cities }: Props) {
           <textarea
             value={form.summary}
             onChange={(event) => update("summary", event.target.value)}
-            placeholder="Short card description."
             rows={4}
+            style={textareaStyle}
+          />
+        </label>
+
+        <label style={labelStyle}>
+          Description
+          <textarea
+            value={form.description}
+            onChange={(event) => update("description", event.target.value)}
+            rows={5}
             style={textareaStyle}
           />
         </label>
@@ -177,7 +189,6 @@ export function AdminNewSpotForm({ cities }: Props) {
           <input
             value={form.imageAlt}
             onChange={(event) => update("imageAlt", event.target.value)}
-            placeholder="Trevi Fountain in Rome"
             style={inputStyle}
           />
         </label>
@@ -187,7 +198,6 @@ export function AdminNewSpotForm({ cities }: Props) {
           <input
             value={form.imageCredit}
             onChange={(event) => update("imageCredit", event.target.value)}
-            placeholder="Unsplash / Pexels / Wikimedia"
             style={inputStyle}
           />
         </label>
@@ -197,7 +207,6 @@ export function AdminNewSpotForm({ cities }: Props) {
           <input
             value={form.imageSourceUrl}
             onChange={(event) => update("imageSourceUrl", event.target.value)}
-            placeholder="https://..."
             style={inputStyle}
           />
         </label>
@@ -207,7 +216,6 @@ export function AdminNewSpotForm({ cities }: Props) {
           <input
             value={form.affiliateHotelUrl}
             onChange={(event) => update("affiliateHotelUrl", event.target.value)}
-            placeholder="https://..."
             style={inputStyle}
           />
         </label>
@@ -217,7 +225,6 @@ export function AdminNewSpotForm({ cities }: Props) {
           <input
             value={form.affiliateTourUrl}
             onChange={(event) => update("affiliateTourUrl", event.target.value)}
-            placeholder="https://..."
             style={inputStyle}
           />
         </label>
@@ -231,12 +238,13 @@ export function AdminNewSpotForm({ cities }: Props) {
           Published
         </label>
 
-        <button type="button" onClick={createInSupabase} style={buttonStyle}>
+        <button
+          type="button"
+          onClick={createInSupabase}
+          style={buttonStyle}
+          disabled={cities.length === 0}
+        >
           Create in Supabase
-        </button>
-
-        <button type="button" onClick={saveDraft} style={secondaryButtonStyle}>
-          Save draft
         </button>
 
         {status && <p style={statusStyle}>{status}</p>}
@@ -253,13 +261,13 @@ export function AdminNewSpotForm({ cities }: Props) {
               : "linear-gradient(135deg, #dfeeea, #f7efe2)",
           }}
         >
-          <div style={badgeStyle}>{form.citySlug || "city-slug"}</div>
+          <div style={badgeStyle}>{form.citySlug || "city"}</div>
 
           <div style={panelStyle}>
             <div style={metaStyle}>{form.isPublished ? "Published" : "Draft"}</div>
             <h2 style={cardTitleStyle}>{form.name || "New spot"}</h2>
             <p style={cardTextStyle}>
-              {form.summary || "Short card description will appear here."}
+              {form.summary || "Spot summary will appear here."}
             </p>
           </div>
         </div>
@@ -337,6 +345,15 @@ const statusStyle: CSSProperties = {
   fontWeight: 850,
 };
 
+const emptyStyle: CSSProperties = {
+  marginBottom: 14,
+  padding: 14,
+  borderRadius: 18,
+  background: "#fffdf8",
+  border: "1px solid rgba(168,116,50,.14)",
+  color: "#607080",
+};
+
 const previewStyle: CSSProperties = {
   display: "grid",
   gap: 10,
@@ -406,11 +423,4 @@ const cardTextStyle: CSSProperties = {
   fontSize: 13,
   lineHeight: 1.55,
   color: "rgba(255,255,255,.84)",
-};
-
-const secondaryButtonStyle: CSSProperties = {
-  ...buttonStyle,
-  background: "#ffffff",
-  color: "#607080",
-  border: "1px solid rgba(23,32,42,.08)",
 };

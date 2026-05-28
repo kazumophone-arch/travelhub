@@ -7,6 +7,22 @@ type Props = {
   id: string;
 };
 
+type CityApiRow = {
+  id?: string;
+  city?: string;
+  slug?: string;
+  country?: string;
+  region?: string;
+  summary?: string;
+  description?: string;
+  image_url?: string;
+  image_alt?: string;
+  image_credit?: string;
+  image_source_url?: string;
+  is_published?: boolean;
+  sort_rank?: number;
+};
+
 type CityForm = {
   id: string;
   city: string;
@@ -62,22 +78,22 @@ export function AdminEditCityForm({ id }: Props) {
         return;
       }
 
-      const city = data.city;
+      const cityData = data.city as Record<string, any>;
 
       setForm({
-        id: city.id,
-        city: city.city ?? "",
-        slug: city.slug ?? "",
-        country: city.country ?? "",
-        region: city.region ?? "",
-        summary: city.summary ?? "",
-        description: city.description ?? "",
-        imageUrl: city.image_url ?? "",
-        imageAlt: city.image_alt ?? "",
-        imageCredit: city.image_credit ?? "",
-        imageSourceUrl: city.image_source_url ?? "",
-        isPublished: Boolean(city.is_published),
-        sortRank: Number(city.sort_rank ?? 999),
+        id: String(cityData.id ?? ""),
+        city: String(cityData.city ?? ""),
+        slug: String(cityData.slug ?? ""),
+        country: String(cityData.country ?? ""),
+        region: String(cityData.region ?? ""),
+        summary: String(cityData.summary ?? ""),
+        description: String(cityData.description ?? ""),
+        imageUrl: String(cityData.image_url ?? ""),
+        imageAlt: String(cityData.image_alt ?? ""),
+        imageCredit: String(cityData.image_credit ?? ""),
+        imageSourceUrl: String(cityData.image_source_url ?? ""),
+        isPublished: Boolean(cityData.is_published),
+        sortRank: Number(cityData.sort_rank ?? 999),
       });
 
       setStatus("");
@@ -381,3 +397,5 @@ const emptyStyle: CSSProperties = {
   background: "#fffdf8",
   color: "#607080",
 };
+
+
