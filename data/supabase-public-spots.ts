@@ -65,8 +65,10 @@ export function toCitySpotFromSupabase(spot: SupabasePublicSpot) {
     imageSourceUrl: spot.image_source_url,
     tags: [],
     highlights: [],
+    bestFor: [],
     isPublished: spot.is_published,
     affiliateHotelUrl: spot.affiliate_hotel_url,
     affiliateTourUrl: spot.affiliate_tour_url,
   };
 }
+

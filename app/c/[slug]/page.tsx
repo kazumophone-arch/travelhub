@@ -4,6 +4,8 @@ import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import type { City } from "@/data/types";
 import { cities } from "@/data/cities";
+import { getPublishedSupabaseCity } from "@/data/supabase-public-cities";
+import { SupabaseCityDetail } from "@/components/SupabaseCityDetail";
 import { getCityWithAdminSpots } from "@/data/admin-spots";
 import { TravelVisual } from "@/components/TravelVisual";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
@@ -847,6 +849,8 @@ const tourCtaStyle: CSSProperties = {
   border: "1px solid rgba(23, 32, 42, 0.08)",
   boxShadow: "0 7px 20px rgba(30, 64, 88, 0.05)",
 };
+
+
 
 
 

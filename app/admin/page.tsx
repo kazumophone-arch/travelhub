@@ -13,50 +13,20 @@ const adminItems = [
   {
     title: "Cities",
     label: "Content",
-    description: "Check city pages, seasonal picks, country grouping, and city-level copy.",
-    href: "/cities",
-  },
-  {
-    title: "Create spot",
-    label: "Content",
-    description: "Create a new spot draft, preview the card, and copy JSON or TypeScript snippets.",
-    href: "/admin/spots/new",
+    description: "Manage city data from Supabase.",
+    href: "/admin/cities",
   },
   {
     title: "Spots",
     label: "Content",
-    description: "Review spot cards, featured places, nearby ideas, and spot detail pages.",
-    href: "/spots",
+    description: "Create, edit, publish, and delete spots from Supabase.",
+    href: "/admin/spots",
   },
   {
-    title: "Card editor",
-    label: "Content",
-    description: "Edit card titles, text, image seeds, links, and preview card layouts as local drafts.",
-    href: "/admin/cards",
-  },
-  {
-    title: "Images",
-    label: "Media",
-    description: "Track placeholder images, future licensed images, credits, and source URLs.",
-    href: "/admin/images",
-  },
-  {
-    title: "Affiliate links",
-    label: "Revenue",
-    description: "Review tours, hotels, booking links, and CTA placement before publishing.",
-    href: "/admin/affiliate",
-  },
-  {
-    title: "SEO & routes",
-    label: "Publishing",
-    description: "Check metadata, sitemap, removed routes, noindex pages, and launch readiness.",
-    href: "/admin/seo",
-  },
-  {
-    title: "Launch checklist",
-    label: "Operations",
-    description: "Use this before public release to check mobile layout, images, links, and build.",
-    href: "/admin/checklist",
+    title: "Back to site",
+    label: "Site",
+    description: "Return to the public TravelHub site.",
+    href: "/",
   },
 ];
 
@@ -66,38 +36,22 @@ export default function AdminPage() {
       <section style={shellStyle}>
         <div style={eyebrowStyle}>TravelHub admin</div>
 
-        <div style={heroStyle}>
-          <div>
-            <h1 style={titleStyle}>Management menu</h1>
-            <p style={leadStyle}>
-              Use this area to manage content, images, affiliate links, SEO, and publishing checks.
-              This page is noindex and should stay out of the public navigation for now.
-            </p>
-          </div>
+        <h1 style={titleStyle}>Management menu</h1>
 
-          <Link href="/" style={homeLinkStyle}>
-            Back to site
-          </Link>
-        </div>
+        <p style={textStyle}>
+          Only currently implemented admin features are shown here.
+        </p>
 
-        <section style={gridStyle}>
+        <div style={gridStyle}>
           {adminItems.map((item) => (
-            <Link key={item.title} href={item.href} style={cardStyle}>
-              <div style={labelStyle}>{item.label}</div>
-              <h2 style={cardTitleStyle}>{item.title}</h2>
+            <Link key={item.href} href={item.href} style={cardStyle}>
+              <span style={labelStyle}>{item.label}</span>
+              <strong style={cardTitleStyle}>{item.title}</strong>
               <p style={cardTextStyle}>{item.description}</p>
-              <div style={openStyle}>Open →</div>
+              <span style={openStyle}>Open →</span>
             </Link>
           ))}
-        </section>
-
-        <section style={noteStyle}>
-          <h2 style={noteTitleStyle}>Current admin approach</h2>
-          <p style={noteTextStyle}>
-            This is a menu-only admin area. It does not edit data yet. Once the content structure is stable,
-            this can become a real CMS-style dashboard for cities, spots, images, and affiliate links.
-          </p>
-        </section>
+        </div>
       </section>
     </main>
   );
@@ -111,9 +65,9 @@ const pageStyle: CSSProperties = {
 
 const shellStyle: CSSProperties = {
   width: "100%",
-  maxWidth: 1120,
+  maxWidth: 960,
   margin: "0 auto",
-  padding: "44px 16px 64px",
+  padding: "48px 16px 72px",
 };
 
 const eyebrowStyle: CSSProperties = {
@@ -130,15 +84,6 @@ const eyebrowStyle: CSSProperties = {
   fontWeight: 850,
 };
 
-const heroStyle: CSSProperties = {
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "flex-end",
-  gap: 18,
-  flexWrap: "wrap",
-  marginBottom: 28,
-};
-
 const titleStyle: CSSProperties = {
   margin: "0 0 12px",
   fontSize: "clamp(38px, 8vw, 64px)",
@@ -147,27 +92,12 @@ const titleStyle: CSSProperties = {
   fontWeight: 850,
 };
 
-const leadStyle: CSSProperties = {
-  margin: 0,
-  maxWidth: 720,
+const textStyle: CSSProperties = {
+  margin: "0 0 28px",
+  maxWidth: 640,
   fontSize: 15,
   lineHeight: 1.75,
   color: "#607080",
-};
-
-const homeLinkStyle: CSSProperties = {
-  display: "inline-flex",
-  alignItems: "center",
-  justifyContent: "center",
-  minHeight: 42,
-  padding: "10px 14px",
-  borderRadius: 999,
-  background: "#eef8f5",
-  border: "1px solid rgba(19, 138, 114, 0.14)",
-  color: "#138a72",
-  textDecoration: "none",
-  fontSize: 13,
-  fontWeight: 850,
 };
 
 const gridStyle: CSSProperties = {
@@ -177,8 +107,8 @@ const gridStyle: CSSProperties = {
 };
 
 const cardStyle: CSSProperties = {
-  display: "block",
-  minHeight: 190,
+  display: "grid",
+  gap: 10,
   padding: 18,
   borderRadius: 24,
   background: "#fffdf8",
@@ -189,12 +119,10 @@ const cardStyle: CSSProperties = {
 };
 
 const labelStyle: CSSProperties = {
-  display: "inline-flex",
-  marginBottom: 14,
+  width: "fit-content",
   padding: "6px 9px",
   borderRadius: 999,
   background: "#f7efe2",
-  border: "1px solid rgba(168, 116, 50, 0.14)",
   color: "#9a6a2f",
   fontSize: 11,
   letterSpacing: "0.11em",
@@ -203,48 +131,20 @@ const labelStyle: CSSProperties = {
 };
 
 const cardTitleStyle: CSSProperties = {
-  margin: 0,
-  fontSize: 24,
-  lineHeight: 1.08,
+  fontSize: 22,
   letterSpacing: "-0.04em",
-  fontWeight: 850,
 };
 
 const cardTextStyle: CSSProperties = {
-  margin: "10px 0 0",
+  margin: 0,
   fontSize: 14,
   lineHeight: 1.6,
   color: "#607080",
 };
 
 const openStyle: CSSProperties = {
-  marginTop: 18,
-  fontSize: 13,
+  marginTop: 8,
   color: "#138a72",
+  fontSize: 13,
   fontWeight: 850,
 };
-
-const noteStyle: CSSProperties = {
-  marginTop: 22,
-  padding: 20,
-  borderRadius: 24,
-  background: "#ffffff",
-  border: "1px solid rgba(23, 32, 42, 0.08)",
-  boxShadow: "0 7px 20px rgba(30, 64, 88, 0.05)",
-};
-
-const noteTitleStyle: CSSProperties = {
-  margin: 0,
-  fontSize: 22,
-  letterSpacing: "-0.04em",
-};
-
-const noteTextStyle: CSSProperties = {
-  margin: "10px 0 0",
-  fontSize: 14,
-  lineHeight: 1.7,
-  color: "#607080",
-};
-
-
-

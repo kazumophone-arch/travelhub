@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PublicSupabaseCities } from "@/components/PublicSupabaseCities";
 import { cities } from "@/data/cities";
 import { CityDirectory } from "@/components/CityDirectory";
 import { isPublishedCity, sortByRank } from "@/data/visibility";
@@ -16,5 +17,6 @@ export default function CitiesPage() {
 
   return <CityDirectory cities={publishedCities} />;
 }
+
 
 
