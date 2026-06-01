@@ -13,6 +13,36 @@ function slugify(value: string) {
     .replace(/^-+|-+$/g, "");
 }
 
+async function resolveCityForSpot(cityId: string, fallbackCitySlug: string) {
+  if (!cityId) {
+    return {
+      cityId: null,
+      citySlug: fallbackCitySlug,
+      error: null,
+    };
+  }
+
+  const { data, error } = await supabaseAdmin
+    .from("cities")
+    .select("id, slug")
+    .eq("id", cityId)
+    .maybeSingle();
+
+  if (error || !data?.slug) {
+    return {
+      cityId: null,
+      citySlug: "",
+      error: "Selected city was not found.",
+    };
+  }
+
+  return {
+    cityId: data.id as string,
+    citySlug: data.slug as string,
+    error: null,
+  };
+}
+
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -46,12 +76,17 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   const body = await request.json();
 
-  const citySlug = String(body.citySlug ?? "").trim();
+  const fallbackCitySlug = String(body.citySlug ?? "").trim();
   const cityId = String(body.cityId ?? "").trim();
   const name = String(body.name ?? "").trim();
   const slug = slugify(String(body.slug ?? body.name ?? ""));
+  const city = await resolveCityForSpot(cityId, fallbackCitySlug);
 
-  if (!citySlug || !name || !slug) {
+  if (city.error) {
+    return NextResponse.json({ error: city.error }, { status: 400 });
+  }
+
+  if (!city.citySlug || !name || !slug) {
     return NextResponse.json(
       { error: "citySlug, name, and slug are required." },
       { status: 400 }
@@ -59,8 +94,8 @@ export async function POST(request: Request) {
   }
 
   const payload = {
-    city_slug: citySlug,
-    city_id: cityId || null,
+    city_slug: city.citySlug,
+    city_id: city.cityId,
     name,
     slug,
     summary: String(body.summary ?? ""),
@@ -102,12 +137,17 @@ export async function PATCH(request: Request) {
     );
   }
 
-  const citySlug = String(body.citySlug ?? "").trim();
+  const fallbackCitySlug = String(body.citySlug ?? "").trim();
   const cityId = String(body.cityId ?? "").trim();
   const name = String(body.name ?? "").trim();
   const slug = slugify(String(body.slug ?? body.name ?? ""));
+  const city = await resolveCityForSpot(cityId, fallbackCitySlug);
 
-  if (!citySlug || !name || !slug) {
+  if (city.error) {
+    return NextResponse.json({ error: city.error }, { status: 400 });
+  }
+
+  if (!city.citySlug || !name || !slug) {
     return NextResponse.json(
       { error: "citySlug, name, and slug are required." },
       { status: 400 }
@@ -115,8 +155,8 @@ export async function PATCH(request: Request) {
   }
 
   const payload = {
-    city_slug: citySlug,
-    city_id: cityId || null,
+    city_slug: city.citySlug,
+    city_id: city.cityId,
     name,
     slug,
     summary: String(body.summary ?? ""),
