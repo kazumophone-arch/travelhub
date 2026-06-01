@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState, type CSSProperties } from "react";
 
 type SupabaseSpot = {
   id: string;
+  city_id: string | null;
   city_slug: string;
   name: string;
   slug: string;
@@ -14,28 +15,42 @@ type SupabaseSpot = {
   created_at: string;
 };
 
+type SupabaseCity = {
+  id: string;
+  slug: string;
+  city: string;
+  country: string;
+};
+
 type Filter = "all" | "draft" | "published";
 
 export function AdminSupabaseSpotList() {
   const [spots, setSpots] = useState<SupabaseSpot[]>([]);
+  const [cities, setCities] = useState<SupabaseCity[]>([]);
   const [filter, setFilter] = useState<Filter>("all");
   const [status, setStatus] = useState("Loading...");
 
   useEffect(() => {
-    async function loadSpots() {
-      const response = await fetch("/api/admin/spots");
-      const data = await response.json();
+    async function loadData() {
+      const [spotsResponse, citiesResponse] = await Promise.all([
+        fetch("/api/admin/spots"),
+        fetch("/api/admin/cities"),
+      ]);
 
-      if (!response.ok) {
-        setStatus(data.error ?? "Failed to load spots.");
+      const spotsData = await spotsResponse.json();
+      const citiesData = await citiesResponse.json();
+
+      if (!spotsResponse.ok) {
+        setStatus(spotsData.error ?? "Failed to load spots.");
         return;
       }
 
-      setSpots(data.spots ?? []);
+      setSpots(spotsData.spots ?? []);
+      setCities(citiesData.cities ?? []);
       setStatus("");
     }
 
-    loadSpots();
+    loadData();
   }, []);
 
   const filteredSpots = useMemo(() => {
@@ -50,6 +65,25 @@ export function AdminSupabaseSpotList() {
     return spots;
   }, [spots, filter]);
 
+  function getCityLabel(spot: SupabaseSpot) {
+    const city =
+      cities.find((item) => item.id === spot.city_id) ??
+      cities.find((item) => item.slug === spot.city_slug);
+
+    if (!city) {
+      return spot.city_slug || "No city";
+    }
+
+    return `${city.city}, ${city.country}`;
+  }
+
+  function getCitySlug(spot: SupabaseSpot) {
+    const city =
+      cities.find((item) => item.id === spot.city_id) ??
+      cities.find((item) => item.slug === spot.city_slug);
+
+    return city?.slug ?? spot.city_slug;
+  }
 
   async function deleteSpot(id: string) {
     const ok = window.confirm("Delete this spot from Supabase?");
@@ -68,6 +102,7 @@ export function AdminSupabaseSpotList() {
 
     setSpots((current) => current.filter((spot) => spot.id !== id));
   }
+
   return (
     <section style={wrapStyle}>
       <div style={filterRowStyle}>
@@ -94,7 +129,7 @@ export function AdminSupabaseSpotList() {
           <div key={spot.id} style={itemStyle}>
             <div>
               <div style={metaStyle}>
-                {spot.city_slug} · {spot.is_published ? "Published" : "Draft"}
+                {getCityLabel(spot)} · {spot.is_published ? "Published" : "Draft"}
               </div>
 
               <h2 style={titleStyle}>{spot.name}</h2>
@@ -102,7 +137,7 @@ export function AdminSupabaseSpotList() {
               <p style={textStyle}>{spot.summary || "No summary yet."}</p>
 
               <code style={codeStyle}>
-                /c/{spot.city_slug}/spot/{spot.slug}
+                /c/{getCitySlug(spot)}/spot/{spot.slug}
               </code>
             </div>
 
@@ -111,7 +146,7 @@ export function AdminSupabaseSpotList() {
                 Edit
               </Link>
 
-              <Link href={`/c/${spot.city_slug}/spot/${spot.slug}`} style={buttonStyle}>
+              <Link href={`/c/${getCitySlug(spot)}/spot/${spot.slug}`} style={buttonStyle}>
                 View
               </Link>
 
@@ -221,14 +256,6 @@ const buttonStyle: CSSProperties = {
   fontWeight: 850,
 };
 
-const emptyStyle: CSSProperties = {
-  padding: 18,
-  borderRadius: 22,
-  background: "#fffdf8",
-  border: "1px solid rgba(168,116,50,.14)",
-  color: "#607080",
-};
-
 const deleteButtonStyle: CSSProperties = {
   width: "fit-content",
   padding: "9px 12px",
@@ -240,3 +267,13 @@ const deleteButtonStyle: CSSProperties = {
   fontWeight: 850,
   cursor: "pointer",
 };
+
+const emptyStyle: CSSProperties = {
+  padding: 18,
+  borderRadius: 22,
+  background: "#fffdf8",
+  border: "1px solid rgba(168,116,50,.14)",
+  color: "#607080",
+};
+
+
