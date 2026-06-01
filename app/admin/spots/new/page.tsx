@@ -18,7 +18,7 @@ export default function NewSpotPage() {
         <div style={eyebrowStyle}>Create</div>
         <h1 style={titleStyle}>New spot</h1>
         <p style={textStyle}>
-          Create a spot draft using the final database-style fields.
+          Create a spot in Supabase using the current database fields.
         </p>
         <AdminNewSpotForm />
       </section>

@@ -21,7 +21,7 @@ export default function NewCityPage() {
         <h1 style={titleStyle}>New city</h1>
 
         <p style={textStyle}>
-          Create a city in Supabase. City pages will be connected after the city admin flow is stable.
+          Create a city record in Supabase.
         </p>
 
         <AdminNewCityForm />

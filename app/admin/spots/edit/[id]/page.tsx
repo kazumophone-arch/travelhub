@@ -24,7 +24,7 @@ export default async function EditSpotPage({ params }: Props) {
         <Link href="/admin/spots" style={backStyle}>← Back to spots</Link>
         <div style={eyebrowStyle}>Edit</div>
         <h1 style={titleStyle}>Edit spot</h1>
-        <p style={textStyle}>Edit a saved local draft.</p>
+        <p style={textStyle}>Edit spot data stored in Supabase.</p>
         <AdminSupabaseEditSpotForm id={id} />
       </section>
     </main>

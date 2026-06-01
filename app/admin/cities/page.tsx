@@ -21,7 +21,7 @@ export default function AdminCitiesPage() {
         <h1 style={titleStyle}>Manage cities</h1>
 
         <p style={textStyle}>
-          Cities are now managed from Supabase. Create and edit features will be added next.
+          Create, edit, view, and delete city records stored in Supabase.
         </p>
 
         <div style={actionRowStyle}>

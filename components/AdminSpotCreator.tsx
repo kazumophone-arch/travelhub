@@ -141,7 +141,7 @@ export function AdminSpotCreator({ cities }: Props) {
       : [currentDraft, ...drafts];
 
     persistDrafts(nextDrafts);
-    setPublishStatus("Draft saved locally.");
+    setPublishStatus("Entry saved in this browser.");
   }
 
   async function publishToLocalData() {
@@ -162,7 +162,7 @@ export function AdminSpotCreator({ cities }: Props) {
       }
 
       saveDraft();
-      setPublishStatus("Published to data/admin-spots.json");
+      setPublishStatus("Exported to the legacy data file.");
       setPublishedHref(`/c/${currentDraft.citySlug}/spot/${currentDraft.slug}`);
     } catch (error) {
       setPublishStatus(
@@ -207,7 +207,7 @@ export function AdminSpotCreator({ cities }: Props) {
 
   function copyJson() {
     navigator.clipboard.writeText(JSON.stringify(currentDraft, null, 2));
-    setPublishStatus("JSON copied.");
+    setPublishStatus("Entry data copied.");
   }
 
   function copyTsSnippet() {
@@ -230,8 +230,8 @@ export function AdminSpotCreator({ cities }: Props) {
           <div style={eyebrowStyle}>Spot creator</div>
           <h1 style={titleStyle}>Create a new spot</h1>
           <p style={leadStyle}>
-            Create spot drafts, preview the card, and publish them to local
-            development data.
+            Compose legacy spot entries, preview the card, and export them for
+            the old static-data workflow. Use the Supabase spot admin for current publishing.
           </p>
         </div>
 
@@ -243,7 +243,7 @@ export function AdminSpotCreator({ cities }: Props) {
       <section style={layoutStyle}>
         <aside style={draftListStyle}>
           <div style={draftHeaderStyle}>
-            <span>{drafts.length} drafts</span>
+            <span>{drafts.length} saved entries</span>
             <button type="button" onClick={newDraft} style={smallButtonStyle}>
               New
             </button>
@@ -251,7 +251,7 @@ export function AdminSpotCreator({ cities }: Props) {
 
           <div style={draftScrollStyle}>
             {drafts.length === 0 ? (
-              <div style={emptyListStyle}>No spot drafts yet.</div>
+              <div style={emptyListStyle}>No saved entries yet.</div>
             ) : (
               drafts.map((draft) => (
                 <div key={draft.id} style={draftItemWrapStyle}>
@@ -362,15 +362,15 @@ export function AdminSpotCreator({ cities }: Props) {
 
             <div style={buttonRowStyle}>
               <button type="button" onClick={publishToLocalData} style={primaryButtonStyle}>
-                Publish to local data
+                Export legacy entry
               </button>
 
               <button type="button" onClick={saveDraft} style={secondaryButtonStyle}>
-                Save draft
+                Save entry
               </button>
 
               <button type="button" onClick={copyJson} style={secondaryButtonStyle}>
-                Copy JSON
+                Copy entry data
               </button>
 
               <button type="button" onClick={copyTsSnippet} style={secondaryButtonStyle}>

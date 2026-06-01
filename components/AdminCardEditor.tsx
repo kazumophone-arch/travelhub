@@ -198,7 +198,7 @@ export function AdminCardEditor({ cities }: Props) {
           <div style={eyebrowStyle}>Card editor</div>
           <h1 style={titleStyle}>Edit travel cards</h1>
           <p style={leadStyle}>
-            Edit card copy and image seeds as local drafts. This does not change production data yet.
+            Edit card copy and image seeds for preview. Saved edits stay in this browser and do not change production data.
           </p>
         </div>
 
@@ -250,7 +250,7 @@ export function AdminCardEditor({ cities }: Props) {
                   <span style={itemKindStyle}>{card.kind}</span>
                   <strong style={itemTitleStyle}>{card.title}</strong>
                   <span style={itemMetaStyle}>{card.meta}</span>
-                  {isDraft && <span style={draftBadgeStyle}>Draft</span>}
+                  {isDraft && <span style={draftBadgeStyle}>Edited</span>}
                 </button>
               );
             })}
@@ -307,7 +307,7 @@ export function AdminCardEditor({ cities }: Props) {
 
             <div style={buttonRowStyle}>
               <button type="button" onClick={saveDrafts} style={primaryButtonStyle}>
-                Save draft
+                Save edits
               </button>
 
               <button type="button" onClick={resetSelected} style={secondaryButtonStyle}>
@@ -315,7 +315,7 @@ export function AdminCardEditor({ cities }: Props) {
               </button>
 
               <button type="button" onClick={copyJson} style={secondaryButtonStyle}>
-                Copy JSON
+                Copy edit data
               </button>
 
               <button type="button" onClick={resetAll} style={dangerButtonStyle}>

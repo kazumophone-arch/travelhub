@@ -21,20 +21,20 @@ export default function AdminSpotsPage() {
         <h1 style={titleStyle}>Manage spots</h1>
 
         <p style={textStyle}>
-          Create, edit, publish, and organize travel spots. This area will be built step by step.
+          Create, edit, publish, view, and delete travel spots stored in Supabase.
         </p>
 
         <div style={gridStyle}>
           <Link href="/admin/spots/new" style={cardStyle}>
             <span style={labelStyle}>Create</span>
             <strong style={cardTitleStyle}>New spot</strong>
-            <p style={cardTextStyle}>Add a new spot draft with title, slug, image, and links.</p>
+            <p style={cardTextStyle}>Add a new spot with title, slug, image, and links.</p>
           </Link>
 
           <div style={cardStyle}>
-            <span style={labelStyle}>Coming next</span>
+            <span style={labelStyle}>Available now</span>
             <strong style={cardTitleStyle}>Spot list</strong>
-            <p style={cardTextStyle}>Edit existing spots after the base form is stable.</p>
+            <p style={cardTextStyle}>Review, filter, edit, view, and delete existing spots.</p>
           </div>
         </div>
 
