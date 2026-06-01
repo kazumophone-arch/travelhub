@@ -26,6 +26,40 @@ type StayArea = {
   reason: string;
 };
 
+function mergePublishedSupabaseSpots(
+  city: City,
+  supabaseSpots: Awaited<ReturnType<typeof getPublishedSupabaseSpotsForCity>>
+): City {
+  if (supabaseSpots.length === 0) {
+    return city;
+  }
+
+  const existingSpotDetails = city.spotDetails ?? [];
+  const existingSlugs = new Set(
+    existingSpotDetails.map((spot) => spot.slug)
+  );
+
+  const addedSpotDetails = supabaseSpots
+    .map(toCitySpotFromSupabase)
+    .filter((spot) => {
+      if (existingSlugs.has(spot.slug)) {
+        return false;
+      }
+
+      existingSlugs.add(spot.slug);
+      return true;
+    });
+
+  if (addedSpotDetails.length === 0) {
+    return city;
+  }
+
+  return {
+    ...city,
+    spotDetails: [...existingSpotDetails, ...addedSpotDetails],
+  };
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -106,9 +140,9 @@ export default async function CityPage({
   const src = typeof sp?.src === "string" ? sp.src : "city";
   const v = typeof sp?.v === "string" ? sp.v : `city_${slug}`;
 
-  const city = getCityWithAdminSpots(cities, slug);
+  const staticCity = getCityWithAdminSpots(cities, slug);
 
-  if (!city) {
+  if (!staticCity) {
     const supabaseCity = await getPublishedSupabaseCity(slug);
 
     if (supabaseCity) {
@@ -117,6 +151,11 @@ export default async function CityPage({
 
     return notFound();
   }
+
+  const city = mergePublishedSupabaseSpots(
+    staticCity,
+    await getPublishedSupabaseSpotsForCity(slug)
+  );
 
   const spotCards =
     city.spotDetails && city.spotDetails.length > 0

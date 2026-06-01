@@ -87,6 +87,8 @@ export async function getPublishedSupabaseSpotsForCity(
     .eq("is_published", true)
     .maybeSingle();
 
+  let idMatchedSpots: SupabasePublicSpot[] = [];
+
   if (city?.id) {
     const { data, error } = await supabase
       .from("spots")
@@ -96,7 +98,7 @@ export async function getPublishedSupabaseSpotsForCity(
       .order("created_at", { ascending: false });
 
     if (!error && data) {
-      return data as SupabasePublicSpot[];
+      idMatchedSpots = data as SupabasePublicSpot[];
     }
   }
 
@@ -108,10 +110,22 @@ export async function getPublishedSupabaseSpotsForCity(
     .order("created_at", { ascending: false });
 
   if (error || !data) {
-    return [];
+    return idMatchedSpots;
   }
 
-  return data as SupabasePublicSpot[];
+  const seenIds = new Set(idMatchedSpots.map((spot) => spot.id));
+  const seenSlugs = new Set(idMatchedSpots.map((spot) => spot.slug));
+  const slugMatchedSpots = (data as SupabasePublicSpot[]).filter((spot) => {
+    if (seenIds.has(spot.id) || seenSlugs.has(spot.slug)) {
+      return false;
+    }
+
+    seenIds.add(spot.id);
+    seenSlugs.add(spot.slug);
+    return true;
+  });
+
+  return [...idMatchedSpots, ...slugMatchedSpots];
 }
 
 export function toCitySpotFromSupabase(spot: SupabasePublicSpot) {
