@@ -3,6 +3,7 @@ import { supabase } from "@/lib/supabase";
 
 export type SupabasePublicSpot = {
   id: string;
+  city_id: string | null;
   city_slug: string;
   name: string;
   slug: string;
@@ -21,7 +22,28 @@ export async function getPublishedSupabaseSpot(
   citySlug: string,
   spotSlug: string
 ): Promise<SupabasePublicSpot | null> {
-  const { data, error } = await supabase
+  const { data: city } = await supabase
+    .from("cities")
+    .select("id, slug")
+    .eq("slug", citySlug)
+    .eq("is_published", true)
+    .maybeSingle();
+
+  if (city?.id) {
+    const { data, error } = await supabase
+      .from("spots")
+      .select("*")
+      .eq("city_id", city.id)
+      .eq("slug", spotSlug)
+      .eq("is_published", true)
+      .maybeSingle();
+
+    if (!error && data) {
+      return data as SupabasePublicSpot;
+    }
+  }
+
+  const { data: slugMatchedSpot, error: slugError } = await supabase
     .from("spots")
     .select("*")
     .eq("city_slug", citySlug)
@@ -29,16 +51,55 @@ export async function getPublishedSupabaseSpot(
     .eq("is_published", true)
     .maybeSingle();
 
-  if (error || !data) {
+  if (!slugError && slugMatchedSpot) {
+    return slugMatchedSpot as SupabasePublicSpot;
+  }
+
+  const { data: looseSpot, error: looseError } = await supabase
+    .from("spots")
+    .select("*")
+    .eq("slug", spotSlug)
+    .eq("is_published", true)
+    .maybeSingle();
+
+  if (looseError || !looseSpot) {
     return null;
   }
 
-  return data as SupabasePublicSpot;
+  if (city?.id && looseSpot.city_id === city.id) {
+    return looseSpot as SupabasePublicSpot;
+  }
+
+  if (looseSpot.city_slug === citySlug) {
+    return looseSpot as SupabasePublicSpot;
+  }
+
+  return null;
 }
 
 export async function getPublishedSupabaseSpotsForCity(
   citySlug: string
 ): Promise<SupabasePublicSpot[]> {
+  const { data: city } = await supabase
+    .from("cities")
+    .select("id, slug")
+    .eq("slug", citySlug)
+    .eq("is_published", true)
+    .maybeSingle();
+
+  if (city?.id) {
+    const { data, error } = await supabase
+      .from("spots")
+      .select("*")
+      .eq("city_id", city.id)
+      .eq("is_published", true)
+      .order("created_at", { ascending: false });
+
+    if (!error && data) {
+      return data as SupabasePublicSpot[];
+    }
+  }
+
   const { data, error } = await supabase
     .from("spots")
     .select("*")
@@ -71,4 +132,3 @@ export function toCitySpotFromSupabase(spot: SupabasePublicSpot) {
     affiliateTourUrl: spot.affiliate_tour_url,
   };
 }
-

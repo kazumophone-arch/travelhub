@@ -33,6 +33,8 @@ function toPageSpot(spot: SupabasePublicSpot) {
     affiliateTourUrl: spot.affiliate_tour_url,
   };
 }
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({
   params,
 }: {
@@ -638,6 +640,7 @@ const relatedMetaStyle: CSSProperties = {
   color: "rgba(255, 255, 255, 0.78)",
   fontWeight: 850,
 };
+
 
 
 
