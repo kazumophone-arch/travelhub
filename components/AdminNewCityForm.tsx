@@ -44,6 +44,8 @@ function slugify(value: string) {
 export function AdminNewCityForm() {
   const [form, setForm] = useState<CityForm>(initialForm);
   const [status, setStatus] = useState("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   function update<K extends keyof CityForm>(key: K, value: CityForm[K]) {
     setForm((current) => ({
@@ -74,6 +76,43 @@ export function AdminNewCityForm() {
     }
 
     setStatus("City created in Supabase.");
+  }
+
+  async function uploadCityImage() {
+    if (!form.slug.trim()) {
+      setStatus("Enter a city slug before uploading an image.");
+      return;
+    }
+
+    if (!imageFile) {
+      setStatus("Choose an image file before uploading.");
+      return;
+    }
+
+    setIsUploadingImage(true);
+    setStatus("Uploading image...");
+
+    const uploadForm = new FormData();
+    uploadForm.append("file", imageFile);
+    uploadForm.append("kind", "city");
+    uploadForm.append("citySlug", form.slug);
+
+    const response = await fetch("/api/admin/uploads", {
+      method: "POST",
+      body: uploadForm,
+    });
+
+    const data = await response.json();
+
+    setIsUploadingImage(false);
+
+    if (!response.ok || typeof data.publicUrl !== "string") {
+      setStatus(data.error ?? "Failed to upload image.");
+      return;
+    }
+
+    update("imageUrl", data.publicUrl);
+    setStatus("Image uploaded. The Image URL field has been updated.");
   }
 
   return (
@@ -148,6 +187,24 @@ export function AdminNewCityForm() {
             style={inputStyle}
           />
         </label>
+
+        <div style={uploadWrapStyle}>
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            onChange={(event) => setImageFile(event.target.files?.[0] ?? null)}
+            style={inputStyle}
+          />
+
+          <button
+            type="button"
+            onClick={uploadCityImage}
+            style={buttonStyle}
+            disabled={isUploadingImage}
+          >
+            Upload image
+          </button>
+        </div>
 
         <label style={labelStyle}>
           Image alt
@@ -280,6 +337,12 @@ const checkStyle: CSSProperties = {
   color: "#607080",
   fontSize: 13,
   fontWeight: 750,
+};
+
+const uploadWrapStyle: CSSProperties = {
+  display: "grid",
+  gap: 9,
+  marginBottom: 14,
 };
 
 const buttonStyle: CSSProperties = {
