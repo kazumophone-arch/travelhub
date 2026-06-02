@@ -10,8 +10,6 @@ import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
 import { DetailPlaceImageCard } from "@/components/DetailPlaceImageCard";
 import { DetailHeroImage } from "@/components/DetailHeroImage";
 import { getMapMagazineSpotVisual } from "@/lib/mapMagazineVisuals";
-import { getPublishedSupabaseCity } from "@/data/supabase-public-cities";
-import { SupabaseSpotDetail } from "@/components/SupabaseSpotDetail";
 import { getPublishedSupabaseSpot, type SupabasePublicSpot } from "@/data/supabase-public-spots";
 
 
@@ -33,8 +31,6 @@ function toPageSpot(spot: SupabasePublicSpot) {
     affiliateTourUrl: spot.affiliate_tour_url,
   };
 }
-export const dynamic = "force-dynamic";
-
 export async function generateMetadata({
   params,
 }: {
@@ -111,17 +107,7 @@ export default async function SpotPage({
   const v = typeof sp?.v === "string" ? sp.v : `spot_${slug}_${spotSlug}`;
 
   const city = getCityWithAdminSpots(cities, slug);
-
-  if (!city) {
-    const supabaseCity = await getPublishedSupabaseCity(slug);
-    const supabaseOnlySpot = await getPublishedSupabaseSpot(slug, spotSlug);
-
-    if (supabaseCity && supabaseOnlySpot) {
-      return <SupabaseSpotDetail city={supabaseCity} spot={supabaseOnlySpot} />;
-    }
-
-    return notFound();
-  }
+  if (!city) return notFound();
 
   const staticSpot = city.spotDetails?.find(
     (item) => item.slug === spotSlug && item.isPublished !== false
@@ -175,7 +161,7 @@ export default async function SpotPage({
             <p style={subtitleStyle}>{spot.summary}</p>
 
             <div style={heroChipWrapStyle}>
-              {bestFor.slice(0, 3).map((item) => (
+              {bestFor.slice(0, 3).map((item: string) => (
                 <span key={item} style={heroChipStyle}>
                   {item}
                 </span>
@@ -210,7 +196,7 @@ export default async function SpotPage({
             <div style={smallLabelStyle}>Best for</div>
             <h2 style={sectionTitleStyle}>Who should add it</h2>
             <div style={tagWrapStyle}>
-              {bestFor.slice(0, 4).map((item) => (
+              {bestFor.slice(0, 4).map((item: string) => (
                 <span key={item} style={tagStyle}>
                   {item}
                 </span>
@@ -640,25 +626,3 @@ const relatedMetaStyle: CSSProperties = {
   color: "rgba(255, 255, 255, 0.78)",
   fontWeight: 850,
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
