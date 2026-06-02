@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { SupabaseSpotDetail } from "@/components/SupabaseSpotDetail";
 import { getPublishedSupabaseCity } from "@/data/supabase-public-cities";
 import { getPublishedSupabaseSpot } from "@/data/supabase-public-spots";
+import { createPublicMetadata } from "@/lib/site-metadata";
 
 export const dynamic = "force-dynamic";
 
@@ -22,27 +23,19 @@ export async function generateMetadata({
     };
   }
 
-  const title = `${spot.name}, ${city.city} | TravelHub`;
+  const title = `${spot.name} in ${city.city}, ${city.country} | TravelHub`;
   const description =
-    spot.summary ||
     spot.description ||
-    `Explore ${spot.name} in ${city.city}, with travel tips and planning links.`;
+    spot.summary ||
+    `Explore ${spot.name} in ${city.city}, ${city.country} with hotel and tour links.`;
 
-  return {
+  return createPublicMetadata({
     title,
     description,
-    openGraph: {
-      title,
-      description,
-      type: "website",
-      url: `https://travelhub-murex.vercel.app/c/${city.slug}/spot/${spot.slug}`,
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-    },
-  };
+    path: `/c/${city.slug}/spot/${spot.slug}`,
+    imageUrl: spot.image_url,
+    imageAlt: spot.image_alt || spot.name,
+  });
 }
 
 export default async function SpotPage({

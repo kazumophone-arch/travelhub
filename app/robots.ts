@@ -1,14 +1,13 @@
 import type { MetadataRoute } from "next";
-
-const siteUrl = "https://travelhub-murex.vercel.app";
+import { getAbsoluteUrl } from "@/lib/site-metadata";
 
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/out/"],
+      disallow: ["/admin", "/admin/", "/out/"],
     },
-    sitemap: `${siteUrl}/sitemap.xml`,
+    sitemap: getAbsoluteUrl("/sitemap.xml"),
   };
 }

@@ -5,14 +5,16 @@ import { TravelDiscoveryTools } from "@/components/TravelDiscoveryTools";
 import { TravelTimingDiscovery } from "@/components/TravelTimingDiscovery";
 import { getPublishedSupabaseDirectoryCities } from "@/data/supabase-public-cities";
 import { sortByRank } from "@/data/visibility";
+import { createPublicMetadata } from "@/lib/site-metadata";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "Discover | TravelHub",
+export const metadata: Metadata = createPublicMetadata({
+  title: "Discover Travel Ideas | TravelHub",
   description:
-    "Find a TravelHub destination by feeling, season, travel style, and timing.",
-};
+    "Find TravelHub city ideas by feeling, season, travel style, and trip timing.",
+  path: "/discover",
+});
 
 export default async function DiscoverPage() {
   const supabaseCities = await getPublishedSupabaseDirectoryCities();

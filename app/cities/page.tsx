@@ -2,15 +2,17 @@ import type { Metadata } from "next";
 import type { City } from "@/data/types";
 import { CityDirectory } from "@/components/CityDirectory";
 import { sortByRank } from "@/data/visibility";
+import { createPublicMetadata } from "@/lib/site-metadata";
 import { supabase } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "Cities | TravelHub",
+export const metadata: Metadata = createPublicMetadata({
+  title: "Browse Travel Cities | TravelHub",
   description:
-    "Browse TravelHub cities by country, season, mood, travel style, and featured spots.",
-};
+    "Browse TravelHub city guides with featured spots, hotel links, tour links, and travel ideas.",
+  path: "/cities",
+});
 
 type SupabaseCityRow = {
   id: string;

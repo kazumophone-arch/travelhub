@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { SupabaseCityDetail } from "@/components/SupabaseCityDetail";
 import { getPublishedSupabaseCity } from "@/data/supabase-public-cities";
+import { createPublicMetadata } from "@/lib/site-metadata";
 
 export const dynamic = "force-dynamic";
 
@@ -20,27 +21,19 @@ export async function generateMetadata({
     };
   }
 
-  const title = `${city.city}, ${city.country} | TravelHub`;
+  const title = `${city.city}, ${city.country} Travel Links | TravelHub`;
   const description =
-    city.summary ||
     city.description ||
-    `Explore ${city.city}, featured spots, where to stay, and travel planning links.`;
+    city.summary ||
+    `Explore travel links, spots, hotels, and tours for ${city.city}, ${city.country}.`;
 
-  return {
+  return createPublicMetadata({
     title,
     description,
-    openGraph: {
-      title,
-      description,
-      type: "website",
-      url: `https://travelhub-murex.vercel.app/c/${city.slug}`,
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-    },
-  };
+    path: `/c/${city.slug}`,
+    imageUrl: city.image_url,
+    imageAlt: city.image_alt || `${city.city}, ${city.country}`,
+  });
 }
 
 export default async function CityPage({

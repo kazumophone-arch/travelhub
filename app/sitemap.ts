@@ -1,7 +1,6 @@
 import type { MetadataRoute } from "next";
+import { getAbsoluteUrl } from "@/lib/site-metadata";
 import { supabase } from "@/lib/supabase";
-
-const siteUrl = "https://travelhub-murex.vercel.app";
 
 export const dynamic = "force-dynamic";
 
@@ -60,7 +59,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: ChangeFrequency,
     priority: number
   ): SitemapEntry | null {
-    const url = path === "/" ? siteUrl : `${siteUrl}${path}`;
+    const url = getAbsoluteUrl(path);
 
     if (seenUrls.has(url)) return null;
 

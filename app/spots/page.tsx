@@ -2,15 +2,17 @@ import type { Metadata } from "next";
 import type { City } from "@/data/types";
 import { SpotDirectory } from "@/components/SpotDirectory";
 import { sortByRank } from "@/data/visibility";
+import { createPublicMetadata } from "@/lib/site-metadata";
 import { supabase } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "Spots | TravelHub",
+export const metadata: Metadata = createPublicMetadata({
+  title: "Browse Travel Spots | TravelHub",
   description:
-    "Browse TravelHub featured spots by place, city, country, and travel mood.",
-};
+    "Browse attractions, travel ideas, hotel links, and tour links across TravelHub spots.",
+  path: "/spots",
+});
 
 const SUPABASE_SPOTS_SELECT =
   "id, city_id, name, slug, summary, description, image_url, image_alt, image_credit, image_source_url, affiliate_hotel_url, affiliate_tour_url, is_published";

@@ -2,6 +2,11 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteNavigation } from "@/components/SiteNavigation";
+import {
+  DEFAULT_SITE_DESCRIPTION,
+  SITE_NAME,
+  getSiteUrl,
+} from "@/lib/site-metadata";
 import "./globals.css";
 import { TemporaryAdminTab } from "@/components/TemporaryAdminTab";
 
@@ -16,13 +21,25 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://travelhub-murex.vercel.app"),
+  metadataBase: getSiteUrl(),
   title: {
-    default: "TravelHub | Find travel links by city",
+    default: SITE_NAME,
     template: "%s",
   },
-  description:
-    "Discover travel cities, featured spots, hotel links, and tour links from short travel videos.",
+  description: DEFAULT_SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  openGraph: {
+    title: SITE_NAME,
+    description: DEFAULT_SITE_DESCRIPTION,
+    type: "website",
+    siteName: SITE_NAME,
+    url: "/",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_NAME,
+    description: DEFAULT_SITE_DESCRIPTION,
+  },
 };
 
 export default function RootLayout({
