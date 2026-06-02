@@ -23,6 +23,12 @@ const adminItems = [
     href: "/admin/spots",
   },
   {
+    title: "Analytics",
+    label: "Reports",
+    description: "Review outbound hotel and tour click logs.",
+    href: "/admin/analytics",
+  },
+  {
     title: "Back to site",
     label: "Site",
     description: "Return to the public TravelHub site.",
