@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
-import { cities } from "@/data/cities";
 import { HomeLanding } from "@/components/HomeLanding";
-import { isPublishedCity, sortByRank } from "@/data/visibility";
+import { getPublishedSupabaseDirectoryCities } from "@/data/supabase-public-cities";
+import { sortByRank } from "@/data/visibility";
 
 const title = "TravelHub | Find travel links by city";
 const description =
   "Discover travel cities, featured spots, hotel links, and tour links from short travel videos.";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title,
@@ -23,10 +25,9 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Home() {
-  const publishedCities = sortByRank(
-    Object.values(cities).filter(isPublishedCity)
-  );
+export default async function Home() {
+  const supabaseCities = await getPublishedSupabaseDirectoryCities();
+  const publishedCities = sortByRank(supabaseCities);
 
   return <HomeLanding cities={publishedCities} />;
 }

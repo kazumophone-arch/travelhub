@@ -18,7 +18,6 @@ type CityOption = {
 type SpotForm = {
   id: string;
   cityId: string;
-  citySlug: string;
   name: string;
   slug: string;
   summary: string;
@@ -35,7 +34,6 @@ type SpotForm = {
 const emptyForm: SpotForm = {
   id: "",
   cityId: "",
-  citySlug: "",
   name: "",
   slug: "",
   summary: "",
@@ -61,7 +59,11 @@ function slugify(value: string) {
 export function AdminSupabaseEditSpotForm({ id }: Props) {
   const [cityOptions, setCityOptions] = useState<CityOption[]>([]);
   const [form, setForm] = useState<SpotForm>(emptyForm);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [status, setStatus] = useState("Loading...");
+  const selectedCity = cityOptions.find((city) => city.id === form.cityId);
+  const selectedCitySlug = selectedCity?.slug ?? "";
 
   useEffect(() => {
     async function loadSpot() {
@@ -72,9 +74,10 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
 
       const data = await spotResponse.json();
       const citiesData = await citiesResponse.json();
+      const nextCities = (citiesData.cities ?? []) as CityOption[];
 
       if (citiesResponse.ok) {
-        setCityOptions(citiesData.cities ?? []);
+        setCityOptions(nextCities);
       }
 
       const response = spotResponse;
@@ -85,11 +88,11 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
       }
 
       const spot = data.spot;
+      const cityId = String(spot.city_id ?? "");
 
       setForm({
         id: spot.id,
-        cityId: spot.city_id ?? "",
-        citySlug: spot.city_slug ?? "",
+        cityId,
         name: spot.name ?? "",
         slug: spot.slug ?? "",
         summary: spot.summary ?? "",
@@ -103,19 +106,20 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
         isPublished: Boolean(spot.is_published),
       });
 
-      setStatus("");
+      setStatus(
+        cityId
+          ? ""
+          : "This spot is missing city_id. Select a city to finish migration."
+      );
     }
 
     loadSpot();
   }, [id]);
 
   function updateCity(cityId: string) {
-    const selectedCity = cityOptions.find((city) => city.id === cityId);
-
     setForm((current) => ({
       ...current,
       cityId,
-      citySlug: selectedCity?.slug ?? "",
     }));
   }
 
@@ -150,6 +154,53 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
     setStatus("Saved.");
   }
 
+  async function uploadSpotImage() {
+    if (!selectedCitySlug) {
+      setStatus("Choose a city before uploading an image.");
+      return;
+    }
+
+    if (!form.slug.trim()) {
+      setStatus("Enter a spot slug before uploading an image.");
+      return;
+    }
+
+    if (!imageFile) {
+      setStatus("Choose an image file before uploading.");
+      return;
+    }
+
+    setIsUploadingImage(true);
+    setStatus("Uploading image...");
+
+    const uploadForm = new FormData();
+    uploadForm.append("file", imageFile);
+    uploadForm.append("kind", "spot");
+    uploadForm.append("citySlug", selectedCitySlug);
+    uploadForm.append("spotSlug", form.slug);
+
+    try {
+      const response = await fetch("/api/admin/uploads", {
+        method: "POST",
+        body: uploadForm,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || typeof data.publicUrl !== "string") {
+        setStatus(data.error ?? "Failed to upload image.");
+        return;
+      }
+
+      update("imageUrl", data.publicUrl);
+      setStatus("Image uploaded. The Image URL field has been updated.");
+    } catch {
+      setStatus("Failed to upload image.");
+    } finally {
+      setIsUploadingImage(false);
+    }
+  }
+
   if (status === "Loading...") {
     return <div style={emptyStyle}>Loading...</div>;
   }
@@ -164,6 +215,9 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
             onChange={(event) => updateCity(event.target.value)}
             style={inputStyle}
           >
+            <option value="" disabled>
+              Select a city
+            </option>
             {cityOptions.map((city) => (
               <option key={city.id} value={city.id}>
                 {city.city}, {city.country}
@@ -219,6 +273,23 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
             style={inputStyle}
           />
         </label>
+
+        <div style={uploadWrapStyle}>
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            onChange={(event) => setImageFile(event.target.files?.[0] ?? null)}
+            style={inputStyle}
+          />
+          <button
+            type="button"
+            onClick={uploadSpotImage}
+            style={buttonStyle}
+            disabled={isUploadingImage}
+          >
+            Upload image
+          </button>
+        </div>
 
         <label style={labelStyle}>
           Image alt
@@ -298,7 +369,7 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
               : "linear-gradient(135deg, #dfeeea, #f7efe2)",
           }}
         >
-          <div style={badgeStyle}>{form.citySlug}</div>
+          <div style={badgeStyle}>{selectedCitySlug || "Missing city_id"}</div>
 
           <div style={panelStyle}>
             <div style={metaStyle}>{form.isPublished ? "Published" : "Draft"}</div>
@@ -366,6 +437,12 @@ const buttonRowStyle: CSSProperties = {
   display: "flex",
   gap: 9,
   flexWrap: "wrap",
+};
+
+const uploadWrapStyle: CSSProperties = {
+  display: "grid",
+  gap: 9,
+  marginBottom: 14,
 };
 
 const buttonStyle: CSSProperties = {

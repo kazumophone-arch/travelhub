@@ -6,7 +6,6 @@ import { useEffect, useMemo, useState, type CSSProperties } from "react";
 type SupabaseSpot = {
   id: string;
   city_id: string | null;
-  city_slug: string;
   name: string;
   slug: string;
   summary: string;
@@ -66,23 +65,25 @@ export function AdminSupabaseSpotList() {
   }, [spots, filter]);
 
   function getCityLabel(spot: SupabaseSpot) {
-    const city =
-      cities.find((item) => item.id === spot.city_id) ??
-      cities.find((item) => item.slug === spot.city_slug);
-
-    if (!city) {
-      return spot.city_slug || "No city";
+    if (!spot.city_id) {
+      return "Missing city_id";
     }
 
-    return `${city.city}, ${city.country}`;
+    const city = cities.find((item) => item.id === spot.city_id);
+
+    if (!city) {
+      return "Unknown city_id";
+    }
+
+    return `${city.city}, ${city.country} (${city.slug})`;
   }
 
   function getCitySlug(spot: SupabaseSpot) {
-    const city =
-      cities.find((item) => item.id === spot.city_id) ??
-      cities.find((item) => item.slug === spot.city_slug);
+    if (!spot.city_id) return "";
 
-    return city?.slug ?? spot.city_slug;
+    const city = cities.find((item) => item.id === spot.city_id);
+
+    return city?.slug ?? "";
   }
 
   async function deleteSpot(id: string) {
@@ -125,41 +126,47 @@ export function AdminSupabaseSpotList() {
       )}
 
       <div style={listStyle}>
-        {filteredSpots.map((spot) => (
-          <div key={spot.id} style={itemStyle}>
-            <div>
-              <div style={metaStyle}>
-                {getCityLabel(spot)} · {spot.is_published ? "Published" : "Draft"}
+        {filteredSpots.map((spot) => {
+          const citySlug = getCitySlug(spot);
+
+          return (
+            <div key={spot.id} style={itemStyle}>
+              <div>
+                <div style={metaStyle}>
+                  {getCityLabel(spot)} · {spot.is_published ? "Published" : "Draft"}
+                </div>
+
+                <h2 style={titleStyle}>{spot.name}</h2>
+
+                <p style={textStyle}>{spot.summary || "No summary yet."}</p>
+
+                <code style={codeStyle}>
+                  {citySlug ? `/c/${citySlug}/spot/${spot.slug}` : "No public URL yet"}
+                </code>
               </div>
 
-              <h2 style={titleStyle}>{spot.name}</h2>
+              <div style={buttonRowStyle}>
+                <Link href={`/admin/spots/edit/${spot.id}`} style={buttonStyle}>
+                  Edit
+                </Link>
 
-              <p style={textStyle}>{spot.summary || "No summary yet."}</p>
+                {citySlug ? (
+                  <Link href={`/c/${citySlug}/spot/${spot.slug}`} style={buttonStyle}>
+                    View
+                  </Link>
+                ) : null}
 
-              <code style={codeStyle}>
-                /c/{getCitySlug(spot)}/spot/{spot.slug}
-              </code>
+                <button
+                  type="button"
+                  onClick={() => deleteSpot(spot.id)}
+                  style={deleteButtonStyle}
+                >
+                  Delete
+                </button>
+              </div>
             </div>
-
-            <div style={buttonRowStyle}>
-              <Link href={`/admin/spots/edit/${spot.id}`} style={buttonStyle}>
-                Edit
-              </Link>
-
-              <Link href={`/c/${getCitySlug(spot)}/spot/${spot.slug}`} style={buttonStyle}>
-                View
-              </Link>
-
-              <button
-                type="button"
-                onClick={() => deleteSpot(spot.id)}
-                style={deleteButtonStyle}
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );

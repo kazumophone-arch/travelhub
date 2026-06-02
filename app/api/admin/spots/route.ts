@@ -4,6 +4,9 @@ import { supabaseAdmin } from "@/lib/supabase-admin";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+const ADMIN_SPOT_SELECT =
+  "id, city_id, name, slug, summary, description, image_url, image_alt, image_credit, image_source_url, affiliate_hotel_url, affiliate_tour_url, is_published, created_at, updated_at";
+
 function slugify(value: string) {
   return value
     .toLowerCase()
@@ -13,32 +16,29 @@ function slugify(value: string) {
     .replace(/^-+|-+$/g, "");
 }
 
-async function resolveCityForSpot(cityId: string, fallbackCitySlug: string) {
+async function resolveCityForSpot(cityId: string) {
   if (!cityId) {
     return {
       cityId: null,
-      citySlug: fallbackCitySlug,
       error: null,
     };
   }
 
   const { data, error } = await supabaseAdmin
     .from("cities")
-    .select("id, slug")
+    .select("id")
     .eq("id", cityId)
     .maybeSingle();
 
-  if (error || !data?.slug) {
+  if (error || !data?.id) {
     return {
       cityId: null,
-      citySlug: "",
       error: "Selected city was not found.",
     };
   }
 
   return {
     cityId: data.id as string,
-    citySlug: data.slug as string,
     error: null,
   };
 }
@@ -51,7 +51,7 @@ export async function GET(request: Request) {
   if (id) {
     const { data, error } = await supabaseAdmin
       .from("spots")
-      .select("*")
+      .select(ADMIN_SPOT_SELECT)
       .eq("id", id)
       .single();
 
@@ -64,7 +64,7 @@ export async function GET(request: Request) {
 
   const { data, error } = await supabaseAdmin
     .from("spots")
-    .select("*")
+    .select(ADMIN_SPOT_SELECT)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -76,25 +76,23 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   const body = await request.json();
 
-  const fallbackCitySlug = String(body.citySlug ?? "").trim();
   const cityId = String(body.cityId ?? "").trim();
   const name = String(body.name ?? "").trim();
   const slug = slugify(String(body.slug ?? body.name ?? ""));
-  const city = await resolveCityForSpot(cityId, fallbackCitySlug);
+  const city = await resolveCityForSpot(cityId);
 
   if (city.error) {
     return NextResponse.json({ error: city.error }, { status: 400 });
   }
 
-  if (!city.citySlug || !name || !slug) {
+  if (!city.cityId || !name || !slug) {
     return NextResponse.json(
-      { error: "citySlug, name, and slug are required." },
+      { error: "cityId, name, and slug are required." },
       { status: 400 }
     );
   }
 
   const payload = {
-    city_slug: city.citySlug,
     city_id: city.cityId,
     name,
     slug,
@@ -113,7 +111,7 @@ export async function POST(request: Request) {
   const { data, error } = await supabaseAdmin
     .from("spots")
     .upsert(payload, {
-      onConflict: "city_slug,slug",
+      onConflict: "city_id,slug",
     })
     .select()
     .single();
@@ -137,25 +135,23 @@ export async function PATCH(request: Request) {
     );
   }
 
-  const fallbackCitySlug = String(body.citySlug ?? "").trim();
   const cityId = String(body.cityId ?? "").trim();
   const name = String(body.name ?? "").trim();
   const slug = slugify(String(body.slug ?? body.name ?? ""));
-  const city = await resolveCityForSpot(cityId, fallbackCitySlug);
+  const city = await resolveCityForSpot(cityId);
 
   if (city.error) {
     return NextResponse.json({ error: city.error }, { status: 400 });
   }
 
-  if (!city.citySlug || !name || !slug) {
+  if (!city.cityId || !name || !slug) {
     return NextResponse.json(
-      { error: "citySlug, name, and slug are required." },
+      { error: "cityId, name, and slug are required." },
       { status: 400 }
     );
   }
 
   const payload = {
-    city_slug: city.citySlug,
     city_id: city.cityId,
     name,
     slug,

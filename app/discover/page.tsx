@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import type { CSSProperties } from "react";
-import { cities } from "@/data/cities";
 import { DiscoverHeroCopy } from "@/components/DiscoverHeroCopy";
 import { TravelDiscoveryTools } from "@/components/TravelDiscoveryTools";
 import { TravelTimingDiscovery } from "@/components/TravelTimingDiscovery";
-import { isPublishedCity, sortByRank } from "@/data/visibility";
+import { getPublishedSupabaseDirectoryCities } from "@/data/supabase-public-cities";
+import { sortByRank } from "@/data/visibility";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Discover | TravelHub",
@@ -12,16 +14,15 @@ export const metadata: Metadata = {
     "Find a TravelHub destination by feeling, season, travel style, and timing.",
 };
 
-export default function DiscoverPage() {
-  const publishedCities = sortByRank(
-    Object.values(cities).filter(isPublishedCity)
-  );
+export default async function DiscoverPage() {
+  const supabaseCities = await getPublishedSupabaseDirectoryCities();
+  const publishedCities = sortByRank(supabaseCities);
 
   return (
     <main style={pageStyle}>
       <section style={shellStyle}>
         <DiscoverHeroCopy />
-<TravelDiscoveryTools cities={publishedCities} />
+        <TravelDiscoveryTools cities={publishedCities} />
 
         <TravelTimingDiscovery cities={publishedCities} />
       </section>

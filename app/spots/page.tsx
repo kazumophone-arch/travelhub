@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import type { City } from "@/data/types";
-import { cities } from "@/data/cities";
 import { SpotDirectory } from "@/components/SpotDirectory";
-import { isPublishedCity, sortByRank } from "@/data/visibility";
+import { sortByRank } from "@/data/visibility";
 import { supabase } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
@@ -12,6 +11,9 @@ export const metadata: Metadata = {
   description:
     "Browse TravelHub featured spots by place, city, country, and travel mood.",
 };
+
+const SUPABASE_SPOTS_SELECT =
+  "id, city_id, name, slug, summary, description, image_url, image_alt, image_credit, image_source_url, affiliate_hotel_url, affiliate_tour_url, is_published";
 
 type SupabaseCityRow = {
   id: string;
@@ -32,7 +34,6 @@ type SupabaseCityRow = {
 type SupabaseSpotRow = {
   id: string;
   city_id: string | null;
-  city_slug: string;
   name: string;
   slug: string;
   summary: string;
@@ -79,6 +80,7 @@ function toDirectoryCity(row: SupabaseCityRow, spots: SupabaseSpotRow[]): City {
     imageCredit: row.image_credit,
     imageSourceUrl: row.image_source_url,
     rank: row.sort_rank ?? 999,
+    sortRank: row.sort_rank ?? 999,
     isPublished: row.is_published,
     seasons: ["All year"],
     travelStyles: [row.region || "City break"],
@@ -100,7 +102,7 @@ async function getSupabaseCitiesAndSpots() {
 
     supabase
       .from("spots")
-      .select("*")
+      .select(SUPABASE_SPOTS_SELECT)
       .eq("is_published", true)
       .order("created_at", { ascending: false }),
   ]);
@@ -115,82 +117,37 @@ async function getSupabaseCitiesAndSpots() {
 }
 
 function mergeSupabaseSpotsIntoCities(
-  staticCities: City[],
   supabaseCities: SupabaseCityRow[],
   supabaseSpots: SupabaseSpotRow[]
 ) {
-  const staticCityMap = new Map(staticCities.map((city) => [city.slug, city]));
-
   const supabaseCityById = new Map(
     supabaseCities.map((city) => [city.id, city])
   );
 
-  const supabaseCityBySlug = new Map(
-    supabaseCities.map((city) => [city.slug, city])
-  );
-
-  const spotsByCitySlug = new Map<string, SupabaseSpotRow[]>();
+  const spotsByCityId = new Map<string, SupabaseSpotRow[]>();
 
   for (const spot of supabaseSpots) {
-    const cityFromId = spot.city_id ? supabaseCityById.get(spot.city_id) : null;
-    const citySlug = cityFromId?.slug || spot.city_slug;
+    if (!spot.city_id || !supabaseCityById.has(spot.city_id)) continue;
 
-    if (!citySlug) continue;
-
-    const current = spotsByCitySlug.get(citySlug) ?? [];
+    const current = spotsByCityId.get(spot.city_id) ?? [];
     current.push(spot);
-    spotsByCitySlug.set(citySlug, current);
+    spotsByCityId.set(spot.city_id, current);
   }
 
-  const mergedStaticCities = staticCities.map((city) => {
-    const addedSpots = spotsByCitySlug.get(city.slug) ?? [];
-
-    if (addedSpots.length === 0) {
-      return city;
-    }
-
-    const existingSpotDetails = city.spotDetails ?? [];
-    const existingSlugs = new Set(
-      existingSpotDetails.map((spot) => spot.slug)
-    );
-
-    const newSpotDetails = addedSpots
-      .filter((spot) => !existingSlugs.has(spot.slug))
-      .map(toDirectorySpot);
-
-    return {
-      ...city,
-      spotDetails: [...existingSpotDetails, ...newSpotDetails],
-      stops: Array.from(
-        new Set([...(city.stops ?? []), ...newSpotDetails.map((spot) => spot.name)])
-      ),
-    };
-  });
-
-  const staticSlugs = new Set(staticCities.map((city) => city.slug));
-
-  const supabaseOnlyCities = supabaseCities
-    .filter((city) => !staticSlugs.has(city.slug))
+  const supabaseDirectoryCities = supabaseCities
     .map((city) => {
-      const citySpots =
-        spotsByCitySlug.get(city.slug) ??
-        supabaseSpots.filter((spot) => spot.city_slug === city.slug);
+      const citySpots = spotsByCityId.get(city.id) ?? [];
 
       return toDirectoryCity(city, citySpots);
     });
 
-  return sortByRank([...mergedStaticCities, ...supabaseOnlyCities]);
+  return sortByRank(supabaseDirectoryCities);
 }
 
 export default async function SpotsPage() {
-  const staticCities = sortByRank(
-    Object.values(cities).filter(isPublishedCity)
-  );
-
   const { supabaseCities, supabaseSpots } = await getSupabaseCitiesAndSpots();
 
   const mergedCities = mergeSupabaseSpotsIntoCities(
-    staticCities,
     supabaseCities,
     supabaseSpots
   );

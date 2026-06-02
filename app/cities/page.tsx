@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import type { City } from "@/data/types";
-import { cities } from "@/data/cities";
 import { CityDirectory } from "@/components/CityDirectory";
-import { isPublishedCity, sortByRank } from "@/data/visibility";
+import { sortByRank } from "@/data/visibility";
 import { supabase } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
@@ -43,6 +42,7 @@ function toDirectoryCity(row: SupabaseCityRow): City {
     imageCredit: row.image_credit,
     imageSourceUrl: row.image_source_url,
     rank: row.sort_rank ?? 999,
+    sortRank: row.sort_rank ?? 999,
     isPublished: row.is_published,
     seasons: ["All year"],
     travelStyles: [row.region || "City break"],
@@ -67,18 +67,8 @@ async function getSupabasePublishedCities() {
 }
 
 export default async function CitiesPage() {
-  const staticCities = sortByRank(
-    Object.values(cities).filter(isPublishedCity)
-  );
-
   const supabaseCities = await getSupabasePublishedCities();
-
-  const staticSlugs = new Set(staticCities.map((city) => city.slug));
-
-  const mergedCities = sortByRank([
-    ...staticCities,
-    ...supabaseCities.filter((city) => !staticSlugs.has(city.slug)),
-  ]);
+  const mergedCities = sortByRank(supabaseCities);
 
   return <CityDirectory cities={mergedCities} />;
 }

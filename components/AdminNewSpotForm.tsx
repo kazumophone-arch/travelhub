@@ -12,7 +12,6 @@ type CityOption = {
 
 type SpotForm = {
   cityId: string;
-  citySlug: string;
   name: string;
   slug: string;
   summary: string;
@@ -28,7 +27,6 @@ type SpotForm = {
 
 const initialForm: SpotForm = {
   cityId: "",
-  citySlug: "",
   name: "",
   slug: "",
   summary: "",
@@ -54,7 +52,11 @@ function slugify(value: string) {
 export function AdminNewSpotForm() {
   const [cities, setCities] = useState<CityOption[]>([]);
   const [form, setForm] = useState<SpotForm>(initialForm);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [status, setStatus] = useState("Loading cities...");
+  const selectedCity = cities.find((city) => city.id === form.cityId);
+  const selectedCitySlug = selectedCity?.slug ?? "";
 
   useEffect(() => {
     async function loadCities() {
@@ -72,7 +74,6 @@ export function AdminNewSpotForm() {
       setForm((current) => ({
         ...current,
         cityId: current.cityId || nextCities[0]?.id || "",
-        citySlug: current.citySlug || nextCities[0]?.slug || "",
       }));
 
       setStatus("");
@@ -82,12 +83,9 @@ export function AdminNewSpotForm() {
   }, []);
 
   function updateCity(cityId: string) {
-    const selectedCity = cities.find((city) => city.id === cityId);
-
     setForm((current) => ({
       ...current,
       cityId,
-      citySlug: selectedCity?.slug ?? "",
     }));
   }
 
@@ -120,6 +118,53 @@ export function AdminNewSpotForm() {
     }
 
     setStatus("Created in Supabase.");
+  }
+
+  async function uploadSpotImage() {
+    if (!selectedCitySlug) {
+      setStatus("Choose a city before uploading an image.");
+      return;
+    }
+
+    if (!form.slug.trim()) {
+      setStatus("Enter a spot slug before uploading an image.");
+      return;
+    }
+
+    if (!imageFile) {
+      setStatus("Choose an image file before uploading.");
+      return;
+    }
+
+    setIsUploadingImage(true);
+    setStatus("Uploading image...");
+
+    const uploadForm = new FormData();
+    uploadForm.append("file", imageFile);
+    uploadForm.append("kind", "spot");
+    uploadForm.append("citySlug", selectedCitySlug);
+    uploadForm.append("spotSlug", form.slug);
+
+    try {
+      const response = await fetch("/api/admin/uploads", {
+        method: "POST",
+        body: uploadForm,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || typeof data.publicUrl !== "string") {
+        setStatus(data.error ?? "Failed to upload image.");
+        return;
+      }
+
+      update("imageUrl", data.publicUrl);
+      setStatus("Image uploaded. The Image URL field has been updated.");
+    } catch {
+      setStatus("Failed to upload image.");
+    } finally {
+      setIsUploadingImage(false);
+    }
   }
 
   return (
@@ -196,6 +241,23 @@ export function AdminNewSpotForm() {
             style={inputStyle}
           />
         </label>
+
+        <div style={uploadWrapStyle}>
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            onChange={(event) => setImageFile(event.target.files?.[0] ?? null)}
+            style={inputStyle}
+          />
+          <button
+            type="button"
+            onClick={uploadSpotImage}
+            style={buttonStyle}
+            disabled={isUploadingImage}
+          >
+            Upload image
+          </button>
+        </div>
 
         <label style={labelStyle}>
           Image alt
@@ -274,7 +336,7 @@ export function AdminNewSpotForm() {
               : "linear-gradient(135deg, #dfeeea, #f7efe2)",
           }}
         >
-          <div style={badgeStyle}>{form.citySlug || "city"}</div>
+          <div style={badgeStyle}>{selectedCitySlug || "city"}</div>
 
           <div style={panelStyle}>
             <div style={metaStyle}>{form.isPublished ? "Published" : "Draft"}</div>
@@ -338,6 +400,12 @@ const checkStyle: CSSProperties = {
   color: "#607080",
   fontSize: 13,
   fontWeight: 750,
+};
+
+const uploadWrapStyle: CSSProperties = {
+  display: "grid",
+  gap: 9,
+  marginBottom: 14,
 };
 
 const buttonStyle: CSSProperties = {

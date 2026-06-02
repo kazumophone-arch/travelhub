@@ -4,25 +4,60 @@ import { supabase } from "@/lib/supabase";
 
 type Spot = {
   id: string;
-  city_slug: string;
+  city_id: string | null;
   name: string;
   slug: string;
   summary: string;
   image_url: string;
 };
 
-export async function PublicSupabaseSpots() {
-  const { data, error } = await supabase
-    .from("spots")
-    .select("id, city_slug, name, slug, summary, image_url")
-    .eq("is_published", true)
-    .order("created_at", { ascending: false });
+type City = {
+  id: string;
+  slug: string;
+  city: string;
+  country: string;
+};
 
-  if (error || !data || data.length === 0) {
+export async function PublicSupabaseSpots() {
+  const [spotsResult, citiesResult] = await Promise.all([
+    supabase
+      .from("spots")
+      .select("id, city_id, name, slug, summary, image_url")
+      .eq("is_published", true)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("cities")
+      .select("id, slug, city, country")
+      .eq("is_published", true),
+  ]);
+
+  if (spotsResult.error || !spotsResult.data || spotsResult.data.length === 0) {
     return null;
   }
 
-  const spots = data as Spot[];
+  const spots = spotsResult.data as Spot[];
+  const cities = (citiesResult.data ?? []) as City[];
+  const citiesById = new Map(cities.map((city) => [city.id, city]));
+  const spotsWithCities = spots
+    .map((spot) => {
+      const city = spot.city_id ? citiesById.get(spot.city_id) : undefined;
+
+      return city
+        ? {
+            spot,
+            city,
+            citySlug: city.slug,
+          }
+        : null;
+    })
+    .filter(
+      (item): item is { spot: Spot; city: City; citySlug: string } =>
+        item !== null
+    );
+
+  if (spotsWithCities.length === 0) {
+    return null;
+  }
 
   return (
     <section style={sectionStyle}>
@@ -30,10 +65,10 @@ export async function PublicSupabaseSpots() {
       <h2 style={titleStyle}>New published spots</h2>
 
       <div style={gridStyle}>
-        {spots.map((spot) => (
+        {spotsWithCities.map(({ spot, city, citySlug }) => (
           <Link
             key={spot.id}
-            href={`/c/${spot.city_slug}/spot/${spot.slug}`}
+            href={`/c/${citySlug}/spot/${spot.slug}`}
             style={{
               ...cardStyle,
               backgroundImage: spot.image_url
@@ -41,7 +76,7 @@ export async function PublicSupabaseSpots() {
                 : "linear-gradient(135deg, #dfeeea, #f7efe2)",
             }}
           >
-            <div style={badgeStyle}>{spot.city_slug}</div>
+            <div style={badgeStyle}>{city?.city ?? citySlug}</div>
 
             <div style={panelStyle}>
               <h3 style={cardTitleStyle}>{spot.name}</h3>

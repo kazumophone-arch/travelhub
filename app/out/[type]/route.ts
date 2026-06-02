@@ -1,6 +1,23 @@
-import { getAffiliateLink, isAffiliateLinkType } from "@/data/affiliate-links";
-import { cities } from "@/data/cities";
+import { isAffiliateLinkType } from "@/data/affiliate-links";
+import type { AffiliateLink, AffiliateLinkType } from "@/data/types";
+import { supabase } from "@/lib/supabase";
 import { NextResponse } from "next/server";
+
+type SupabaseRedirectCity = {
+  id: string;
+  slug: string;
+  city: string;
+  country: string;
+};
+
+type SupabaseRedirectSpot = {
+  id: string;
+  city_id: string | null;
+  name: string;
+  slug: string;
+  affiliate_hotel_url: string;
+  affiliate_tour_url: string;
+};
 
 function inferSpotSlug({
   citySlug,
@@ -17,8 +34,8 @@ function inferSpotSlug({
 
   const spotPrefix = `spot_${citySlug}_`;
 
-  if (videoId.startsWith(spotPrefix)) {
-    return videoId.replace(spotPrefix, "");
+  if (videoId.includes(spotPrefix)) {
+    return videoId.slice(videoId.indexOf(spotPrefix) + spotPrefix.length);
   }
 
   const spotPathMatch = referer.match(/\/spot\/([^/?#]+)/);
@@ -28,6 +45,74 @@ function inferSpotSlug({
   }
 
   return "";
+}
+
+async function getPublishedSupabaseCity(citySlug: string) {
+  const { data, error } = await supabase
+    .from("cities")
+    .select("id, slug, city, country")
+    .eq("slug", citySlug)
+    .eq("is_published", true)
+    .maybeSingle();
+
+  if (error || !data) return null;
+
+  return data as SupabaseRedirectCity;
+}
+
+async function getPublishedSupabaseSpot({
+  city,
+  spotSlug,
+}: {
+  city: SupabaseRedirectCity;
+  spotSlug: string;
+}) {
+  const selectFields =
+    "id, city_id, name, slug, affiliate_hotel_url, affiliate_tour_url";
+
+  const { data: idMatchedSpots, error } = await supabase
+    .from("spots")
+    .select(selectFields)
+    .eq("city_id", city.id)
+    .eq("slug", spotSlug)
+    .eq("is_published", true)
+    .limit(1);
+
+  if (!error && idMatchedSpots?.[0]) {
+    return idMatchedSpots[0] as SupabaseRedirectSpot;
+  }
+
+  return null;
+}
+
+function getSupabaseSpotAffiliateLink({
+  spot,
+  type,
+}: {
+  spot: SupabaseRedirectSpot;
+  type: AffiliateLinkType;
+}): AffiliateLink | null {
+  if (type === "hotels" && spot.affiliate_hotel_url) {
+    return {
+      type,
+      label: `Find hotels near ${spot.name}`,
+      url: spot.affiliate_hotel_url,
+      priority: 5,
+      isActive: true,
+    };
+  }
+
+  if (type === "tours" && spot.affiliate_tour_url) {
+    return {
+      type,
+      label: `Book tours near ${spot.name}`,
+      url: spot.affiliate_tour_url,
+      priority: 5,
+      isActive: true,
+    };
+  }
+
+  return null;
 }
 
 export async function GET(
@@ -48,22 +133,6 @@ export async function GET(
   const src = url.searchParams.get("src") ?? "unknown";
   const videoId = url.searchParams.get("v") ?? "unknown";
   const explicitSpotSlug = url.searchParams.get("s") ?? "";
-
-  const city = cities[citySlug];
-
-  if (!city) {
-    return new NextResponse("City not found", { status: 404 });
-  }
-
-  const affiliateLink = getAffiliateLink({
-    city,
-    type,
-  });
-
-  if (!affiliateLink) {
-    return new NextResponse("Destination not found", { status: 404 });
-  }
-
   const referer = request.headers.get("referer") ?? "";
   const userAgent = request.headers.get("user-agent") ?? "";
   const forwardedFor = request.headers.get("x-forwarded-for") ?? "";
@@ -76,13 +145,41 @@ export async function GET(
     referer,
   });
 
+  const supabaseCity = citySlug
+    ? await getPublishedSupabaseCity(citySlug)
+    : null;
+
+  let affiliateLink: AffiliateLink | null = null;
+
+  if (supabaseCity && inferredSpotSlug) {
+    const supabaseSpot = await getPublishedSupabaseSpot({
+      city: supabaseCity,
+      spotSlug: inferredSpotSlug,
+    });
+
+    if (supabaseSpot) {
+      affiliateLink = getSupabaseSpotAffiliateLink({
+        spot: supabaseSpot,
+        type,
+      });
+    }
+  }
+
+  if (!supabaseCity) {
+    return new NextResponse("City not found", { status: 404 });
+  }
+
+  if (!affiliateLink) {
+    return new NextResponse("Destination not found", { status: 404 });
+  }
+
   const clickEvent = {
     event: "affiliate_click",
     clicked_at: new Date().toISOString(),
 
-    city_slug: city.slug,
-    city_name: city.city,
-    country: city.country,
+    citySlug: supabaseCity.slug,
+    city_name: supabaseCity.city,
+    country: supabaseCity.country,
 
     link_type: affiliateLink.type,
     link_label: affiliateLink.label,

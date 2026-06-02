@@ -17,6 +17,7 @@ export type AffiliateLink = {
 };
 
 export type Spot = {
+  city_id?: string | null;
   slug: string;
   name: string;
   summary: string;

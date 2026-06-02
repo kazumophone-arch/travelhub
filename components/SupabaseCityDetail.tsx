@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import type { SupabasePublicCity } from "@/data/supabase-public-cities";
-import { supabase } from "@/lib/supabase";
+import { getPublishedSupabaseSpotsForCity } from "@/data/supabase-public-spots";
 
 type Props = {
   city: SupabasePublicCity;
@@ -9,7 +9,7 @@ type Props = {
 
 type Spot = {
   id: string;
-  city_slug: string;
+  city_id: string | null;
   name: string;
   slug: string;
   summary: string;
@@ -17,14 +17,7 @@ type Spot = {
 };
 
 export async function SupabaseCityDetail({ city }: Props) {
-  const { data } = await supabase
-    .from("spots")
-    .select("id, city_slug, name, slug, summary, image_url")
-    .eq("city_id", city.id)
-    .eq("is_published", true)
-    .order("created_at", { ascending: false });
-
-  const spots = (data ?? []) as Spot[];
+  const spots = (await getPublishedSupabaseSpotsForCity(city.slug)) as Spot[];
 
   return (
     <main style={pageStyle}>
@@ -56,7 +49,7 @@ export async function SupabaseCityDetail({ city }: Props) {
             {spots.map((spot) => (
               <Link
                 key={spot.id}
-                href={`/c/${spot.city_slug}/spot/${spot.slug}`}
+                href={`/c/${city.slug}/spot/${spot.slug}`}
                 style={{
                   ...cardStyle,
                   backgroundImage: spot.image_url
@@ -216,4 +209,3 @@ const emptyStyle: CSSProperties = {
   border: "1px solid rgba(168,116,50,.14)",
   color: "#607080",
 };
-
