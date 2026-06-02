@@ -2,6 +2,13 @@
 
 import Link from "next/link";
 import { useEffect, useState, type CSSProperties } from "react";
+import {
+  AdminContentGuidance,
+  AdminFieldHint,
+  AdminInlineButton,
+  AdminUrlTestLink,
+  buildCityDescription,
+} from "@/components/AdminContentTools";
 import { AdminLivePreview, hasPreviewUrl } from "@/components/AdminLivePreview";
 import {
   formatValidationErrors,
@@ -128,6 +135,21 @@ export function AdminEditCityForm({ id }: Props) {
     }));
   }
 
+  function generateSlugFromCity() {
+    update("slug", slugify(form.city));
+  }
+
+  function insertDescriptionTemplate() {
+    if (
+      form.description &&
+      !window.confirm("現在の説明文をテンプレートで上書きしますか？")
+    ) {
+      return;
+    }
+
+    update("description", buildCityDescription(form.city, form.country));
+  }
+
   async function saveCity() {
     const validationErrors = validateCityFields(form);
 
@@ -209,6 +231,8 @@ export function AdminEditCityForm({ id }: Props) {
   return (
     <div style={wrapStyle}>
       <section style={formStyle}>
+        <AdminContentGuidance kind="city" />
+
         <label style={labelStyle}>
           都市名
           <input value={form.city} onChange={(event) => update("city", event.target.value)} style={inputStyle} />
@@ -217,7 +241,13 @@ export function AdminEditCityForm({ id }: Props) {
         <label style={labelStyle}>
           スラッグ
           <input value={form.slug} onChange={(event) => update("slug", slugify(event.target.value))} style={inputStyle} />
+          <AdminInlineButton onClick={generateSlugFromCity}>
+            都市名から生成
+          </AdminInlineButton>
         </label>
+        <AdminFieldHint>
+          英小文字・数字・ハイフンのみ。既存スラッグを変えると公開URLも変わります。
+        </AdminFieldHint>
 
         <label style={labelStyle}>
           国
@@ -237,12 +267,22 @@ export function AdminEditCityForm({ id }: Props) {
         <label style={labelStyle}>
           説明
           <textarea value={form.description} onChange={(event) => update("description", event.target.value)} rows={5} style={textareaStyle} />
+          <AdminInlineButton onClick={insertDescriptionTemplate}>
+            説明文テンプレートを挿入
+          </AdminInlineButton>
         </label>
+        <AdminFieldHint>
+          公開ページ向けの英語説明文。空欄なら概要が使われます。
+        </AdminFieldHint>
 
         <label style={labelStyle}>
           画像URL（https）
           <input value={form.imageUrl} onChange={(event) => update("imageUrl", event.target.value)} placeholder="https://..." style={inputStyle} />
         </label>
+        <AdminFieldHint>
+          公開ページとプレビューで使う画像URLです。https の実URLを入れてください。
+        </AdminFieldHint>
+        <AdminUrlTestLink url={form.imageUrl} />
 
         <div style={uploadWrapStyle}>
           <input
@@ -276,6 +316,10 @@ export function AdminEditCityForm({ id }: Props) {
           画像出典URL（https）
           <input value={form.imageSourceUrl} onChange={(event) => update("imageSourceUrl", event.target.value)} placeholder="https://source.example/photo" style={inputStyle} />
         </label>
+        <AdminFieldHint>
+          写真提供元やライセンス確認用のURLです。
+        </AdminFieldHint>
+        <AdminUrlTestLink url={form.imageSourceUrl} />
 
         <label style={labelStyle}>
           表示順
@@ -286,11 +330,19 @@ export function AdminEditCityForm({ id }: Props) {
           ホテルアフィリエイトURL（https）
           <input value={form.affiliateHotelUrl} onChange={(event) => update("affiliateHotelUrl", event.target.value)} placeholder="https://..." style={inputStyle} />
         </label>
+        <AdminFieldHint>
+          都市ページのホテルCTAで使う候補URLです。スポット側URLがある場合はそちらが優先されます。
+        </AdminFieldHint>
+        <AdminUrlTestLink url={form.affiliateHotelUrl} />
 
         <label style={labelStyle}>
           ツアーアフィリエイトURL（https）
           <input value={form.affiliateTourUrl} onChange={(event) => update("affiliateTourUrl", event.target.value)} placeholder="https://..." style={inputStyle} />
         </label>
+        <AdminFieldHint>
+          都市ページのツアーCTAで使う候補URLです。スポット側URLがある場合はそちらが優先されます。
+        </AdminFieldHint>
+        <AdminUrlTestLink url={form.affiliateTourUrl} />
 
         <label style={checkStyle}>
           <input type="checkbox" checked={form.isPublished} onChange={(event) => update("isPublished", event.target.checked)} />

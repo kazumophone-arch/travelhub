@@ -2,6 +2,13 @@
 
 import { useEffect, useState, type CSSProperties } from "react";
 import Link from "next/link";
+import {
+  AdminContentGuidance,
+  AdminFieldHint,
+  AdminInlineButton,
+  AdminUrlTestLink,
+  buildSpotDescription,
+} from "@/components/AdminContentTools";
 import { AdminLivePreview, hasPreviewUrl } from "@/components/AdminLivePreview";
 import {
   formatValidationErrors,
@@ -150,6 +157,28 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
     }));
   }
 
+  function generateSlugFromSpot() {
+    update("slug", slugify(form.name));
+  }
+
+  function insertDescriptionTemplate() {
+    if (
+      form.description &&
+      !window.confirm("現在の説明文をテンプレートで上書きしますか？")
+    ) {
+      return;
+    }
+
+    update(
+      "description",
+      buildSpotDescription(
+        form.name,
+        selectedCity?.city ?? "",
+        selectedCity?.country ?? ""
+      )
+    );
+  }
+
   async function save() {
     const validationErrors = validateSpotFields(form);
 
@@ -237,6 +266,8 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
   return (
     <div style={wrapStyle}>
       <section style={formStyle}>
+        <AdminContentGuidance kind="spot" />
+
         <label style={labelStyle}>
           都市
           <select
@@ -272,7 +303,13 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
             onChange={(event) => update("slug", slugify(event.target.value))}
             style={inputStyle}
           />
+          <AdminInlineButton onClick={generateSlugFromSpot}>
+            スポット名から生成
+          </AdminInlineButton>
         </label>
+        <AdminFieldHint>
+          英小文字・数字・ハイフンのみ。既存スラッグを変えると公開URLも変わります。
+        </AdminFieldHint>
 
         <label style={labelStyle}>
           概要
@@ -292,7 +329,13 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
             rows={5}
             style={textareaStyle}
           />
+          <AdminInlineButton onClick={insertDescriptionTemplate}>
+            説明文テンプレートを挿入
+          </AdminInlineButton>
         </label>
+        <AdminFieldHint>
+          公開ページ向けの英語説明文。空欄なら概要が使われます。
+        </AdminFieldHint>
 
         <label style={labelStyle}>
           画像URL（https）
@@ -303,6 +346,10 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
             style={inputStyle}
           />
         </label>
+        <AdminFieldHint>
+          スポット詳細ページとプレビューで使う画像URLです。
+        </AdminFieldHint>
+        <AdminUrlTestLink url={form.imageUrl} />
 
         <div style={uploadWrapStyle}>
           <input
@@ -348,6 +395,10 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
             style={inputStyle}
           />
         </label>
+        <AdminFieldHint>
+          写真提供元やライセンス確認用のURLです。
+        </AdminFieldHint>
+        <AdminUrlTestLink url={form.imageSourceUrl} />
 
         <label style={labelStyle}>
           ホテルアフィリエイトURL（https）
@@ -358,6 +409,10 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
             style={inputStyle}
           />
         </label>
+        <AdminFieldHint>
+          スポット詳細のホテルCTAで優先されるURLです。未入力なら都市側URLが使われる場合があります。
+        </AdminFieldHint>
+        <AdminUrlTestLink url={form.affiliateHotelUrl} />
 
         <label style={labelStyle}>
           ツアーアフィリエイトURL（https）
@@ -368,6 +423,10 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
             style={inputStyle}
           />
         </label>
+        <AdminFieldHint>
+          スポット詳細のツアーCTAで優先されるURLです。未入力なら都市側URLが使われる場合があります。
+        </AdminFieldHint>
+        <AdminUrlTestLink url={form.affiliateTourUrl} />
 
         <label style={checkStyle}>
           <input

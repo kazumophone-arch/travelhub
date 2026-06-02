@@ -50,6 +50,19 @@ export function AdminLivePreview({
         ) : null}
       </div>
 
+      {ctas.length > 0 ? (
+        <div style={ctaStatusRowStyle}>
+          {ctas.map((cta) => (
+            <span
+              key={cta.label}
+              style={cta.isVisible ? ctaStatusVisibleStyle : ctaStatusHiddenStyle}
+            >
+              {cta.label}: {cta.isVisible ? "表示予定" : "非表示"}
+            </span>
+          ))}
+        </div>
+      ) : null}
+
       <div
         style={{
           ...cardStyle,
@@ -198,4 +211,25 @@ const ctaStyle: CSSProperties = {
   textDecoration: "none",
   fontSize: 12,
   fontWeight: 850,
+};
+
+const ctaStatusRowStyle: CSSProperties = {
+  display: "flex",
+  flexWrap: "wrap",
+  gap: 8,
+};
+
+const ctaStatusVisibleStyle: CSSProperties = {
+  padding: "6px 9px",
+  borderRadius: 999,
+  background: "#edf8f5",
+  color: "#138a72",
+  fontSize: 12,
+  fontWeight: 850,
+};
+
+const ctaStatusHiddenStyle: CSSProperties = {
+  ...ctaStatusVisibleStyle,
+  background: "#f3f5f4",
+  color: "#7a8795",
 };

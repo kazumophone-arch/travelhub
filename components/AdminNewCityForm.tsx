@@ -1,6 +1,13 @@
 "use client";
 
 import { useState, type CSSProperties } from "react";
+import {
+  AdminContentGuidance,
+  AdminFieldHint,
+  AdminInlineButton,
+  AdminUrlTestLink,
+  buildCityDescription,
+} from "@/components/AdminContentTools";
 import { AdminLivePreview, hasPreviewUrl } from "@/components/AdminLivePreview";
 import {
   formatValidationErrors,
@@ -75,6 +82,21 @@ export function AdminNewCityForm() {
         ? { slug: slugify(String(value)) }
         : {}),
     }));
+  }
+
+  function generateSlugFromCity() {
+    update("slug", slugify(form.city));
+  }
+
+  function insertDescriptionTemplate() {
+    if (
+      form.description &&
+      !window.confirm("現在の説明文をテンプレートで上書きしますか？")
+    ) {
+      return;
+    }
+
+    update("description", buildCityDescription(form.city, form.country));
   }
 
   async function createCity() {
@@ -154,6 +176,8 @@ export function AdminNewCityForm() {
   return (
     <div style={wrapStyle}>
       <section style={formStyle}>
+        <AdminContentGuidance kind="city" />
+
         <label style={labelStyle}>
           都市名
           <input
@@ -172,7 +196,13 @@ export function AdminNewCityForm() {
             placeholder="rome-it"
             style={inputStyle}
           />
+          <AdminInlineButton onClick={generateSlugFromCity}>
+            都市名から生成
+          </AdminInlineButton>
         </label>
+        <AdminFieldHint>
+          英小文字・数字・ハイフンのみ。例: New York City → new-york-city
+        </AdminFieldHint>
 
         <label style={labelStyle}>
           国
@@ -212,7 +242,13 @@ export function AdminNewCityForm() {
             rows={5}
             style={textareaStyle}
           />
+          <AdminInlineButton onClick={insertDescriptionTemplate}>
+            説明文テンプレートを挿入
+          </AdminInlineButton>
         </label>
+        <AdminFieldHint>
+          公開ページ向けの英語説明文。空欄なら概要が使われます。
+        </AdminFieldHint>
 
         <label style={labelStyle}>
           画像URL（https）
@@ -223,6 +259,10 @@ export function AdminNewCityForm() {
             style={inputStyle}
           />
         </label>
+        <AdminFieldHint>
+          公開ページとプレビューで使う画像URLです。https の実URLを入れてください。
+        </AdminFieldHint>
+        <AdminUrlTestLink url={form.imageUrl} />
 
         <div style={uploadWrapStyle}>
           <input
@@ -271,6 +311,10 @@ export function AdminNewCityForm() {
             style={inputStyle}
           />
         </label>
+        <AdminFieldHint>
+          写真提供元やライセンス確認用のURLです。
+        </AdminFieldHint>
+        <AdminUrlTestLink url={form.imageSourceUrl} />
 
         <label style={labelStyle}>
           表示順
@@ -291,6 +335,10 @@ export function AdminNewCityForm() {
             style={inputStyle}
           />
         </label>
+        <AdminFieldHint>
+          都市ページのホテルCTAで使う候補URLです。スポット側URLがある場合はそちらが優先されます。
+        </AdminFieldHint>
+        <AdminUrlTestLink url={form.affiliateHotelUrl} />
 
         <label style={labelStyle}>
           ツアーアフィリエイトURL（https）
@@ -301,6 +349,10 @@ export function AdminNewCityForm() {
             style={inputStyle}
           />
         </label>
+        <AdminFieldHint>
+          都市ページのツアーCTAで使う候補URLです。スポット側URLがある場合はそちらが優先されます。
+        </AdminFieldHint>
+        <AdminUrlTestLink url={form.affiliateTourUrl} />
 
         <label style={checkStyle}>
           <input

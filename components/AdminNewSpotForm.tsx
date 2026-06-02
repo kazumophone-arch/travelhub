@@ -1,6 +1,13 @@
 "use client";
 
 import { useEffect, useState, type CSSProperties } from "react";
+import {
+  AdminContentGuidance,
+  AdminFieldHint,
+  AdminInlineButton,
+  AdminUrlTestLink,
+  buildSpotDescription,
+} from "@/components/AdminContentTools";
 import { AdminLivePreview, hasPreviewUrl } from "@/components/AdminLivePreview";
 import {
   formatValidationErrors,
@@ -115,6 +122,28 @@ export function AdminNewSpotForm() {
     }));
   }
 
+  function generateSlugFromSpot() {
+    update("slug", slugify(form.name));
+  }
+
+  function insertDescriptionTemplate() {
+    if (
+      form.description &&
+      !window.confirm("現在の説明文をテンプレートで上書きしますか？")
+    ) {
+      return;
+    }
+
+    update(
+      "description",
+      buildSpotDescription(
+        form.name,
+        selectedCity?.city ?? "",
+        selectedCity?.country ?? ""
+      )
+    );
+  }
+
   async function createInSupabase() {
     const validationErrors = validateSpotFields(form);
 
@@ -198,6 +227,8 @@ export function AdminNewSpotForm() {
   return (
     <div style={wrapStyle}>
       <section style={formStyle}>
+        <AdminContentGuidance kind="spot" />
+
         {cities.length === 0 && !status ? (
           <div style={emptyStyle}>
             都市が見つかりません。先に都市を作成してください。
@@ -238,7 +269,13 @@ export function AdminNewSpotForm() {
             placeholder="trevi-fountain"
             style={inputStyle}
           />
+          <AdminInlineButton onClick={generateSlugFromSpot}>
+            スポット名から生成
+          </AdminInlineButton>
         </label>
+        <AdminFieldHint>
+          英小文字・数字・ハイフンのみ。同じ都市内で重複しないようにします。
+        </AdminFieldHint>
 
         <label style={labelStyle}>
           概要
@@ -258,7 +295,13 @@ export function AdminNewSpotForm() {
             rows={5}
             style={textareaStyle}
           />
+          <AdminInlineButton onClick={insertDescriptionTemplate}>
+            説明文テンプレートを挿入
+          </AdminInlineButton>
         </label>
+        <AdminFieldHint>
+          公開ページ向けの英語説明文。空欄なら概要が使われます。
+        </AdminFieldHint>
 
         <label style={labelStyle}>
           画像URL（https）
@@ -269,6 +312,10 @@ export function AdminNewSpotForm() {
             style={inputStyle}
           />
         </label>
+        <AdminFieldHint>
+          スポット詳細ページとプレビューで使う画像URLです。
+        </AdminFieldHint>
+        <AdminUrlTestLink url={form.imageUrl} />
 
         <div style={uploadWrapStyle}>
           <input
@@ -314,6 +361,10 @@ export function AdminNewSpotForm() {
             style={inputStyle}
           />
         </label>
+        <AdminFieldHint>
+          写真提供元やライセンス確認用のURLです。
+        </AdminFieldHint>
+        <AdminUrlTestLink url={form.imageSourceUrl} />
 
         <label style={labelStyle}>
           ホテルアフィリエイトURL（https）
@@ -324,6 +375,10 @@ export function AdminNewSpotForm() {
             style={inputStyle}
           />
         </label>
+        <AdminFieldHint>
+          スポット詳細のホテルCTAで優先されるURLです。未入力なら都市側URLが使われる場合があります。
+        </AdminFieldHint>
+        <AdminUrlTestLink url={form.affiliateHotelUrl} />
 
         <label style={labelStyle}>
           ツアーアフィリエイトURL（https）
@@ -334,6 +389,10 @@ export function AdminNewSpotForm() {
             style={inputStyle}
           />
         </label>
+        <AdminFieldHint>
+          スポット詳細のツアーCTAで優先されるURLです。未入力なら都市側URLが使われる場合があります。
+        </AdminFieldHint>
+        <AdminUrlTestLink url={form.affiliateTourUrl} />
 
         <label style={checkStyle}>
           <input
