@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import { supabase } from "@/lib/supabase";
+import { getImageBackground } from "@/lib/url-fields";
 
 type Spot = {
   id: string;
@@ -71,9 +72,11 @@ export async function PublicSupabaseSpots() {
             href={`/c/${citySlug}/spot/${spot.slug}`}
             style={{
               ...cardStyle,
-              backgroundImage: spot.image_url
-                ? `linear-gradient(180deg, rgba(10,18,24,.05), rgba(10,18,24,.76)), url("${spot.image_url}")`
-                : "linear-gradient(135deg, #dfeeea, #f7efe2)",
+              backgroundImage: getImageBackground(
+                spot.image_url,
+                "linear-gradient(180deg, rgba(10,18,24,.05), rgba(10,18,24,.76))",
+                "linear-gradient(135deg, #dfeeea, #f7efe2)"
+              ),
             }}
           >
             <div style={badgeStyle}>{city?.city ?? citySlug}</div>

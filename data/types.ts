@@ -32,6 +32,10 @@ export type Spot = {
   imageUrl?: string;
   imageAlt?: string;
   imageCredit?: string;
+  imageSourceUrl?: string;
+
+  affiliateHotelUrl?: string;
+  affiliateTourUrl?: string;
 };
 
 export type City = {
@@ -48,6 +52,7 @@ export type City = {
   imageUrl?: string;
   imageAlt?: string;
   imageCredit?: string;
+  imageSourceUrl?: string;
 
   isFeatured?: boolean;
   featuredRank?: number;
@@ -62,7 +67,10 @@ export type City = {
 
   affiliateLinks?: AffiliateLink[];
 
-  affHotelsUrl: string;
+  affiliateHotelUrl?: string;
+  affiliateTourUrl?: string;
+
+  affHotelsUrl?: string;
   affToursUrl?: string;
   planUrl?: string;
 };

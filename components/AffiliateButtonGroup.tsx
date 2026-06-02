@@ -2,6 +2,8 @@ import Link from "next/link";
 import type { CSSProperties } from "react";
 import type { City } from "@/data/types";
 
+type AffiliateCity = Pick<City, "slug" | "city">;
+
 type AffiliatePrimary = "hotels" | "tours";
 type AffiliateTone = "light" | "dark";
 type AffiliateVariant =
@@ -13,12 +15,15 @@ type AffiliateVariant =
   | "final";
 
 type Props = {
-  city: City;
+  city: AffiliateCity;
   src?: string;
   v?: string;
+  spotSlug?: string;
   primary?: AffiliatePrimary;
   tone?: AffiliateTone;
   variant?: AffiliateVariant;
+  showHotels?: boolean;
+  showTours?: boolean;
 };
 
 type AffiliateItem = {
@@ -33,33 +38,49 @@ export function AffiliateButtonGroup({
   city,
   src = "site",
   v = "default",
+  spotSlug,
   primary = "hotels",
   tone = "light",
   variant = "city",
+  showHotels = true,
+  showTours = true,
 }: Props) {
   const encodedCity = encodeURIComponent(city.slug);
   const encodedSrc = encodeURIComponent(src);
   const encodedV = encodeURIComponent(v);
+  const spotQuery = spotSlug ? `&s=${encodeURIComponent(spotSlug)}` : "";
 
   const hotelCopy = getHotelCopy(city, variant);
   const tourCopy = getTourCopy(city, variant);
 
   const items: AffiliateItem[] = [
-    {
-      key: "hotels",
-      href: `/out/hotels?c=${encodedCity}&src=${encodedSrc}&v=${encodedV}`,
-      label: "Hotels",
-      title: hotelCopy.title,
-      text: hotelCopy.text,
-    },
-    {
-      key: "tours",
-      href: `/out/tours?c=${encodedCity}&src=${encodedSrc}&v=${encodedV}`,
-      label: "Tours",
-      title: tourCopy.title,
-      text: tourCopy.text,
-    },
+    ...(showHotels
+      ? [
+          {
+            key: "hotels" as const,
+            href: `/out/hotels?c=${encodedCity}&src=${encodedSrc}&v=${encodedV}${spotQuery}`,
+            label: "Hotels",
+            title: hotelCopy.title,
+            text: hotelCopy.text,
+          },
+        ]
+      : []),
+    ...(showTours
+      ? [
+          {
+            key: "tours" as const,
+            href: `/out/tours?c=${encodedCity}&src=${encodedSrc}&v=${encodedV}${spotQuery}`,
+            label: "Tours",
+            title: tourCopy.title,
+            text: tourCopy.text,
+          },
+        ]
+      : []),
   ];
+
+  if (items.length === 0) {
+    return null;
+  }
 
   const orderedItems = [
     ...items.filter((item) => item.key === primary),
@@ -97,7 +118,7 @@ export function AffiliateButtonGroup({
   );
 }
 
-function getHotelCopy(city: City, variant: AffiliateVariant) {
+function getHotelCopy(city: AffiliateCity, variant: AffiliateVariant) {
   if (variant === "stay") {
     return {
       title: `Compare ${city.city} hotels by area`,
@@ -139,7 +160,7 @@ function getHotelCopy(city: City, variant: AffiliateVariant) {
   };
 }
 
-function getTourCopy(city: City, variant: AffiliateVariant) {
+function getTourCopy(city: AffiliateCity, variant: AffiliateVariant) {
   if (variant === "stay") {
     return {
       title: `View ${city.city} tours`,

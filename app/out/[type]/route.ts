@@ -1,6 +1,8 @@
 import { isAffiliateLinkType } from "@/data/affiliate-links";
 import type { AffiliateLink, AffiliateLinkType } from "@/data/types";
 import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase-admin";
+import { getOptionalHttpUrl } from "@/lib/url-fields";
 import { NextResponse } from "next/server";
 
 type SupabaseRedirectCity = {
@@ -8,6 +10,8 @@ type SupabaseRedirectCity = {
   slug: string;
   city: string;
   country: string;
+  affiliate_hotel_url?: string | null;
+  affiliate_tour_url?: string | null;
 };
 
 type SupabaseRedirectSpot = {
@@ -18,6 +22,33 @@ type SupabaseRedirectSpot = {
   affiliate_hotel_url: string;
   affiliate_tour_url: string;
 };
+
+type ClickLogInput = {
+  type: AffiliateLinkType;
+  cityId: string | null;
+  spotId: string | null;
+  citySlug: string | null;
+  spotSlug: string | null;
+  targetUrl: string;
+  src: string;
+  videoId: string;
+  referer: string;
+  userAgent: string;
+};
+
+type SupabaseError = {
+  code?: string;
+  message?: string;
+};
+
+function isMissingCityAffiliateColumnError(error: SupabaseError) {
+  const message = String(error.message ?? "").toLowerCase();
+
+  return (
+    message.includes("affiliate_hotel_url") ||
+    message.includes("affiliate_tour_url")
+  );
+}
 
 function inferSpotSlug({
   citySlug,
@@ -48,16 +79,37 @@ function inferSpotSlug({
 }
 
 async function getPublishedSupabaseCity(citySlug: string) {
+  const citySelect =
+    "id, slug, city, country, affiliate_hotel_url, affiliate_tour_url";
   const { data, error } = await supabase
+    .from("cities")
+    .select(citySelect)
+    .eq("slug", citySlug)
+    .eq("is_published", true)
+    .maybeSingle();
+
+  if (!error && data) {
+    return data as SupabaseRedirectCity;
+  }
+
+  if (!error || !isMissingCityAffiliateColumnError(error)) {
+    return null;
+  }
+
+  const fallbackResult = await supabase
     .from("cities")
     .select("id, slug, city, country")
     .eq("slug", citySlug)
     .eq("is_published", true)
     .maybeSingle();
 
-  if (error || !data) return null;
+  if (fallbackResult.error || !fallbackResult.data) return null;
 
-  return data as SupabaseRedirectCity;
+  return {
+    ...(fallbackResult.data as SupabaseRedirectCity),
+    affiliate_hotel_url: "",
+    affiliate_tour_url: "",
+  };
 }
 
 async function getPublishedSupabaseSpot({
@@ -93,26 +145,93 @@ function getSupabaseSpotAffiliateLink({
   type: AffiliateLinkType;
 }): AffiliateLink | null {
   if (type === "hotels" && spot.affiliate_hotel_url) {
+    const url = getOptionalHttpUrl(spot.affiliate_hotel_url);
+    if (!url) return null;
+
     return {
       type,
       label: `Find hotels near ${spot.name}`,
-      url: spot.affiliate_hotel_url,
+      url,
       priority: 5,
       isActive: true,
     };
   }
 
   if (type === "tours" && spot.affiliate_tour_url) {
+    const url = getOptionalHttpUrl(spot.affiliate_tour_url);
+    if (!url) return null;
+
     return {
       type,
       label: `Book tours near ${spot.name}`,
-      url: spot.affiliate_tour_url,
+      url,
       priority: 5,
       isActive: true,
     };
   }
 
   return null;
+}
+
+function getSupabaseCityAffiliateLink({
+  city,
+  type,
+}: {
+  city: SupabaseRedirectCity;
+  type: AffiliateLinkType;
+}): AffiliateLink | null {
+  if (type === "hotels") {
+    const url = getOptionalHttpUrl(city.affiliate_hotel_url);
+
+    return url
+      ? {
+          type,
+          label: `Find hotels in ${city.city}`,
+          url,
+          priority: 10,
+          isActive: true,
+        }
+      : null;
+  }
+
+  if (type === "tours") {
+    const url = getOptionalHttpUrl(city.affiliate_tour_url);
+
+    return url
+      ? {
+          type,
+          label: `Book tours in ${city.city}`,
+          url,
+          priority: 10,
+          isActive: true,
+        }
+      : null;
+  }
+
+  return null;
+}
+
+async function logOutboundClick(input: ClickLogInput) {
+  try {
+    const { error } = await supabaseAdmin.from("click_logs").insert({
+      type: input.type,
+      city_id: input.cityId,
+      spot_id: input.spotId,
+      city_slug: input.citySlug,
+      spot_slug: input.spotSlug,
+      target_url: input.targetUrl,
+      src: input.src,
+      v: input.videoId,
+      referer: input.referer || null,
+      user_agent: input.userAgent || null,
+    });
+
+    if (error) {
+      console.warn("[TravelHub click log failed]", error.message);
+    }
+  } catch (error) {
+    console.warn("[TravelHub click log failed]", error);
+  }
 }
 
 export async function GET(
@@ -150,9 +269,10 @@ export async function GET(
     : null;
 
   let affiliateLink: AffiliateLink | null = null;
+  let supabaseSpot: SupabaseRedirectSpot | null = null;
 
   if (supabaseCity && inferredSpotSlug) {
-    const supabaseSpot = await getPublishedSupabaseSpot({
+    supabaseSpot = await getPublishedSupabaseSpot({
       city: supabaseCity,
       spotSlug: inferredSpotSlug,
     });
@@ -170,7 +290,31 @@ export async function GET(
   }
 
   if (!affiliateLink) {
-    return new NextResponse("Destination not found", { status: 404 });
+    affiliateLink = getSupabaseCityAffiliateLink({
+      city: supabaseCity,
+      type,
+    });
+  }
+
+  if (!affiliateLink) {
+    const fallbackUrl = new URL(`/c/${supabaseCity.slug}`, url.origin);
+    fallbackUrl.searchParams.set("src", src);
+    fallbackUrl.searchParams.set("v", videoId);
+
+    await logOutboundClick({
+      type,
+      cityId: supabaseCity.id,
+      spotId: supabaseSpot?.id ?? null,
+      citySlug: supabaseCity.slug,
+      spotSlug: (supabaseSpot?.slug ?? inferredSpotSlug) || null,
+      targetUrl: fallbackUrl.toString(),
+      src,
+      videoId,
+      referer,
+      userAgent,
+    });
+
+    return NextResponse.redirect(fallbackUrl, 302);
   }
 
   const clickEvent = {
@@ -195,6 +339,19 @@ export async function GET(
   };
 
   console.info("[TravelHub click]", JSON.stringify(clickEvent));
+
+  await logOutboundClick({
+    type,
+    cityId: supabaseCity.id,
+    spotId: supabaseSpot?.id ?? null,
+    citySlug: supabaseCity.slug,
+    spotSlug: (supabaseSpot?.slug ?? inferredSpotSlug) || null,
+    targetUrl: affiliateLink.url,
+    src,
+    videoId,
+    referer,
+    userAgent,
+  });
 
   return NextResponse.redirect(affiliateLink.url, 302);
 }

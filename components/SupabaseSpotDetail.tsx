@@ -1,7 +1,9 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
+import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
 import type { SupabasePublicCity } from "@/data/supabase-public-cities";
 import type { SupabasePublicSpot } from "@/data/supabase-public-spots";
+import { getImageBackground, getOptionalHttpUrl } from "@/lib/url-fields";
 
 type Props = {
   city: SupabasePublicCity;
@@ -9,14 +11,23 @@ type Props = {
 };
 
 export function SupabaseSpotDetail({ city, spot }: Props) {
+  const hotelAffiliateUrl =
+    spot.affiliateHotelUrl ?? spot.affiliate_hotel_url ?? city.affiliate_hotel_url;
+  const tourAffiliateUrl =
+    spot.affiliateTourUrl ?? spot.affiliate_tour_url ?? city.affiliate_tour_url;
+  const hasHotelAffiliate = Boolean(getOptionalHttpUrl(hotelAffiliateUrl));
+  const hasTourAffiliate = Boolean(getOptionalHttpUrl(tourAffiliateUrl));
+
   return (
     <main style={pageStyle}>
       <section
         style={{
           ...heroStyle,
-          backgroundImage: spot.image_url
-            ? `linear-gradient(180deg, rgba(10,18,24,.10), rgba(10,18,24,.76)), url("${spot.image_url}")`
-            : "linear-gradient(135deg, #dfeeea, #f7efe2)",
+          backgroundImage: getImageBackground(
+            spot.image_url,
+            "linear-gradient(180deg, rgba(10,18,24,.10), rgba(10,18,24,.76))",
+            "linear-gradient(135deg, #dfeeea, #f7efe2)"
+          ),
         }}
       >
         <div style={panelStyle}>
@@ -29,6 +40,21 @@ export function SupabaseSpotDetail({ city, spot }: Props) {
           <p style={leadStyle}>
             {spot.summary || spot.description || "A TravelHub spot guide."}
           </p>
+          {hasHotelAffiliate || hasTourAffiliate ? (
+            <div style={heroCtaStyle}>
+              <AffiliateButtonGroup
+                city={city}
+                src="spot-detail"
+                v={`spot_${city.slug}_${spot.slug}`}
+                spotSlug={spot.slug}
+                primary={hasHotelAffiliate ? "hotels" : "tours"}
+                tone="dark"
+                variant={hasHotelAffiliate ? "spot-hotel" : "spot-tour"}
+                showHotels={hasHotelAffiliate}
+                showTours={hasTourAffiliate}
+              />
+            </div>
+          ) : null}
         </div>
       </section>
 
@@ -101,6 +127,11 @@ const leadStyle: CSSProperties = {
   fontSize: 16,
   lineHeight: 1.7,
   color: "rgba(255,255,255,.84)",
+};
+
+const heroCtaStyle: CSSProperties = {
+  maxWidth: 420,
+  marginTop: 18,
 };
 
 const bodyStyle: CSSProperties = {

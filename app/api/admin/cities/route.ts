@@ -1,16 +1,48 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase-admin";
+import {
+  formatValidationErrors,
+  validateCityFields,
+} from "@/lib/admin-validation";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-function slugify(value: string) {
-  return value
-    .toLowerCase()
-    .trim()
-    .replace(/&/g, "and")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
+type AdminDbError = {
+  code?: string;
+  message?: string;
+};
+
+function isDuplicateError(error: AdminDbError) {
+  return (
+    error.code === "23505" ||
+    String(error.message ?? "").toLowerCase().includes("duplicate key")
+  );
+}
+
+function isForeignKeyError(error: AdminDbError) {
+  return error.code === "23503";
+}
+
+function cityErrorResponse(error: AdminDbError) {
+  if (isDuplicateError(error)) {
+    return NextResponse.json(
+      { error: "A city with this slug already exists." },
+      { status: 409 }
+    );
+  }
+
+  if (isForeignKeyError(error)) {
+    return NextResponse.json(
+      { error: "Delete this city's spots before deleting the city." },
+      { status: 409 }
+    );
+  }
+
+  return NextResponse.json(
+    { error: error.message ?? "Failed to save city." },
+    { status: 500 }
+  );
 }
 
 export async function GET(request: Request) {
@@ -46,17 +78,18 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   const body = await request.json();
+  const validationErrors = validateCityFields(body);
 
-  const city = String(body.city ?? "").trim();
-  const country = String(body.country ?? "").trim();
-  const slug = slugify(String(body.slug ?? body.city ?? ""));
-
-  if (!city || !country || !slug) {
+  if (validationErrors.length > 0) {
     return NextResponse.json(
-      { error: "city, country, and slug are required." },
+      { error: formatValidationErrors(validationErrors) },
       { status: 400 }
     );
   }
+
+  const city = String(body.city ?? "").trim();
+  const country = String(body.country ?? "").trim();
+  const slug = String(body.slug ?? "").trim();
 
   const payload = {
     slug,
@@ -76,12 +109,12 @@ export async function POST(request: Request) {
 
   const { data, error } = await supabaseAdmin
     .from("cities")
-    .upsert(payload, { onConflict: "slug" })
+    .insert(payload)
     .select()
     .single();
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return cityErrorResponse(error);
   }
 
   return NextResponse.json({ ok: true, city: data });
@@ -89,19 +122,20 @@ export async function POST(request: Request) {
 
 export async function PATCH(request: Request) {
   const body = await request.json();
+  const validationErrors = validateCityFields(body);
 
   const id = String(body.id ?? "").trim();
   const city = String(body.city ?? "").trim();
   const country = String(body.country ?? "").trim();
-  const slug = slugify(String(body.slug ?? body.city ?? ""));
+  const slug = String(body.slug ?? "").trim();
 
   if (!id) {
     return NextResponse.json({ error: "id is required." }, { status: 400 });
   }
 
-  if (!city || !country || !slug) {
+  if (validationErrors.length > 0) {
     return NextResponse.json(
-      { error: "city, country, and slug are required." },
+      { error: formatValidationErrors(validationErrors) },
       { status: 400 }
     );
   }
@@ -130,7 +164,7 @@ export async function PATCH(request: Request) {
     .single();
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return cityErrorResponse(error);
   }
 
   return NextResponse.json({ ok: true, city: data });
@@ -150,7 +184,7 @@ export async function DELETE(request: Request) {
     .eq("id", id);
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return cityErrorResponse(error);
   }
 
   return NextResponse.json({ ok: true });

@@ -8,6 +8,7 @@ import { getMapMagazineSpotVisual } from "@/lib/mapMagazineVisuals";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { isValidDisplayText } from "@/lib/displayText";
 import { spotsCopyVariants, pickDailyVariant } from "@/lib/copyVariants";
+import { getImageBackground, getOptionalHttpUrl } from "@/lib/url-fields";
 
 type Props = {
   cities: City[];
@@ -22,6 +23,7 @@ type SpotItem = {
   summary: string;
   highlights: string[];
   tags: string[];
+  imageUrl?: string;
   canOpen: boolean;
 };
 
@@ -73,6 +75,7 @@ function collectSpots(cities: City[]) {
           summary: spot.summary,
           highlights: spot.highlights,
           tags: spot.tags ?? [],
+          imageUrl: spot.imageUrl,
           canOpen: true,
         });
       });
@@ -90,6 +93,7 @@ function collectSpots(cities: City[]) {
         summary: `A featured place from ${city.city}.`,
         highlights: [index === 0 ? "Featured spot" : "Travel spot"],
         tags: [index === 0 ? "Featured" : "Travel spot"],
+        imageUrl: undefined,
         canOpen: false,
       });
     });
@@ -202,11 +206,18 @@ function getSpotCategories(spot: SpotItem) {
 
 function getSpotPhotoCardStyle(spot: SpotItem): CSSProperties {
   const seed = encodeURIComponent(`travelhub-spot-${spot.citySlug}-${spot.slug}`);
-  const imageUrl = `https://picsum.photos/seed/${seed}/1000/700`;
+  const fallbackImageUrl = `https://picsum.photos/seed/${seed}/1000/700`;
+  const imageUrl = getOptionalHttpUrl(spot.imageUrl) || fallbackImageUrl;
 
   return {
     ...spotCardStyle,
-    background: `linear-gradient(180deg, rgba(10, 18, 24, 0.05) 0%, rgba(10, 18, 24, 0.24) 42%, rgba(10, 18, 24, 0.76) 100%), url("${imageUrl}") center / cover no-repeat`,
+    backgroundImage: getImageBackground(
+      imageUrl,
+      "linear-gradient(180deg, rgba(10, 18, 24, 0.05) 0%, rgba(10, 18, 24, 0.24) 42%, rgba(10, 18, 24, 0.76) 100%)",
+      visualForIndex(0)
+    ),
+    backgroundSize: "cover",
+    backgroundPosition: "center",
   };
 }
 export function SpotDirectory({ cities }: Props) {

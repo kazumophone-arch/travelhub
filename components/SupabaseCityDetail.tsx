@@ -1,7 +1,9 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
+import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
 import type { SupabasePublicCity } from "@/data/supabase-public-cities";
 import { getPublishedSupabaseSpotsForCity } from "@/data/supabase-public-spots";
+import { getImageBackground } from "@/lib/url-fields";
 
 type Props = {
   city: SupabasePublicCity;
@@ -24,9 +26,11 @@ export async function SupabaseCityDetail({ city }: Props) {
       <section
         style={{
           ...heroStyle,
-          backgroundImage: city.image_url
-            ? `linear-gradient(180deg, rgba(10,18,24,.12), rgba(10,18,24,.76)), url("${city.image_url}")`
-            : "linear-gradient(135deg, #dfeeea, #f7efe2)",
+          backgroundImage: getImageBackground(
+            city.image_url,
+            "linear-gradient(180deg, rgba(10,18,24,.12), rgba(10,18,24,.76))",
+            "linear-gradient(135deg, #dfeeea, #f7efe2)"
+          ),
         }}
       >
         <div style={heroPanelStyle}>
@@ -35,6 +39,15 @@ export async function SupabaseCityDetail({ city }: Props) {
           <p style={leadStyle}>
             {city.summary || city.description || "A TravelHub city guide."}
           </p>
+          <div style={heroCtaStyle}>
+            <AffiliateButtonGroup
+              city={city}
+              src="city-detail"
+              v={`city_${city.slug}`}
+              tone="dark"
+              variant="city"
+            />
+          </div>
         </div>
       </section>
 
@@ -52,9 +65,11 @@ export async function SupabaseCityDetail({ city }: Props) {
                 href={`/c/${city.slug}/spot/${spot.slug}`}
                 style={{
                   ...cardStyle,
-                  backgroundImage: spot.image_url
-                    ? `linear-gradient(180deg, rgba(10,18,24,.05), rgba(10,18,24,.76)), url("${spot.image_url}")`
-                    : "linear-gradient(135deg, #dfeeea, #f7efe2)",
+                  backgroundImage: getImageBackground(
+                    spot.image_url,
+                    "linear-gradient(180deg, rgba(10,18,24,.05), rgba(10,18,24,.76))",
+                    "linear-gradient(135deg, #dfeeea, #f7efe2)"
+                  ),
                 }}
               >
                 <div style={badgeStyle}>{city.city}</div>
@@ -122,6 +137,11 @@ const leadStyle: CSSProperties = {
   fontSize: 16,
   lineHeight: 1.7,
   color: "rgba(255,255,255,.84)",
+};
+
+const heroCtaStyle: CSSProperties = {
+  maxWidth: 420,
+  marginTop: 18,
 };
 
 const shellStyle: CSSProperties = {

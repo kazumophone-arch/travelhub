@@ -1,6 +1,13 @@
 "use client";
 
 import { useEffect, useState, type CSSProperties } from "react";
+import {
+  formatValidationErrors,
+  slugify,
+  validateSlug,
+  validateSpotFields,
+} from "@/lib/admin-validation";
+import { getImageBackground } from "@/lib/url-fields";
 
 type CityOption = {
   id: string;
@@ -25,6 +32,8 @@ type SpotForm = {
   isPublished: boolean;
 };
 
+type StatusKind = "info" | "success" | "error";
+
 const initialForm: SpotForm = {
   cityId: "",
   name: "",
@@ -40,13 +49,14 @@ const initialForm: SpotForm = {
   isPublished: false,
 };
 
-function slugify(value: string) {
-  return value
-    .toLowerCase()
-    .trim()
-    .replace(/&/g, "and")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
+async function readResponse(response: Response) {
+  const text = await response.text();
+
+  try {
+    return text ? JSON.parse(text) : {};
+  } catch {
+    return { error: text || "Invalid server response." };
+  }
 }
 
 export function AdminNewSpotForm() {
@@ -55,8 +65,14 @@ export function AdminNewSpotForm() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [status, setStatus] = useState("Loading cities...");
+  const [statusKind, setStatusKind] = useState<StatusKind>("info");
   const selectedCity = cities.find((city) => city.id === form.cityId);
   const selectedCitySlug = selectedCity?.slug ?? "";
+
+  function setStatusMessage(message: string, kind: StatusKind = "info") {
+    setStatus(message);
+    setStatusKind(kind);
+  }
 
   useEffect(() => {
     async function loadCities() {
@@ -64,7 +80,7 @@ export function AdminNewSpotForm() {
       const data = await response.json();
 
       if (!response.ok) {
-        setStatus(data.error ?? "Failed to load cities.");
+        setStatusMessage(data.error ?? "Failed to load cities.", "error");
         return;
       }
 
@@ -76,7 +92,7 @@ export function AdminNewSpotForm() {
         cityId: current.cityId || nextCities[0]?.id || "",
       }));
 
-      setStatus("");
+      setStatusMessage("");
     }
 
     loadCities();
@@ -100,7 +116,14 @@ export function AdminNewSpotForm() {
   }
 
   async function createInSupabase() {
-    setStatus("Creating in Supabase...");
+    const validationErrors = validateSpotFields(form);
+
+    if (validationErrors.length > 0) {
+      setStatusMessage(formatValidationErrors(validationErrors), "error");
+      return;
+    }
+
+    setStatusMessage("Creating spot...");
 
     const response = await fetch("/api/admin/spots", {
       method: "POST",
@@ -110,34 +133,36 @@ export function AdminNewSpotForm() {
       body: JSON.stringify(form),
     });
 
-    const data = await response.json();
+    const data = await readResponse(response);
 
     if (!response.ok) {
-      setStatus(data.error ?? "Failed to create spot.");
+      setStatusMessage(data.error ?? "Failed to create spot.", "error");
       return;
     }
 
-    setStatus("Created in Supabase.");
+    setStatusMessage("Spot created successfully.", "success");
   }
 
   async function uploadSpotImage() {
     if (!selectedCitySlug) {
-      setStatus("Choose a city before uploading an image.");
+      setStatusMessage("Choose a city before uploading an image.", "error");
       return;
     }
 
-    if (!form.slug.trim()) {
-      setStatus("Enter a spot slug before uploading an image.");
+    const slugError = validateSlug(form.slug, "Spot slug");
+
+    if (slugError) {
+      setStatusMessage(slugError, "error");
       return;
     }
 
     if (!imageFile) {
-      setStatus("Choose an image file before uploading.");
+      setStatusMessage("Choose an image file before uploading.", "error");
       return;
     }
 
     setIsUploadingImage(true);
-    setStatus("Uploading image...");
+    setStatusMessage("Uploading image...");
 
     const uploadForm = new FormData();
     uploadForm.append("file", imageFile);
@@ -151,17 +176,20 @@ export function AdminNewSpotForm() {
         body: uploadForm,
       });
 
-      const data = await response.json();
+      const data = await readResponse(response);
 
       if (!response.ok || typeof data.publicUrl !== "string") {
-        setStatus(data.error ?? "Failed to upload image.");
+        setStatusMessage(data.error ?? "Failed to upload image.", "error");
         return;
       }
 
       update("imageUrl", data.publicUrl);
-      setStatus("Image uploaded. The Image URL field has been updated.");
+      setStatusMessage(
+        "Image uploaded. The Image URL field has been updated.",
+        "success"
+      );
     } catch {
-      setStatus("Failed to upload image.");
+      setStatusMessage("Failed to upload image.", "error");
     } finally {
       setIsUploadingImage(false);
     }
@@ -233,7 +261,7 @@ export function AdminNewSpotForm() {
         </label>
 
         <label style={labelStyle}>
-          Image URL
+          Image URL (https)
           <input
             value={form.imageUrl}
             onChange={(event) => update("imageUrl", event.target.value)}
@@ -278,28 +306,31 @@ export function AdminNewSpotForm() {
         </label>
 
         <label style={labelStyle}>
-          Image source URL
+          Image source URL (https)
           <input
             value={form.imageSourceUrl}
             onChange={(event) => update("imageSourceUrl", event.target.value)}
+            placeholder="https://source.example/photo"
             style={inputStyle}
           />
         </label>
 
         <label style={labelStyle}>
-          Hotel affiliate URL
+          Hotel affiliate URL (https)
           <input
             value={form.affiliateHotelUrl}
             onChange={(event) => update("affiliateHotelUrl", event.target.value)}
+            placeholder="https://..."
             style={inputStyle}
           />
         </label>
 
         <label style={labelStyle}>
-          Tour affiliate URL
+          Tour affiliate URL (https)
           <input
             value={form.affiliateTourUrl}
             onChange={(event) => update("affiliateTourUrl", event.target.value)}
+            placeholder="https://..."
             style={inputStyle}
           />
         </label>
@@ -322,7 +353,11 @@ export function AdminNewSpotForm() {
           Create in Supabase
         </button>
 
-        {status && <p style={statusStyle}>{status}</p>}
+        {status && (
+          <p style={statusKind === "error" ? errorStatusStyle : statusKind === "success" ? successStatusStyle : statusStyle}>
+            {status}
+          </p>
+        )}
       </section>
 
       <section style={previewStyle}>
@@ -331,9 +366,11 @@ export function AdminNewSpotForm() {
         <div
           style={{
             ...cardStyle,
-            backgroundImage: form.imageUrl
-              ? `linear-gradient(180deg, rgba(10,18,24,.05), rgba(10,18,24,.76)), url("${form.imageUrl}")`
-              : "linear-gradient(135deg, #dfeeea, #f7efe2)",
+            backgroundImage: getImageBackground(
+              form.imageUrl,
+              "linear-gradient(180deg, rgba(10,18,24,.05), rgba(10,18,24,.76))",
+              "linear-gradient(135deg, #dfeeea, #f7efe2)"
+            ),
           }}
         >
           <div style={badgeStyle}>{selectedCitySlug || "city"}</div>
@@ -424,6 +461,13 @@ const statusStyle: CSSProperties = {
   color: "#138a72",
   fontSize: 13,
   fontWeight: 850,
+};
+
+const successStatusStyle: CSSProperties = statusStyle;
+
+const errorStatusStyle: CSSProperties = {
+  ...statusStyle,
+  color: "#9a3d2f",
 };
 
 const emptyStyle: CSSProperties = {

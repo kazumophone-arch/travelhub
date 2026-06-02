@@ -1,6 +1,13 @@
 "use client";
 
 import { useState, type CSSProperties } from "react";
+import {
+  formatValidationErrors,
+  slugify,
+  validateCityFields,
+  validateSlug,
+} from "@/lib/admin-validation";
+import { getImageBackground } from "@/lib/url-fields";
 
 type CityForm = {
   city: string;
@@ -17,6 +24,8 @@ type CityForm = {
   sortRank: number;
 };
 
+type StatusKind = "info" | "success" | "error";
+
 const initialForm: CityForm = {
   city: "",
   slug: "",
@@ -32,20 +41,27 @@ const initialForm: CityForm = {
   sortRank: 999,
 };
 
-function slugify(value: string) {
-  return value
-    .toLowerCase()
-    .trim()
-    .replace(/&/g, "and")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
+async function readResponse(response: Response) {
+  const text = await response.text();
+
+  try {
+    return text ? JSON.parse(text) : {};
+  } catch {
+    return { error: text || "Invalid server response." };
+  }
 }
 
 export function AdminNewCityForm() {
   const [form, setForm] = useState<CityForm>(initialForm);
   const [status, setStatus] = useState("");
+  const [statusKind, setStatusKind] = useState<StatusKind>("info");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
+
+  function setStatusMessage(message: string, kind: StatusKind = "info") {
+    setStatus(message);
+    setStatusKind(kind);
+  }
 
   function update<K extends keyof CityForm>(key: K, value: CityForm[K]) {
     setForm((current) => ({
@@ -58,7 +74,14 @@ export function AdminNewCityForm() {
   }
 
   async function createCity() {
-    setStatus("Creating city...");
+    const validationErrors = validateCityFields(form);
+
+    if (validationErrors.length > 0) {
+      setStatusMessage(formatValidationErrors(validationErrors), "error");
+      return;
+    }
+
+    setStatusMessage("Creating city...");
 
     const response = await fetch("/api/admin/cities", {
       method: "POST",
@@ -68,51 +91,60 @@ export function AdminNewCityForm() {
       body: JSON.stringify(form),
     });
 
-    const data = await response.json();
+    const data = await readResponse(response);
 
     if (!response.ok) {
-      setStatus(data.error ?? "Failed to create city.");
+      setStatusMessage(data.error ?? "Failed to create city.", "error");
       return;
     }
 
-    setStatus("City created in Supabase.");
+    setStatusMessage("City created successfully.", "success");
   }
 
   async function uploadCityImage() {
-    if (!form.slug.trim()) {
-      setStatus("Enter a city slug before uploading an image.");
+    const slugError = validateSlug(form.slug, "City slug");
+
+    if (slugError) {
+      setStatusMessage(slugError, "error");
       return;
     }
 
     if (!imageFile) {
-      setStatus("Choose an image file before uploading.");
+      setStatusMessage("Choose an image file before uploading.", "error");
       return;
     }
 
     setIsUploadingImage(true);
-    setStatus("Uploading image...");
+    setStatusMessage("Uploading image...");
 
     const uploadForm = new FormData();
     uploadForm.append("file", imageFile);
     uploadForm.append("kind", "city");
     uploadForm.append("citySlug", form.slug);
 
-    const response = await fetch("/api/admin/uploads", {
-      method: "POST",
-      body: uploadForm,
-    });
+    try {
+      const response = await fetch("/api/admin/uploads", {
+        method: "POST",
+        body: uploadForm,
+      });
 
-    const data = await response.json();
+      const data = await readResponse(response);
 
-    setIsUploadingImage(false);
+      if (!response.ok || typeof data.publicUrl !== "string") {
+        setStatusMessage(data.error ?? "Failed to upload image.", "error");
+        return;
+      }
 
-    if (!response.ok || typeof data.publicUrl !== "string") {
-      setStatus(data.error ?? "Failed to upload image.");
-      return;
+      update("imageUrl", data.publicUrl);
+      setStatusMessage(
+        "Image uploaded. The Image URL field has been updated.",
+        "success"
+      );
+    } catch {
+      setStatusMessage("Failed to upload image.", "error");
+    } finally {
+      setIsUploadingImage(false);
     }
-
-    update("imageUrl", data.publicUrl);
-    setStatus("Image uploaded. The Image URL field has been updated.");
   }
 
   return (
@@ -179,7 +211,7 @@ export function AdminNewCityForm() {
         </label>
 
         <label style={labelStyle}>
-          Image URL
+          Image URL (https)
           <input
             value={form.imageUrl}
             onChange={(event) => update("imageUrl", event.target.value)}
@@ -227,11 +259,11 @@ export function AdminNewCityForm() {
         </label>
 
         <label style={labelStyle}>
-          Image source URL
+          Image source URL (https)
           <input
             value={form.imageSourceUrl}
             onChange={(event) => update("imageSourceUrl", event.target.value)}
-            placeholder="https://..."
+            placeholder="https://source.example/photo"
             style={inputStyle}
           />
         </label>
@@ -259,7 +291,11 @@ export function AdminNewCityForm() {
           Create city
         </button>
 
-        {status && <p style={statusStyle}>{status}</p>}
+        {status && (
+          <p style={statusKind === "error" ? errorStatusStyle : statusKind === "success" ? successStatusStyle : statusStyle}>
+            {status}
+          </p>
+        )}
       </section>
 
       <section style={previewStyle}>
@@ -268,9 +304,11 @@ export function AdminNewCityForm() {
         <div
           style={{
             ...cardStyle,
-            backgroundImage: form.imageUrl
-              ? `linear-gradient(180deg, rgba(10,18,24,.05), rgba(10,18,24,.76)), url("${form.imageUrl}")`
-              : "linear-gradient(135deg, #dfeeea, #f7efe2)",
+            backgroundImage: getImageBackground(
+              form.imageUrl,
+              "linear-gradient(180deg, rgba(10,18,24,.05), rgba(10,18,24,.76))",
+              "linear-gradient(135deg, #dfeeea, #f7efe2)"
+            ),
           }}
         >
           <div style={badgeStyle}>{form.country || "Country"}</div>
@@ -361,6 +399,13 @@ const statusStyle: CSSProperties = {
   color: "#138a72",
   fontSize: 13,
   fontWeight: 850,
+};
+
+const successStatusStyle: CSSProperties = statusStyle;
+
+const errorStatusStyle: CSSProperties = {
+  ...statusStyle,
+  color: "#9a3d2f",
 };
 
 const previewStyle: CSSProperties = {

@@ -1,7 +1,14 @@
 "use client";
 
-import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import Link from "next/link";
+import {
+  formatValidationErrors,
+  slugify,
+  validateSlug,
+  validateSpotFields,
+} from "@/lib/admin-validation";
+import { getImageBackground } from "@/lib/url-fields";
 
 type Props = {
   id: string;
@@ -31,6 +38,8 @@ type SpotForm = {
   isPublished: boolean;
 };
 
+type StatusKind = "info" | "success" | "error";
+
 const emptyForm: SpotForm = {
   id: "",
   cityId: "",
@@ -47,13 +56,14 @@ const emptyForm: SpotForm = {
   isPublished: false,
 };
 
-function slugify(value: string) {
-  return value
-    .toLowerCase()
-    .trim()
-    .replace(/&/g, "and")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
+async function readResponse(response: Response) {
+  const text = await response.text();
+
+  try {
+    return text ? JSON.parse(text) : {};
+  } catch {
+    return { error: text || "Invalid server response." };
+  }
 }
 
 export function AdminSupabaseEditSpotForm({ id }: Props) {
@@ -62,8 +72,14 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [status, setStatus] = useState("Loading...");
+  const [statusKind, setStatusKind] = useState<StatusKind>("info");
   const selectedCity = cityOptions.find((city) => city.id === form.cityId);
   const selectedCitySlug = selectedCity?.slug ?? "";
+
+  function setStatusMessage(message: string, kind: StatusKind = "info") {
+    setStatus(message);
+    setStatusKind(kind);
+  }
 
   useEffect(() => {
     async function loadSpot() {
@@ -72,8 +88,8 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
         fetch("/api/admin/cities"),
       ]);
 
-      const data = await spotResponse.json();
-      const citiesData = await citiesResponse.json();
+      const data = await readResponse(spotResponse);
+      const citiesData = await readResponse(citiesResponse);
       const nextCities = (citiesData.cities ?? []) as CityOption[];
 
       if (citiesResponse.ok) {
@@ -83,7 +99,7 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
       const response = spotResponse;
 
       if (!response.ok) {
-        setStatus(data.error ?? "Failed to load spot.");
+        setStatusMessage(data.error ?? "Failed to load spot.", "error");
         return;
       }
 
@@ -106,10 +122,11 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
         isPublished: Boolean(spot.is_published),
       });
 
-      setStatus(
+      setStatusMessage(
         cityId
           ? ""
-          : "This spot is missing city_id. Select a city to finish migration."
+          : "This spot is missing city_id. Select a city to finish migration.",
+        cityId ? "info" : "error"
       );
     }
 
@@ -134,7 +151,14 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
   }
 
   async function save() {
-    setStatus("Saving...");
+    const validationErrors = validateSpotFields(form);
+
+    if (validationErrors.length > 0) {
+      setStatusMessage(formatValidationErrors(validationErrors), "error");
+      return;
+    }
+
+    setStatusMessage("Saving...");
 
     const response = await fetch("/api/admin/spots", {
       method: "PATCH",
@@ -144,34 +168,36 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
       body: JSON.stringify(form),
     });
 
-    const data = await response.json();
+    const data = await readResponse(response);
 
     if (!response.ok) {
-      setStatus(data.error ?? "Failed to save.");
+      setStatusMessage(data.error ?? "Failed to save spot.", "error");
       return;
     }
 
-    setStatus("Saved.");
+    setStatusMessage("Spot saved successfully.", "success");
   }
 
   async function uploadSpotImage() {
     if (!selectedCitySlug) {
-      setStatus("Choose a city before uploading an image.");
+      setStatusMessage("Choose a city before uploading an image.", "error");
       return;
     }
 
-    if (!form.slug.trim()) {
-      setStatus("Enter a spot slug before uploading an image.");
+    const slugError = validateSlug(form.slug, "Spot slug");
+
+    if (slugError) {
+      setStatusMessage(slugError, "error");
       return;
     }
 
     if (!imageFile) {
-      setStatus("Choose an image file before uploading.");
+      setStatusMessage("Choose an image file before uploading.", "error");
       return;
     }
 
     setIsUploadingImage(true);
-    setStatus("Uploading image...");
+    setStatusMessage("Uploading image...");
 
     const uploadForm = new FormData();
     uploadForm.append("file", imageFile);
@@ -185,17 +211,20 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
         body: uploadForm,
       });
 
-      const data = await response.json();
+      const data = await readResponse(response);
 
       if (!response.ok || typeof data.publicUrl !== "string") {
-        setStatus(data.error ?? "Failed to upload image.");
+        setStatusMessage(data.error ?? "Failed to upload image.", "error");
         return;
       }
 
       update("imageUrl", data.publicUrl);
-      setStatus("Image uploaded. The Image URL field has been updated.");
+      setStatusMessage(
+        "Image uploaded. The Image URL field has been updated.",
+        "success"
+      );
     } catch {
-      setStatus("Failed to upload image.");
+      setStatusMessage("Failed to upload image.", "error");
     } finally {
       setIsUploadingImage(false);
     }
@@ -266,10 +295,11 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
         </label>
 
         <label style={labelStyle}>
-          Image URL
+          Image URL (https)
           <input
             value={form.imageUrl}
             onChange={(event) => update("imageUrl", event.target.value)}
+            placeholder="https://..."
             style={inputStyle}
           />
         </label>
@@ -310,28 +340,31 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
         </label>
 
         <label style={labelStyle}>
-          Image source URL
+          Image source URL (https)
           <input
             value={form.imageSourceUrl}
             onChange={(event) => update("imageSourceUrl", event.target.value)}
+            placeholder="https://source.example/photo"
             style={inputStyle}
           />
         </label>
 
         <label style={labelStyle}>
-          Hotel affiliate URL
+          Hotel affiliate URL (https)
           <input
             value={form.affiliateHotelUrl}
             onChange={(event) => update("affiliateHotelUrl", event.target.value)}
+            placeholder="https://..."
             style={inputStyle}
           />
         </label>
 
         <label style={labelStyle}>
-          Tour affiliate URL
+          Tour affiliate URL (https)
           <input
             value={form.affiliateTourUrl}
             onChange={(event) => update("affiliateTourUrl", event.target.value)}
+            placeholder="https://..."
             style={inputStyle}
           />
         </label>
@@ -355,7 +388,11 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
           </Link>
         </div>
 
-        {status && <p style={statusStyle}>{status}</p>}
+        {status && (
+          <p style={statusKind === "error" ? errorStatusStyle : statusKind === "success" ? successStatusStyle : statusStyle}>
+            {status}
+          </p>
+        )}
       </section>
 
       <section style={previewStyle}>
@@ -364,9 +401,11 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
         <div
           style={{
             ...cardStyle,
-            backgroundImage: form.imageUrl
-              ? `linear-gradient(180deg, rgba(10,18,24,.05), rgba(10,18,24,.76)), url("${form.imageUrl}")`
-              : "linear-gradient(135deg, #dfeeea, #f7efe2)",
+            backgroundImage: getImageBackground(
+              form.imageUrl,
+              "linear-gradient(180deg, rgba(10,18,24,.05), rgba(10,18,24,.76))",
+              "linear-gradient(135deg, #dfeeea, #f7efe2)"
+            ),
           }}
         >
           <div style={badgeStyle}>{selectedCitySlug || "Missing city_id"}</div>
@@ -469,6 +508,13 @@ const statusStyle: CSSProperties = {
   color: "#138a72",
   fontSize: 13,
   fontWeight: 850,
+};
+
+const successStatusStyle: CSSProperties = statusStyle;
+
+const errorStatusStyle: CSSProperties = {
+  ...statusStyle,
+  color: "#9a3d2f",
 };
 
 const previewStyle: CSSProperties = {

@@ -9,6 +9,7 @@ import { getMapMagazineVisual } from "@/lib/mapMagazineVisuals";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { getDisplayStops } from "@/lib/displayText";
 import { citiesCopyVariants, pickDailyVariant } from "@/lib/copyVariants";
+import { getImageBackground, getOptionalHttpUrl } from "@/lib/url-fields";
 
 type Props = {
   cities: City[];
@@ -210,10 +211,15 @@ function getCityReason(city: City) {
 
 function getCityPhotoCardStyle(city: City): CSSProperties {
   const image = getCityImage(city.slug);
+  const imageUrl = getOptionalHttpUrl(city.imageUrl) || image.imageUrl;
 
   return {
     ...destinationCardStyle,
-    backgroundImage: `linear-gradient(180deg, rgba(10, 18, 24, 0.05) 0%, rgba(10, 18, 24, 0.24) 42%, rgba(10, 18, 24, 0.76) 100%), url("${image.imageUrl}")`,
+    backgroundImage: getImageBackground(
+      imageUrl,
+      "linear-gradient(180deg, rgba(10, 18, 24, 0.05) 0%, rgba(10, 18, 24, 0.24) 42%, rgba(10, 18, 24, 0.76) 100%)",
+      "linear-gradient(135deg, #dfeeea, #f7efe2)"
+    ),
     backgroundSize: "cover",
     backgroundPosition: "center",
   };

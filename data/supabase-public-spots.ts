@@ -15,10 +15,22 @@ export type SupabasePublicSpot = {
   image_alt: string;
   image_credit: string;
   image_source_url: string;
-  affiliate_hotel_url: string;
-  affiliate_tour_url: string;
+  affiliate_hotel_url: string | null;
+  affiliate_tour_url: string | null;
+  affiliateHotelUrl?: string;
+  affiliateTourUrl?: string;
   is_published: boolean;
 };
+
+export function normalizeSupabasePublicSpot(
+  spot: SupabasePublicSpot
+): SupabasePublicSpot {
+  return {
+    ...spot,
+    affiliateHotelUrl: spot.affiliate_hotel_url ?? "",
+    affiliateTourUrl: spot.affiliate_tour_url ?? "",
+  };
+}
 
 export async function getPublishedSupabaseSpot(
   citySlug: string,
@@ -47,7 +59,7 @@ export async function getPublishedSupabaseSpot(
     return null;
   }
 
-  return data as SupabasePublicSpot;
+  return normalizeSupabasePublicSpot(data as SupabasePublicSpot);
 }
 
 export async function getPublishedSupabaseSpotsForCity(
@@ -75,7 +87,7 @@ export async function getPublishedSupabaseSpotsForCity(
     return [];
   }
 
-  return data as SupabasePublicSpot[];
+  return (data as SupabasePublicSpot[]).map(normalizeSupabasePublicSpot);
 }
 
 export function toCitySpotFromSupabase(spot: SupabasePublicSpot) {
@@ -92,7 +104,7 @@ export function toCitySpotFromSupabase(spot: SupabasePublicSpot) {
     highlights: [],
     bestFor: [],
     isPublished: spot.is_published,
-    affiliateHotelUrl: spot.affiliate_hotel_url,
-    affiliateTourUrl: spot.affiliate_tour_url,
+    affiliateHotelUrl: spot.affiliateHotelUrl ?? spot.affiliate_hotel_url ?? "",
+    affiliateTourUrl: spot.affiliateTourUrl ?? spot.affiliate_tour_url ?? "",
   };
 }

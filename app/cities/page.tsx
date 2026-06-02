@@ -24,6 +24,8 @@ type SupabaseCityRow = {
   image_alt: string;
   image_credit: string;
   image_source_url: string;
+  affiliate_hotel_url?: string | null;
+  affiliate_tour_url?: string | null;
   is_published: boolean;
   sort_rank: number;
 };
@@ -41,6 +43,10 @@ function toDirectoryCity(row: SupabaseCityRow): City {
     imageAlt: row.image_alt || row.city,
     imageCredit: row.image_credit,
     imageSourceUrl: row.image_source_url,
+    affiliateHotelUrl: row.affiliate_hotel_url ?? "",
+    affiliateTourUrl: row.affiliate_tour_url ?? "",
+    affHotelsUrl: row.affiliate_hotel_url ?? "",
+    affToursUrl: row.affiliate_tour_url ?? "",
     rank: row.sort_rank ?? 999,
     sortRank: row.sort_rank ?? 999,
     isPublished: row.is_published,

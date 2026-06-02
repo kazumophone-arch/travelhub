@@ -2,6 +2,13 @@
 
 import Link from "next/link";
 import { useEffect, useState, type CSSProperties } from "react";
+import {
+  formatValidationErrors,
+  slugify,
+  validateCityFields,
+  validateSlug,
+} from "@/lib/admin-validation";
+import { getImageBackground } from "@/lib/url-fields";
 
 type Props = {
   id: string;
@@ -24,6 +31,7 @@ type CityForm = {
 };
 
 type CityApiRow = Record<string, any>;
+type StatusKind = "info" | "success" | "error";
 
 const emptyForm: CityForm = {
   id: "",
@@ -41,15 +49,6 @@ const emptyForm: CityForm = {
   sortRank: 999,
 };
 
-function slugify(value: string) {
-  return value
-    .toLowerCase()
-    .trim()
-    .replace(/&/g, "and")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
-
 async function readResponse(response: Response) {
   const text = await response.text();
 
@@ -63,25 +62,31 @@ async function readResponse(response: Response) {
 export function AdminEditCityForm({ id }: Props) {
   const [form, setForm] = useState<CityForm>(emptyForm);
   const [status, setStatus] = useState("Loading...");
+  const [statusKind, setStatusKind] = useState<StatusKind>("info");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
 
+  function setStatusMessage(message: string, kind: StatusKind = "info") {
+    setStatus(message);
+    setStatusKind(kind);
+  }
+
   useEffect(() => {
     async function loadCity() {
-      setStatus("Loading...");
+      setStatusMessage("Loading...");
 
       const response = await fetch(`/api/admin/cities?id=${id}`);
       const data = await readResponse(response);
 
       if (!response.ok) {
-        setStatus(data.error ?? "Failed to load city.");
+        setStatusMessage(data.error ?? "Failed to load city.", "error");
         return;
       }
 
       const cityData = data.city as CityApiRow | null;
 
       if (!cityData) {
-        setStatus("City not found.");
+        setStatusMessage("City not found.", "error");
         return;
       }
 
@@ -101,7 +106,7 @@ export function AdminEditCityForm({ id }: Props) {
         sortRank: Number(cityData.sort_rank ?? 999),
       });
 
-      setStatus("");
+      setStatusMessage("");
     }
 
     loadCity();
@@ -118,7 +123,14 @@ export function AdminEditCityForm({ id }: Props) {
   }
 
   async function saveCity() {
-    setStatus("Saving...");
+    const validationErrors = validateCityFields(form);
+
+    if (validationErrors.length > 0) {
+      setStatusMessage(formatValidationErrors(validationErrors), "error");
+      return;
+    }
+
+    setStatusMessage("Saving...");
 
     const response = await fetch("/api/admin/cities", {
       method: "PATCH",
@@ -131,48 +143,57 @@ export function AdminEditCityForm({ id }: Props) {
     const data = await readResponse(response);
 
     if (!response.ok) {
-      setStatus(data.error ?? "Failed to save city.");
+      setStatusMessage(data.error ?? "Failed to save city.", "error");
       return;
     }
 
-    setStatus("Saved.");
+    setStatusMessage("City saved successfully.", "success");
   }
 
   async function uploadCityImage() {
-    if (!form.slug.trim()) {
-      setStatus("Enter a city slug before uploading an image.");
+    const slugError = validateSlug(form.slug, "City slug");
+
+    if (slugError) {
+      setStatusMessage(slugError, "error");
       return;
     }
 
     if (!imageFile) {
-      setStatus("Choose an image file before uploading.");
+      setStatusMessage("Choose an image file before uploading.", "error");
       return;
     }
 
     setIsUploadingImage(true);
-    setStatus("Uploading image...");
+    setStatusMessage("Uploading image...");
 
     const uploadForm = new FormData();
     uploadForm.append("file", imageFile);
     uploadForm.append("kind", "city");
     uploadForm.append("citySlug", form.slug);
 
-    const response = await fetch("/api/admin/uploads", {
-      method: "POST",
-      body: uploadForm,
-    });
+    try {
+      const response = await fetch("/api/admin/uploads", {
+        method: "POST",
+        body: uploadForm,
+      });
 
-    const data = await readResponse(response);
+      const data = await readResponse(response);
 
-    setIsUploadingImage(false);
+      if (!response.ok || typeof data.publicUrl !== "string") {
+        setStatusMessage(data.error ?? "Failed to upload image.", "error");
+        return;
+      }
 
-    if (!response.ok || typeof data.publicUrl !== "string") {
-      setStatus(data.error ?? "Failed to upload image.");
-      return;
+      update("imageUrl", data.publicUrl);
+      setStatusMessage(
+        "Image uploaded. The Image URL field has been updated.",
+        "success"
+      );
+    } catch {
+      setStatusMessage("Failed to upload image.", "error");
+    } finally {
+      setIsUploadingImage(false);
     }
-
-    update("imageUrl", data.publicUrl);
-    setStatus("Image uploaded. The Image URL field has been updated.");
   }
 
   if (status === "Loading...") {
@@ -213,8 +234,8 @@ export function AdminEditCityForm({ id }: Props) {
         </label>
 
         <label style={labelStyle}>
-          Image URL
-          <input value={form.imageUrl} onChange={(event) => update("imageUrl", event.target.value)} style={inputStyle} />
+          Image URL (https)
+          <input value={form.imageUrl} onChange={(event) => update("imageUrl", event.target.value)} placeholder="https://..." style={inputStyle} />
         </label>
 
         <div style={uploadWrapStyle}>
@@ -246,8 +267,8 @@ export function AdminEditCityForm({ id }: Props) {
         </label>
 
         <label style={labelStyle}>
-          Image source URL
-          <input value={form.imageSourceUrl} onChange={(event) => update("imageSourceUrl", event.target.value)} style={inputStyle} />
+          Image source URL (https)
+          <input value={form.imageSourceUrl} onChange={(event) => update("imageSourceUrl", event.target.value)} placeholder="https://source.example/photo" style={inputStyle} />
         </label>
 
         <label style={labelStyle}>
@@ -270,7 +291,35 @@ export function AdminEditCityForm({ id }: Props) {
           </Link>
         </div>
 
-        {status && <p style={statusStyle}>{status}</p>}
+        {status && (
+          <p style={statusKind === "error" ? errorStatusStyle : statusKind === "success" ? successStatusStyle : statusStyle}>
+            {status}
+          </p>
+        )}
+      </section>
+      <section style={previewStyle}>
+        <div style={previewLabelStyle}>Preview</div>
+
+        <div
+          style={{
+            ...cardStyle,
+            backgroundImage: getImageBackground(
+              form.imageUrl,
+              "linear-gradient(180deg, rgba(10,18,24,.05), rgba(10,18,24,.76))",
+              "linear-gradient(135deg, #dfeeea, #f7efe2)"
+            ),
+          }}
+        >
+          <div style={badgeStyle}>{form.country || "Country"}</div>
+
+          <div style={panelStyle}>
+            <div style={metaStyle}>{form.isPublished ? "Published" : "Draft"}</div>
+            <h2 style={cardTitleStyle}>{form.city || "City"}</h2>
+            <p style={cardTextStyle}>
+              {form.summary || "City summary will appear here."}
+            </p>
+          </div>
+        </div>
       </section>
     </div>
   );
@@ -278,7 +327,9 @@ export function AdminEditCityForm({ id }: Props) {
 
 const wrapStyle: CSSProperties = {
   display: "grid",
+  gridTemplateColumns: "minmax(0, 1fr) minmax(min(100%, 360px), 0.75fr)",
   gap: 18,
+  alignItems: "start",
 };
 
 const formStyle: CSSProperties = {
@@ -363,9 +414,87 @@ const statusStyle: CSSProperties = {
   fontWeight: 850,
 };
 
+const successStatusStyle: CSSProperties = statusStyle;
+
+const errorStatusStyle: CSSProperties = {
+  ...statusStyle,
+  color: "#9a3d2f",
+};
+
 const emptyStyle: CSSProperties = {
   padding: 18,
   borderRadius: 22,
   background: "#fffdf8",
   color: "#607080",
+};
+
+const previewStyle: CSSProperties = {
+  display: "grid",
+  gap: 10,
+};
+
+const previewLabelStyle: CSSProperties = {
+  fontSize: 12,
+  color: "#9a6a2f",
+  fontWeight: 850,
+  textTransform: "uppercase",
+  letterSpacing: ".12em",
+};
+
+const cardStyle: CSSProperties = {
+  minHeight: 430,
+  position: "relative",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "flex-end",
+  borderRadius: 26,
+  overflow: "hidden",
+  backgroundSize: "cover",
+  backgroundPosition: "center",
+  color: "#ffffff",
+};
+
+const badgeStyle: CSSProperties = {
+  position: "absolute",
+  top: 14,
+  left: 14,
+  padding: "7px 10px",
+  borderRadius: 999,
+  background: "rgba(255,255,255,.84)",
+  color: "#17202a",
+  fontSize: 12,
+  fontWeight: 850,
+};
+
+const panelStyle: CSSProperties = {
+  margin: 12,
+  padding: 16,
+  borderRadius: 20,
+  background: "rgba(12,22,30,.54)",
+  border: "1px solid rgba(255,255,255,.24)",
+  backdropFilter: "blur(18px)",
+  WebkitBackdropFilter: "blur(18px)",
+};
+
+const metaStyle: CSSProperties = {
+  marginBottom: 7,
+  fontSize: 12,
+  color: "rgba(255,255,255,.76)",
+  fontWeight: 850,
+  textTransform: "uppercase",
+  letterSpacing: ".1em",
+};
+
+const cardTitleStyle: CSSProperties = {
+  margin: 0,
+  fontSize: 28,
+  lineHeight: 1.04,
+  letterSpacing: "-.045em",
+};
+
+const cardTextStyle: CSSProperties = {
+  margin: "10px 0 0",
+  fontSize: 13,
+  lineHeight: 1.55,
+  color: "rgba(255,255,255,.84)",
 };

@@ -19,6 +19,8 @@ export type SupabasePublicCity = {
   image_alt: string;
   image_credit: string;
   image_source_url: string;
+  affiliate_hotel_url?: string | null;
+  affiliate_tour_url?: string | null;
   is_published: boolean;
   sort_rank?: number | null;
 };
@@ -75,13 +77,16 @@ function toDirectoryCity(
     imageUrl: city.image_url,
     imageAlt: city.image_alt || city.city,
     imageCredit: city.image_credit,
+    imageSourceUrl: city.image_source_url,
     spotDetails: spots.map(toCitySpotFromSupabase),
     seasons: ["All year"],
     travelStyles: [city.region || "City break"],
     themes: [city.region || "Travel city"],
     categories: city.region ? [city.region] : [],
-    affHotelsUrl: "",
-    affToursUrl: "",
+    affiliateHotelUrl: city.affiliate_hotel_url ?? "",
+    affiliateTourUrl: city.affiliate_tour_url ?? "",
+    affHotelsUrl: city.affiliate_hotel_url ?? "",
+    affToursUrl: city.affiliate_tour_url ?? "",
   };
 }
 

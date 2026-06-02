@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import { supabase } from "@/lib/supabase";
+import { getImageBackground } from "@/lib/url-fields";
 
 type City = {
   id: string;
@@ -38,9 +39,11 @@ export async function PublicSupabaseCities() {
             href={`/c/${city.slug}`}
             style={{
               ...cardStyle,
-              backgroundImage: city.image_url
-                ? `linear-gradient(180deg, rgba(10,18,24,.05), rgba(10,18,24,.76)), url("${city.image_url}")`
-                : "linear-gradient(135deg, #dfeeea, #f7efe2)",
+              backgroundImage: getImageBackground(
+                city.image_url,
+                "linear-gradient(180deg, rgba(10,18,24,.05), rgba(10,18,24,.76))",
+                "linear-gradient(135deg, #dfeeea, #f7efe2)"
+              ),
             }}
           >
             <div style={badgeStyle}>{city.country}</div>

@@ -15,22 +15,26 @@ export function isAffiliateLinkType(type: string): type is AffiliateLinkType {
 
 export function getAffiliateLinks(city: City): AffiliateLink[] {
   const manualLinks = city.affiliateLinks ?? [];
+  const hotelUrl = city.affiliateHotelUrl ?? city.affHotelsUrl;
+  const tourUrl = city.affiliateTourUrl ?? city.affToursUrl;
 
-  const legacyLinks: AffiliateLink[] = [
-    {
+  const legacyLinks: AffiliateLink[] = [];
+
+  if (hotelUrl) {
+    legacyLinks.push({
       type: "hotels",
       label: `Find hotels in ${city.city}`,
-      url: city.affHotelsUrl,
+      url: hotelUrl,
       priority: 10,
       isActive: true,
-    },
-  ];
+    });
+  }
 
-  if (city.affToursUrl) {
+  if (tourUrl) {
     legacyLinks.push({
       type: "tours",
       label: "Book tours & activities",
-      url: city.affToursUrl,
+      url: tourUrl,
       priority: 20,
       isActive: true,
     });
