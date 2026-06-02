@@ -1,11 +1,12 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
+import { AdminNavigation } from "@/components/AdminNavigation";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Analytics | TravelHub Admin",
+  title: "クリック分析 | TravelHub Admin",
   robots: {
     index: false,
     follow: false,
@@ -77,12 +78,12 @@ export default async function AdminAnalyticsPage() {
   const nameMaps = await getNameMaps(logs);
   const totalClicks = getCount(totalResult, logs.length);
   const metrics = [
-    { label: "Total clicks", value: totalClicks },
-    { label: "Hotel clicks", value: getCount(hotelResult, countType(logs, "hotels")) },
-    { label: "Tour clicks", value: getCount(tourResult, countType(logs, "tours")) },
-    { label: "Last 7 days", value: getCount(last7DaysResult, countSince(logs, last7Days)) },
+    { label: "合計クリック", value: totalClicks },
+    { label: "ホテルクリック", value: getCount(hotelResult, countType(logs, "hotels")) },
+    { label: "ツアークリック", value: getCount(tourResult, countType(logs, "tours")) },
+    { label: "過去7日", value: getCount(last7DaysResult, countSince(logs, last7Days)) },
     {
-      label: "Last 24 hours",
+      label: "過去24時間",
       value: getCount(last24HoursResult, countSince(logs, last24Hours)),
     },
   ];
@@ -101,28 +102,29 @@ export default async function AdminAnalyticsPage() {
   return (
     <main style={pageStyle}>
       <section style={shellStyle}>
+        <AdminNavigation />
+
         <Link href="/admin" style={backStyle}>
-          ← Back to admin
+          ← 管理メニューへ戻る
         </Link>
 
-        <div style={eyebrowStyle}>Analytics</div>
+        <div style={eyebrowStyle}>クリック分析</div>
 
-        <h1 style={titleStyle}>Outbound clicks</h1>
+        <h1 style={titleStyle}>外部リンククリック</h1>
 
         <p style={textStyle}>
-          Review recent hotel and tour redirects logged through TravelHub&apos;s
-          outbound route.
+          TravelHub の外部リンク経由で記録されたホテルとツアーのクリックを確認します。
         </p>
 
         {errorMessage ? (
-          <div style={noticeStyle}>Analytics could not load: {errorMessage}</div>
+          <div style={noticeStyle}>分析データを読み込めませんでした: {errorMessage}</div>
         ) : null}
 
         {!errorMessage && totalClicks === 0 ? (
-          <div style={noticeStyle}>No outbound clicks have been logged yet.</div>
+          <div style={noticeStyle}>外部リンククリックはまだ記録されていません。</div>
         ) : null}
 
-        <section style={metricGridStyle} aria-label="Click summary">
+        <section style={metricGridStyle} aria-label="クリック概要">
           {metrics.map((metric) => (
             <div key={metric.label} style={metricCardStyle}>
               <span style={metricLabelStyle}>{metric.label}</span>
@@ -133,14 +135,14 @@ export default async function AdminAnalyticsPage() {
 
         {logsResult.isCapped ? (
           <p style={smallNoteStyle}>
-            Breakdowns use the latest {formatNumber(MAX_AGGREGATION_ROWS)} logs.
+            内訳は最新 {formatNumber(MAX_AGGREGATION_ROWS)} 件のログを使っています。
           </p>
         ) : null}
 
         <AnalyticsTable
-          title="Clicks by city"
-          emptyText="No city click data yet."
-          headers={["City", "Slug", "Clicks", "Hotels", "Tours"]}
+          title="都市別クリック"
+          emptyText="都市別クリックデータはまだありません。"
+          headers={["都市", "スラッグ", "クリック", "ホテル", "ツアー"]}
           rows={cityBreakdown.map((row) => [
             row.cityName,
             row.citySlug,
@@ -151,12 +153,12 @@ export default async function AdminAnalyticsPage() {
         />
 
         <AnalyticsTable
-          title="Clicks by spot"
-          emptyText="No spot click data yet."
-          headers={["City", "Spot", "Clicks", "Hotels", "Tours"]}
+          title="スポット別クリック"
+          emptyText="スポット別クリックデータはまだありません。"
+          headers={["都市", "スポット", "クリック", "ホテル", "ツアー"]}
           rows={spotBreakdown.map((row) => [
             row.citySlug,
-            row.spotName ? `${row.spotName} (${row.spotSlug})` : row.spotSlug ?? "Unknown spot",
+            row.spotName ? `${row.spotName} (${row.spotSlug})` : row.spotSlug ?? "不明なスポット",
             formatNumber(row.count),
             formatNumber(row.hotels),
             formatNumber(row.tours),
@@ -164,13 +166,13 @@ export default async function AdminAnalyticsPage() {
         />
 
         <AnalyticsTable
-          title="Latest 20 click logs"
-          emptyText="No outbound clicks have been logged yet."
-          headers={["Time", "Type", "City", "Spot", "Src", "Version", "Target", "Referer"]}
+          title="最新20件のクリックログ"
+          emptyText="外部リンククリックはまだ記録されていません。"
+          headers={["日時", "種類", "都市", "スポット", "流入元", "バージョン", "遷移先", "参照元"]}
           rows={latestLogs.map((log) => [
             formatDate(log.created_at),
-            log.type || "Unknown",
-            log.city_slug || "Unknown city",
+            formatClickType(log.type),
+            log.city_slug || "不明な都市",
             log.spot_slug || "",
             log.src || "",
             log.v || "",
@@ -295,11 +297,11 @@ function getCityBreakdown(logs: ClickLogRow[], nameMaps: NameMaps) {
       breakdown.get(key) ??
       createBreakdownRow({
         key,
-        citySlug: log.city_slug || "Unknown city",
+        citySlug: log.city_slug || "不明な都市",
         cityName:
           (log.city_id ? nameMaps.cities.get(log.city_id) : "") ||
           log.city_slug ||
-          "Unknown city",
+          "不明な都市",
       });
 
     incrementBreakdown(current, log.type);
@@ -322,12 +324,12 @@ function getSpotBreakdown(logs: ClickLogRow[], nameMaps: NameMaps) {
       breakdown.get(key) ??
       createBreakdownRow({
         key,
-        citySlug: log.city_slug || "Unknown city",
+        citySlug: log.city_slug || "不明な都市",
         cityName:
           (log.city_id ? nameMaps.cities.get(log.city_id) : "") ||
           log.city_slug ||
-          "Unknown city",
-        spotSlug: log.spot_slug || "Unknown spot",
+          "不明な都市",
+        spotSlug: log.spot_slug || "不明なスポット",
         spotName: log.spot_id ? nameMaps.spots.get(log.spot_id) : "",
       });
 
@@ -389,7 +391,7 @@ function getCount(result: CountResult, fallback: number) {
 }
 
 function formatNumber(value: number) {
-  return new Intl.NumberFormat("en").format(value);
+  return new Intl.NumberFormat("ja-JP").format(value);
 }
 
 function formatDate(value: string) {
@@ -399,10 +401,16 @@ function formatDate(value: string) {
     return value || "";
   }
 
-  return new Intl.DateTimeFormat("en", {
+  return new Intl.DateTimeFormat("ja-JP", {
     dateStyle: "medium",
     timeStyle: "short",
   }).format(date);
+}
+
+function formatClickType(value: string) {
+  if (value === "hotels") return "ホテル";
+  if (value === "tours") return "ツアー";
+  return value || "不明";
 }
 
 function AnalyticsTable({

@@ -1,9 +1,10 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
+import { AdminNavigation } from "@/components/AdminNavigation";
 import { AdminNewCityForm } from "@/components/AdminNewCityForm";
 
 export const metadata = {
-  title: "New city | TravelHub Admin",
+  title: "新しい都市 | TravelHub Admin",
   robots: {
     index: false,
     follow: false,
@@ -14,14 +15,16 @@ export default function NewCityPage() {
   return (
     <main style={pageStyle}>
       <section style={shellStyle}>
-        <Link href="/admin/cities" style={backStyle}>← Back to cities</Link>
+        <AdminNavigation />
 
-        <div style={eyebrowStyle}>Create</div>
+        <Link href="/admin/cities" style={backStyle}>← 都市管理へ戻る</Link>
 
-        <h1 style={titleStyle}>New city</h1>
+        <div style={eyebrowStyle}>作成</div>
+
+        <h1 style={titleStyle}>新しい都市</h1>
 
         <p style={textStyle}>
-          Create a city record in Supabase.
+          Supabase に都市レコードを作成します。
         </p>
 
         <AdminNewCityForm />

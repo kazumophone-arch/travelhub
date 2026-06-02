@@ -1,9 +1,10 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
+import { AdminNavigation } from "@/components/AdminNavigation";
 import { AdminSupabaseEditSpotForm } from "@/components/AdminSupabaseEditSpotForm";
 
 export const metadata = {
-  title: "Edit spot | TravelHub Admin",
+  title: "スポット編集 | TravelHub Admin",
   robots: {
     index: false,
     follow: false,
@@ -21,10 +22,11 @@ export default async function EditSpotPage({ params }: Props) {
   return (
     <main style={pageStyle}>
       <section style={shellStyle}>
-        <Link href="/admin/spots" style={backStyle}>← Back to spots</Link>
-        <div style={eyebrowStyle}>Edit</div>
-        <h1 style={titleStyle}>Edit spot</h1>
-        <p style={textStyle}>Edit spot data stored in Supabase.</p>
+        <AdminNavigation />
+        <Link href="/admin/spots" style={backStyle}>← スポット管理へ戻る</Link>
+        <div style={eyebrowStyle}>編集</div>
+        <h1 style={titleStyle}>スポットを編集</h1>
+        <p style={textStyle}>Supabase に保存されたスポットデータを編集します。</p>
         <AdminSupabaseEditSpotForm id={id} />
       </section>
     </main>

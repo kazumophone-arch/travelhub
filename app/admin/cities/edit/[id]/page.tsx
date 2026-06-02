@@ -1,9 +1,10 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
+import { AdminNavigation } from "@/components/AdminNavigation";
 import { AdminEditCityForm } from "@/components/AdminEditCityForm";
 
 export const metadata = {
-  title: "Edit city | TravelHub Admin",
+  title: "都市編集 | TravelHub Admin",
   robots: {
     index: false,
     follow: false,
@@ -22,14 +23,16 @@ export default async function EditCityPage({ params }: Props) {
   return (
     <main style={pageStyle}>
       <section style={shellStyle}>
-        <Link href="/admin/cities" style={backStyle}>← Back to cities</Link>
+        <AdminNavigation />
 
-        <div style={eyebrowStyle}>Edit</div>
+        <Link href="/admin/cities" style={backStyle}>← 都市管理へ戻る</Link>
 
-        <h1 style={titleStyle}>Edit city</h1>
+        <div style={eyebrowStyle}>編集</div>
+
+        <h1 style={titleStyle}>都市を編集</h1>
 
         <p style={textStyle}>
-          Edit city data stored in Supabase.
+          Supabase に保存された都市データを編集します。
         </p>
 
         <AdminEditCityForm id={id} />

@@ -2,13 +2,13 @@
 
 import { useEffect, useState, type CSSProperties } from "react";
 import Link from "next/link";
+import { AdminLivePreview, hasPreviewUrl } from "@/components/AdminLivePreview";
 import {
   formatValidationErrors,
   slugify,
   validateSlug,
   validateSpotFields,
 } from "@/lib/admin-validation";
-import { getImageBackground } from "@/lib/url-fields";
 
 type Props = {
   id: string;
@@ -62,7 +62,7 @@ async function readResponse(response: Response) {
   try {
     return text ? JSON.parse(text) : {};
   } catch {
-    return { error: text || "Invalid server response." };
+    return { error: text || "サーバー応答を読み取れませんでした。" };
   }
 }
 
@@ -71,7 +71,7 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
   const [form, setForm] = useState<SpotForm>(emptyForm);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
-  const [status, setStatus] = useState("Loading...");
+  const [status, setStatus] = useState("読み込み中...");
   const [statusKind, setStatusKind] = useState<StatusKind>("info");
   const selectedCity = cityOptions.find((city) => city.id === form.cityId);
   const selectedCitySlug = selectedCity?.slug ?? "";
@@ -99,7 +99,7 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
       const response = spotResponse;
 
       if (!response.ok) {
-        setStatusMessage(data.error ?? "Failed to load spot.", "error");
+        setStatusMessage(data.error ?? "スポットの読み込みに失敗しました。", "error");
         return;
       }
 
@@ -125,7 +125,7 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
       setStatusMessage(
         cityId
           ? ""
-          : "This spot is missing city_id. Select a city to finish migration.",
+          : "このスポットは city_id が未設定です。移行を完了するため都市を選択してください。",
         cityId ? "info" : "error"
       );
     }
@@ -158,7 +158,7 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
       return;
     }
 
-    setStatusMessage("Saving...");
+    setStatusMessage("保存しています...");
 
     const response = await fetch("/api/admin/spots", {
       method: "PATCH",
@@ -171,20 +171,20 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
     const data = await readResponse(response);
 
     if (!response.ok) {
-      setStatusMessage(data.error ?? "Failed to save spot.", "error");
+      setStatusMessage(data.error ?? "スポットの保存に失敗しました。", "error");
       return;
     }
 
-    setStatusMessage("Spot saved successfully.", "success");
+    setStatusMessage("スポットを保存しました。", "success");
   }
 
   async function uploadSpotImage() {
     if (!selectedCitySlug) {
-      setStatusMessage("Choose a city before uploading an image.", "error");
+      setStatusMessage("画像をアップロードする前に都市を選択してください。", "error");
       return;
     }
 
-    const slugError = validateSlug(form.slug, "Spot slug");
+    const slugError = validateSlug(form.slug, "スポットスラッグ");
 
     if (slugError) {
       setStatusMessage(slugError, "error");
@@ -192,12 +192,12 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
     }
 
     if (!imageFile) {
-      setStatusMessage("Choose an image file before uploading.", "error");
+      setStatusMessage("アップロードする画像ファイルを選択してください。", "error");
       return;
     }
 
     setIsUploadingImage(true);
-    setStatusMessage("Uploading image...");
+    setStatusMessage("画像をアップロードしています...");
 
     const uploadForm = new FormData();
     uploadForm.append("file", imageFile);
@@ -214,50 +214,50 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
       const data = await readResponse(response);
 
       if (!response.ok || typeof data.publicUrl !== "string") {
-        setStatusMessage(data.error ?? "Failed to upload image.", "error");
+        setStatusMessage(data.error ?? "画像のアップロードに失敗しました。", "error");
         return;
       }
 
       update("imageUrl", data.publicUrl);
       setStatusMessage(
-        "Image uploaded. The Image URL field has been updated.",
+        "画像をアップロードしました。画像URL欄を更新しました。",
         "success"
       );
     } catch {
-      setStatusMessage("Failed to upload image.", "error");
+      setStatusMessage("画像のアップロードに失敗しました。", "error");
     } finally {
       setIsUploadingImage(false);
     }
   }
 
-  if (status === "Loading...") {
-    return <div style={emptyStyle}>Loading...</div>;
+  if (status === "読み込み中...") {
+    return <div style={emptyStyle}>読み込み中...</div>;
   }
 
   return (
     <div style={wrapStyle}>
       <section style={formStyle}>
         <label style={labelStyle}>
-          City
+          都市
           <select
             value={form.cityId}
             onChange={(event) => updateCity(event.target.value)}
             style={inputStyle}
           >
             <option value="" disabled>
-              Select a city
+              都市を選択
             </option>
             {cityOptions.map((city) => (
               <option key={city.id} value={city.id}>
                 {city.city}, {city.country}
-                {city.is_published ? "" : " — Draft"}
+                {city.is_published ? "" : " — 下書き"}
               </option>
             ))}
           </select>
         </label>
 
         <label style={labelStyle}>
-          Spot name
+          スポット名
           <input
             value={form.name}
             onChange={(event) => update("name", event.target.value)}
@@ -266,7 +266,7 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
         </label>
 
         <label style={labelStyle}>
-          Slug
+          スラッグ
           <input
             value={form.slug}
             onChange={(event) => update("slug", slugify(event.target.value))}
@@ -275,7 +275,7 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
         </label>
 
         <label style={labelStyle}>
-          Summary
+          概要
           <textarea
             value={form.summary}
             onChange={(event) => update("summary", event.target.value)}
@@ -285,7 +285,7 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
         </label>
 
         <label style={labelStyle}>
-          Description
+          説明
           <textarea
             value={form.description}
             onChange={(event) => update("description", event.target.value)}
@@ -295,7 +295,7 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
         </label>
 
         <label style={labelStyle}>
-          Image URL (https)
+          画像URL（https）
           <input
             value={form.imageUrl}
             onChange={(event) => update("imageUrl", event.target.value)}
@@ -317,12 +317,12 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
             style={buttonStyle}
             disabled={isUploadingImage}
           >
-            Upload image
+            画像をアップロード
           </button>
         </div>
 
         <label style={labelStyle}>
-          Image alt
+          画像代替テキスト
           <input
             value={form.imageAlt}
             onChange={(event) => update("imageAlt", event.target.value)}
@@ -331,7 +331,7 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
         </label>
 
         <label style={labelStyle}>
-          Image credit
+          画像クレジット
           <input
             value={form.imageCredit}
             onChange={(event) => update("imageCredit", event.target.value)}
@@ -340,7 +340,7 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
         </label>
 
         <label style={labelStyle}>
-          Image source URL (https)
+          画像出典URL（https）
           <input
             value={form.imageSourceUrl}
             onChange={(event) => update("imageSourceUrl", event.target.value)}
@@ -350,7 +350,7 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
         </label>
 
         <label style={labelStyle}>
-          Hotel affiliate URL (https)
+          ホテルアフィリエイトURL（https）
           <input
             value={form.affiliateHotelUrl}
             onChange={(event) => update("affiliateHotelUrl", event.target.value)}
@@ -360,7 +360,7 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
         </label>
 
         <label style={labelStyle}>
-          Tour affiliate URL (https)
+          ツアーアフィリエイトURL（https）
           <input
             value={form.affiliateTourUrl}
             onChange={(event) => update("affiliateTourUrl", event.target.value)}
@@ -375,16 +375,16 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
             checked={form.isPublished}
             onChange={(event) => update("isPublished", event.target.checked)}
           />
-          Published
+          公開
         </label>
 
         <div style={buttonRowStyle}>
           <button type="button" onClick={save} style={buttonStyle}>
-            Save changes
+            保存
           </button>
 
           <Link href="/admin/spots" style={secondaryButtonStyle}>
-            Back
+            戻る
           </Link>
         </div>
 
@@ -395,35 +395,38 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
         )}
       </section>
 
-      <section style={previewStyle}>
-        <div style={previewLabelStyle}>Preview</div>
-
-        <div
-          style={{
-            ...cardStyle,
-            backgroundImage: getImageBackground(
-              form.imageUrl,
-              "linear-gradient(180deg, rgba(10,18,24,.05), rgba(10,18,24,.76))",
-              "linear-gradient(135deg, #dfeeea, #f7efe2)"
-            ),
-          }}
-        >
-          <div style={badgeStyle}>{selectedCitySlug || "Missing city_id"}</div>
-
-          <div style={panelStyle}>
-            <div style={metaStyle}>{form.isPublished ? "Published" : "Draft"}</div>
-            <h2 style={cardTitleStyle}>{form.name}</h2>
-            <p style={cardTextStyle}>{form.summary}</p>
-          </div>
-        </div>
-      </section>
+      <AdminLivePreview
+        label="ライブプレビュー"
+        title={form.name || "スポット名未入力"}
+        subtitle={selectedCity ? `${selectedCity.city}, ${selectedCity.country}` : "都市未選択"}
+        description={form.description || form.summary}
+        imageUrl={form.imageUrl}
+        isPublished={form.isPublished}
+        publicPath={selectedCitySlug && form.slug ? `/c/${selectedCitySlug}/spot/${form.slug}` : ""}
+        ctas={[
+          {
+            label: "ホテル",
+            href: `/out/hotels?c=${encodeURIComponent(selectedCitySlug)}&s=${encodeURIComponent(form.slug)}&src=admin-preview&v=spot_preview`,
+            isVisible:
+              Boolean(selectedCitySlug && form.slug) &&
+              hasPreviewUrl(form.affiliateHotelUrl),
+          },
+          {
+            label: "ツアー",
+            href: `/out/tours?c=${encodeURIComponent(selectedCitySlug)}&s=${encodeURIComponent(form.slug)}&src=admin-preview&v=spot_preview`,
+            isVisible:
+              Boolean(selectedCitySlug && form.slug) &&
+              hasPreviewUrl(form.affiliateTourUrl),
+          },
+        ]}
+      />
     </div>
   );
 }
 
 const wrapStyle: CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "minmax(0, 1fr) minmax(min(100%, 360px), 0.75fr)",
+  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 360px), 1fr))",
   gap: 18,
   alignItems: "start",
 };

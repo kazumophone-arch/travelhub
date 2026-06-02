@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useState, type CSSProperties } from "react";
+import { AdminLivePreview, hasPreviewUrl } from "@/components/AdminLivePreview";
 import {
   formatValidationErrors,
   slugify,
   validateSlug,
   validateSpotFields,
 } from "@/lib/admin-validation";
-import { getImageBackground } from "@/lib/url-fields";
 
 type CityOption = {
   id: string;
@@ -55,7 +55,7 @@ async function readResponse(response: Response) {
   try {
     return text ? JSON.parse(text) : {};
   } catch {
-    return { error: text || "Invalid server response." };
+    return { error: text || "サーバー応答を読み取れませんでした。" };
   }
 }
 
@@ -64,7 +64,7 @@ export function AdminNewSpotForm() {
   const [form, setForm] = useState<SpotForm>(initialForm);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
-  const [status, setStatus] = useState("Loading cities...");
+  const [status, setStatus] = useState("都市を読み込み中...");
   const [statusKind, setStatusKind] = useState<StatusKind>("info");
   const selectedCity = cities.find((city) => city.id === form.cityId);
   const selectedCitySlug = selectedCity?.slug ?? "";
@@ -80,7 +80,7 @@ export function AdminNewSpotForm() {
       const data = await response.json();
 
       if (!response.ok) {
-        setStatusMessage(data.error ?? "Failed to load cities.", "error");
+        setStatusMessage(data.error ?? "都市の読み込みに失敗しました。", "error");
         return;
       }
 
@@ -123,7 +123,7 @@ export function AdminNewSpotForm() {
       return;
     }
 
-    setStatusMessage("Creating spot...");
+    setStatusMessage("スポットを作成しています...");
 
     const response = await fetch("/api/admin/spots", {
       method: "POST",
@@ -136,20 +136,20 @@ export function AdminNewSpotForm() {
     const data = await readResponse(response);
 
     if (!response.ok) {
-      setStatusMessage(data.error ?? "Failed to create spot.", "error");
+      setStatusMessage(data.error ?? "スポットの作成に失敗しました。", "error");
       return;
     }
 
-    setStatusMessage("Spot created successfully.", "success");
+    setStatusMessage("スポットを作成しました。", "success");
   }
 
   async function uploadSpotImage() {
     if (!selectedCitySlug) {
-      setStatusMessage("Choose a city before uploading an image.", "error");
+      setStatusMessage("画像をアップロードする前に都市を選択してください。", "error");
       return;
     }
 
-    const slugError = validateSlug(form.slug, "Spot slug");
+    const slugError = validateSlug(form.slug, "スポットスラッグ");
 
     if (slugError) {
       setStatusMessage(slugError, "error");
@@ -157,12 +157,12 @@ export function AdminNewSpotForm() {
     }
 
     if (!imageFile) {
-      setStatusMessage("Choose an image file before uploading.", "error");
+      setStatusMessage("アップロードする画像ファイルを選択してください。", "error");
       return;
     }
 
     setIsUploadingImage(true);
-    setStatusMessage("Uploading image...");
+    setStatusMessage("画像をアップロードしています...");
 
     const uploadForm = new FormData();
     uploadForm.append("file", imageFile);
@@ -179,17 +179,17 @@ export function AdminNewSpotForm() {
       const data = await readResponse(response);
 
       if (!response.ok || typeof data.publicUrl !== "string") {
-        setStatusMessage(data.error ?? "Failed to upload image.", "error");
+        setStatusMessage(data.error ?? "画像のアップロードに失敗しました。", "error");
         return;
       }
 
       update("imageUrl", data.publicUrl);
       setStatusMessage(
-        "Image uploaded. The Image URL field has been updated.",
+        "画像をアップロードしました。画像URL欄を更新しました。",
         "success"
       );
     } catch {
-      setStatusMessage("Failed to upload image.", "error");
+      setStatusMessage("画像のアップロードに失敗しました。", "error");
     } finally {
       setIsUploadingImage(false);
     }
@@ -200,12 +200,12 @@ export function AdminNewSpotForm() {
       <section style={formStyle}>
         {cities.length === 0 && !status ? (
           <div style={emptyStyle}>
-            No cities found. Create a city first.
+            都市が見つかりません。先に都市を作成してください。
           </div>
         ) : null}
 
         <label style={labelStyle}>
-          City
+          都市
           <select
             value={form.cityId}
             onChange={(event) => updateCity(event.target.value)}
@@ -214,14 +214,14 @@ export function AdminNewSpotForm() {
             {cities.map((city) => (
               <option key={city.id} value={city.id}>
                 {city.city}, {city.country}
-                {city.is_published ? "" : " — Draft"}
+                {city.is_published ? "" : " — 下書き"}
               </option>
             ))}
           </select>
         </label>
 
         <label style={labelStyle}>
-          Spot name
+          スポット名
           <input
             value={form.name}
             onChange={(event) => update("name", event.target.value)}
@@ -231,7 +231,7 @@ export function AdminNewSpotForm() {
         </label>
 
         <label style={labelStyle}>
-          Slug
+          スラッグ
           <input
             value={form.slug}
             onChange={(event) => update("slug", slugify(event.target.value))}
@@ -241,7 +241,7 @@ export function AdminNewSpotForm() {
         </label>
 
         <label style={labelStyle}>
-          Summary
+          概要
           <textarea
             value={form.summary}
             onChange={(event) => update("summary", event.target.value)}
@@ -251,7 +251,7 @@ export function AdminNewSpotForm() {
         </label>
 
         <label style={labelStyle}>
-          Description
+          説明
           <textarea
             value={form.description}
             onChange={(event) => update("description", event.target.value)}
@@ -261,7 +261,7 @@ export function AdminNewSpotForm() {
         </label>
 
         <label style={labelStyle}>
-          Image URL (https)
+          画像URL（https）
           <input
             value={form.imageUrl}
             onChange={(event) => update("imageUrl", event.target.value)}
@@ -283,12 +283,12 @@ export function AdminNewSpotForm() {
             style={buttonStyle}
             disabled={isUploadingImage}
           >
-            Upload image
+            画像をアップロード
           </button>
         </div>
 
         <label style={labelStyle}>
-          Image alt
+          画像代替テキスト
           <input
             value={form.imageAlt}
             onChange={(event) => update("imageAlt", event.target.value)}
@@ -297,7 +297,7 @@ export function AdminNewSpotForm() {
         </label>
 
         <label style={labelStyle}>
-          Image credit
+          画像クレジット
           <input
             value={form.imageCredit}
             onChange={(event) => update("imageCredit", event.target.value)}
@@ -306,7 +306,7 @@ export function AdminNewSpotForm() {
         </label>
 
         <label style={labelStyle}>
-          Image source URL (https)
+          画像出典URL（https）
           <input
             value={form.imageSourceUrl}
             onChange={(event) => update("imageSourceUrl", event.target.value)}
@@ -316,7 +316,7 @@ export function AdminNewSpotForm() {
         </label>
 
         <label style={labelStyle}>
-          Hotel affiliate URL (https)
+          ホテルアフィリエイトURL（https）
           <input
             value={form.affiliateHotelUrl}
             onChange={(event) => update("affiliateHotelUrl", event.target.value)}
@@ -326,7 +326,7 @@ export function AdminNewSpotForm() {
         </label>
 
         <label style={labelStyle}>
-          Tour affiliate URL (https)
+          ツアーアフィリエイトURL（https）
           <input
             value={form.affiliateTourUrl}
             onChange={(event) => update("affiliateTourUrl", event.target.value)}
@@ -341,7 +341,7 @@ export function AdminNewSpotForm() {
             checked={form.isPublished}
             onChange={(event) => update("isPublished", event.target.checked)}
           />
-          Published
+          公開
         </label>
 
         <button
@@ -350,7 +350,7 @@ export function AdminNewSpotForm() {
           style={buttonStyle}
           disabled={cities.length === 0}
         >
-          Create in Supabase
+          Supabase に作成
         </button>
 
         {status && (
@@ -360,37 +360,38 @@ export function AdminNewSpotForm() {
         )}
       </section>
 
-      <section style={previewStyle}>
-        <div style={previewLabelStyle}>Preview</div>
-
-        <div
-          style={{
-            ...cardStyle,
-            backgroundImage: getImageBackground(
-              form.imageUrl,
-              "linear-gradient(180deg, rgba(10,18,24,.05), rgba(10,18,24,.76))",
-              "linear-gradient(135deg, #dfeeea, #f7efe2)"
-            ),
-          }}
-        >
-          <div style={badgeStyle}>{selectedCitySlug || "city"}</div>
-
-          <div style={panelStyle}>
-            <div style={metaStyle}>{form.isPublished ? "Published" : "Draft"}</div>
-            <h2 style={cardTitleStyle}>{form.name || "New spot"}</h2>
-            <p style={cardTextStyle}>
-              {form.summary || "Spot summary will appear here."}
-            </p>
-          </div>
-        </div>
-      </section>
+      <AdminLivePreview
+        label="ライブプレビュー"
+        title={form.name || "新しいスポット"}
+        subtitle={selectedCity ? `${selectedCity.city}, ${selectedCity.country}` : "都市"}
+        description={form.description || form.summary}
+        imageUrl={form.imageUrl}
+        isPublished={form.isPublished}
+        publicPath={selectedCitySlug && form.slug ? `/c/${selectedCitySlug}/spot/${form.slug}` : ""}
+        ctas={[
+          {
+            label: "ホテル",
+            href: `/out/hotels?c=${encodeURIComponent(selectedCitySlug)}&s=${encodeURIComponent(form.slug)}&src=admin-preview&v=spot_preview`,
+            isVisible:
+              Boolean(selectedCitySlug && form.slug) &&
+              hasPreviewUrl(form.affiliateHotelUrl),
+          },
+          {
+            label: "ツアー",
+            href: `/out/tours?c=${encodeURIComponent(selectedCitySlug)}&s=${encodeURIComponent(form.slug)}&src=admin-preview&v=spot_preview`,
+            isVisible:
+              Boolean(selectedCitySlug && form.slug) &&
+              hasPreviewUrl(form.affiliateTourUrl),
+          },
+        ]}
+      />
     </div>
   );
 }
 
 const wrapStyle: CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "minmax(0, 1fr) minmax(min(100%, 360px), 0.75fr)",
+  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 360px), 1fr))",
   gap: 18,
   alignItems: "start",
 };

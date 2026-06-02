@@ -1,9 +1,10 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
+import { AdminNavigation } from "@/components/AdminNavigation";
 import { AdminNewSpotForm } from "@/components/AdminNewSpotForm";
 
 export const metadata = {
-  title: "New spot | TravelHub Admin",
+  title: "新しいスポット | TravelHub Admin",
   robots: {
     index: false,
     follow: false,
@@ -14,11 +15,12 @@ export default function NewSpotPage() {
   return (
     <main style={pageStyle}>
       <section style={shellStyle}>
-        <Link href="/admin/spots" style={backStyle}>← Back to spots</Link>
-        <div style={eyebrowStyle}>Create</div>
-        <h1 style={titleStyle}>New spot</h1>
+        <AdminNavigation />
+        <Link href="/admin/spots" style={backStyle}>← スポット管理へ戻る</Link>
+        <div style={eyebrowStyle}>作成</div>
+        <h1 style={titleStyle}>新しいスポット</h1>
         <p style={textStyle}>
-          Create a spot in Supabase using the current database fields.
+          現在のデータベース項目を使って Supabase にスポットを作成します。
         </p>
         <AdminNewSpotForm />
       </section>

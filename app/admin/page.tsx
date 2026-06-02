@@ -1,8 +1,9 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
+import { AdminNavigation } from "@/components/AdminNavigation";
 
 export const metadata = {
-  title: "Admin | TravelHub",
+  title: "管理画面 | TravelHub Admin",
   robots: {
     index: false,
     follow: false,
@@ -11,27 +12,27 @@ export const metadata = {
 
 const adminItems = [
   {
-    title: "Cities",
-    label: "Content",
-    description: "Manage city data from Supabase.",
+    title: "都市管理",
+    label: "コンテンツ",
+    description: "Supabase に保存された都市データを管理します。",
     href: "/admin/cities",
   },
   {
-    title: "Spots",
-    label: "Content",
-    description: "Create, edit, publish, and delete spots from Supabase.",
+    title: "スポット管理",
+    label: "コンテンツ",
+    description: "スポットの作成、編集、公開、削除を行います。",
     href: "/admin/spots",
   },
   {
-    title: "Analytics",
-    label: "Reports",
-    description: "Review outbound hotel and tour click logs.",
+    title: "クリック分析",
+    label: "レポート",
+    description: "ホテルとツアーの外部リンククリックを確認します。",
     href: "/admin/analytics",
   },
   {
-    title: "Back to site",
-    label: "Site",
-    description: "Return to the public TravelHub site.",
+    title: "公開サイトへ",
+    label: "サイト",
+    description: "公開中の TravelHub サイトへ戻ります。",
     href: "/",
   },
 ];
@@ -40,12 +41,14 @@ export default function AdminPage() {
   return (
     <main style={pageStyle}>
       <section style={shellStyle}>
-        <div style={eyebrowStyle}>TravelHub admin</div>
+        <AdminNavigation />
 
-        <h1 style={titleStyle}>Management menu</h1>
+        <div style={eyebrowStyle}>TravelHub 管理画面</div>
+
+        <h1 style={titleStyle}>管理メニュー</h1>
 
         <p style={textStyle}>
-          Only currently implemented admin features are shown here.
+          都市、スポット、クリック分析をここから管理できます。
         </p>
 
         <div style={gridStyle}>
@@ -54,7 +57,7 @@ export default function AdminPage() {
               <span style={labelStyle}>{item.label}</span>
               <strong style={cardTitleStyle}>{item.title}</strong>
               <p style={cardTextStyle}>{item.description}</p>
-              <span style={openStyle}>Open →</span>
+              <span style={openStyle}>開く →</span>
             </Link>
           ))}
         </div>

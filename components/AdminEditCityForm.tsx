@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { useEffect, useState, type CSSProperties } from "react";
+import { AdminLivePreview, hasPreviewUrl } from "@/components/AdminLivePreview";
 import {
   formatValidationErrors,
   slugify,
   validateCityFields,
   validateSlug,
 } from "@/lib/admin-validation";
-import { getImageBackground } from "@/lib/url-fields";
 
 type Props = {
   id: string;
@@ -26,6 +26,8 @@ type CityForm = {
   imageAlt: string;
   imageCredit: string;
   imageSourceUrl: string;
+  affiliateHotelUrl: string;
+  affiliateTourUrl: string;
   isPublished: boolean;
   sortRank: number;
 };
@@ -45,6 +47,8 @@ const emptyForm: CityForm = {
   imageAlt: "",
   imageCredit: "",
   imageSourceUrl: "",
+  affiliateHotelUrl: "",
+  affiliateTourUrl: "",
   isPublished: false,
   sortRank: 999,
 };
@@ -55,13 +59,13 @@ async function readResponse(response: Response) {
   try {
     return text ? JSON.parse(text) : {};
   } catch {
-    return { error: text || "Invalid server response." };
+    return { error: text || "サーバー応答を読み取れませんでした。" };
   }
 }
 
 export function AdminEditCityForm({ id }: Props) {
   const [form, setForm] = useState<CityForm>(emptyForm);
-  const [status, setStatus] = useState("Loading...");
+  const [status, setStatus] = useState("読み込み中...");
   const [statusKind, setStatusKind] = useState<StatusKind>("info");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
@@ -73,20 +77,20 @@ export function AdminEditCityForm({ id }: Props) {
 
   useEffect(() => {
     async function loadCity() {
-      setStatusMessage("Loading...");
+      setStatusMessage("読み込み中...");
 
       const response = await fetch(`/api/admin/cities?id=${id}`);
       const data = await readResponse(response);
 
       if (!response.ok) {
-        setStatusMessage(data.error ?? "Failed to load city.", "error");
+        setStatusMessage(data.error ?? "都市の読み込みに失敗しました。", "error");
         return;
       }
 
       const cityData = data.city as CityApiRow | null;
 
       if (!cityData) {
-        setStatusMessage("City not found.", "error");
+        setStatusMessage("都市が見つかりません。", "error");
         return;
       }
 
@@ -102,6 +106,8 @@ export function AdminEditCityForm({ id }: Props) {
         imageAlt: String(cityData.image_alt ?? ""),
         imageCredit: String(cityData.image_credit ?? ""),
         imageSourceUrl: String(cityData.image_source_url ?? ""),
+        affiliateHotelUrl: String(cityData.affiliate_hotel_url ?? ""),
+        affiliateTourUrl: String(cityData.affiliate_tour_url ?? ""),
         isPublished: Boolean(cityData.is_published),
         sortRank: Number(cityData.sort_rank ?? 999),
       });
@@ -130,7 +136,7 @@ export function AdminEditCityForm({ id }: Props) {
       return;
     }
 
-    setStatusMessage("Saving...");
+    setStatusMessage("保存しています...");
 
     const response = await fetch("/api/admin/cities", {
       method: "PATCH",
@@ -143,15 +149,15 @@ export function AdminEditCityForm({ id }: Props) {
     const data = await readResponse(response);
 
     if (!response.ok) {
-      setStatusMessage(data.error ?? "Failed to save city.", "error");
+      setStatusMessage(data.error ?? "都市の保存に失敗しました。", "error");
       return;
     }
 
-    setStatusMessage("City saved successfully.", "success");
+    setStatusMessage("都市を保存しました。", "success");
   }
 
   async function uploadCityImage() {
-    const slugError = validateSlug(form.slug, "City slug");
+    const slugError = validateSlug(form.slug, "都市スラッグ");
 
     if (slugError) {
       setStatusMessage(slugError, "error");
@@ -159,12 +165,12 @@ export function AdminEditCityForm({ id }: Props) {
     }
 
     if (!imageFile) {
-      setStatusMessage("Choose an image file before uploading.", "error");
+      setStatusMessage("アップロードする画像ファイルを選択してください。", "error");
       return;
     }
 
     setIsUploadingImage(true);
-    setStatusMessage("Uploading image...");
+    setStatusMessage("画像をアップロードしています...");
 
     const uploadForm = new FormData();
     uploadForm.append("file", imageFile);
@@ -180,61 +186,61 @@ export function AdminEditCityForm({ id }: Props) {
       const data = await readResponse(response);
 
       if (!response.ok || typeof data.publicUrl !== "string") {
-        setStatusMessage(data.error ?? "Failed to upload image.", "error");
+        setStatusMessage(data.error ?? "画像のアップロードに失敗しました。", "error");
         return;
       }
 
       update("imageUrl", data.publicUrl);
       setStatusMessage(
-        "Image uploaded. The Image URL field has been updated.",
+        "画像をアップロードしました。画像URL欄を更新しました。",
         "success"
       );
     } catch {
-      setStatusMessage("Failed to upload image.", "error");
+      setStatusMessage("画像のアップロードに失敗しました。", "error");
     } finally {
       setIsUploadingImage(false);
     }
   }
 
-  if (status === "Loading...") {
-    return <div style={emptyStyle}>Loading...</div>;
+  if (status === "読み込み中...") {
+    return <div style={emptyStyle}>読み込み中...</div>;
   }
 
   return (
     <div style={wrapStyle}>
       <section style={formStyle}>
         <label style={labelStyle}>
-          City
+          都市名
           <input value={form.city} onChange={(event) => update("city", event.target.value)} style={inputStyle} />
         </label>
 
         <label style={labelStyle}>
-          Slug
+          スラッグ
           <input value={form.slug} onChange={(event) => update("slug", slugify(event.target.value))} style={inputStyle} />
         </label>
 
         <label style={labelStyle}>
-          Country
+          国
           <input value={form.country} onChange={(event) => update("country", event.target.value)} style={inputStyle} />
         </label>
 
         <label style={labelStyle}>
-          Region
+          地域
           <input value={form.region} onChange={(event) => update("region", event.target.value)} style={inputStyle} />
         </label>
 
         <label style={labelStyle}>
-          Summary
+          概要
           <textarea value={form.summary} onChange={(event) => update("summary", event.target.value)} rows={4} style={textareaStyle} />
         </label>
 
         <label style={labelStyle}>
-          Description
+          説明
           <textarea value={form.description} onChange={(event) => update("description", event.target.value)} rows={5} style={textareaStyle} />
         </label>
 
         <label style={labelStyle}>
-          Image URL (https)
+          画像URL（https）
           <input value={form.imageUrl} onChange={(event) => update("imageUrl", event.target.value)} placeholder="https://..." style={inputStyle} />
         </label>
 
@@ -252,42 +258,52 @@ export function AdminEditCityForm({ id }: Props) {
             style={buttonStyle}
             disabled={isUploadingImage}
           >
-            Upload image
+            画像をアップロード
           </button>
         </div>
 
         <label style={labelStyle}>
-          Image alt
+          画像代替テキスト
           <input value={form.imageAlt} onChange={(event) => update("imageAlt", event.target.value)} style={inputStyle} />
         </label>
 
         <label style={labelStyle}>
-          Image credit
+          画像クレジット
           <input value={form.imageCredit} onChange={(event) => update("imageCredit", event.target.value)} style={inputStyle} />
         </label>
 
         <label style={labelStyle}>
-          Image source URL (https)
+          画像出典URL（https）
           <input value={form.imageSourceUrl} onChange={(event) => update("imageSourceUrl", event.target.value)} placeholder="https://source.example/photo" style={inputStyle} />
         </label>
 
         <label style={labelStyle}>
-          Sort rank
+          表示順
           <input type="number" value={form.sortRank} onChange={(event) => update("sortRank", Number(event.target.value))} style={inputStyle} />
+        </label>
+
+        <label style={labelStyle}>
+          ホテルアフィリエイトURL（https）
+          <input value={form.affiliateHotelUrl} onChange={(event) => update("affiliateHotelUrl", event.target.value)} placeholder="https://..." style={inputStyle} />
+        </label>
+
+        <label style={labelStyle}>
+          ツアーアフィリエイトURL（https）
+          <input value={form.affiliateTourUrl} onChange={(event) => update("affiliateTourUrl", event.target.value)} placeholder="https://..." style={inputStyle} />
         </label>
 
         <label style={checkStyle}>
           <input type="checkbox" checked={form.isPublished} onChange={(event) => update("isPublished", event.target.checked)} />
-          Published
+          公開
         </label>
 
         <div style={buttonRowStyle}>
           <button type="button" onClick={saveCity} style={buttonStyle}>
-            Save changes
+            保存
           </button>
 
           <Link href="/admin/cities" style={secondaryButtonStyle}>
-            Back
+            戻る
           </Link>
         </div>
 
@@ -297,37 +313,34 @@ export function AdminEditCityForm({ id }: Props) {
           </p>
         )}
       </section>
-      <section style={previewStyle}>
-        <div style={previewLabelStyle}>Preview</div>
-
-        <div
-          style={{
-            ...cardStyle,
-            backgroundImage: getImageBackground(
-              form.imageUrl,
-              "linear-gradient(180deg, rgba(10,18,24,.05), rgba(10,18,24,.76))",
-              "linear-gradient(135deg, #dfeeea, #f7efe2)"
-            ),
-          }}
-        >
-          <div style={badgeStyle}>{form.country || "Country"}</div>
-
-          <div style={panelStyle}>
-            <div style={metaStyle}>{form.isPublished ? "Published" : "Draft"}</div>
-            <h2 style={cardTitleStyle}>{form.city || "City"}</h2>
-            <p style={cardTextStyle}>
-              {form.summary || "City summary will appear here."}
-            </p>
-          </div>
-        </div>
-      </section>
+      <AdminLivePreview
+        label="ライブプレビュー"
+        title={form.city || "都市名未入力"}
+        subtitle={form.country || "国"}
+        description={form.description || form.summary}
+        imageUrl={form.imageUrl}
+        isPublished={form.isPublished}
+        publicPath={form.slug ? `/c/${form.slug}` : ""}
+        ctas={[
+          {
+            label: "ホテル",
+            href: `/out/hotels?c=${encodeURIComponent(form.slug)}&src=admin-preview&v=city_preview`,
+            isVisible: Boolean(form.slug) && hasPreviewUrl(form.affiliateHotelUrl),
+          },
+          {
+            label: "ツアー",
+            href: `/out/tours?c=${encodeURIComponent(form.slug)}&src=admin-preview&v=city_preview`,
+            isVisible: Boolean(form.slug) && hasPreviewUrl(form.affiliateTourUrl),
+          },
+        ]}
+      />
     </div>
   );
 }
 
 const wrapStyle: CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "minmax(0, 1fr) minmax(min(100%, 360px), 0.75fr)",
+  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 360px), 1fr))",
   gap: 18,
   alignItems: "start",
 };

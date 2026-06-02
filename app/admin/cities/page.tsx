@@ -1,9 +1,10 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
+import { AdminNavigation } from "@/components/AdminNavigation";
 import { AdminSupabaseCityList } from "@/components/AdminSupabaseCityList";
 
 export const metadata = {
-  title: "Cities | TravelHub Admin",
+  title: "都市管理 | TravelHub Admin",
   robots: {
     index: false,
     follow: false,
@@ -14,19 +15,21 @@ export default function AdminCitiesPage() {
   return (
     <main style={pageStyle}>
       <section style={shellStyle}>
-        <Link href="/admin" style={backStyle}>← Back to admin</Link>
+        <AdminNavigation />
 
-        <div style={eyebrowStyle}>Cities</div>
+        <Link href="/admin" style={backStyle}>← 管理メニューへ戻る</Link>
 
-        <h1 style={titleStyle}>Manage cities</h1>
+        <div style={eyebrowStyle}>都市管理</div>
+
+        <h1 style={titleStyle}>都市を管理</h1>
 
         <p style={textStyle}>
-          Create, edit, view, and delete city records stored in Supabase.
+          Supabase に保存された都市レコードを作成、編集、表示、削除します。
         </p>
 
         <div style={actionRowStyle}>
           <Link href="/admin/cities/new" style={primaryLinkStyle}>
-            New city
+            新しい都市
           </Link>
         </div>
 

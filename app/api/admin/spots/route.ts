@@ -26,13 +26,13 @@ function isDuplicateError(error: AdminDbError) {
 function spotErrorResponse(error: AdminDbError) {
   if (isDuplicateError(error)) {
     return NextResponse.json(
-      { error: "A spot with this slug already exists for the selected city." },
+      { error: "選択した都市には、このスラッグのスポットがすでに存在します。" },
       { status: 409 }
     );
   }
 
   return NextResponse.json(
-    { error: error.message ?? "Failed to save spot." },
+    { error: error.message ?? "スポットの保存に失敗しました。" },
     { status: 500 }
   );
 }
@@ -54,7 +54,7 @@ async function resolveCityForSpot(cityId: string) {
   if (error || !data?.id) {
     return {
       cityId: null,
-      error: "Selected city was not found.",
+      error: "選択した都市が見つかりません。",
     };
   }
 
@@ -116,7 +116,7 @@ export async function POST(request: Request) {
 
   if (!city.cityId || !name || !slug) {
     return NextResponse.json(
-      { error: "cityId, name, and slug are required." },
+      { error: "都市、スポット名、スラッグは必須です。" },
       { status: 400 }
     );
   }
@@ -158,7 +158,7 @@ export async function PATCH(request: Request) {
 
   if (!id) {
     return NextResponse.json(
-      { error: "id is required." },
+      { error: "idは必須です。" },
       { status: 400 }
     );
   }
@@ -215,7 +215,7 @@ export async function DELETE(request: Request) {
 
   if (!id) {
     return NextResponse.json(
-      { error: "id is required." },
+      { error: "idは必須です。" },
       { status: 400 }
     );
   }

@@ -51,7 +51,7 @@ export async function POST(request: Request) {
     formData = await request.formData();
   } catch {
     return NextResponse.json(
-      { error: "Expected multipart/form-data." },
+      { error: "multipart/form-data で送信してください。" },
       { status: 400 }
     );
   }
@@ -60,26 +60,26 @@ export async function POST(request: Request) {
   const kind = getStringField(formData, "kind");
 
   if (!file) {
-    return NextResponse.json({ error: "file is required." }, { status: 400 });
+    return NextResponse.json({ error: "ファイルは必須です。" }, { status: 400 });
   }
 
   if (!(file instanceof File)) {
     return NextResponse.json(
-      { error: "file must be an image file." },
+      { error: "画像ファイルを選択してください。" },
       { status: 400 }
     );
   }
 
   if (kind !== "city" && kind !== "spot") {
     return NextResponse.json(
-      { error: 'kind must be either "city" or "spot".' },
+      { error: "kind は city または spot を指定してください。" },
       { status: 400 }
     );
   }
 
   if (file.size > MAX_FILE_SIZE) {
     return NextResponse.json(
-      { error: "file must be 5MB or smaller." },
+      { error: "ファイルサイズは5MB以下にしてください。" },
       { status: 413 }
     );
   }
@@ -88,7 +88,7 @@ export async function POST(request: Request) {
 
   if (!extension) {
     return NextResponse.json(
-      { error: "file must be a JPEG, PNG, or WebP image." },
+      { error: "JPEG、PNG、WebP の画像を選択してください。" },
       { status: 415 }
     );
   }

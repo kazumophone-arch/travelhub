@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { AdminSupabaseSpotList } from "@/components/AdminSupabaseSpotList";
+import { AdminNavigation } from "@/components/AdminNavigation";
 import type { CSSProperties } from "react";
 
 export const metadata = {
-  title: "Spots | TravelHub Admin",
+  title: "スポット管理 | TravelHub Admin",
   robots: {
     index: false,
     follow: false,
@@ -14,27 +15,29 @@ export default function AdminSpotsPage() {
   return (
     <main style={pageStyle}>
       <section style={shellStyle}>
-        <Link href="/admin" style={backStyle}>← Back to admin</Link>
+        <AdminNavigation />
 
-        <div style={eyebrowStyle}>Spots</div>
+        <Link href="/admin" style={backStyle}>← 管理メニューへ戻る</Link>
 
-        <h1 style={titleStyle}>Manage spots</h1>
+        <div style={eyebrowStyle}>スポット管理</div>
+
+        <h1 style={titleStyle}>スポットを管理</h1>
 
         <p style={textStyle}>
-          Create, edit, publish, view, and delete travel spots stored in Supabase.
+          Supabase に保存されたスポットを作成、編集、公開、表示、削除します。
         </p>
 
         <div style={gridStyle}>
           <Link href="/admin/spots/new" style={cardStyle}>
-            <span style={labelStyle}>Create</span>
-            <strong style={cardTitleStyle}>New spot</strong>
-            <p style={cardTextStyle}>Add a new spot with title, slug, image, and links.</p>
+            <span style={labelStyle}>作成</span>
+            <strong style={cardTitleStyle}>新しいスポット</strong>
+            <p style={cardTextStyle}>タイトル、スラッグ、画像、リンクを設定します。</p>
           </Link>
 
           <div style={cardStyle}>
-            <span style={labelStyle}>Available now</span>
-            <strong style={cardTitleStyle}>Spot list</strong>
-            <p style={cardTextStyle}>Review, filter, edit, view, and delete existing spots.</p>
+            <span style={labelStyle}>一覧</span>
+            <strong style={cardTitleStyle}>スポットリスト</strong>
+            <p style={cardTextStyle}>既存スポットの確認、絞り込み、編集、表示、削除を行います。</p>
           </div>
         </div>
 

@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, type CSSProperties } from "react";
+import { AdminLivePreview, hasPreviewUrl } from "@/components/AdminLivePreview";
 import {
   formatValidationErrors,
   slugify,
   validateCityFields,
   validateSlug,
 } from "@/lib/admin-validation";
-import { getImageBackground } from "@/lib/url-fields";
 
 type CityForm = {
   city: string;
@@ -20,6 +20,8 @@ type CityForm = {
   imageAlt: string;
   imageCredit: string;
   imageSourceUrl: string;
+  affiliateHotelUrl: string;
+  affiliateTourUrl: string;
   isPublished: boolean;
   sortRank: number;
 };
@@ -37,6 +39,8 @@ const initialForm: CityForm = {
   imageAlt: "",
   imageCredit: "",
   imageSourceUrl: "",
+  affiliateHotelUrl: "",
+  affiliateTourUrl: "",
   isPublished: false,
   sortRank: 999,
 };
@@ -47,7 +51,7 @@ async function readResponse(response: Response) {
   try {
     return text ? JSON.parse(text) : {};
   } catch {
-    return { error: text || "Invalid server response." };
+    return { error: text || "サーバー応答を読み取れませんでした。" };
   }
 }
 
@@ -81,7 +85,7 @@ export function AdminNewCityForm() {
       return;
     }
 
-    setStatusMessage("Creating city...");
+    setStatusMessage("都市を作成しています...");
 
     const response = await fetch("/api/admin/cities", {
       method: "POST",
@@ -94,15 +98,15 @@ export function AdminNewCityForm() {
     const data = await readResponse(response);
 
     if (!response.ok) {
-      setStatusMessage(data.error ?? "Failed to create city.", "error");
+      setStatusMessage(data.error ?? "都市の作成に失敗しました。", "error");
       return;
     }
 
-    setStatusMessage("City created successfully.", "success");
+    setStatusMessage("都市を作成しました。", "success");
   }
 
   async function uploadCityImage() {
-    const slugError = validateSlug(form.slug, "City slug");
+    const slugError = validateSlug(form.slug, "都市スラッグ");
 
     if (slugError) {
       setStatusMessage(slugError, "error");
@@ -110,12 +114,12 @@ export function AdminNewCityForm() {
     }
 
     if (!imageFile) {
-      setStatusMessage("Choose an image file before uploading.", "error");
+      setStatusMessage("アップロードする画像ファイルを選択してください。", "error");
       return;
     }
 
     setIsUploadingImage(true);
-    setStatusMessage("Uploading image...");
+    setStatusMessage("画像をアップロードしています...");
 
     const uploadForm = new FormData();
     uploadForm.append("file", imageFile);
@@ -131,17 +135,17 @@ export function AdminNewCityForm() {
       const data = await readResponse(response);
 
       if (!response.ok || typeof data.publicUrl !== "string") {
-        setStatusMessage(data.error ?? "Failed to upload image.", "error");
+        setStatusMessage(data.error ?? "画像のアップロードに失敗しました。", "error");
         return;
       }
 
       update("imageUrl", data.publicUrl);
       setStatusMessage(
-        "Image uploaded. The Image URL field has been updated.",
+        "画像をアップロードしました。画像URL欄を更新しました。",
         "success"
       );
     } catch {
-      setStatusMessage("Failed to upload image.", "error");
+      setStatusMessage("画像のアップロードに失敗しました。", "error");
     } finally {
       setIsUploadingImage(false);
     }
@@ -151,7 +155,7 @@ export function AdminNewCityForm() {
     <div style={wrapStyle}>
       <section style={formStyle}>
         <label style={labelStyle}>
-          City
+          都市名
           <input
             value={form.city}
             onChange={(event) => update("city", event.target.value)}
@@ -161,7 +165,7 @@ export function AdminNewCityForm() {
         </label>
 
         <label style={labelStyle}>
-          Slug
+          スラッグ
           <input
             value={form.slug}
             onChange={(event) => update("slug", slugify(event.target.value))}
@@ -171,7 +175,7 @@ export function AdminNewCityForm() {
         </label>
 
         <label style={labelStyle}>
-          Country
+          国
           <input
             value={form.country}
             onChange={(event) => update("country", event.target.value)}
@@ -181,7 +185,7 @@ export function AdminNewCityForm() {
         </label>
 
         <label style={labelStyle}>
-          Region
+          地域
           <input
             value={form.region}
             onChange={(event) => update("region", event.target.value)}
@@ -191,7 +195,7 @@ export function AdminNewCityForm() {
         </label>
 
         <label style={labelStyle}>
-          Summary
+          概要
           <textarea
             value={form.summary}
             onChange={(event) => update("summary", event.target.value)}
@@ -201,7 +205,7 @@ export function AdminNewCityForm() {
         </label>
 
         <label style={labelStyle}>
-          Description
+          説明
           <textarea
             value={form.description}
             onChange={(event) => update("description", event.target.value)}
@@ -211,7 +215,7 @@ export function AdminNewCityForm() {
         </label>
 
         <label style={labelStyle}>
-          Image URL (https)
+          画像URL（https）
           <input
             value={form.imageUrl}
             onChange={(event) => update("imageUrl", event.target.value)}
@@ -234,12 +238,12 @@ export function AdminNewCityForm() {
             style={buttonStyle}
             disabled={isUploadingImage}
           >
-            Upload image
+            画像をアップロード
           </button>
         </div>
 
         <label style={labelStyle}>
-          Image alt
+          画像代替テキスト
           <input
             value={form.imageAlt}
             onChange={(event) => update("imageAlt", event.target.value)}
@@ -249,7 +253,7 @@ export function AdminNewCityForm() {
         </label>
 
         <label style={labelStyle}>
-          Image credit
+          画像クレジット
           <input
             value={form.imageCredit}
             onChange={(event) => update("imageCredit", event.target.value)}
@@ -259,7 +263,7 @@ export function AdminNewCityForm() {
         </label>
 
         <label style={labelStyle}>
-          Image source URL (https)
+          画像出典URL（https）
           <input
             value={form.imageSourceUrl}
             onChange={(event) => update("imageSourceUrl", event.target.value)}
@@ -269,11 +273,31 @@ export function AdminNewCityForm() {
         </label>
 
         <label style={labelStyle}>
-          Sort rank
+          表示順
           <input
             type="number"
             value={form.sortRank}
             onChange={(event) => update("sortRank", Number(event.target.value))}
+            style={inputStyle}
+          />
+        </label>
+
+        <label style={labelStyle}>
+          ホテルアフィリエイトURL（https）
+          <input
+            value={form.affiliateHotelUrl}
+            onChange={(event) => update("affiliateHotelUrl", event.target.value)}
+            placeholder="https://..."
+            style={inputStyle}
+          />
+        </label>
+
+        <label style={labelStyle}>
+          ツアーアフィリエイトURL（https）
+          <input
+            value={form.affiliateTourUrl}
+            onChange={(event) => update("affiliateTourUrl", event.target.value)}
+            placeholder="https://..."
             style={inputStyle}
           />
         </label>
@@ -284,11 +308,11 @@ export function AdminNewCityForm() {
             checked={form.isPublished}
             onChange={(event) => update("isPublished", event.target.checked)}
           />
-          Published
+          公開
         </label>
 
         <button type="button" onClick={createCity} style={buttonStyle}>
-          Create city
+          都市を作成
         </button>
 
         {status && (
@@ -298,37 +322,34 @@ export function AdminNewCityForm() {
         )}
       </section>
 
-      <section style={previewStyle}>
-        <div style={previewLabelStyle}>Preview</div>
-
-        <div
-          style={{
-            ...cardStyle,
-            backgroundImage: getImageBackground(
-              form.imageUrl,
-              "linear-gradient(180deg, rgba(10,18,24,.05), rgba(10,18,24,.76))",
-              "linear-gradient(135deg, #dfeeea, #f7efe2)"
-            ),
-          }}
-        >
-          <div style={badgeStyle}>{form.country || "Country"}</div>
-
-          <div style={panelStyle}>
-            <div style={metaStyle}>{form.isPublished ? "Published" : "Draft"}</div>
-            <h2 style={cardTitleStyle}>{form.city || "New city"}</h2>
-            <p style={cardTextStyle}>
-              {form.summary || "City summary will appear here."}
-            </p>
-          </div>
-        </div>
-      </section>
+      <AdminLivePreview
+        label="ライブプレビュー"
+        title={form.city || "新しい都市"}
+        subtitle={form.country || "国"}
+        description={form.description || form.summary}
+        imageUrl={form.imageUrl}
+        isPublished={form.isPublished}
+        publicPath={form.slug ? `/c/${form.slug}` : ""}
+        ctas={[
+          {
+            label: "ホテル",
+            href: `/out/hotels?c=${encodeURIComponent(form.slug)}&src=admin-preview&v=city_preview`,
+            isVisible: Boolean(form.slug) && hasPreviewUrl(form.affiliateHotelUrl),
+          },
+          {
+            label: "ツアー",
+            href: `/out/tours?c=${encodeURIComponent(form.slug)}&src=admin-preview&v=city_preview`,
+            isVisible: Boolean(form.slug) && hasPreviewUrl(form.affiliateTourUrl),
+          },
+        ]}
+      />
     </div>
   );
 }
 
 const wrapStyle: CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "minmax(0, 1fr) minmax(min(100%, 360px), 0.75fr)",
+  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 360px), 1fr))",
   gap: 18,
   alignItems: "start",
 };

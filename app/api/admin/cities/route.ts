@@ -27,20 +27,20 @@ function isForeignKeyError(error: AdminDbError) {
 function cityErrorResponse(error: AdminDbError) {
   if (isDuplicateError(error)) {
     return NextResponse.json(
-      { error: "A city with this slug already exists." },
+      { error: "このスラッグの都市はすでに存在します。" },
       { status: 409 }
     );
   }
 
   if (isForeignKeyError(error)) {
     return NextResponse.json(
-      { error: "Delete this city's spots before deleting the city." },
+      { error: "この都市を削除する前に、関連するスポットを削除してください。" },
       { status: 409 }
     );
   }
 
   return NextResponse.json(
-    { error: error.message ?? "Failed to save city." },
+    { error: error.message ?? "都市の保存に失敗しました。" },
     { status: 500 }
   );
 }
@@ -102,6 +102,8 @@ export async function POST(request: Request) {
     image_alt: String(body.imageAlt ?? ""),
     image_credit: String(body.imageCredit ?? ""),
     image_source_url: String(body.imageSourceUrl ?? ""),
+    affiliate_hotel_url: String(body.affiliateHotelUrl ?? ""),
+    affiliate_tour_url: String(body.affiliateTourUrl ?? ""),
     is_published: Boolean(body.isPublished),
     sort_rank: Number(body.sortRank ?? 999),
     updated_at: new Date().toISOString(),
@@ -130,7 +132,7 @@ export async function PATCH(request: Request) {
   const slug = String(body.slug ?? "").trim();
 
   if (!id) {
-    return NextResponse.json({ error: "id is required." }, { status: 400 });
+    return NextResponse.json({ error: "idは必須です。" }, { status: 400 });
   }
 
   if (validationErrors.length > 0) {
@@ -151,6 +153,8 @@ export async function PATCH(request: Request) {
     image_alt: String(body.imageAlt ?? ""),
     image_credit: String(body.imageCredit ?? ""),
     image_source_url: String(body.imageSourceUrl ?? ""),
+    affiliate_hotel_url: String(body.affiliateHotelUrl ?? ""),
+    affiliate_tour_url: String(body.affiliateTourUrl ?? ""),
     is_published: Boolean(body.isPublished),
     sort_rank: Number(body.sortRank ?? 999),
     updated_at: new Date().toISOString(),
@@ -175,7 +179,7 @@ export async function DELETE(request: Request) {
   const id = searchParams.get("id");
 
   if (!id) {
-    return NextResponse.json({ error: "id is required." }, { status: 400 });
+    return NextResponse.json({ error: "idは必須です。" }, { status: 400 });
   }
 
   const { error } = await supabaseAdmin

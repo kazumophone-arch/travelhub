@@ -27,7 +27,7 @@ export function AdminSupabaseSpotList() {
   const [spots, setSpots] = useState<SupabaseSpot[]>([]);
   const [cities, setCities] = useState<SupabaseCity[]>([]);
   const [filter, setFilter] = useState<Filter>("all");
-  const [status, setStatus] = useState("Loading...");
+  const [status, setStatus] = useState("読み込み中...");
 
   useEffect(() => {
     async function loadData() {
@@ -40,7 +40,7 @@ export function AdminSupabaseSpotList() {
       const citiesData = await citiesResponse.json();
 
       if (!spotsResponse.ok) {
-        setStatus(spotsData.error ?? "Failed to load spots.");
+        setStatus(spotsData.error ?? "スポットの読み込みに失敗しました。");
         return;
       }
 
@@ -66,13 +66,13 @@ export function AdminSupabaseSpotList() {
 
   function getCityLabel(spot: SupabaseSpot) {
     if (!spot.city_id) {
-      return "Missing city_id";
+      return "city_id が未設定です";
     }
 
     const city = cities.find((item) => item.id === spot.city_id);
 
     if (!city) {
-      return "Unknown city_id";
+      return "不明な都市ID";
     }
 
     return `${city.city}, ${city.country} (${city.slug})`;
@@ -87,7 +87,7 @@ export function AdminSupabaseSpotList() {
   }
 
   async function deleteSpot(id: string) {
-    const ok = window.confirm("Delete this spot from Supabase?");
+    const ok = window.confirm("このスポットを Supabase から削除しますか？");
     if (!ok) return;
 
     const response = await fetch(`/api/admin/spots?id=${id}`, {
@@ -97,7 +97,7 @@ export function AdminSupabaseSpotList() {
     const data = await response.json();
 
     if (!response.ok) {
-      setStatus(data.error ?? "Failed to delete spot.");
+      setStatus(data.error ?? "スポットの削除に失敗しました。");
       return;
     }
 
@@ -114,7 +114,7 @@ export function AdminSupabaseSpotList() {
             onClick={() => setFilter(value)}
             style={filter === value ? activeFilterStyle : filterStyle}
           >
-            {value}
+            {getFilterLabel(value)}
           </button>
         ))}
       </div>
@@ -122,7 +122,7 @@ export function AdminSupabaseSpotList() {
       {status && <div style={emptyStyle}>{status}</div>}
 
       {!status && filteredSpots.length === 0 && (
-        <div style={emptyStyle}>No spots found.</div>
+        <div style={emptyStyle}>スポットが見つかりません。</div>
       )}
 
       <div style={listStyle}>
@@ -133,26 +133,26 @@ export function AdminSupabaseSpotList() {
             <div key={spot.id} style={itemStyle}>
               <div>
                 <div style={metaStyle}>
-                  {getCityLabel(spot)} · {spot.is_published ? "Published" : "Draft"}
+                  {getCityLabel(spot)} · {spot.is_published ? "公開" : "下書き"}
                 </div>
 
                 <h2 style={titleStyle}>{spot.name}</h2>
 
-                <p style={textStyle}>{spot.summary || "No summary yet."}</p>
+                <p style={textStyle}>{spot.summary || "概要はまだありません。"}</p>
 
                 <code style={codeStyle}>
-                  {citySlug ? `/c/${citySlug}/spot/${spot.slug}` : "No public URL yet"}
+                  {citySlug ? `/c/${citySlug}/spot/${spot.slug}` : "公開URLはまだありません"}
                 </code>
               </div>
 
               <div style={buttonRowStyle}>
                 <Link href={`/admin/spots/edit/${spot.id}`} style={buttonStyle}>
-                  Edit
+                  編集
                 </Link>
 
                 {citySlug ? (
                   <Link href={`/c/${citySlug}/spot/${spot.slug}`} style={buttonStyle}>
-                    View
+                    表示
                   </Link>
                 ) : null}
 
@@ -161,7 +161,7 @@ export function AdminSupabaseSpotList() {
                   onClick={() => deleteSpot(spot.id)}
                   style={deleteButtonStyle}
                 >
-                  Delete
+                  削除
                 </button>
               </div>
             </div>
@@ -170,6 +170,12 @@ export function AdminSupabaseSpotList() {
       </div>
     </section>
   );
+}
+
+function getFilterLabel(filter: Filter) {
+  if (filter === "published") return "公開";
+  if (filter === "draft") return "下書き";
+  return "すべて";
 }
 
 const wrapStyle: CSSProperties = {

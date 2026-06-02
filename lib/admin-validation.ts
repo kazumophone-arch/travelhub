@@ -17,11 +17,11 @@ export function validateSlug(value: unknown, label: string) {
   const slug = asString(value);
 
   if (!slug) {
-    return `${label} is required.`;
+    return `${label}は必須です。`;
   }
 
   if (!slugPattern.test(slug)) {
-    return `${label} must use lowercase letters, numbers, and hyphens only, with no spaces or leading/trailing hyphen.`;
+    return `${label}は小文字、数字、ハイフンのみで入力してください。スペースや先頭・末尾のハイフンは使えません。`;
   }
 
   return null;
@@ -38,10 +38,10 @@ export function validateOptionalUrl(value: unknown, label: string) {
     const url = new URL(urlValue);
 
     if (url.protocol !== "http:" && url.protocol !== "https:") {
-      return `${label} must start with http:// or https://.`;
+      return `${label}は http:// または https:// で始まるURLにしてください。`;
     }
   } catch {
-    return `${label} must be a valid URL.`;
+    return `${label}は有効なURLにしてください。`;
   }
 
   return null;
@@ -50,7 +50,7 @@ export function validateOptionalUrl(value: unknown, label: string) {
 export function formatValidationErrors(errors: string[]) {
   return errors.length === 1
     ? errors[0]
-    : `Please fix these fields: ${errors.join(" ")}`;
+    : `次の項目を修正してください: ${errors.join(" ")}`;
 }
 
 export type CityValidationInput = {
@@ -59,6 +59,8 @@ export type CityValidationInput = {
   country?: unknown;
   imageUrl?: unknown;
   imageSourceUrl?: unknown;
+  affiliateHotelUrl?: unknown;
+  affiliateTourUrl?: unknown;
   sortRank?: unknown;
 };
 
@@ -66,24 +68,36 @@ export function validateCityFields(input: CityValidationInput) {
   const errors: string[] = [];
 
   if (!asString(input.city)) {
-    errors.push("City name is required.");
+    errors.push("都市名は必須です。");
   }
 
-  const slugError = validateSlug(input.slug, "City slug");
+  const slugError = validateSlug(input.slug, "都市スラッグ");
   if (slugError) errors.push(slugError);
 
   if (!asString(input.country)) {
-    errors.push("Country is required.");
+    errors.push("国は必須です。");
   }
 
-  const imageUrlError = validateOptionalUrl(input.imageUrl, "Image URL");
+  const imageUrlError = validateOptionalUrl(input.imageUrl, "画像URL");
   if (imageUrlError) errors.push(imageUrlError);
 
   const imageSourceUrlError = validateOptionalUrl(
     input.imageSourceUrl,
-    "Image source URL"
+    "画像出典URL"
   );
   if (imageSourceUrlError) errors.push(imageSourceUrlError);
+
+  const hotelUrlError = validateOptionalUrl(
+    input.affiliateHotelUrl,
+    "ホテルアフィリエイトURL"
+  );
+  if (hotelUrlError) errors.push(hotelUrlError);
+
+  const tourUrlError = validateOptionalUrl(
+    input.affiliateTourUrl,
+    "ツアーアフィリエイトURL"
+  );
+  if (tourUrlError) errors.push(tourUrlError);
 
   if (
     input.sortRank !== undefined &&
@@ -91,7 +105,7 @@ export function validateCityFields(input: CityValidationInput) {
     input.sortRank !== "" &&
     !Number.isFinite(Number(input.sortRank))
   ) {
-    errors.push("Sort rank must be a number.");
+    errors.push("表示順は数値で入力してください。");
   }
 
   return errors;
@@ -111,34 +125,34 @@ export function validateSpotFields(input: SpotValidationInput) {
   const errors: string[] = [];
 
   if (!asString(input.cityId)) {
-    errors.push("City is required.");
+    errors.push("都市は必須です。");
   }
 
   if (!asString(input.name)) {
-    errors.push("Spot name is required.");
+    errors.push("スポット名は必須です。");
   }
 
-  const slugError = validateSlug(input.slug, "Spot slug");
+  const slugError = validateSlug(input.slug, "スポットスラッグ");
   if (slugError) errors.push(slugError);
 
-  const imageUrlError = validateOptionalUrl(input.imageUrl, "Image URL");
+  const imageUrlError = validateOptionalUrl(input.imageUrl, "画像URL");
   if (imageUrlError) errors.push(imageUrlError);
 
   const imageSourceUrlError = validateOptionalUrl(
     input.imageSourceUrl,
-    "Image source URL"
+    "画像出典URL"
   );
   if (imageSourceUrlError) errors.push(imageSourceUrlError);
 
   const hotelUrlError = validateOptionalUrl(
     input.affiliateHotelUrl,
-    "Hotel affiliate URL"
+    "ホテルアフィリエイトURL"
   );
   if (hotelUrlError) errors.push(hotelUrlError);
 
   const tourUrlError = validateOptionalUrl(
     input.affiliateTourUrl,
-    "Tour affiliate URL"
+    "ツアーアフィリエイトURL"
   );
   if (tourUrlError) errors.push(tourUrlError);
 

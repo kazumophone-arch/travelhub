@@ -20,7 +20,7 @@ type Filter = "all" | "draft" | "published";
 export function AdminSupabaseCityList() {
   const [cities, setCities] = useState<CityRow[]>([]);
   const [filter, setFilter] = useState<Filter>("all");
-  const [status, setStatus] = useState("Loading...");
+  const [status, setStatus] = useState("読み込み中...");
 
   useEffect(() => {
     async function loadCities() {
@@ -28,7 +28,7 @@ export function AdminSupabaseCityList() {
       const data = await response.json();
 
       if (!response.ok) {
-        setStatus(data.error ?? "Failed to load cities.");
+        setStatus(data.error ?? "都市の読み込みに失敗しました。");
         return;
       }
 
@@ -47,7 +47,7 @@ export function AdminSupabaseCityList() {
 
 
   async function deleteCity(id: string) {
-    const ok = window.confirm("Delete this city from Supabase?");
+    const ok = window.confirm("この都市を Supabase から削除しますか？");
     if (!ok) return;
 
     const response = await fetch(`/api/admin/cities?id=${id}`, {
@@ -57,7 +57,7 @@ export function AdminSupabaseCityList() {
     const data = await response.json();
 
     if (!response.ok) {
-      setStatus(data.error ?? "Failed to delete city.");
+      setStatus(data.error ?? "都市の削除に失敗しました。");
       return;
     }
 
@@ -73,7 +73,7 @@ export function AdminSupabaseCityList() {
             onClick={() => setFilter(value)}
             style={filter === value ? activeFilterStyle : filterStyle}
           >
-            {value}
+            {getFilterLabel(value)}
           </button>
         ))}
       </div>
@@ -81,7 +81,7 @@ export function AdminSupabaseCityList() {
       {status && <div style={emptyStyle}>{status}</div>}
 
       {!status && filteredCities.length === 0 && (
-        <div style={emptyStyle}>No cities found.</div>
+        <div style={emptyStyle}>都市が見つかりません。</div>
       )}
 
       <div style={listStyle}>
@@ -89,23 +89,23 @@ export function AdminSupabaseCityList() {
           <div key={city.id} style={itemStyle}>
             <div>
               <div style={metaStyle}>
-                {city.country} · {city.is_published ? "Published" : "Draft"}
+                {city.country} · {city.is_published ? "公開" : "下書き"}
               </div>
 
               <h2 style={titleStyle}>{city.city}</h2>
 
-              <p style={textStyle}>{city.summary || "No summary yet."}</p>
+                <p style={textStyle}>{city.summary || "概要はまだありません。"}</p>
 
               <code style={codeStyle}>/c/{city.slug}</code>
             </div>
 
             <div style={buttonRowStyle}>
               <Link href={`/admin/cities/edit/${city.id}`} style={buttonStyle}>
-                Edit
+                編集
               </Link>
 
               <Link href={`/c/${city.slug}`} style={buttonStyle}>
-                View
+                表示
               </Link>
 
               <button
@@ -113,7 +113,7 @@ export function AdminSupabaseCityList() {
                 onClick={() => deleteCity(city.id)}
                 style={deleteButtonStyle}
               >
-                Delete
+                削除
               </button>
             </div>
           </div>
@@ -121,6 +121,12 @@ export function AdminSupabaseCityList() {
       </div>
     </section>
   );
+}
+
+function getFilterLabel(filter: Filter) {
+  if (filter === "published") return "公開";
+  if (filter === "draft") return "下書き";
+  return "すべて";
 }
 
 const wrapStyle: CSSProperties = {
