@@ -3,7 +3,7 @@ import type { CSSProperties } from "react";
 import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
 import type { SupabasePublicCity } from "@/data/supabase-public-cities";
 import { getPublishedSupabaseSpotsForCity } from "@/data/supabase-public-spots";
-import { getImageBackground } from "@/lib/url-fields";
+import { getImageBackground, getOptionalHttpUrl } from "@/lib/url-fields";
 
 type Props = {
   city: SupabasePublicCity;
@@ -20,6 +20,8 @@ type Spot = {
 
 export async function SupabaseCityDetail({ city }: Props) {
   const spots = (await getPublishedSupabaseSpotsForCity(city.slug)) as Spot[];
+  const hasHotelAffiliate = Boolean(getOptionalHttpUrl(city.affiliate_hotel_url));
+  const hasTourAffiliate = Boolean(getOptionalHttpUrl(city.affiliate_tour_url));
 
   return (
     <main style={pageStyle}>
@@ -39,15 +41,20 @@ export async function SupabaseCityDetail({ city }: Props) {
           <p style={leadStyle}>
             {city.summary || city.description || "A TravelHub city guide."}
           </p>
-          <div style={heroCtaStyle}>
-            <AffiliateButtonGroup
-              city={city}
-              src="city-detail"
-              v={`city_${city.slug}`}
-              tone="dark"
-              variant="city"
-            />
-          </div>
+          {hasHotelAffiliate || hasTourAffiliate ? (
+            <div style={heroCtaStyle}>
+              <AffiliateButtonGroup
+                city={city}
+                src="city-detail"
+                v={`city_${city.slug}`}
+                primary={hasHotelAffiliate ? "hotels" : "tours"}
+                tone="dark"
+                variant="city"
+                showHotels={hasHotelAffiliate}
+                showTours={hasTourAffiliate}
+              />
+            </div>
+          ) : null}
         </div>
       </section>
 

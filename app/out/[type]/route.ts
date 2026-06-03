@@ -19,8 +19,8 @@ type SupabaseRedirectSpot = {
   city_id: string | null;
   name: string;
   slug: string;
-  affiliate_hotel_url: string;
-  affiliate_tour_url: string;
+  affiliate_hotel_url: string | null;
+  affiliate_tour_url: string | null;
 };
 
 type ClickLogInput = {

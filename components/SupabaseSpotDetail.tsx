@@ -12,9 +12,9 @@ type Props = {
 
 export function SupabaseSpotDetail({ city, spot }: Props) {
   const hotelAffiliateUrl =
-    spot.affiliateHotelUrl ?? spot.affiliate_hotel_url ?? city.affiliate_hotel_url;
+    spot.affiliateHotelUrl ?? spot.affiliate_hotel_url;
   const tourAffiliateUrl =
-    spot.affiliateTourUrl ?? spot.affiliate_tour_url ?? city.affiliate_tour_url;
+    spot.affiliateTourUrl ?? spot.affiliate_tour_url;
   const hasHotelAffiliate = Boolean(getOptionalHttpUrl(hotelAffiliateUrl));
   const hasTourAffiliate = Boolean(getOptionalHttpUrl(tourAffiliateUrl));
 
