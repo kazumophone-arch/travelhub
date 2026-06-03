@@ -85,9 +85,9 @@ export function AdminLivePreview({
           {visibleCtas.length > 0 ? (
             <div style={ctaRowStyle}>
               {visibleCtas.map((cta) => (
-                <Link key={cta.label} href={cta.href} style={ctaStyle}>
+                <a key={cta.label} href={cta.href} style={ctaStyle}>
                   {cta.label}
-                </Link>
+                </a>
               ))}
             </div>
           ) : null}

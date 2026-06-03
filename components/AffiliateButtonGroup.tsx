@@ -1,4 +1,3 @@
-import Link from "next/link";
 import type { CSSProperties } from "react";
 import type { City } from "@/data/types";
 
@@ -98,7 +97,7 @@ export function AffiliateButtonGroup({
         const trustStyle = getTrustStyle(isPrimary, tone);
 
         return (
-          <Link key={item.key} href={item.href} style={cardStyle}>
+          <a key={item.key} href={item.href} style={cardStyle}>
             <div style={cardTopStyle}>
               <span style={labelStyle}>{item.label}</span>
               <span style={arrowStyle}>→</span>
@@ -111,7 +110,7 @@ export function AffiliateButtonGroup({
             <div style={trustStyle}>
               External link · No extra cost · Compare details
             </div>
-          </Link>
+          </a>
         );
       })}
 

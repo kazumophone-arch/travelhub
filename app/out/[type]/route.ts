@@ -41,6 +41,34 @@ type SupabaseError = {
   message?: string;
 };
 
+type OutboundRouteContext = {
+  params: Promise<{ type: string }>;
+};
+
+function isPrefetchRequest(request: Request) {
+  const purpose = request.headers.get("purpose")?.toLowerCase();
+  const secPurpose = request.headers.get("sec-purpose")?.toLowerCase();
+  const nextRouterPrefetch = request.headers.get("next-router-prefetch");
+  const middlewarePrefetch = request.headers.get("x-middleware-prefetch");
+  const rsc = request.headers.get("rsc");
+  const accept = request.headers.get("accept")?.toLowerCase();
+
+  return (
+    purpose === "prefetch" ||
+    secPurpose?.includes("prefetch") === true ||
+    nextRouterPrefetch === "1" ||
+    nextRouterPrefetch === "true" ||
+    middlewarePrefetch === "1" ||
+    middlewarePrefetch === "true" ||
+    rsc === "1" ||
+    accept?.includes("text/x-component") === true
+  );
+}
+
+function shouldLogOutboundClick(request: Request) {
+  return request.method.toUpperCase() !== "HEAD" && !isPrefetchRequest(request);
+}
+
 function isMissingCityAffiliateColumnError(error: SupabaseError) {
   const message = String(error.message ?? "").toLowerCase();
 
@@ -234,12 +262,7 @@ async function logOutboundClick(input: ClickLogInput) {
   }
 }
 
-export async function GET(
-  request: Request,
-  context: {
-    params: Promise<{ type: string }>;
-  }
-) {
+async function handleOutboundRedirect(request: Request, context: OutboundRouteContext) {
   const { type } = await context.params;
 
   if (!isAffiliateLinkType(type)) {
@@ -256,6 +279,7 @@ export async function GET(
   const userAgent = request.headers.get("user-agent") ?? "";
   const forwardedFor = request.headers.get("x-forwarded-for") ?? "";
   const realIp = request.headers.get("x-real-ip") ?? "";
+  const shouldLogClick = shouldLogOutboundClick(request);
 
   const inferredSpotSlug = inferSpotSlug({
     citySlug,
@@ -301,18 +325,20 @@ export async function GET(
     fallbackUrl.searchParams.set("src", src);
     fallbackUrl.searchParams.set("v", videoId);
 
-    await logOutboundClick({
-      type,
-      cityId: supabaseCity.id,
-      spotId: supabaseSpot?.id ?? null,
-      citySlug: supabaseCity.slug,
-      spotSlug: (supabaseSpot?.slug ?? inferredSpotSlug) || null,
-      targetUrl: fallbackUrl.toString(),
-      src,
-      videoId,
-      referer,
-      userAgent,
-    });
+    if (shouldLogClick) {
+      await logOutboundClick({
+        type,
+        cityId: supabaseCity.id,
+        spotId: supabaseSpot?.id ?? null,
+        citySlug: supabaseCity.slug,
+        spotSlug: (supabaseSpot?.slug ?? inferredSpotSlug) || null,
+        targetUrl: fallbackUrl.toString(),
+        src,
+        videoId,
+        referer,
+        userAgent,
+      });
+    }
 
     return NextResponse.redirect(fallbackUrl, 302);
   }
@@ -338,20 +364,30 @@ export async function GET(
     ip_hint: forwardedFor || realIp || null,
   };
 
-  console.info("[TravelHub click]", JSON.stringify(clickEvent));
+  if (shouldLogClick) {
+    console.info("[TravelHub click]", JSON.stringify(clickEvent));
 
-  await logOutboundClick({
-    type,
-    cityId: supabaseCity.id,
-    spotId: supabaseSpot?.id ?? null,
-    citySlug: supabaseCity.slug,
-    spotSlug: (supabaseSpot?.slug ?? inferredSpotSlug) || null,
-    targetUrl: affiliateLink.url,
-    src,
-    videoId,
-    referer,
-    userAgent,
-  });
+    await logOutboundClick({
+      type,
+      cityId: supabaseCity.id,
+      spotId: supabaseSpot?.id ?? null,
+      citySlug: supabaseCity.slug,
+      spotSlug: (supabaseSpot?.slug ?? inferredSpotSlug) || null,
+      targetUrl: affiliateLink.url,
+      src,
+      videoId,
+      referer,
+      userAgent,
+    });
+  }
 
   return NextResponse.redirect(affiliateLink.url, 302);
+}
+
+export async function GET(request: Request, context: OutboundRouteContext) {
+  return handleOutboundRedirect(request, context);
+}
+
+export async function HEAD(request: Request, context: OutboundRouteContext) {
+  return handleOutboundRedirect(request, context);
 }
