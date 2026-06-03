@@ -30,6 +30,7 @@ export type Spot = {
   sortRank?: number;
 
   imageUrl?: string;
+  imagePosition?: string;
   imageAlt?: string;
   imageCredit?: string;
   imageSourceUrl?: string;
@@ -53,6 +54,7 @@ export type City = {
   sortRank?: number;
 
   imageUrl?: string;
+  imagePosition?: string;
   imageAlt?: string;
   imageCredit?: string;
   imageSourceUrl?: string;

@@ -4,7 +4,11 @@ import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
 import type { SupabasePublicCity } from "@/data/supabase-public-cities";
 import { getPublishedSupabaseSpotsForCity } from "@/data/supabase-public-spots";
 import type { TrackingParams } from "@/lib/tracking-query";
-import { getImageBackground, getOptionalHttpUrl } from "@/lib/url-fields";
+import {
+  getCssImagePosition,
+  getImageBackground,
+  getOptionalHttpUrl,
+} from "@/lib/url-fields";
 
 type Props = {
   city: SupabasePublicCity;
@@ -18,6 +22,7 @@ type Spot = {
   slug: string;
   summary: string;
   image_url: string;
+  image_position?: string | null;
 };
 
 export async function SupabaseCityDetail({ city, tracking }: Props) {
@@ -38,6 +43,7 @@ export async function SupabaseCityDetail({ city, tracking }: Props) {
             "linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.84))",
             "linear-gradient(135deg, #e8f4ff, #edf8f2)"
           ),
+          backgroundPosition: getCssImagePosition(city.imagePosition ?? city.image_position),
         }}
       >
         <div style={heroPanelStyle}>
@@ -82,6 +88,7 @@ export async function SupabaseCityDetail({ city, tracking }: Props) {
                     "linear-gradient(180deg, rgba(255,255,255,0), rgba(23,32,42,.08))",
                     "linear-gradient(135deg, #e8f4ff, #edf8f2)"
                   ),
+                  backgroundPosition: getCssImagePosition(spot.image_position),
                 }}
               >
                 <div style={badgeStyle}>{city.city}</div>

@@ -1,6 +1,11 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
-import { getImageBackground, getOptionalHttpUrl } from "@/lib/url-fields";
+import {
+  getCssImagePosition,
+  getImageBackground,
+  getOptionalHttpUrl,
+  type ImagePosition,
+} from "@/lib/url-fields";
 
 type CtaPreview = {
   label: string;
@@ -14,6 +19,7 @@ type Props = {
   subtitle: string;
   description: string;
   imageUrl: string;
+  imagePosition?: ImagePosition;
   isPublished: boolean;
   publicPath: string;
   ctas?: CtaPreview[];
@@ -25,6 +31,7 @@ export function AdminLivePreview({
   subtitle,
   description,
   imageUrl,
+  imagePosition,
   isPublished,
   publicPath,
   ctas = [],
@@ -71,6 +78,7 @@ export function AdminLivePreview({
             "linear-gradient(180deg, rgba(10,18,24,.05), rgba(10,18,24,.76))",
             "linear-gradient(135deg, #dfeeea, #f7efe2)"
           ),
+          backgroundPosition: getCssImagePosition(imagePosition),
         }}
       >
         <div style={badgeStyle}>{isPublished ? "公開" : "下書き"}</div>

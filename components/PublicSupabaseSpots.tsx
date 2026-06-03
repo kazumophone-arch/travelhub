@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import { supabase } from "@/lib/supabase";
-import { getImageBackground } from "@/lib/url-fields";
+import { getCssImagePosition, getImageBackground } from "@/lib/url-fields";
 
 type Spot = {
   id: string;
@@ -10,6 +10,7 @@ type Spot = {
   slug: string;
   summary: string;
   image_url: string;
+  image_position?: string | null;
 };
 
 type City = {
@@ -23,7 +24,7 @@ export async function PublicSupabaseSpots() {
   const [spotsResult, citiesResult] = await Promise.all([
     supabase
       .from("spots")
-      .select("id, city_id, name, slug, summary, image_url")
+      .select("id, city_id, name, slug, summary, image_url, image_position")
       .eq("is_published", true)
       .order("created_at", { ascending: false }),
     supabase
@@ -77,6 +78,7 @@ export async function PublicSupabaseSpots() {
                 "linear-gradient(180deg, rgba(255,255,255,0), rgba(23,32,42,.08))",
                 "linear-gradient(135deg, #e8f4ff, #edf8f2)"
               ),
+              backgroundPosition: getCssImagePosition(spot.image_position),
             }}
           >
             <div style={badgeStyle}>{city?.city ?? citySlug}</div>

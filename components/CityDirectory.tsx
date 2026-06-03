@@ -9,7 +9,11 @@ import { getMapMagazineVisual } from "@/lib/mapMagazineVisuals";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { getDisplayStops } from "@/lib/displayText";
 import { citiesCopyVariants, pickDailyVariant } from "@/lib/copyVariants";
-import { getImageBackground, getOptionalHttpUrl } from "@/lib/url-fields";
+import {
+  getCssImagePosition,
+  getImageBackground,
+  getOptionalHttpUrl,
+} from "@/lib/url-fields";
 
 type Props = {
   cities: City[];
@@ -221,7 +225,7 @@ function getCityPhotoCardStyle(city: City): CSSProperties {
       "linear-gradient(135deg, #e8f4ff, #edf8f2)"
     ),
     backgroundSize: "cover",
-    backgroundPosition: "center",
+    backgroundPosition: getCssImagePosition(city.imagePosition),
   };
 }
 export function CityDirectory({ cities }: Props) {

@@ -4,6 +4,7 @@ import { SpotDirectory } from "@/components/SpotDirectory";
 import { sortByRank } from "@/data/visibility";
 import { createPublicMetadata } from "@/lib/site-metadata";
 import { supabase } from "@/lib/supabase";
+import { normalizeImagePosition } from "@/lib/url-fields";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +16,7 @@ export const metadata: Metadata = createPublicMetadata({
 });
 
 const SUPABASE_SPOTS_SELECT =
-  "id, city_id, name, slug, summary, description, image_url, image_alt, image_credit, image_source_url, affiliate_hotel_url, affiliate_tour_url, is_published";
+  "id, city_id, name, slug, summary, description, image_url, image_alt, image_credit, image_source_url, image_position, affiliate_hotel_url, affiliate_tour_url, is_published";
 
 type SupabaseCityRow = {
   id: string;
@@ -30,6 +31,7 @@ type SupabaseCityRow = {
   image_alt: string;
   image_credit: string;
   image_source_url: string;
+  image_position?: string | null;
   affiliate_hotel_url?: string | null;
   affiliate_tour_url?: string | null;
   is_published: boolean;
@@ -47,6 +49,7 @@ type SupabaseSpotRow = {
   image_alt: string;
   image_credit: string;
   image_source_url: string;
+  image_position?: string | null;
   affiliate_hotel_url: string;
   affiliate_tour_url: string;
   is_published: boolean;
@@ -59,6 +62,7 @@ function toDirectorySpot(row: SupabaseSpotRow) {
     summary: row.summary,
     description: row.description,
     imageUrl: row.image_url,
+    imagePosition: normalizeImagePosition(row.image_position),
     imageAlt: row.image_alt || row.name,
     imageCredit: row.image_credit,
     imageSourceUrl: row.image_source_url,
@@ -83,6 +87,7 @@ function toDirectoryCity(row: SupabaseCityRow, spots: SupabaseSpotRow[]): City {
     summary: row.summary,
     description: row.description,
     imageUrl: row.image_url,
+    imagePosition: normalizeImagePosition(row.image_position),
     imageAlt: row.image_alt || row.city,
     imageCredit: row.image_credit,
     imageSourceUrl: row.image_source_url,

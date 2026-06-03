@@ -16,6 +16,11 @@ import {
   validateCityFields,
   validateSlug,
 } from "@/lib/admin-validation";
+import {
+  IMAGE_POSITION_OPTIONS,
+  normalizeImagePosition,
+  type ImagePosition,
+} from "@/lib/url-fields";
 
 type Props = {
   id: string;
@@ -31,6 +36,7 @@ type CityForm = {
   summary: string;
   description: string;
   imageUrl: string;
+  imagePosition: ImagePosition;
   imageAlt: string;
   imageCredit: string;
   imageSourceUrl: string;
@@ -61,6 +67,7 @@ const emptyForm: CityForm = {
   summary: "",
   description: "",
   imageUrl: "",
+  imagePosition: "center",
   imageAlt: "",
   imageCredit: "",
   imageSourceUrl: "",
@@ -147,6 +154,7 @@ export function AdminEditCityForm({ id }: Props) {
         summary: String(cityData.summary ?? ""),
         description: String(cityData.description ?? ""),
         imageUrl: String(cityData.image_url ?? ""),
+        imagePosition: normalizeImagePosition(cityData.image_position),
         imageAlt: String(cityData.image_alt ?? ""),
         imageCredit: String(cityData.image_credit ?? ""),
         imageSourceUrl: String(cityData.image_source_url ?? ""),
@@ -361,6 +369,26 @@ export function AdminEditCityForm({ id }: Props) {
         </AdminFieldHint>
         <AdminUrlTestLink url={form.imageUrl} />
 
+        <label style={labelStyle}>
+          画像の表示位置
+          <select
+            value={form.imagePosition}
+            onChange={(event) =>
+              update("imagePosition", normalizeImagePosition(event.target.value))
+            }
+            style={inputStyle}
+          >
+            {IMAGE_POSITION_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <AdminFieldHint>
+          画像が切れる場合に、どの位置を優先して表示するかを選びます。
+        </AdminFieldHint>
+
         <div style={uploadWrapStyle}>
           <input
             type="file"
@@ -448,6 +476,7 @@ export function AdminEditCityForm({ id }: Props) {
         subtitle={form.country || "国"}
         description={form.description || form.summary}
         imageUrl={form.imageUrl}
+        imagePosition={form.imagePosition}
         isPublished={form.isPublished}
         publicPath={form.slug ? `/c/${form.slug}` : ""}
         ctas={[

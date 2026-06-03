@@ -4,7 +4,11 @@ import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
 import type { SupabasePublicCity } from "@/data/supabase-public-cities";
 import type { SupabasePublicSpot } from "@/data/supabase-public-spots";
 import type { TrackingParams } from "@/lib/tracking-query";
-import { getImageBackground, getOptionalHttpUrl } from "@/lib/url-fields";
+import {
+  getCssImagePosition,
+  getImageBackground,
+  getOptionalHttpUrl,
+} from "@/lib/url-fields";
 
 type Props = {
   city: SupabasePublicCity;
@@ -32,6 +36,7 @@ export function SupabaseSpotDetail({ city, spot, tracking }: Props) {
             "linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.84))",
             "linear-gradient(135deg, #e8f4ff, #edf8f2)"
           ),
+          backgroundPosition: getCssImagePosition(spot.imagePosition ?? spot.image_position),
         }}
       >
         <div style={panelStyle}>

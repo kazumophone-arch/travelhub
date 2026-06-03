@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import { supabase } from "@/lib/supabase";
-import { getImageBackground } from "@/lib/url-fields";
+import { getCssImagePosition, getImageBackground } from "@/lib/url-fields";
 
 type City = {
   id: string;
@@ -11,12 +11,13 @@ type City = {
   region: string;
   summary: string;
   image_url: string;
+  image_position?: string | null;
 };
 
 export async function PublicSupabaseCities() {
   const { data, error } = await supabase
     .from("cities")
-    .select("id, slug, city, country, region, summary, image_url")
+    .select("id, slug, city, country, region, summary, image_url, image_position")
     .eq("is_published", true)
     .order("sort_rank", { ascending: true })
     .order("created_at", { ascending: false });
@@ -44,6 +45,7 @@ export async function PublicSupabaseCities() {
                 "linear-gradient(180deg, rgba(255,255,255,0), rgba(23,32,42,.08))",
                 "linear-gradient(135deg, #e8f4ff, #edf8f2)"
               ),
+              backgroundPosition: getCssImagePosition(city.image_position),
             }}
           >
             <div style={badgeStyle}>{city.country}</div>

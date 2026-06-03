@@ -8,7 +8,11 @@ import { getMapMagazineSpotVisual } from "@/lib/mapMagazineVisuals";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { isValidDisplayText } from "@/lib/displayText";
 import { spotsCopyVariants, pickDailyVariant } from "@/lib/copyVariants";
-import { getImageBackground, getOptionalHttpUrl } from "@/lib/url-fields";
+import {
+  getCssImagePosition,
+  getImageBackground,
+  getOptionalHttpUrl,
+} from "@/lib/url-fields";
 
 type Props = {
   cities: City[];
@@ -24,6 +28,7 @@ type SpotItem = {
   highlights: string[];
   tags: string[];
   imageUrl?: string;
+  imagePosition?: string;
   canOpen: boolean;
 };
 
@@ -76,6 +81,7 @@ function collectSpots(cities: City[]) {
           highlights: spot.highlights,
           tags: spot.tags ?? [],
           imageUrl: spot.imageUrl,
+          imagePosition: spot.imagePosition,
           canOpen: true,
         });
       });
@@ -217,7 +223,7 @@ function getSpotPhotoCardStyle(spot: SpotItem): CSSProperties {
       "linear-gradient(135deg, #e8f4ff, #edf8f2)"
     ),
     backgroundSize: "cover",
-    backgroundPosition: "center",
+    backgroundPosition: getCssImagePosition(spot.imagePosition),
   };
 }
 export function SpotDirectory({ cities }: Props) {

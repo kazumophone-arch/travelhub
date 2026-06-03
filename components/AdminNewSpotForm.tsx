@@ -15,6 +15,11 @@ import {
   validateSlug,
   validateSpotFields,
 } from "@/lib/admin-validation";
+import {
+  IMAGE_POSITION_OPTIONS,
+  normalizeImagePosition,
+  type ImagePosition,
+} from "@/lib/url-fields";
 
 type CityOption = {
   id: string;
@@ -31,6 +36,7 @@ type SpotForm = {
   summary: string;
   description: string;
   imageUrl: string;
+  imagePosition: ImagePosition;
   imageAlt: string;
   imageCredit: string;
   imageSourceUrl: string;
@@ -48,6 +54,7 @@ const initialForm: SpotForm = {
   summary: "",
   description: "",
   imageUrl: "",
+  imagePosition: "center",
   imageAlt: "",
   imageCredit: "",
   imageSourceUrl: "",
@@ -333,6 +340,26 @@ export function AdminNewSpotForm() {
         </AdminFieldHint>
         <AdminUrlTestLink url={form.imageUrl} />
 
+        <label style={labelStyle}>
+          画像の表示位置
+          <select
+            value={form.imagePosition}
+            onChange={(event) =>
+              update("imagePosition", normalizeImagePosition(event.target.value))
+            }
+            style={inputStyle}
+          >
+            {IMAGE_POSITION_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <AdminFieldHint>
+          画像が切れる場合に、どの位置を優先して表示するかを選びます。
+        </AdminFieldHint>
+
         <div style={uploadWrapStyle}>
           <input
             type="file"
@@ -441,6 +468,7 @@ export function AdminNewSpotForm() {
         subtitle={selectedCity ? `${selectedCity.city}, ${selectedCity.country}` : "都市"}
         description={form.description || form.summary}
         imageUrl={form.imageUrl}
+        imagePosition={form.imagePosition}
         isPublished={form.isPublished}
         publicPath={selectedCitySlug && form.slug ? `/c/${selectedCitySlug}/spot/${form.slug}` : ""}
         ctas={[

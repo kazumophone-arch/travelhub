@@ -1,3 +1,5 @@
+import { isImagePosition } from "@/lib/url-fields";
+
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 export function slugify(value: string) {
@@ -47,6 +49,20 @@ export function validateOptionalUrl(value: unknown, label: string) {
   return null;
 }
 
+export function validateImagePosition(value: unknown) {
+  const imagePosition = asString(value);
+
+  if (!imagePosition) {
+    return null;
+  }
+
+  if (!isImagePosition(imagePosition)) {
+    return "画像の表示位置は選択肢から選んでください。";
+  }
+
+  return null;
+}
+
 export function formatValidationErrors(errors: string[]) {
   return errors.length === 1
     ? errors[0]
@@ -59,6 +75,7 @@ export type CityValidationInput = {
   countryId?: unknown;
   country?: unknown;
   imageUrl?: unknown;
+  imagePosition?: unknown;
   imageSourceUrl?: unknown;
   affiliateHotelUrl?: unknown;
   affiliateTourUrl?: unknown;
@@ -87,6 +104,9 @@ export function validateCityFields(input: CityValidationInput) {
     "画像出典URL"
   );
   if (imageSourceUrlError) errors.push(imageSourceUrlError);
+
+  const imagePositionError = validateImagePosition(input.imagePosition);
+  if (imagePositionError) errors.push(imagePositionError);
 
   const hotelUrlError = validateOptionalUrl(
     input.affiliateHotelUrl,
@@ -156,6 +176,7 @@ export type SpotValidationInput = {
   name?: unknown;
   slug?: unknown;
   imageUrl?: unknown;
+  imagePosition?: unknown;
   imageSourceUrl?: unknown;
   affiliateHotelUrl?: unknown;
   affiliateTourUrl?: unknown;
@@ -183,6 +204,9 @@ export function validateSpotFields(input: SpotValidationInput) {
     "画像出典URL"
   );
   if (imageSourceUrlError) errors.push(imageSourceUrlError);
+
+  const imagePositionError = validateImagePosition(input.imagePosition);
+  if (imagePositionError) errors.push(imagePositionError);
 
   const hotelUrlError = validateOptionalUrl(
     input.affiliateHotelUrl,

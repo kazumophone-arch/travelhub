@@ -3,6 +3,11 @@ import type { CSSProperties } from "react";
 import type { City } from "@/data/types";
 import { getCityImage, getSpotImage } from "@/data/travel-images";
 import { getDisplayStops } from "@/lib/displayText";
+import {
+  getCssImagePosition,
+  getImageBackground,
+  getOptionalHttpUrl,
+} from "@/lib/url-fields";
 
 type SpotSearchResult = {
   citySlug?: string;
@@ -13,6 +18,8 @@ type SpotSearchResult = {
   name?: string;
   summary?: string;
   tags?: string[];
+  imageUrl?: string;
+  imagePosition?: string;
   canOpen?: boolean;
 };
 
@@ -24,12 +31,17 @@ type Props = {
 
 function getCityCardStyle(city: City): CSSProperties {
   const image = getCityImage(city.slug);
+  const imageUrl = getOptionalHttpUrl(city.imageUrl) || image.imageUrl;
 
   return {
     ...cardStyle,
-    backgroundImage: `linear-gradient(180deg, rgba(255,255,255,0), rgba(23,32,42,.08)), url("${image.imageUrl}")`,
+    backgroundImage: getImageBackground(
+      imageUrl,
+      "linear-gradient(180deg, rgba(255,255,255,0), rgba(23,32,42,.08))",
+      "linear-gradient(135deg, #e8f4ff, #edf8f2)"
+    ),
     backgroundSize: "cover",
-    backgroundPosition: "center",
+    backgroundPosition: getCssImagePosition(city.imagePosition),
   };
 }
 
@@ -37,12 +49,17 @@ function getSpotCardStyle(spot: SpotSearchResult): CSSProperties {
   const citySlug = spot.citySlug ?? "travelhub";
   const spotSlug = spot.slug ?? spot.spotSlug ?? spot.name ?? "spot";
   const image = getSpotImage(citySlug, spotSlug);
+  const imageUrl = getOptionalHttpUrl(spot.imageUrl) || image.imageUrl;
 
   return {
     ...cardStyle,
-    backgroundImage: `linear-gradient(180deg, rgba(255,255,255,0), rgba(23,32,42,.08)), url("${image.imageUrl}")`,
+    backgroundImage: getImageBackground(
+      imageUrl,
+      "linear-gradient(180deg, rgba(255,255,255,0), rgba(23,32,42,.08))",
+      "linear-gradient(135deg, #e8f4ff, #edf8f2)"
+    ),
     backgroundSize: "cover",
-    backgroundPosition: "center",
+    backgroundPosition: getCssImagePosition(spot.imagePosition),
   };
 }
 

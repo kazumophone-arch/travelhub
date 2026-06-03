@@ -4,6 +4,7 @@ import { CityDirectory } from "@/components/CityDirectory";
 import { sortByRank } from "@/data/visibility";
 import { createPublicMetadata } from "@/lib/site-metadata";
 import { supabase } from "@/lib/supabase";
+import { normalizeImagePosition } from "@/lib/url-fields";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +28,7 @@ type SupabaseCityRow = {
   image_alt: string;
   image_credit: string;
   image_source_url: string;
+  image_position?: string | null;
   affiliate_hotel_url?: string | null;
   affiliate_tour_url?: string | null;
   is_published: boolean;
@@ -45,6 +47,7 @@ function toDirectoryCity(row: SupabaseCityRow): City {
     summary: row.summary,
     description: row.description,
     imageUrl: row.image_url,
+    imagePosition: normalizeImagePosition(row.image_position),
     imageAlt: row.image_alt || row.city,
     imageCredit: row.image_credit,
     imageSourceUrl: row.image_source_url,

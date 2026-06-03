@@ -3,6 +3,11 @@ import type { CSSProperties } from "react";
 import type { City } from "@/data/types";
 import { getCityImage } from "@/data/travel-images";
 import { getDisplayStops } from "@/lib/displayText";
+import {
+  getCssImagePosition,
+  getImageBackground,
+  getOptionalHttpUrl,
+} from "@/lib/url-fields";
 
 type Props = {
   cities: City[];
@@ -25,12 +30,17 @@ function getReason(city: City) {
 
 function getCardStyle(city: City): CSSProperties {
   const image = getCityImage(city.slug);
+  const imageUrl = getOptionalHttpUrl(city.imageUrl) || image.imageUrl;
 
   return {
     ...cardStyle,
-    backgroundImage: `linear-gradient(180deg, rgba(255,255,255,0), rgba(23,32,42,.08)), url("${image.imageUrl}")`,
+    backgroundImage: getImageBackground(
+      imageUrl,
+      "linear-gradient(180deg, rgba(255,255,255,0), rgba(23,32,42,.08))",
+      "linear-gradient(135deg, #e8f4ff, #edf8f2)"
+    ),
     backgroundSize: "cover",
-    backgroundPosition: "center",
+    backgroundPosition: getCssImagePosition(city.imagePosition),
   };
 }
 

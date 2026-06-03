@@ -4,6 +4,7 @@ import {
   formatValidationErrors,
   validateCityFields,
 } from "@/lib/admin-validation";
+import { normalizeImagePosition } from "@/lib/url-fields";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -138,6 +139,7 @@ export async function POST(request: Request) {
   const city = String(body.city ?? "").trim();
   const countryName = String(normalizedBody.country ?? "").trim();
   const slug = String(body.slug ?? "").trim();
+  const imagePosition = normalizeImagePosition(body.imagePosition);
 
   const payload = {
     slug,
@@ -151,6 +153,7 @@ export async function POST(request: Request) {
     image_alt: String(body.imageAlt ?? ""),
     image_credit: String(body.imageCredit ?? ""),
     image_source_url: String(body.imageSourceUrl ?? ""),
+    image_position: imagePosition,
     affiliate_hotel_url: String(body.affiliateHotelUrl ?? ""),
     affiliate_tour_url: String(body.affiliateTourUrl ?? ""),
     is_published: Boolean(body.isPublished),
@@ -191,6 +194,7 @@ export async function PATCH(request: Request) {
   const city = String(body.city ?? "").trim();
   const countryName = String(normalizedBody.country ?? "").trim();
   const slug = String(body.slug ?? "").trim();
+  const imagePosition = normalizeImagePosition(body.imagePosition);
 
   if (!id) {
     return NextResponse.json({ error: "idは必須です。" }, { status: 400 });
@@ -215,6 +219,7 @@ export async function PATCH(request: Request) {
     image_alt: String(body.imageAlt ?? ""),
     image_credit: String(body.imageCredit ?? ""),
     image_source_url: String(body.imageSourceUrl ?? ""),
+    image_position: imagePosition,
     affiliate_hotel_url: String(body.affiliateHotelUrl ?? ""),
     affiliate_tour_url: String(body.affiliateTourUrl ?? ""),
     is_published: Boolean(body.isPublished),

@@ -1,8 +1,9 @@
 import "server-only";
 import { supabase } from "@/lib/supabase";
+import { normalizeImagePosition } from "@/lib/url-fields";
 
 export const SUPABASE_PUBLIC_SPOT_SELECT =
-  "id, city_id, name, slug, summary, description, image_url, image_alt, image_credit, image_source_url, affiliate_hotel_url, affiliate_tour_url, is_published";
+  "id, city_id, name, slug, summary, description, image_url, image_alt, image_credit, image_source_url, image_position, affiliate_hotel_url, affiliate_tour_url, is_published";
 
 export type SupabasePublicSpot = {
   id: string;
@@ -15,6 +16,8 @@ export type SupabasePublicSpot = {
   image_alt: string;
   image_credit: string;
   image_source_url: string;
+  image_position?: string | null;
+  imagePosition?: string;
   affiliate_hotel_url: string | null;
   affiliate_tour_url: string | null;
   affiliateHotelUrl?: string;
@@ -27,6 +30,7 @@ export function normalizeSupabasePublicSpot(
 ): SupabasePublicSpot {
   return {
     ...spot,
+    imagePosition: normalizeImagePosition(spot.image_position),
     affiliateHotelUrl: spot.affiliate_hotel_url ?? "",
     affiliateTourUrl: spot.affiliate_tour_url ?? "",
   };
@@ -97,6 +101,7 @@ export function toCitySpotFromSupabase(spot: SupabasePublicSpot) {
     summary: spot.summary,
     description: spot.description,
     imageUrl: spot.image_url,
+    imagePosition: normalizeImagePosition(spot.imagePosition ?? spot.image_position),
     imageAlt: spot.image_alt || spot.name,
     imageCredit: spot.image_credit,
     imageSourceUrl: spot.image_source_url,

@@ -4,12 +4,13 @@ import {
   formatValidationErrors,
   validateSpotFields,
 } from "@/lib/admin-validation";
+import { normalizeImagePosition } from "@/lib/url-fields";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const ADMIN_SPOT_SELECT =
-  "id, city_id, name, slug, summary, description, image_url, image_alt, image_credit, image_source_url, affiliate_hotel_url, affiliate_tour_url, is_published, created_at, updated_at";
+  "id, city_id, name, slug, summary, description, image_url, image_alt, image_credit, image_source_url, image_position, affiliate_hotel_url, affiliate_tour_url, is_published, created_at, updated_at";
 
 type AdminDbError = {
   code?: string;
@@ -121,6 +122,7 @@ export async function POST(request: Request) {
   const name = String(body.name ?? "").trim();
   const slug = String(body.slug ?? "").trim();
   const city = await resolveCityForSpot(cityId);
+  const imagePosition = normalizeImagePosition(body.imagePosition);
 
   if (city.error) {
     return NextResponse.json({ error: city.error }, { status: 400 });
@@ -143,6 +145,7 @@ export async function POST(request: Request) {
     image_alt: String(body.imageAlt ?? ""),
     image_credit: String(body.imageCredit ?? ""),
     image_source_url: String(body.imageSourceUrl ?? ""),
+    image_position: imagePosition,
     affiliate_hotel_url: String(body.affiliateHotelUrl ?? ""),
     affiliate_tour_url: String(body.affiliateTourUrl ?? ""),
     is_published: Boolean(body.isPublished),
@@ -199,6 +202,7 @@ export async function PATCH(request: Request) {
   const name = String(body.name ?? "").trim();
   const slug = String(body.slug ?? "").trim();
   const city = await resolveCityForSpot(cityId);
+  const imagePosition = normalizeImagePosition(body.imagePosition);
 
   if (city.error) {
     return NextResponse.json({ error: city.error }, { status: 400 });
@@ -214,6 +218,7 @@ export async function PATCH(request: Request) {
     image_alt: String(body.imageAlt ?? ""),
     image_credit: String(body.imageCredit ?? ""),
     image_source_url: String(body.imageSourceUrl ?? ""),
+    image_position: imagePosition,
     affiliate_hotel_url: String(body.affiliateHotelUrl ?? ""),
     affiliate_tour_url: String(body.affiliateTourUrl ?? ""),
     is_published: Boolean(body.isPublished),

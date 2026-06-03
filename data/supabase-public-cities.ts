@@ -6,6 +6,7 @@ import {
   type SupabasePublicSpot,
 } from "@/data/supabase-public-spots";
 import { supabase } from "@/lib/supabase";
+import { normalizeImagePosition } from "@/lib/url-fields";
 
 export type SupabasePublicCity = {
   id: string;
@@ -22,6 +23,8 @@ export type SupabasePublicCity = {
   image_alt: string;
   image_credit: string;
   image_source_url: string;
+  image_position?: string | null;
+  imagePosition?: string;
   affiliate_hotel_url?: string | null;
   affiliate_tour_url?: string | null;
   is_published: boolean;
@@ -42,7 +45,16 @@ export async function getPublishedSupabaseCity(
     return null;
   }
 
-  return data as SupabasePublicCity;
+  return normalizeSupabasePublicCity(data as SupabasePublicCity);
+}
+
+export function normalizeSupabasePublicCity(
+  city: SupabasePublicCity
+): SupabasePublicCity {
+  return {
+    ...city,
+    imagePosition: normalizeImagePosition(city.image_position),
+  };
 }
 
 function toStopTuple(city: SupabasePublicCity, spots: SupabasePublicSpot[]) {
@@ -81,6 +93,7 @@ function toDirectoryCity(
     isPublished: city.is_published,
     sortRank: city.sort_rank ?? 999,
     imageUrl: city.image_url,
+    imagePosition: normalizeImagePosition(city.imagePosition ?? city.image_position),
     imageAlt: city.image_alt || city.city,
     imageCredit: city.image_credit,
     imageSourceUrl: city.image_source_url,
@@ -115,7 +128,9 @@ export async function getPublishedSupabaseDirectoryCities(): Promise<City[]> {
     return [];
   }
 
-  const cities = citiesResult.data as SupabasePublicCity[];
+  const cities = (citiesResult.data as SupabasePublicCity[]).map(
+    normalizeSupabasePublicCity
+  );
   const spots = spotsResult.error
     ? []
     : ((spotsResult.data ?? []) as SupabasePublicSpot[]);

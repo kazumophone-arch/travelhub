@@ -23,6 +23,8 @@ type SpotSearchResult = {
   name: string;
   summary: string;
   tags: string[];
+  imageUrl?: string;
+  imagePosition?: string;
   canOpen: boolean;
 };
 
@@ -103,6 +105,8 @@ function getSpotSearchResults(cities: City[], query: string) {
           name: spot.name,
           summary: spot.summary,
           tags: spot.tags ?? spot.highlights,
+          imageUrl: spot.imageUrl,
+          imagePosition: spot.imagePosition,
           canOpen: true,
         });
       });
@@ -824,7 +828,6 @@ const countryBadgeStyle: CSSProperties = {
   fontSize: 12,
   fontWeight: 850,
 };
-
 
 
 
