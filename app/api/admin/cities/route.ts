@@ -13,6 +13,9 @@ type AdminDbError = {
   message?: string;
 };
 
+const CITY_HAS_SPOTS_ERROR =
+  "この都市にはスポットが登録されています。先にスポットを削除してください。";
+
 function isDuplicateError(error: AdminDbError) {
   return (
     error.code === "23505" ||
@@ -34,7 +37,7 @@ function cityErrorResponse(error: AdminDbError) {
 
   if (isForeignKeyError(error)) {
     return NextResponse.json(
-      { error: "この都市を削除する前に、関連するスポットを削除してください。" },
+      { error: CITY_HAS_SPOTS_ERROR },
       { status: 409 }
     );
   }
@@ -239,6 +242,25 @@ export async function DELETE(request: Request) {
 
   if (!id) {
     return NextResponse.json({ error: "idは必須です。" }, { status: 400 });
+  }
+
+  const { count: spotCount, error: spotCountError } = await supabaseAdmin
+    .from("spots")
+    .select("id", { count: "exact", head: true })
+    .eq("city_id", id);
+
+  if (spotCountError) {
+    return NextResponse.json(
+      { error: spotCountError.message ?? "関連スポットの確認に失敗しました。" },
+      { status: 500 }
+    );
+  }
+
+  if ((spotCount ?? 0) > 0) {
+    return NextResponse.json(
+      { error: CITY_HAS_SPOTS_ERROR },
+      { status: 409 }
+    );
   }
 
   const { error } = await supabaseAdmin

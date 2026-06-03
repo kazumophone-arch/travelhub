@@ -135,6 +135,7 @@ export function AdminSupabaseCityList() {
     }
 
     setCities((current) => current.filter((city) => city.id !== id));
+    setStatus("");
   }
   return (
     <section style={wrapStyle}>
