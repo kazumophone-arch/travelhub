@@ -17,6 +17,13 @@ const CLICK_LOG_SELECT =
   "id, created_at, type, city_id, spot_id, city_slug, spot_slug, target_url, src, v, referer";
 const PAGE_SIZE = 1000;
 const MAX_AGGREGATION_ROWS = 10000;
+const UNSET_LABEL = "未設定";
+const RANGE_OPTIONS: RangeOption[] = [
+  { key: "24h", label: "24時間", milliseconds: 24 * 60 * 60 * 1000 },
+  { key: "7d", label: "7日間", milliseconds: 7 * 24 * 60 * 60 * 1000 },
+  { key: "30d", label: "30日間", milliseconds: 30 * 24 * 60 * 60 * 1000 },
+  { key: "all", label: "全期間" },
+];
 
 type ClickLogRow = {
   id: string;
@@ -37,6 +44,14 @@ type CountResult = {
   error: { message?: string } | null;
 };
 
+type RangeKey = "24h" | "7d" | "30d" | "all";
+
+type RangeOption = {
+  key: RangeKey;
+  label: string;
+  milliseconds?: number;
+};
+
 type BreakdownRow = {
   key: string;
   citySlug: string;
@@ -48,15 +63,36 @@ type BreakdownRow = {
   tours: number;
 };
 
+type TrackingBreakdownRow = {
+  key: string;
+  src?: string;
+  v?: string;
+  count: number;
+  hotels: number;
+  tours: number;
+  latestAt: string;
+};
+
 type NameMaps = {
   cities: Map<string, string>;
   spots: Map<string, string>;
 };
 
-export default async function AdminAnalyticsPage() {
-  const now = Date.now();
-  const last24Hours = new Date(now - 24 * 60 * 60 * 1000).toISOString();
-  const last7Days = new Date(now - 7 * 24 * 60 * 60 * 1000).toISOString();
+type AdminAnalyticsPageProps = {
+  searchParams: Promise<{
+    range?: string | string[];
+  }>;
+};
+
+export default async function AdminAnalyticsPage({ searchParams }: AdminAnalyticsPageProps) {
+  const resolvedSearchParams = await searchParams;
+  const selectedRange = getRangeOption(readSearchParam(resolvedSearchParams.range));
+  const now = new Date();
+  const selectedSince = getRangeSince(selectedRange, now);
+  const last24Hours = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
+  const last7Days = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
+  const selectedLast24Hours = getLaterSince(selectedSince, last24Hours);
+  const selectedLast7Days = getLaterSince(selectedSince, last7Days);
 
   const [
     totalResult,
@@ -66,12 +102,12 @@ export default async function AdminAnalyticsPage() {
     last24HoursResult,
     logsResult,
   ] = await Promise.all([
-    countClickLogs(),
-    countClickLogs({ type: "hotels" }),
-    countClickLogs({ type: "tours" }),
-    countClickLogs({ since: last7Days }),
-    countClickLogs({ since: last24Hours }),
-    fetchClickLogsForAggregation(),
+    countClickLogs({ since: selectedSince }),
+    countClickLogs({ type: "hotels", since: selectedSince }),
+    countClickLogs({ type: "tours", since: selectedSince }),
+    countClickLogs({ since: selectedLast7Days }),
+    countClickLogs({ since: selectedLast24Hours }),
+    fetchClickLogsForAggregation({ since: selectedSince }),
   ]);
 
   const logs = logsResult.rows;
@@ -89,6 +125,9 @@ export default async function AdminAnalyticsPage() {
   ];
   const cityBreakdown = getCityBreakdown(logs, nameMaps).slice(0, 20);
   const spotBreakdown = getSpotBreakdown(logs, nameMaps).slice(0, 20);
+  const sourceBreakdown = getSourceBreakdown(logs).slice(0, 20);
+  const versionBreakdown = getVersionBreakdown(logs).slice(0, 20);
+  const sourceVersionBreakdown = getSourceVersionBreakdown(logs).slice(0, 30);
   const latestLogs = logs.slice(0, 20);
   const errorMessage =
     logsResult.error ??
@@ -113,8 +152,12 @@ export default async function AdminAnalyticsPage() {
         <h1 style={titleStyle}>外部リンククリック</h1>
 
         <p style={textStyle}>
-          TravelHub の外部リンク経由で記録されたホテルとツアーのクリックを確認します。
+          TravelHub の外部リンク経由で記録されたホテルとツアーのクリックを選択中の期間で確認します。
         </p>
+
+        <RangeFilter selectedRange={selectedRange.key} />
+
+        <SnsGuide />
 
         {errorMessage ? (
           <div style={noticeStyle}>分析データを読み込めませんでした: {errorMessage}</div>
@@ -166,16 +209,55 @@ export default async function AdminAnalyticsPage() {
         />
 
         <AnalyticsTable
+          title="流入元別クリック"
+          emptyText="流入元別クリックデータはまだありません。"
+          headers={["流入元", "クリック", "ホテル", "ツアー", "最新クリック"]}
+          rows={sourceBreakdown.map((row) => [
+            row.src ?? UNSET_LABEL,
+            formatNumber(row.count),
+            formatNumber(row.hotels),
+            formatNumber(row.tours),
+            formatDate(row.latestAt),
+          ])}
+        />
+
+        <AnalyticsTable
+          title="投稿ID別クリック"
+          emptyText="投稿ID別クリックデータはまだありません。"
+          headers={["投稿ID", "クリック", "ホテル", "ツアー", "最新クリック"]}
+          rows={versionBreakdown.map((row) => [
+            row.v ?? UNSET_LABEL,
+            formatNumber(row.count),
+            formatNumber(row.hotels),
+            formatNumber(row.tours),
+            formatDate(row.latestAt),
+          ])}
+        />
+
+        <AnalyticsTable
+          title="流入元 × 投稿ID 別クリック"
+          emptyText="流入元と投稿IDの組み合わせ別クリックデータはまだありません。"
+          headers={["流入元", "投稿ID", "クリック", "ホテル", "ツアー"]}
+          rows={sourceVersionBreakdown.map((row) => [
+            row.src ?? UNSET_LABEL,
+            row.v ?? UNSET_LABEL,
+            formatNumber(row.count),
+            formatNumber(row.hotels),
+            formatNumber(row.tours),
+          ])}
+        />
+
+        <AnalyticsTable
           title="最新20件のクリックログ"
           emptyText="外部リンククリックはまだ記録されていません。"
-          headers={["日時", "種類", "都市", "スポット", "流入元", "バージョン", "遷移先", "参照元"]}
+          headers={["日時", "種類", "都市", "スポット", "流入元", "投稿ID", "遷移先", "参照元"]}
           rows={latestLogs.map((log) => [
             formatDate(log.created_at),
             formatClickType(log.type),
             log.city_slug || "不明な都市",
             log.spot_slug || "",
-            log.src || "",
-            log.v || "",
+            displayTrackingValue(log.src),
+            displayTrackingValue(log.v),
             log.target_url || "",
             log.referer || "",
           ])}
@@ -206,16 +288,21 @@ async function countClickLogs(options: { type?: string; since?: string } = {}) {
   };
 }
 
-async function fetchClickLogsForAggregation() {
+async function fetchClickLogsForAggregation(options: { since?: string } = {}) {
   const rows: ClickLogRow[] = [];
 
   for (let start = 0; start < MAX_AGGREGATION_ROWS; start += PAGE_SIZE) {
     const end = start + PAGE_SIZE - 1;
-    const { data, error } = await supabaseAdmin
+    let query = supabaseAdmin
       .from("click_logs")
       .select(CLICK_LOG_SELECT)
-      .order("created_at", { ascending: false })
-      .range(start, end);
+      .order("created_at", { ascending: false });
+
+    if (options.since) {
+      query = query.gte("created_at", options.since);
+    }
+
+    const { data, error } = await query.range(start, end);
 
     if (error) {
       return {
@@ -256,6 +343,28 @@ async function getNameMaps(logs: ClickLogRow[]): Promise<NameMaps> {
     cities: new Map(cityRows.map((city) => [city.id, city.city])),
     spots: new Map(spotRows.map((spot) => [spot.id, spot.name])),
   };
+}
+
+function readSearchParam(value: string | string[] | undefined) {
+  const rawValue = Array.isArray(value) ? value[0] : value;
+  const trimmed = rawValue?.trim();
+  return trimmed || "";
+}
+
+function getRangeOption(value: string) {
+  return RANGE_OPTIONS.find((option) => option.key === value) ?? RANGE_OPTIONS[1];
+}
+
+function getRangeSince(range: RangeOption, now: Date) {
+  if (!range.milliseconds) return undefined;
+
+  return new Date(now.getTime() - range.milliseconds).toISOString();
+}
+
+function getLaterSince(first: string | undefined, second: string) {
+  if (!first) return second;
+
+  return new Date(first).getTime() > new Date(second).getTime() ? first : second;
 }
 
 async function fetchCityNames(cityIds: string[]) {
@@ -340,6 +449,66 @@ function getSpotBreakdown(logs: ClickLogRow[], nameMaps: NameMaps) {
   return sortBreakdown(Array.from(breakdown.values()));
 }
 
+function getSourceBreakdown(logs: ClickLogRow[]) {
+  const breakdown = new Map<string, TrackingBreakdownRow>();
+
+  for (const log of logs) {
+    const src = displayTrackingValue(log.src);
+    const current =
+      breakdown.get(src) ??
+      createTrackingBreakdownRow({
+        key: src,
+        src,
+      });
+
+    incrementTrackingBreakdown(current, log);
+    breakdown.set(src, current);
+  }
+
+  return sortTrackingBreakdown(Array.from(breakdown.values()));
+}
+
+function getVersionBreakdown(logs: ClickLogRow[]) {
+  const breakdown = new Map<string, TrackingBreakdownRow>();
+
+  for (const log of logs) {
+    const v = displayTrackingValue(log.v);
+    const current =
+      breakdown.get(v) ??
+      createTrackingBreakdownRow({
+        key: v,
+        v,
+      });
+
+    incrementTrackingBreakdown(current, log);
+    breakdown.set(v, current);
+  }
+
+  return sortTrackingBreakdown(Array.from(breakdown.values()));
+}
+
+function getSourceVersionBreakdown(logs: ClickLogRow[]) {
+  const breakdown = new Map<string, TrackingBreakdownRow>();
+
+  for (const log of logs) {
+    const src = displayTrackingValue(log.src);
+    const v = displayTrackingValue(log.v);
+    const key = `${src}:${v}`;
+    const current =
+      breakdown.get(key) ??
+      createTrackingBreakdownRow({
+        key,
+        src,
+        v,
+      });
+
+    incrementTrackingBreakdown(current, log);
+    breakdown.set(key, current);
+  }
+
+  return sortTrackingBreakdown(Array.from(breakdown.values()));
+}
+
 function createBreakdownRow(input: {
   key: string;
   citySlug: string;
@@ -355,6 +524,20 @@ function createBreakdownRow(input: {
   };
 }
 
+function createTrackingBreakdownRow(input: {
+  key: string;
+  src?: string;
+  v?: string;
+}): TrackingBreakdownRow {
+  return {
+    ...input,
+    count: 0,
+    hotels: 0,
+    tours: 0,
+    latestAt: "",
+  };
+}
+
 function incrementBreakdown(row: BreakdownRow, type: string) {
   row.count += 1;
 
@@ -367,8 +550,34 @@ function incrementBreakdown(row: BreakdownRow, type: string) {
   }
 }
 
+function incrementTrackingBreakdown(row: TrackingBreakdownRow, log: ClickLogRow) {
+  row.count += 1;
+
+  if (log.type === "hotels") {
+    row.hotels += 1;
+  }
+
+  if (log.type === "tours") {
+    row.tours += 1;
+  }
+
+  if (!row.latestAt || new Date(log.created_at).getTime() > new Date(row.latestAt).getTime()) {
+    row.latestAt = log.created_at;
+  }
+}
+
 function sortBreakdown(rows: BreakdownRow[]) {
   return rows.sort((first, second) => second.count - first.count);
+}
+
+function sortTrackingBreakdown(rows: TrackingBreakdownRow[]) {
+  return rows.sort((first, second) => {
+    if (second.count !== first.count) {
+      return second.count - first.count;
+    }
+
+    return new Date(second.latestAt).getTime() - new Date(first.latestAt).getTime();
+  });
 }
 
 function countType(logs: ClickLogRow[], type: string) {
@@ -394,6 +603,11 @@ function formatNumber(value: number) {
   return new Intl.NumberFormat("ja-JP").format(value);
 }
 
+function displayTrackingValue(value: string | null) {
+  const trimmed = value?.trim();
+  return trimmed || UNSET_LABEL;
+}
+
 function formatDate(value: string) {
   const date = new Date(value);
 
@@ -411,6 +625,55 @@ function formatClickType(value: string) {
   if (value === "hotels") return "ホテル";
   if (value === "tours") return "ツアー";
   return value || "不明";
+}
+
+function RangeFilter({ selectedRange }: { selectedRange: RangeKey }) {
+  return (
+    <nav aria-label="分析期間" style={rangeFilterStyle}>
+      {RANGE_OPTIONS.map((option) => {
+        const isActive = option.key === selectedRange;
+        return (
+          <Link
+            key={option.key}
+            href={`/admin/analytics?range=${option.key}`}
+            style={{
+              ...rangeLinkStyle,
+              ...(isActive ? rangeLinkActiveStyle : {}),
+            }}
+            aria-current={isActive ? "page" : undefined}
+          >
+            {option.label}
+          </Link>
+        );
+      })}
+    </nav>
+  );
+}
+
+function SnsGuide() {
+  return (
+    <section style={guideStyle} aria-labelledby="sns-guide-title">
+      <h2 id="sns-guide-title" style={guideTitleStyle}>
+        SNS用リンクの使い方
+      </h2>
+      <p style={guideTextStyle}>
+        <strong>src</strong> は流入元、<strong>v</strong> は投稿ID・動画IDです。TikTok は{" "}
+        <code style={codeStyle}>src=tiktok</code>、YouTube Shorts は{" "}
+        <code style={codeStyle}>src=youtube</code>、Instagram は{" "}
+        <code style={codeStyle}>src=instagram</code> を使います。
+      </p>
+      <div style={exampleGridStyle}>
+        <code style={exampleCodeStyle}>/c/kyoto-jp?src=tiktok&amp;v=kyoto_001</code>
+        <code style={exampleCodeStyle}>
+          /c/kyoto-jp/spot/fushimi-inari-shrine?src=tiktok&amp;v=kyoto_fushimi_001
+        </code>
+      </div>
+      <p style={guideNoteStyle}>
+        命名例: 都市動画は <code style={codeStyle}>kyoto_001</code>、スポット動画は{" "}
+        <code style={codeStyle}>kyoto_fushimi_001</code>。小文字、数字、アンダースコアでそろえます。
+      </p>
+    </section>
+  );
 }
 
 function AnalyticsTable({
@@ -509,6 +772,87 @@ const textStyle: CSSProperties = {
   fontSize: 15,
   lineHeight: 1.75,
   color: "#607080",
+};
+
+const rangeFilterStyle: CSSProperties = {
+  display: "flex",
+  flexWrap: "wrap",
+  gap: 8,
+  margin: "0 0 18px",
+};
+
+const rangeLinkStyle: CSSProperties = {
+  display: "inline-flex",
+  alignItems: "center",
+  minHeight: 36,
+  padding: "8px 13px",
+  borderRadius: 999,
+  border: "1px solid rgba(23,32,42,.1)",
+  background: "#ffffff",
+  color: "#607080",
+  fontSize: 13,
+  fontWeight: 850,
+  textDecoration: "none",
+};
+
+const rangeLinkActiveStyle: CSSProperties = {
+  background: "#17202a",
+  borderColor: "#17202a",
+  color: "#ffffff",
+};
+
+const guideStyle: CSSProperties = {
+  display: "grid",
+  gap: 10,
+  margin: "0 0 24px",
+  padding: 18,
+  borderRadius: 22,
+  border: "1px solid rgba(19,138,114,.15)",
+  background: "#ffffff",
+  boxShadow: "0 8px 24px rgba(30,64,88,.05)",
+};
+
+const guideTitleStyle: CSSProperties = {
+  margin: 0,
+  fontSize: 18,
+  letterSpacing: "-.02em",
+};
+
+const guideTextStyle: CSSProperties = {
+  margin: 0,
+  color: "#607080",
+  fontSize: 14,
+  lineHeight: 1.75,
+};
+
+const exampleGridStyle: CSSProperties = {
+  display: "grid",
+  gap: 8,
+};
+
+const codeStyle: CSSProperties = {
+  padding: "2px 5px",
+  borderRadius: 6,
+  background: "#f8faf7",
+  color: "#17202a",
+  fontSize: 13,
+};
+
+const exampleCodeStyle: CSSProperties = {
+  display: "block",
+  padding: "10px 12px",
+  borderRadius: 12,
+  background: "#f8faf7",
+  color: "#17202a",
+  fontSize: 13,
+  overflowWrap: "anywhere",
+};
+
+const guideNoteStyle: CSSProperties = {
+  margin: 0,
+  color: "#607080",
+  fontSize: 13,
+  lineHeight: 1.7,
 };
 
 const metricGridStyle: CSSProperties = {

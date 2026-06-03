@@ -3,10 +3,12 @@ import type { CSSProperties } from "react";
 import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
 import type { SupabasePublicCity } from "@/data/supabase-public-cities";
 import { getPublishedSupabaseSpotsForCity } from "@/data/supabase-public-spots";
+import type { TrackingParams } from "@/lib/tracking-query";
 import { getImageBackground, getOptionalHttpUrl } from "@/lib/url-fields";
 
 type Props = {
   city: SupabasePublicCity;
+  tracking?: TrackingParams;
 };
 
 type Spot = {
@@ -18,10 +20,13 @@ type Spot = {
   image_url: string;
 };
 
-export async function SupabaseCityDetail({ city }: Props) {
+export async function SupabaseCityDetail({ city, tracking }: Props) {
   const spots = (await getPublishedSupabaseSpotsForCity(city.slug)) as Spot[];
   const hasHotelAffiliate = Boolean(getOptionalHttpUrl(city.affiliate_hotel_url));
   const hasTourAffiliate = Boolean(getOptionalHttpUrl(city.affiliate_tour_url));
+  const trackingSrc = tracking?.src ?? "city-detail";
+  const trackingV = tracking?.v ?? `city_${city.slug}`;
+  const spotTrackingQuery = getTrackingQuery(tracking);
 
   return (
     <main style={pageStyle}>
@@ -45,8 +50,8 @@ export async function SupabaseCityDetail({ city }: Props) {
             <div style={heroCtaStyle}>
               <AffiliateButtonGroup
                 city={city}
-                src="city-detail"
-                v={`city_${city.slug}`}
+                src={trackingSrc}
+                v={trackingV}
                 primary={hasHotelAffiliate ? "hotels" : "tours"}
                 tone="dark"
                 variant="city"
@@ -69,7 +74,7 @@ export async function SupabaseCityDetail({ city }: Props) {
             {spots.map((spot) => (
               <Link
                 key={spot.id}
-                href={`/c/${city.slug}/spot/${spot.slug}`}
+                href={`/c/${city.slug}/spot/${spot.slug}${spotTrackingQuery}`}
                 style={{
                   ...cardStyle,
                   backgroundImage: getImageBackground(
@@ -92,6 +97,21 @@ export async function SupabaseCityDetail({ city }: Props) {
       </section>
     </main>
   );
+}
+
+function getTrackingQuery(tracking: TrackingParams | undefined) {
+  const query = new URLSearchParams();
+
+  if (tracking?.src) {
+    query.set("src", tracking.src);
+  }
+
+  if (tracking?.v) {
+    query.set("v", tracking.v);
+  }
+
+  const queryString = query.toString();
+  return queryString ? `?${queryString}` : "";
 }
 
 const pageStyle: CSSProperties = {

@@ -3,20 +3,24 @@ import type { CSSProperties } from "react";
 import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
 import type { SupabasePublicCity } from "@/data/supabase-public-cities";
 import type { SupabasePublicSpot } from "@/data/supabase-public-spots";
+import type { TrackingParams } from "@/lib/tracking-query";
 import { getImageBackground, getOptionalHttpUrl } from "@/lib/url-fields";
 
 type Props = {
   city: SupabasePublicCity;
   spot: SupabasePublicSpot;
+  tracking?: TrackingParams;
 };
 
-export function SupabaseSpotDetail({ city, spot }: Props) {
+export function SupabaseSpotDetail({ city, spot, tracking }: Props) {
   const hotelAffiliateUrl =
     spot.affiliateHotelUrl ?? spot.affiliate_hotel_url;
   const tourAffiliateUrl =
     spot.affiliateTourUrl ?? spot.affiliate_tour_url;
   const hasHotelAffiliate = Boolean(getOptionalHttpUrl(hotelAffiliateUrl));
   const hasTourAffiliate = Boolean(getOptionalHttpUrl(tourAffiliateUrl));
+  const trackingSrc = tracking?.src ?? "spot-detail";
+  const trackingV = tracking?.v ?? `spot_${city.slug}_${spot.slug}`;
 
   return (
     <main style={pageStyle}>
@@ -44,8 +48,8 @@ export function SupabaseSpotDetail({ city, spot }: Props) {
             <div style={heroCtaStyle}>
               <AffiliateButtonGroup
                 city={city}
-                src="spot-detail"
-                v={`spot_${city.slug}_${spot.slug}`}
+                src={trackingSrc}
+                v={trackingV}
                 spotSlug={spot.slug}
                 primary={hasHotelAffiliate ? "hotels" : "tours"}
                 tone="dark"

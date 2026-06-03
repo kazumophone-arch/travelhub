@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { SupabaseCityDetail } from "@/components/SupabaseCityDetail";
 import { getPublishedSupabaseCity } from "@/data/supabase-public-cities";
 import { createPublicMetadata } from "@/lib/site-metadata";
+import { getTrackingParams, type TrackingSearchParams } from "@/lib/tracking-query";
 
 export const dynamic = "force-dynamic";
 
@@ -38,13 +39,16 @@ export async function generateMetadata({
 
 export default async function CityPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<TrackingSearchParams>;
 }) {
   const { slug } = await params;
+  const tracking = getTrackingParams(await searchParams);
   const city = await getPublishedSupabaseCity(slug);
 
   if (!city) return notFound();
 
-  return <SupabaseCityDetail city={city} />;
+  return <SupabaseCityDetail city={city} tracking={tracking} />;
 }
