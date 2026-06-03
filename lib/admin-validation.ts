@@ -125,7 +125,7 @@ export function validateSpotFields(input: SpotValidationInput) {
   const errors: string[] = [];
 
   if (!asString(input.cityId)) {
-    errors.push("都市は必須です。");
+    errors.push("都市を選択してください。");
   }
 
   if (!asString(input.name)) {

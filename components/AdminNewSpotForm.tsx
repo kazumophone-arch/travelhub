@@ -91,7 +91,12 @@ export function AdminNewSpotForm() {
         return;
       }
 
-      const nextCities = data.cities ?? [];
+      const nextCities = ((data.cities ?? []) as CityOption[])
+        .map((city) => ({
+          ...city,
+          id: String(city.id ?? "").trim(),
+        }))
+        .filter((city) => city.id);
       setCities(nextCities);
 
       setForm((current) => ({
@@ -108,7 +113,7 @@ export function AdminNewSpotForm() {
   function updateCity(cityId: string) {
     setForm((current) => ({
       ...current,
-      cityId,
+      cityId: String(cityId ?? "").trim(),
     }));
   }
 
@@ -145,7 +150,18 @@ export function AdminNewSpotForm() {
   }
 
   async function createInSupabase() {
-    const validationErrors = validateSpotFields(form);
+    const cityId = String(form.cityId ?? "").trim();
+
+    if (!cityId) {
+      setStatusMessage("都市を選択してください。", "error");
+      return;
+    }
+
+    const payload = {
+      ...form,
+      cityId,
+    };
+    const validationErrors = validateSpotFields(payload);
 
     if (validationErrors.length > 0) {
       setStatusMessage(formatValidationErrors(validationErrors), "error");
@@ -159,7 +175,7 @@ export function AdminNewSpotForm() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(form),
+      body: JSON.stringify(payload),
     });
 
     const data = await readResponse(response);

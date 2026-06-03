@@ -97,7 +97,12 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
 
       const data = await readResponse(spotResponse);
       const citiesData = await readResponse(citiesResponse);
-      const nextCities = (citiesData.cities ?? []) as CityOption[];
+      const nextCities = ((citiesData.cities ?? []) as CityOption[])
+        .map((city) => ({
+          ...city,
+          id: String(city.id ?? "").trim(),
+        }))
+        .filter((city) => city.id);
 
       if (citiesResponse.ok) {
         setCityOptions(nextCities);
@@ -111,7 +116,7 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
       }
 
       const spot = data.spot;
-      const cityId = String(spot.city_id ?? "");
+      const cityId = String(spot.city_id ?? "").trim();
 
       setForm({
         id: spot.id,
@@ -143,7 +148,7 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
   function updateCity(cityId: string) {
     setForm((current) => ({
       ...current,
-      cityId,
+      cityId: String(cityId ?? "").trim(),
     }));
   }
 
@@ -180,7 +185,18 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
   }
 
   async function save() {
-    const validationErrors = validateSpotFields(form);
+    const cityId = String(form.cityId ?? "").trim();
+
+    if (!cityId) {
+      setStatusMessage("都市を選択してください。", "error");
+      return;
+    }
+
+    const payload = {
+      ...form,
+      cityId,
+    };
+    const validationErrors = validateSpotFields(payload);
 
     if (validationErrors.length > 0) {
       setStatusMessage(formatValidationErrors(validationErrors), "error");
@@ -194,7 +210,7 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(form),
+      body: JSON.stringify(payload),
     });
 
     const data = await readResponse(response);

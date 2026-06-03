@@ -40,8 +40,8 @@ function spotErrorResponse(error: AdminDbError) {
 async function resolveCityForSpot(cityId: string) {
   if (!cityId) {
     return {
-      cityId: null,
-      error: null,
+      cityId: "",
+      error: "都市を選択してください。",
     };
   }
 
@@ -53,13 +53,13 @@ async function resolveCityForSpot(cityId: string) {
 
   if (error || !data?.id) {
     return {
-      cityId: null,
+      cityId: "",
       error: "選択した都市が見つかりません。",
     };
   }
 
   return {
-    cityId: data.id as string,
+    cityId: String(data.id).trim(),
     error: null,
   };
 }
@@ -96,7 +96,20 @@ export async function GET(request: Request) {
 }
 export async function POST(request: Request) {
   const body = await request.json();
-  const validationErrors = validateSpotFields(body);
+  const cityId = String(body.cityId ?? "").trim();
+
+  if (!cityId) {
+    return NextResponse.json(
+      { error: "都市を選択してください。" },
+      { status: 400 }
+    );
+  }
+
+  const normalizedBody = {
+    ...body,
+    cityId,
+  };
+  const validationErrors = validateSpotFields(normalizedBody);
 
   if (validationErrors.length > 0) {
     return NextResponse.json(
@@ -105,7 +118,6 @@ export async function POST(request: Request) {
     );
   }
 
-  const cityId = String(body.cityId ?? "").trim();
   const name = String(body.name ?? "").trim();
   const slug = String(body.slug ?? "").trim();
   const city = await resolveCityForSpot(cityId);
@@ -114,9 +126,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: city.error }, { status: 400 });
   }
 
-  if (!city.cityId || !name || !slug) {
+  if (!name || !slug) {
     return NextResponse.json(
-      { error: "都市、スポット名、スラッグは必須です。" },
+      { error: "スポット名、スラッグは必須です。" },
       { status: 400 }
     );
   }
@@ -152,7 +164,6 @@ export async function POST(request: Request) {
 
 export async function PATCH(request: Request) {
   const body = await request.json();
-  const validationErrors = validateSpotFields(body);
 
   const id = String(body.id ?? "").trim();
 
@@ -164,19 +175,33 @@ export async function PATCH(request: Request) {
   }
 
   const cityId = String(body.cityId ?? "").trim();
-  const name = String(body.name ?? "").trim();
-  const slug = String(body.slug ?? "").trim();
-  const city = await resolveCityForSpot(cityId);
 
-  if (city.error) {
-    return NextResponse.json({ error: city.error }, { status: 400 });
+  if (!cityId) {
+    return NextResponse.json(
+      { error: "都市を選択してください。" },
+      { status: 400 }
+    );
   }
+
+  const normalizedBody = {
+    ...body,
+    cityId,
+  };
+  const validationErrors = validateSpotFields(normalizedBody);
 
   if (validationErrors.length > 0) {
     return NextResponse.json(
       { error: formatValidationErrors(validationErrors) },
       { status: 400 }
     );
+  }
+
+  const name = String(body.name ?? "").trim();
+  const slug = String(body.slug ?? "").trim();
+  const city = await resolveCityForSpot(cityId);
+
+  if (city.error) {
+    return NextResponse.json({ error: city.error }, { status: 400 });
   }
 
   const payload = {
