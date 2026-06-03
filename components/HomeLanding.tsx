@@ -309,7 +309,7 @@ export function HomeLanding({ cities }: Props) {
 const pageStyle: CSSProperties = {
   minHeight: "100vh",
   overflowX: "hidden",
-  background: "#f8faf7",
+  background: "linear-gradient(180deg, #f7fbff 0%, #ffffff 46%, #f6faf8 100%)",
   color: "#17202a",
   fontFamily:
     '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif',
@@ -318,12 +318,12 @@ const pageStyle: CSSProperties = {
 const shellStyle: CSSProperties = {
   maxWidth: 1120,
   margin: "0 auto",
-  padding: "34px 16px 48px",
+  padding: "28px 16px 56px",
 };
 
 const heroStyle: CSSProperties = {
   display: "block",
-  maxWidth: 760,
+  maxWidth: 820,
   marginBottom: 34,
   padding: "18px 0 4px",
 };
@@ -335,27 +335,28 @@ const heroTextStyle: CSSProperties = {
 
 const eyebrowStyle: CSSProperties = {
   fontSize: 12,
-  letterSpacing: "0.14em",
+  letterSpacing: 0,
   textTransform: "uppercase",
-  opacity: 0.58,
+  color: "#1769e0",
+  fontWeight: 850,
   marginBottom: 14,
 };
 
 const heroTitleStyle: CSSProperties = {
   margin: "0 0 14px",
   maxWidth: 700,
-  fontSize: "clamp(34px, 8vw, 56px)",
-  lineHeight: 1.04,
-  letterSpacing: "-0.05em",
+  fontSize: 44,
+  lineHeight: 1.08,
+  letterSpacing: 0,
   fontWeight: 850,
 };
 
 const heroSubtitleStyle: CSSProperties = {
   margin: "0 0 22px",
   maxWidth: 620,
-  fontSize: "clamp(14px, 3.6vw, 16px)",
+  fontSize: 16,
   lineHeight: 1.72,
-  color: "#607080",
+  color: "#4c5f6f",
 };
 
 const searchBoxStyle: CSSProperties = {
@@ -365,14 +366,14 @@ const searchBoxStyle: CSSProperties = {
   gap: 10,
   padding: "7px 8px 7px 16px",
   borderRadius: 22,
-  background: "#fffdf8",
-  border: "1px solid rgba(168, 116, 50, 0.14)",
-  boxShadow: "0 10px 30px rgba(96, 76, 48, 0.08)",
+  background: "#ffffff",
+  border: "1px solid rgba(23, 32, 42, 0.1)",
+  boxShadow: "0 10px 24px rgba(30, 64, 88, 0.08)",
 };
 
 const searchIconStyle: CSSProperties = {
   fontSize: 22,
-  color: "#9a6a2f",
+  color: "#1769e0",
   flexShrink: 0,
 };
 
@@ -400,11 +401,11 @@ const primaryHeroButtonStyle: CSSProperties = {
   border: 0,
   padding: "13px 16px",
   borderRadius: 999,
-  background: "#138a72",
+  background: "#1769e0",
   color: "#ffffff",
   fontSize: 14,
   fontWeight: 850,
-  boxShadow: "0 14px 34px rgba(0, 0, 0, 0.16)",
+  boxShadow: "0 12px 28px rgba(23, 105, 224, 0.24)",
 };
 
 const secondaryHeroButtonStyle: CSSProperties = {
@@ -438,7 +439,7 @@ const sectionHeaderStyle: CSSProperties = {
 
 const smallLabelStyle: CSSProperties = {
   fontSize: 12,
-  letterSpacing: "0.12em",
+  letterSpacing: 0,
   textTransform: "uppercase",
   color: "#138a72",
   fontWeight: 850,
@@ -447,9 +448,9 @@ const smallLabelStyle: CSSProperties = {
 
 const sectionTitleStyle: CSSProperties = {
   margin: 0,
-  fontSize: "clamp(24px, 5.6vw, 32px)",
+  fontSize: 30,
   lineHeight: 1.08,
-  letterSpacing: "-0.045em",
+  letterSpacing: 0,
   fontWeight: 850,
   color: "#17202a",
 };
@@ -509,7 +510,7 @@ const resultTitleStyle: CSSProperties = {
   margin: 0,
   fontSize: 23,
   lineHeight: 1.05,
-  letterSpacing: "-0.04em",
+  letterSpacing: 0,
   fontWeight: 850,
 };
 
@@ -545,9 +546,9 @@ const quickCardStyle: CSSProperties = {
   minHeight: 142,
   padding: 18,
   borderRadius: 22,
-  background: "#fffdf8",
-  border: "1px solid rgba(168, 116, 50, 0.14)",
-  boxShadow: "0 8px 24px rgba(96, 76, 48, 0.07)",
+  background: "#ffffff",
+  border: "1px solid rgba(23, 32, 42, 0.1)",
+  boxShadow: "0 10px 24px rgba(30, 64, 88, 0.08)",
   color: "inherit",
   textDecoration: "none",
 };
@@ -558,11 +559,11 @@ const quickLabelStyle: CSSProperties = {
   marginBottom: 13,
   padding: "6px 9px",
   borderRadius: 999,
-  background: "#f7efe2",
-  border: "1px solid rgba(168, 116, 50, 0.14)",
-  color: "#9a6a2f",
+  background: "#e8f1ff",
+  border: "1px solid rgba(23, 105, 224, 0.12)",
+  color: "#1769e0",
   fontSize: 11,
-  letterSpacing: "0.11em",
+  letterSpacing: 0,
   textTransform: "uppercase",
   fontWeight: 850,
 };
@@ -571,7 +572,7 @@ const quickTitleStyle: CSSProperties = {
   margin: 0,
   fontSize: 22,
   lineHeight: 1.1,
-  letterSpacing: "-0.04em",
+  letterSpacing: 0,
   fontWeight: 850,
   color: "#17202a",
 };
@@ -632,7 +633,7 @@ const railCardTitleStyle: CSSProperties = {
   margin: 0,
   fontSize: 25,
   lineHeight: 1.05,
-  letterSpacing: "-0.045em",
+  letterSpacing: 0,
   fontWeight: 850,
 };
 
@@ -666,7 +667,7 @@ const cityResultWrapStyle: CSSProperties = {
 const miniSectionTitleStyle: CSSProperties = {
   margin: "0 0 12px",
   fontSize: 17,
-  letterSpacing: "-0.025em",
+  letterSpacing: 0,
   fontWeight: 850,
 };
 
@@ -714,7 +715,7 @@ const cityResultTitleStyle: CSSProperties = {
   margin: 0,
   fontSize: 23,
   lineHeight: 1.06,
-  letterSpacing: "-0.04em",
+  letterSpacing: 0,
   fontWeight: 850,
   color: "#ffffff",
   textShadow: "0 1px 10px rgba(0, 0, 0, 0.26)",
@@ -772,7 +773,7 @@ const destinationTitleStyle: CSSProperties = {
   margin: 0,
   fontSize: "clamp(22px, 5.8vw, 26px)",
   lineHeight: 1.06,
-  letterSpacing: "-0.04em",
+  letterSpacing: 0,
   fontWeight: 850,
   color: "#ffffff",
   textShadow: "0 1px 10px rgba(0, 0, 0, 0.26)",
@@ -823,8 +824,6 @@ const countryBadgeStyle: CSSProperties = {
   fontSize: 12,
   fontWeight: 850,
 };
-
-
 
 
 

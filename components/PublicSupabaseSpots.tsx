@@ -69,13 +69,13 @@ export async function PublicSupabaseSpots() {
         {spotsWithCities.map(({ spot, city, citySlug }) => (
           <Link
             key={spot.id}
-            href={`/c/${citySlug}/spot/${spot.slug}`}
+            href={`/c/${citySlug}/spot/${spot.slug}?src=spots&v=published_${citySlug}_${spot.slug}`}
             style={{
               ...cardStyle,
               backgroundImage: getImageBackground(
                 spot.image_url,
-                "linear-gradient(180deg, rgba(10,18,24,.05), rgba(10,18,24,.76))",
-                "linear-gradient(135deg, #dfeeea, #f7efe2)"
+                "linear-gradient(180deg, rgba(255,255,255,0), rgba(23,32,42,.08))",
+                "linear-gradient(135deg, #e8f4ff, #edf8f2)"
               ),
             }}
           >
@@ -99,16 +99,16 @@ const sectionStyle: CSSProperties = {
 const labelStyle: CSSProperties = {
   marginBottom: 8,
   fontSize: 12,
-  color: "#9a6a2f",
+  color: "#138a72",
   fontWeight: 850,
   textTransform: "uppercase",
-  letterSpacing: ".12em",
+  letterSpacing: 0,
 };
 
 const titleStyle: CSSProperties = {
   margin: "0 0 16px",
-  fontSize: "clamp(24px, 5vw, 32px)",
-  letterSpacing: "-.045em",
+  fontSize: 28,
+  letterSpacing: 0,
 };
 
 const gridStyle: CSSProperties = {
@@ -118,17 +118,20 @@ const gridStyle: CSSProperties = {
 };
 
 const cardStyle: CSSProperties = {
-  minHeight: 360,
+  minHeight: 410,
   position: "relative",
   display: "flex",
   flexDirection: "column",
   justifyContent: "flex-end",
   borderRadius: 26,
   overflow: "hidden",
-  color: "#ffffff",
+  color: "#17202a",
   textDecoration: "none",
   backgroundSize: "cover",
   backgroundPosition: "center",
+  backgroundColor: "#edf8f2",
+  border: "1px solid rgba(23,32,42,.1)",
+  boxShadow: "0 12px 28px rgba(30,64,88,.12)",
 };
 
 const badgeStyle: CSSProperties = {
@@ -137,32 +140,31 @@ const badgeStyle: CSSProperties = {
   left: 14,
   padding: "7px 10px",
   borderRadius: 999,
-  background: "rgba(255,255,255,.84)",
+  background: "#ffffff",
+  border: "1px solid rgba(23,32,42,.08)",
   color: "#17202a",
   fontSize: 12,
   fontWeight: 850,
 };
 
 const panelStyle: CSSProperties = {
-  margin: 12,
-  padding: 16,
-  borderRadius: 20,
-  background: "rgba(12,22,30,.54)",
-  border: "1px solid rgba(255,255,255,.24)",
-  backdropFilter: "blur(18px)",
-  WebkitBackdropFilter: "blur(18px)",
+  margin: 0,
+  padding: 18,
+  borderRadius: "0 0 26px 26px",
+  background: "#ffffff",
+  borderTop: "1px solid rgba(23,32,42,.08)",
 };
 
 const cardTitleStyle: CSSProperties = {
   margin: 0,
   fontSize: 24,
-  lineHeight: 1.06,
-  letterSpacing: "-.04em",
+  lineHeight: 1.12,
+  letterSpacing: 0,
 };
 
 const textStyle: CSSProperties = {
   margin: "10px 0 0",
   fontSize: 13,
   lineHeight: 1.55,
-  color: "rgba(255,255,255,.84)",
+  color: "#4c5f6f",
 };

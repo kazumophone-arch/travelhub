@@ -29,8 +29,8 @@ export function SupabaseSpotDetail({ city, spot, tracking }: Props) {
           ...heroStyle,
           backgroundImage: getImageBackground(
             spot.image_url,
-            "linear-gradient(180deg, rgba(10,18,24,.10), rgba(10,18,24,.76))",
-            "linear-gradient(135deg, #dfeeea, #f7efe2)"
+            "linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.84))",
+            "linear-gradient(135deg, #e8f4ff, #edf8f2)"
           ),
         }}
       >
@@ -52,7 +52,7 @@ export function SupabaseSpotDetail({ city, spot, tracking }: Props) {
                 v={trackingV}
                 spotSlug={spot.slug}
                 primary={hasHotelAffiliate ? "hotels" : "tours"}
-                tone="dark"
+                tone="light"
                 variant={hasHotelAffiliate ? "spot-hotel" : "spot-tour"}
                 showHotels={hasHotelAffiliate}
                 showTours={hasTourAffiliate}
@@ -74,17 +74,17 @@ export function SupabaseSpotDetail({ city, spot, tracking }: Props) {
 
 const pageStyle: CSSProperties = {
   minHeight: "100vh",
-  background: "#f8faf7",
+  background: "linear-gradient(180deg, #f7fbff 0%, #ffffff 52%, #f6faf8 100%)",
   color: "#17202a",
 };
 
 const heroStyle: CSSProperties = {
-  minHeight: "clamp(460px, 72vw, 720px)",
+  minHeight: 540,
   display: "flex",
   alignItems: "flex-end",
   backgroundSize: "cover",
   backgroundPosition: "center",
-  padding: "44px 16px",
+  padding: "220px 16px 28px",
 };
 
 const panelStyle: CSSProperties = {
@@ -93,17 +93,16 @@ const panelStyle: CSSProperties = {
   margin: "0 auto",
   padding: 22,
   borderRadius: 28,
-  background: "rgba(12,22,30,.54)",
-  border: "1px solid rgba(255,255,255,.24)",
-  backdropFilter: "blur(18px)",
-  WebkitBackdropFilter: "blur(18px)",
-  color: "#ffffff",
+  background: "rgba(255,255,255,.94)",
+  border: "1px solid rgba(23,32,42,.1)",
+  boxShadow: "0 18px 42px rgba(30,64,88,.14)",
+  color: "#17202a",
 };
 
 const backStyle: CSSProperties = {
   display: "inline-flex",
   marginBottom: 18,
-  color: "rgba(255,255,255,.86)",
+  color: "#1769e0",
   textDecoration: "none",
   fontSize: 14,
   fontWeight: 850,
@@ -114,15 +113,15 @@ const eyebrowStyle: CSSProperties = {
   fontSize: 12,
   fontWeight: 850,
   textTransform: "uppercase",
-  letterSpacing: ".13em",
-  color: "rgba(255,255,255,.78)",
+  letterSpacing: 0,
+  color: "#138a72",
 };
 
 const titleStyle: CSSProperties = {
   margin: 0,
-  fontSize: "clamp(44px, 10vw, 84px)",
-  lineHeight: 1,
-  letterSpacing: "-.06em",
+  fontSize: 44,
+  lineHeight: 1.06,
+  letterSpacing: 0,
 };
 
 const leadStyle: CSSProperties = {
@@ -130,11 +129,11 @@ const leadStyle: CSSProperties = {
   maxWidth: 720,
   fontSize: 16,
   lineHeight: 1.7,
-  color: "rgba(255,255,255,.84)",
+  color: "#4c5f6f",
 };
 
 const heroCtaStyle: CSSProperties = {
-  maxWidth: 420,
+  maxWidth: 520,
   marginTop: 18,
 };
 
@@ -147,8 +146,8 @@ const bodyStyle: CSSProperties = {
 
 const sectionTitleStyle: CSSProperties = {
   margin: "0 0 12px",
-  fontSize: "clamp(26px, 5vw, 36px)",
-  letterSpacing: "-.045em",
+  fontSize: 32,
+  letterSpacing: 0,
 };
 
 const bodyTextStyle: CSSProperties = {

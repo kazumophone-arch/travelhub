@@ -28,7 +28,7 @@ function getCardStyle(city: City): CSSProperties {
 
   return {
     ...cardStyle,
-    backgroundImage: `url("${image.imageUrl}")`,
+    backgroundImage: `linear-gradient(180deg, rgba(255,255,255,0), rgba(23,32,42,.08)), url("${image.imageUrl}")`,
     backgroundSize: "cover",
     backgroundPosition: "center",
   };
@@ -106,18 +106,18 @@ const sectionHeaderStyle: CSSProperties = {
 
 const smallLabelStyle: CSSProperties = {
   fontSize: 12,
-  letterSpacing: "0.12em",
+  letterSpacing: 0,
   textTransform: "uppercase",
-  color: "#9a6a2f",
+  color: "#138a72",
   fontWeight: 850,
   marginBottom: 7,
 };
 
 const sectionTitleStyle: CSSProperties = {
   margin: 0,
-  fontSize: "clamp(24px, 5.6vw, 32px)",
+  fontSize: 30,
   lineHeight: 1.08,
-  letterSpacing: "-0.045em",
+  letterSpacing: 0,
   fontWeight: 850,
   color: "#17202a",
 };
@@ -128,12 +128,12 @@ const viewAllStyle: CSSProperties = {
   gap: 8,
   padding: "9px 12px",
   borderRadius: 999,
-  background: "#f7efe2",
-  color: "#9a6a2f",
+  background: "#e8f1ff",
+  color: "#1769e0",
   textDecoration: "none",
   fontSize: 13,
   fontWeight: 850,
-  border: "1px solid rgba(168, 116, 50, 0.14)",
+  border: "1px solid rgba(23, 105, 224, 0.12)",
 };
 
 const gridStyle: CSSProperties = {
@@ -144,17 +144,17 @@ const gridStyle: CSSProperties = {
 
 const cardStyle: CSSProperties = {
   position: "relative",
-  minHeight: 370,
+  minHeight: 410,
   display: "flex",
   flexDirection: "column",
   justifyContent: "flex-end",
   borderRadius: 26,
   overflow: "hidden",
   textDecoration: "none",
-  color: "#ffffff",
-  backgroundColor: "#17202a",
-  border: "1px solid rgba(255, 255, 255, 0.22)",
-  boxShadow: "0 14px 36px rgba(30, 64, 88, 0.16)",
+  color: "#17202a",
+  backgroundColor: "#edf8f2",
+  border: "1px solid rgba(23, 32, 42, 0.1)",
+  boxShadow: "0 12px 28px rgba(30, 64, 88, 0.12)",
 };
 
 const monthBadgeStyle: CSSProperties = {
@@ -164,10 +164,8 @@ const monthBadgeStyle: CSSProperties = {
   zIndex: 3,
   padding: "7px 10px",
   borderRadius: 999,
-  background: "rgba(255, 255, 255, 0.84)",
-  border: "1px solid rgba(255, 255, 255, 0.28)",
-  backdropFilter: "blur(12px)",
-  WebkitBackdropFilter: "blur(12px)",
+  background: "#ffffff",
+  border: "1px solid rgba(23, 32, 42, 0.08)",
   color: "#17202a",
   fontSize: 12,
   fontWeight: 850,
@@ -176,40 +174,36 @@ const monthBadgeStyle: CSSProperties = {
 const textPanelStyle: CSSProperties = {
   position: "relative",
   zIndex: 2,
-  margin: 12,
-  padding: 16,
-  borderRadius: 20,
-  background: "rgba(12, 22, 30, 0.54)",
-  border: "1px solid rgba(255, 255, 255, 0.24)",
-  boxShadow: "0 10px 26px rgba(0, 0, 0, 0.14)",
-  backdropFilter: "blur(18px)",
-  WebkitBackdropFilter: "blur(18px)",
+  margin: 0,
+  padding: 18,
+  borderRadius: "0 0 26px 26px",
+  background: "#ffffff",
+  borderTop: "1px solid rgba(23, 32, 42, 0.08)",
 };
 
 const metaStyle: CSSProperties = {
   marginBottom: 7,
   fontSize: 12,
-  letterSpacing: "0.1em",
+  letterSpacing: 0,
   textTransform: "uppercase",
-  color: "rgba(255, 255, 255, 0.78)",
+  color: "#607080",
   fontWeight: 850,
 };
 
 const cardTitleStyle: CSSProperties = {
   margin: 0,
-  fontSize: "clamp(23px, 5.8vw, 28px)",
-  lineHeight: 1.04,
-  letterSpacing: "-0.045em",
-  color: "#ffffff",
+  fontSize: 24,
+  lineHeight: 1.12,
+  letterSpacing: 0,
+  color: "#17202a",
   fontWeight: 850,
-  textShadow: "0 1px 10px rgba(0, 0, 0, 0.26)",
 };
 
 const cardTextStyle: CSSProperties = {
   margin: "10px 0 0",
   fontSize: 13,
   lineHeight: 1.55,
-  color: "rgba(255, 255, 255, 0.84)",
+  color: "#4c5f6f",
 };
 
 const chipRowStyle: CSSProperties = {
@@ -222,9 +216,9 @@ const chipRowStyle: CSSProperties = {
 const chipStyle: CSSProperties = {
   padding: "7px 9px",
   borderRadius: 999,
-  background: "rgba(255, 255, 255, 0.16)",
-  color: "#ffffff",
-  border: "1px solid rgba(255, 255, 255, 0.22)",
+  background: "#eaf8f1",
+  color: "#0c7a58",
+  border: "1px solid rgba(12, 122, 88, 0.14)",
   fontSize: 12,
   fontWeight: 800,
 };

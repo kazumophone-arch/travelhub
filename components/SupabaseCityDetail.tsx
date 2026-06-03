@@ -35,8 +35,8 @@ export async function SupabaseCityDetail({ city, tracking }: Props) {
           ...heroStyle,
           backgroundImage: getImageBackground(
             city.image_url,
-            "linear-gradient(180deg, rgba(10,18,24,.12), rgba(10,18,24,.76))",
-            "linear-gradient(135deg, #dfeeea, #f7efe2)"
+            "linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.84))",
+            "linear-gradient(135deg, #e8f4ff, #edf8f2)"
           ),
         }}
       >
@@ -53,7 +53,7 @@ export async function SupabaseCityDetail({ city, tracking }: Props) {
                 src={trackingSrc}
                 v={trackingV}
                 primary={hasHotelAffiliate ? "hotels" : "tours"}
-                tone="dark"
+                tone="light"
                 variant="city"
                 showHotels={hasHotelAffiliate}
                 showTours={hasTourAffiliate}
@@ -64,8 +64,8 @@ export async function SupabaseCityDetail({ city, tracking }: Props) {
       </section>
 
       <section style={shellStyle}>
-        <div style={labelStyle}>Added from admin</div>
-        <h2 style={sectionTitleStyle}>Published spots</h2>
+        <div style={labelStyle}>Explore next</div>
+        <h2 style={sectionTitleStyle}>Popular spots in {city.city}</h2>
 
         {spots.length === 0 ? (
           <div style={emptyStyle}>No published spots yet.</div>
@@ -79,8 +79,8 @@ export async function SupabaseCityDetail({ city, tracking }: Props) {
                   ...cardStyle,
                   backgroundImage: getImageBackground(
                     spot.image_url,
-                    "linear-gradient(180deg, rgba(10,18,24,.05), rgba(10,18,24,.76))",
-                    "linear-gradient(135deg, #dfeeea, #f7efe2)"
+                    "linear-gradient(180deg, rgba(255,255,255,0), rgba(23,32,42,.08))",
+                    "linear-gradient(135deg, #e8f4ff, #edf8f2)"
                   ),
                 }}
               >
@@ -116,17 +116,17 @@ function getTrackingQuery(tracking: TrackingParams | undefined) {
 
 const pageStyle: CSSProperties = {
   minHeight: "100vh",
-  background: "#f8faf7",
+  background: "linear-gradient(180deg, #f7fbff 0%, #ffffff 52%, #f6faf8 100%)",
   color: "#17202a",
 };
 
 const heroStyle: CSSProperties = {
-  minHeight: "clamp(420px, 68vw, 680px)",
+  minHeight: 520,
   display: "flex",
   alignItems: "flex-end",
   backgroundSize: "cover",
   backgroundPosition: "center",
-  padding: "44px 16px",
+  padding: "220px 16px 28px",
 };
 
 const heroPanelStyle: CSSProperties = {
@@ -135,11 +135,10 @@ const heroPanelStyle: CSSProperties = {
   margin: "0 auto",
   padding: 22,
   borderRadius: 28,
-  background: "rgba(12,22,30,.54)",
-  border: "1px solid rgba(255,255,255,.24)",
-  backdropFilter: "blur(18px)",
-  WebkitBackdropFilter: "blur(18px)",
-  color: "#ffffff",
+  background: "rgba(255,255,255,.94)",
+  border: "1px solid rgba(23,32,42,.1)",
+  boxShadow: "0 18px 42px rgba(30,64,88,.14)",
+  color: "#17202a",
 };
 
 const eyebrowStyle: CSSProperties = {
@@ -147,15 +146,15 @@ const eyebrowStyle: CSSProperties = {
   fontSize: 12,
   fontWeight: 850,
   textTransform: "uppercase",
-  letterSpacing: ".13em",
-  color: "rgba(255,255,255,.78)",
+  letterSpacing: 0,
+  color: "#1769e0",
 };
 
 const titleStyle: CSSProperties = {
   margin: 0,
-  fontSize: "clamp(44px, 10vw, 84px)",
-  lineHeight: 1,
-  letterSpacing: "-.06em",
+  fontSize: 44,
+  lineHeight: 1.06,
+  letterSpacing: 0,
 };
 
 const leadStyle: CSSProperties = {
@@ -163,11 +162,11 @@ const leadStyle: CSSProperties = {
   maxWidth: 720,
   fontSize: 16,
   lineHeight: 1.7,
-  color: "rgba(255,255,255,.84)",
+  color: "#4c5f6f",
 };
 
 const heroCtaStyle: CSSProperties = {
-  maxWidth: 420,
+  maxWidth: 520,
   marginTop: 18,
 };
 
@@ -181,16 +180,16 @@ const shellStyle: CSSProperties = {
 const labelStyle: CSSProperties = {
   marginBottom: 8,
   fontSize: 12,
-  color: "#9a6a2f",
+  color: "#138a72",
   fontWeight: 850,
   textTransform: "uppercase",
-  letterSpacing: ".12em",
+  letterSpacing: 0,
 };
 
 const sectionTitleStyle: CSSProperties = {
   margin: "0 0 16px",
-  fontSize: "clamp(26px, 5vw, 36px)",
-  letterSpacing: "-.045em",
+  fontSize: 32,
+  letterSpacing: 0,
 };
 
 const gridStyle: CSSProperties = {
@@ -200,17 +199,20 @@ const gridStyle: CSSProperties = {
 };
 
 const cardStyle: CSSProperties = {
-  minHeight: 360,
+  minHeight: 410,
   position: "relative",
   display: "flex",
   flexDirection: "column",
   justifyContent: "flex-end",
   borderRadius: 26,
   overflow: "hidden",
-  color: "#ffffff",
+  color: "#17202a",
   textDecoration: "none",
   backgroundSize: "cover",
   backgroundPosition: "center",
+  backgroundColor: "#edf8f2",
+  border: "1px solid rgba(23,32,42,.1)",
+  boxShadow: "0 12px 28px rgba(30,64,88,.12)",
 };
 
 const badgeStyle: CSSProperties = {
@@ -219,34 +221,34 @@ const badgeStyle: CSSProperties = {
   left: 14,
   padding: "7px 10px",
   borderRadius: 999,
-  background: "rgba(255,255,255,.84)",
+  background: "#ffffff",
+  border: "1px solid rgba(23,32,42,.08)",
   color: "#17202a",
   fontSize: 12,
   fontWeight: 850,
 };
 
 const panelStyle: CSSProperties = {
-  margin: 12,
-  padding: 16,
-  borderRadius: 20,
-  background: "rgba(12,22,30,.54)",
-  border: "1px solid rgba(255,255,255,.24)",
-  backdropFilter: "blur(18px)",
-  WebkitBackdropFilter: "blur(18px)",
+  margin: 0,
+  padding: 18,
+  borderRadius: "0 0 26px 26px",
+  background: "#ffffff",
+  borderTop: "1px solid rgba(23,32,42,.08)",
 };
 
 const cardTitleStyle: CSSProperties = {
   margin: 0,
   fontSize: 24,
-  lineHeight: 1.06,
-  letterSpacing: "-.04em",
+  lineHeight: 1.12,
+  letterSpacing: 0,
+  color: "#17202a",
 };
 
 const cardTextStyle: CSSProperties = {
   margin: "10px 0 0",
   fontSize: 13,
   lineHeight: 1.55,
-  color: "rgba(255,255,255,.84)",
+  color: "#4c5f6f",
 };
 
 const emptyStyle: CSSProperties = {

@@ -362,16 +362,17 @@ const sectionHeaderStyle: CSSProperties = {
 
 const smallLabelStyle: CSSProperties = {
   fontSize: 12,
-  letterSpacing: "0.12em",
+  letterSpacing: 0,
   textTransform: "uppercase",
-  opacity: 0.5,
+  color: "#138a72",
+  fontWeight: 850,
   marginBottom: 6,
 };
 
 const sectionTitleStyle: CSSProperties = {
   margin: 0,
-  fontSize: "clamp(24px, 6vw, 32px)",
-  letterSpacing: "-0.045em",
+  fontSize: 30,
+  letterSpacing: 0,
   fontWeight: 850,
 };
 
@@ -385,16 +386,16 @@ const quizCardStyle: CSSProperties = {
   borderRadius: 32,
   padding: 18,
   background: "#ffffff",
-  border: "1px solid rgba(23, 32, 42, 0.08)",
-  boxShadow: "0 24px 70px rgba(0, 0, 0, 0.1)",
+  border: "1px solid rgba(23, 32, 42, 0.1)",
+  boxShadow: "0 12px 28px rgba(30, 64, 88, 0.1)",
 };
 
 const swipeCardStyle: CSSProperties = {
   borderRadius: 32,
   padding: 18,
   background: "#ffffff",
-  border: "1px solid rgba(23, 32, 42, 0.08)",
-  boxShadow: "0 24px 70px rgba(0, 0, 0, 0.1)",
+  border: "1px solid rgba(23, 32, 42, 0.1)",
+  boxShadow: "0 12px 28px rgba(30, 64, 88, 0.1)",
 };
 
 const toolHeaderStyle: CSSProperties = {
@@ -409,14 +410,15 @@ const toolTitleStyle: CSSProperties = {
   margin: 0,
   fontSize: 24,
   lineHeight: 1.05,
-  letterSpacing: "-0.045em",
+  letterSpacing: 0,
   fontWeight: 850,
 };
 
 const toolBadgeStyle: CSSProperties = {
   padding: "8px 10px",
   borderRadius: 999,
-  background: "rgba(0, 0, 0, 0.06)",
+  background: "#e8f1ff",
+  color: "#1769e0",
   fontSize: 12,
   fontWeight: 800,
   whiteSpace: "nowrap",
@@ -452,16 +454,17 @@ const optionStyle: CSSProperties = {
 
 const activeOptionStyle: CSSProperties = {
   ...optionStyle,
-  background: "#171717",
+  background: "#1769e0",
   color: "#ffffff",
-  border: "1px solid #171717",
+  border: "1px solid #1769e0",
 };
 
 const resultBoxStyle: CSSProperties = {
   marginBottom: 18,
   padding: 14,
   borderRadius: 24,
-  background: "rgba(0, 0, 0, 0.04)",
+  background: "#f7fbff",
+  border: "1px solid rgba(23, 32, 42, 0.08)",
 };
 
 const resultTitleStyle: CSSProperties = {
@@ -483,6 +486,7 @@ const resultItemStyle: CSSProperties = {
   padding: 12,
   borderRadius: 18,
   background: "#ffffff",
+  border: "1px solid rgba(23, 32, 42, 0.08)",
   color: "inherit",
   textDecoration: "none",
 };
@@ -493,7 +497,7 @@ const resultRankStyle: CSSProperties = {
   display: "grid",
   placeItems: "center",
   borderRadius: "50%",
-  background: "#171717",
+  background: "#1769e0",
   color: "#ffffff",
   fontSize: 12,
   fontWeight: 850,
@@ -550,9 +554,9 @@ const swipeBodyStyle: CSSProperties = {
 
 const swipeCityStyle: CSSProperties = {
   margin: 0,
-  fontSize: "clamp(28px, 8vw, 38px)",
+  fontSize: 34,
   lineHeight: 1.02,
-  letterSpacing: "-0.055em",
+  letterSpacing: 0,
   fontWeight: 850,
 };
 
@@ -584,7 +588,7 @@ const pickButtonStyle: CSSProperties = {
   border: 0,
   borderRadius: 18,
   padding: "14px 12px",
-  background: "#171717",
+  background: "#138a72",
   color: "#ffffff",
   fontSize: 14,
   fontWeight: 850,
@@ -605,7 +609,8 @@ const pickedBoxStyle: CSSProperties = {
   marginTop: 18,
   padding: 14,
   borderRadius: 24,
-  background: "rgba(0, 0, 0, 0.04)",
+  background: "#f7fbff",
+  border: "1px solid rgba(23, 32, 42, 0.08)",
 };
 
 const pickedEmptyStyle: CSSProperties = {
@@ -622,7 +627,7 @@ const pickedListStyle: CSSProperties = {
 const pickedItemStyle: CSSProperties = {
   padding: "8px 10px",
   borderRadius: 999,
-  background: "#171717",
+  background: "#1769e0",
   color: "#ffffff",
   textDecoration: "none",
   fontSize: 12,
@@ -632,7 +637,8 @@ const pickedItemStyle: CSSProperties = {
 const emptyStyle: CSSProperties = {
   padding: 18,
   borderRadius: 20,
-  background: "rgba(0, 0, 0, 0.04)",
+  background: "#f7fbff",
+  border: "1px solid rgba(23, 32, 42, 0.08)",
   fontSize: 14,
   opacity: 0.68,
 };

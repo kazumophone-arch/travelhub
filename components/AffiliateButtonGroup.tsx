@@ -114,11 +114,22 @@ export function AffiliateButtonGroup({
           </Link>
         );
       })}
+
+      <p style={disclosureStyle}>
+        Some links may be affiliate links. TravelHub may earn a commission at no extra cost to you.
+      </p>
     </div>
   );
 }
 
 function getHotelCopy(city: AffiliateCity, variant: AffiliateVariant) {
+  if (variant === "spot-tour" || variant === "spot-hotel") {
+    return {
+      title: "Find hotels nearby",
+      text: "Compare nearby stays after choosing the place you want to visit.",
+    };
+  }
+
   if (variant === "stay") {
     return {
       title: `Compare ${city.city} hotels by area`,
@@ -133,20 +144,6 @@ function getHotelCopy(city: AffiliateCity, variant: AffiliateVariant) {
     };
   }
 
-  if (variant === "spot-tour") {
-    return {
-      title: `Stay near your ${city.city} route`,
-      text: "Compare stays after deciding which spots you want to connect.",
-    };
-  }
-
-  if (variant === "spot-hotel") {
-    return {
-      title: `Find stays in ${city.city}`,
-      text: "Choose your hotel area after checking which places are part of your route.",
-    };
-  }
-
   if (variant === "final") {
     return {
       title: `Compare stays in ${city.city}`,
@@ -155,12 +152,19 @@ function getHotelCopy(city: AffiliateCity, variant: AffiliateVariant) {
   }
 
   return {
-    title: `Find stays in ${city.city}`,
-    text: "Compare hotel options after choosing the area that fits your route.",
+    title: `Find hotels in ${city.city}`,
+    text: "Compare places to stay with your route and budget in mind.",
   };
 }
 
 function getTourCopy(city: AffiliateCity, variant: AffiliateVariant) {
+  if (variant === "spot-tour" || variant === "spot-hotel") {
+    return {
+      title: "Find tours and tickets",
+      text: "Check guided options, entry tickets, and simple ways to plan this stop.",
+    };
+  }
+
   if (variant === "stay") {
     return {
       title: `View ${city.city} tours`,
@@ -175,20 +179,6 @@ function getTourCopy(city: AffiliateCity, variant: AffiliateVariant) {
     };
   }
 
-  if (variant === "spot-tour") {
-    return {
-      title: `View ${city.city} tours including this area`,
-      text: "Use a tour when this spot is one of your route anchors.",
-    };
-  }
-
-  if (variant === "spot-hotel") {
-    return {
-      title: `Add a ${city.city} tour`,
-      text: "Use a guided route if you want to connect this spot with nearby highlights.",
-    };
-  }
-
   if (variant === "final") {
     return {
       title: `View ${city.city} tours`,
@@ -197,8 +187,8 @@ function getTourCopy(city: AffiliateCity, variant: AffiliateVariant) {
   }
 
   return {
-    title: `View ${city.city} tours`,
-    text: "Use a guided route when you want the planning handled for you.",
+    title: `Find tours in ${city.city}`,
+    text: "Compare tours and tickets when you want the planning handled for you.",
   };
 }
 
@@ -212,7 +202,7 @@ function getCardStyle(isPrimary: boolean, tone: AffiliateTone): CSSProperties {
 
 function getArrowStyle(isPrimary: boolean, tone: AffiliateTone): CSSProperties {
   if (tone === "dark") {
-    return isPrimary ? arrowOnWhiteStyle : arrowOnDarkStyle;
+    return arrowOnWhiteStyle;
   }
 
   return isPrimary ? arrowOnDarkStyle : arrowOnWhiteStyle;
@@ -239,7 +229,7 @@ function getTrustStyle(isPrimary: boolean, tone: AffiliateTone): CSSProperties {
     ...trustNoteStyle,
     color: isDarkPrimary ? "#ffffff" : "inherit",
     borderTop:
-      isDarkPrimary || tone === "dark"
+      isDarkPrimary
         ? "1px solid rgba(255, 255, 255, 0.14)"
         : "1px solid rgba(0, 0, 0, 0.08)",
     opacity: isDarkPrimary ? 0.62 : 0.58,
@@ -253,43 +243,47 @@ const wrapStyle: CSSProperties = {
 
 const primaryLightToneCardStyle: CSSProperties = {
   display: "block",
-  padding: 15,
+  minHeight: 116,
+  padding: 16,
   borderRadius: 22,
-  background: "#171717",
+  background: "#1769e0",
   color: "#ffffff",
   textDecoration: "none",
-  boxShadow: "0 18px 46px rgba(0, 0, 0, 0.16)",
+  boxShadow: "0 12px 28px rgba(23, 105, 224, 0.24)",
 };
 
 const secondaryLightToneCardStyle: CSSProperties = {
   display: "block",
-  padding: 15,
-  borderRadius: 22,
-  background: "rgba(255, 255, 255, 0.88)",
-  color: "#17202a",
-  textDecoration: "none",
-  border: "1px solid rgba(0, 0, 0, 0.08)",
-  boxShadow: "0 14px 34px rgba(0, 0, 0, 0.08)",
-};
-
-const primaryDarkToneCardStyle: CSSProperties = {
-  display: "block",
-  padding: 15,
+  minHeight: 116,
+  padding: 16,
   borderRadius: 22,
   background: "#ffffff",
   color: "#17202a",
   textDecoration: "none",
-  boxShadow: "0 18px 46px rgba(0, 0, 0, 0.18)",
+  border: "1px solid rgba(23, 32, 42, 0.1)",
+  boxShadow: "0 10px 24px rgba(30, 64, 88, 0.08)",
+};
+
+const primaryDarkToneCardStyle: CSSProperties = {
+  display: "block",
+  minHeight: 116,
+  padding: 16,
+  borderRadius: 22,
+  background: "#ffffff",
+  color: "#17202a",
+  textDecoration: "none",
+  boxShadow: "0 12px 28px rgba(0, 0, 0, 0.16)",
 };
 
 const secondaryDarkToneCardStyle: CSSProperties = {
   display: "block",
-  padding: 15,
+  minHeight: 116,
+  padding: 16,
   borderRadius: 22,
-  background: "rgba(255, 255, 255, 0.12)",
-  color: "#ffffff",
+  background: "rgba(255, 255, 255, 0.92)",
+  color: "#17202a",
   textDecoration: "none",
-  border: "1px solid rgba(255, 255, 255, 0.16)",
+  border: "1px solid rgba(255, 255, 255, 0.32)",
 };
 
 const cardTopStyle: CSSProperties = {
@@ -334,7 +328,7 @@ const arrowOnWhiteStyle: CSSProperties = {
 const titleStyle: CSSProperties = {
   fontSize: 18,
   lineHeight: 1.08,
-  letterSpacing: "-0.04em",
+  letterSpacing: 0,
   fontWeight: 850,
 };
 
@@ -350,6 +344,14 @@ const trustNoteStyle: CSSProperties = {
   fontSize: 11,
   lineHeight: 1.45,
   fontWeight: 750,
+};
+
+const disclosureStyle: CSSProperties = {
+  margin: "2px 0 0",
+  color: "inherit",
+  fontSize: 11,
+  lineHeight: 1.45,
+  opacity: 0.64,
 };
 
 

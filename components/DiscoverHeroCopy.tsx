@@ -36,27 +36,28 @@ const heroStyle: CSSProperties = {
 
 const eyebrowStyle: CSSProperties = {
   fontSize: 12,
-  letterSpacing: "0.14em",
+  letterSpacing: 0,
   textTransform: "uppercase",
-  opacity: 0.58,
+  color: "#1769e0",
+  fontWeight: 850,
   marginBottom: 14,
 };
 
 const titleStyle: CSSProperties = {
   margin: "0 0 18px",
   maxWidth: 760,
-  fontSize: "clamp(42px, 11vw, 78px)",
-  lineHeight: 1.02,
-  letterSpacing: "-0.055em",
+  fontSize: 42,
+  lineHeight: 1.08,
+  letterSpacing: 0,
   fontWeight: 850,
 };
 
 const subtitleStyle: CSSProperties = {
   margin: 0,
   maxWidth: 680,
-  fontSize: "clamp(15px, 4vw, 17px)",
+  fontSize: 16,
   lineHeight: 1.72,
-  opacity: 0.72,
+  color: "#4c5f6f",
 };
 
 

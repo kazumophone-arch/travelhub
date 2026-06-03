@@ -217,8 +217,8 @@ function getCityPhotoCardStyle(city: City): CSSProperties {
     ...destinationCardStyle,
     backgroundImage: getImageBackground(
       imageUrl,
-      "linear-gradient(180deg, rgba(10, 18, 24, 0.05) 0%, rgba(10, 18, 24, 0.24) 42%, rgba(10, 18, 24, 0.76) 100%)",
-      "linear-gradient(135deg, #dfeeea, #f7efe2)"
+      "linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(23, 32, 42, 0.08) 100%)",
+      "linear-gradient(135deg, #e8f4ff, #edf8f2)"
     ),
     backgroundSize: "cover",
     backgroundPosition: "center",
@@ -543,8 +543,7 @@ function FilterGroup({
 const pageStyle: CSSProperties = {
   minHeight: "100vh",
   overflowX: "hidden",
-  background:
-    "radial-gradient(circle at 12% 0%, rgba(255, 221, 180, 0.72), transparent 30%), radial-gradient(circle at 88% 4%, rgba(175, 205, 255, 0.58), transparent 28%), linear-gradient(180deg, #fbf7f0 0%, #ffffff 44%, #eef4f8 100%)",
+  background: "linear-gradient(180deg, #f7fbff 0%, #ffffff 48%, #f6faf8 100%)",
   color: "#17202a",
   fontFamily:
     '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif',
@@ -553,7 +552,7 @@ const pageStyle: CSSProperties = {
 const shellStyle: CSSProperties = {
   maxWidth: 1120,
   margin: "0 auto",
-  padding: "34px 16px 48px",
+  padding: "28px 16px 56px",
 };
 
 const heroStyle: CSSProperties = {
@@ -562,27 +561,28 @@ const heroStyle: CSSProperties = {
 
 const eyebrowStyle: CSSProperties = {
   fontSize: 12,
-  letterSpacing: "0.14em",
+  letterSpacing: 0,
   textTransform: "uppercase",
-  opacity: 0.58,
+  color: "#1769e0",
+  fontWeight: 850,
   marginBottom: 14,
 };
 
 const titleStyle: CSSProperties = {
   margin: "0 0 18px",
   maxWidth: 760,
-  fontSize: "clamp(42px, 11vw, 78px)",
-  lineHeight: 1.02,
-  letterSpacing: "-0.055em",
+  fontSize: 42,
+  lineHeight: 1.08,
+  letterSpacing: 0,
   fontWeight: 850,
 };
 
 const subtitleStyle: CSSProperties = {
   margin: "0 0 24px",
   maxWidth: 640,
-  fontSize: "clamp(15px, 4vw, 17px)",
+  fontSize: 16,
   lineHeight: 1.72,
-  opacity: 0.72,
+  color: "#4c5f6f",
 };
 
 const searchBoxStyle: CSSProperties = {
@@ -592,15 +592,14 @@ const searchBoxStyle: CSSProperties = {
   gap: 10,
   padding: "7px 8px 7px 16px",
   borderRadius: 24,
-  background: "rgba(255, 255, 255, 0.88)",
-  border: "1px solid rgba(23, 32, 42, 0.08)",
-  boxShadow: "0 8px 24px rgba(30, 64, 88, 0.08)",
-  backdropFilter: "blur(18px)",
+  background: "#ffffff",
+  border: "1px solid rgba(23, 32, 42, 0.1)",
+  boxShadow: "0 10px 24px rgba(30, 64, 88, 0.08)",
 };
 
 const searchIconStyle: CSSProperties = {
   fontSize: 22,
-  opacity: 0.5,
+  color: "#1769e0",
   flexShrink: 0,
 };
 
@@ -620,8 +619,8 @@ const filterPanelStyle: CSSProperties = {
   padding: 16,
   borderRadius: 26,
   background: "#ffffff",
-  border: "1px solid rgba(23, 32, 42, 0.08)",
-  boxShadow: "0 7px 20px rgba(30, 64, 88, 0.05)",
+  border: "1px solid rgba(23, 32, 42, 0.1)",
+  boxShadow: "0 8px 20px rgba(30, 64, 88, 0.06)",
 };
 
 const sectionHeaderStyle: CSSProperties = {
@@ -635,16 +634,17 @@ const sectionHeaderStyle: CSSProperties = {
 
 const smallLabelStyle: CSSProperties = {
   fontSize: 12,
-  letterSpacing: "0.12em",
+  letterSpacing: 0,
   textTransform: "uppercase",
-  opacity: 0.5,
+  color: "#138a72",
+  fontWeight: 850,
   marginBottom: 6,
 };
 
 const sectionTitleStyle: CSSProperties = {
   margin: 0,
-  fontSize: "clamp(24px, 6vw, 30px)",
-  letterSpacing: "-0.04em",
+  fontSize: 28,
+  letterSpacing: 0,
   fontWeight: 850,
 };
 
@@ -681,9 +681,9 @@ const shortcutButtonStyle: CSSProperties = {
 
 const activeShortcutButtonStyle: CSSProperties = {
   ...shortcutButtonStyle,
-  background: "#138a72",
+  background: "#1769e0",
   color: "#ffffff",
-  border: "1px solid #171717",
+  border: "1px solid #1769e0",
 };
 
 const filterGridStyle: CSSProperties = {
@@ -796,18 +796,18 @@ const destinationCardStyle: CSSProperties = {
   display: "flex",
   flexDirection: "column",
   justifyContent: "flex-end",
-  minHeight: 370,
+  minHeight: 420,
   borderRadius: 24,
-  color: "#ffffff",
+  color: "#17202a",
   textDecoration: "none",
   overflow: "hidden",
-  border: "1px solid rgba(255, 255, 255, 0.22)",
-  boxShadow: "0 12px 34px rgba(30, 64, 88, 0.16)",
-  backgroundColor: "#17202a",
+  border: "1px solid rgba(23, 32, 42, 0.1)",
+  boxShadow: "0 12px 28px rgba(30, 64, 88, 0.12)",
+  backgroundColor: "#edf8f2",
 };
 
 const destinationVisualStyle: CSSProperties = {
-  minHeight: 160,
+  minHeight: 190,
   position: "relative",
   flex: 1,
 };
@@ -819,10 +819,8 @@ const countryBadgeStyle: CSSProperties = {
   zIndex: 3,
   padding: "7px 10px",
   borderRadius: 999,
-  background: "rgba(255, 255, 255, 0.84)",
-  border: "1px solid rgba(255, 255, 255, 0.28)",
-  backdropFilter: "blur(12px)",
-  WebkitBackdropFilter: "blur(12px)",
+  background: "#ffffff",
+  border: "1px solid rgba(23, 32, 42, 0.08)",
   fontSize: 12,
   color: "#17202a",
   fontWeight: 850,
@@ -831,14 +829,12 @@ const countryBadgeStyle: CSSProperties = {
 const destinationBodyStyle: CSSProperties = {
   position: "relative",
   zIndex: 2,
-  margin: "0 12px 12px",
-  padding: 16,
-  borderRadius: 20,
-  background: "rgba(12, 22, 30, 0.52)",
-  border: "1px solid rgba(255, 255, 255, 0.24)",
-  boxShadow: "0 10px 26px rgba(0, 0, 0, 0.14)",
-  backdropFilter: "blur(18px)",
-  WebkitBackdropFilter: "blur(18px)",
+  margin: 0,
+  padding: 18,
+  borderRadius: "0 0 24px 24px",
+  background: "#ffffff",
+  borderTop: "1px solid rgba(23, 32, 42, 0.08)",
+  boxShadow: "0 -8px 20px rgba(23, 32, 42, 0.05)",
 };
 
 const destinationTopStyle: CSSProperties = {
@@ -855,18 +851,17 @@ const destinationTextStyle: CSSProperties = {
 
 const destinationTitleStyle: CSSProperties = {
   margin: 0,
-  fontSize: "clamp(22px, 5.8vw, 26px)",
-  lineHeight: 1.06,
-  letterSpacing: "-0.04em",
+  fontSize: 24,
+  lineHeight: 1.12,
+  letterSpacing: 0,
   overflowWrap: "break-word",
-  color: "#ffffff",
-  textShadow: "0 1px 10px rgba(0, 0, 0, 0.24)",
+  color: "#17202a",
 };
 
 const destinationCountryStyle: CSSProperties = {
   margin: "6px 0 0",
   fontSize: 13,
-  color: "rgba(255, 255, 255, 0.82)",
+  color: "#607080",
   fontWeight: 750,
 };
 
@@ -874,7 +869,7 @@ const destinationReasonStyle: CSSProperties = {
   margin: "0 0 14px",
   fontSize: 13,
   lineHeight: 1.5,
-  color: "rgba(255, 255, 255, 0.82)",
+  color: "#4c5f6f",
   fontWeight: 650,
 };
 
@@ -884,8 +879,8 @@ const arrowStyle: CSSProperties = {
   display: "grid",
   placeItems: "center",
   borderRadius: "50%",
-  background: "rgba(255, 255, 255, 0.86)",
-  color: "#138a72",
+  background: "#e8f1ff",
+  color: "#1769e0",
   fontWeight: 850,
   flexShrink: 0,
 };
@@ -895,7 +890,7 @@ const spotsStyle: CSSProperties = {
   gap: 6,
   fontSize: 13,
   lineHeight: 1.4,
-  color: "rgba(255, 255, 255, 0.82)",
+  color: "#607080",
   marginBottom: 15,
 };
 
@@ -908,9 +903,9 @@ const actionRowStyle: CSSProperties = {
 const primaryMiniStyle: CSSProperties = {
   padding: "7px 10px",
   borderRadius: 999,
-  background: "rgba(255, 255, 255, 0.18)",
-  color: "#ffffff",
-  border: "1px solid rgba(255, 255, 255, 0.24)",
+  background: "#eaf8f1",
+  color: "#0c7a58",
+  border: "1px solid rgba(12, 122, 88, 0.14)",
   fontSize: 12,
   fontWeight: 800,
 };
@@ -918,9 +913,9 @@ const primaryMiniStyle: CSSProperties = {
 const secondaryMiniStyle: CSSProperties = {
   padding: "7px 10px",
   borderRadius: 999,
-  background: "rgba(255, 255, 255, 0.14)",
-  color: "rgba(255, 255, 255, 0.86)",
-  border: "1px solid rgba(255, 255, 255, 0.20)",
+  background: "#fff4e7",
+  color: "#b45d00",
+  border: "1px solid rgba(180, 93, 0, 0.14)",
   fontSize: 12,
   fontWeight: 750,
 };
