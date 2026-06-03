@@ -25,6 +25,7 @@ type CityForm = {
   id: string;
   city: string;
   slug: string;
+  countryId: string;
   country: string;
   region: string;
   summary: string;
@@ -39,6 +40,14 @@ type CityForm = {
   sortRank: number;
 };
 
+type CountryOption = {
+  id: string;
+  name: string;
+  slug: string;
+  region: string | null;
+  is_published: boolean;
+};
+
 type CityApiRow = Record<string, any>;
 type StatusKind = "info" | "success" | "error";
 
@@ -46,6 +55,7 @@ const emptyForm: CityForm = {
   id: "",
   city: "",
   slug: "",
+  countryId: "",
   country: "",
   region: "",
   summary: "",
@@ -72,6 +82,7 @@ async function readResponse(response: Response) {
 
 export function AdminEditCityForm({ id }: Props) {
   const [form, setForm] = useState<CityForm>(emptyForm);
+  const [countryOptions, setCountryOptions] = useState<CountryOption[]>([]);
   const [status, setStatus] = useState("読み込み中...");
   const [statusKind, setStatusKind] = useState<StatusKind>("info");
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -86,8 +97,23 @@ export function AdminEditCityForm({ id }: Props) {
     async function loadCity() {
       setStatusMessage("読み込み中...");
 
-      const response = await fetch(`/api/admin/cities?id=${id}`);
+      const [response, countriesResponse] = await Promise.all([
+        fetch(`/api/admin/cities?id=${id}`),
+        fetch("/api/admin/countries"),
+      ]);
       const data = await readResponse(response);
+      const countriesData = await readResponse(countriesResponse);
+      const nextCountries = ((countriesData.countries ?? []) as CountryOption[])
+        .map((country) => ({
+          ...country,
+          id: String(country.id ?? "").trim(),
+          name: String(country.name ?? "").trim(),
+        }))
+        .filter((country) => country.id && country.name);
+
+      if (countriesResponse.ok) {
+        setCountryOptions(nextCountries);
+      }
 
       if (!response.ok) {
         setStatusMessage(data.error ?? "都市の読み込みに失敗しました。", "error");
@@ -101,12 +127,23 @@ export function AdminEditCityForm({ id }: Props) {
         return;
       }
 
+      const existingCountry = String(cityData.country ?? "");
+      const existingCountryId = String(cityData.country_id ?? "").trim();
+      const matchedCountry =
+        nextCountries.find((country) => country.id === existingCountryId) ??
+        nextCountries.find(
+          (country) =>
+            country.name.trim().toLowerCase() ===
+            existingCountry.trim().toLowerCase()
+        );
+
       setForm({
         id: String(cityData.id ?? ""),
         city: String(cityData.city ?? ""),
         slug: String(cityData.slug ?? ""),
-        country: String(cityData.country ?? ""),
-        region: String(cityData.region ?? ""),
+        countryId: existingCountryId || matchedCountry?.id || "",
+        country: matchedCountry?.name ?? existingCountry,
+        region: String(cityData.region ?? matchedCountry?.region ?? ""),
         summary: String(cityData.summary ?? ""),
         description: String(cityData.description ?? ""),
         imageUrl: String(cityData.image_url ?? ""),
@@ -132,6 +169,26 @@ export function AdminEditCityForm({ id }: Props) {
       ...(key === "city" && !current.slug
         ? { slug: slugify(String(value)) }
         : {}),
+    }));
+  }
+
+  function updateCountry(countryId: string) {
+    const nextCountryId = String(countryId ?? "").trim();
+    const selectedCountry = countryOptions.find((country) => country.id === nextCountryId);
+
+    setForm((current) => ({
+      ...current,
+      countryId: nextCountryId,
+      country: selectedCountry?.name ?? current.country,
+      region: current.region || selectedCountry?.region || "",
+    }));
+  }
+
+  function updateManualCountry(country: string) {
+    setForm((current) => ({
+      ...current,
+      countryId: "",
+      country,
     }));
   }
 
@@ -251,7 +308,27 @@ export function AdminEditCityForm({ id }: Props) {
 
         <label style={labelStyle}>
           国
-          <input value={form.country} onChange={(event) => update("country", event.target.value)} style={inputStyle} />
+          <select
+            value={form.countryId}
+            onChange={(event) => updateCountry(event.target.value)}
+            style={inputStyle}
+          >
+            <option value="">国を選択</option>
+            {countryOptions.map((country) => (
+              <option key={country.id} value={country.id}>
+                {country.name}
+                {country.is_published ? "" : " — 下書き"}
+              </option>
+            ))}
+          </select>
+        </label>
+        <AdminFieldHint>
+          国管理のデータを選ぶと、互換性のため国名にも同じ名前を保存します。
+        </AdminFieldHint>
+
+        <label style={labelStyle}>
+          国名
+          <input value={form.country} onChange={(event) => updateManualCountry(event.target.value)} style={inputStyle} />
         </label>
 
         <label style={labelStyle}>

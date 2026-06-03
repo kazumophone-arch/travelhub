@@ -9,9 +9,12 @@ import { supabase } from "@/lib/supabase";
 
 export type SupabasePublicCity = {
   id: string;
+  country_id?: string | null;
   slug: string;
   city: string;
   country: string;
+  countryName?: string;
+  countrySlug?: string;
   region: string;
   summary: string;
   description: string;
@@ -69,7 +72,10 @@ function toDirectoryCity(
   return {
     slug: city.slug,
     city: city.city,
-    country: city.country,
+    countryId: city.country_id ?? null,
+    country: city.countryName || city.country,
+    countryName: city.countryName || city.country,
+    countrySlug: city.countrySlug,
     stops: toStopTuple(city, spots),
     description: city.description || city.summary,
     isPublished: city.is_published,

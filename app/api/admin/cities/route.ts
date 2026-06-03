@@ -45,6 +45,39 @@ function cityErrorResponse(error: AdminDbError) {
   );
 }
 
+async function resolveCountryForCity(countryId: string) {
+  if (!countryId) {
+    return {
+      countryId: null,
+      countryName: "",
+      countryRegion: "",
+      error: null,
+    };
+  }
+
+  const { data, error } = await supabaseAdmin
+    .from("countries")
+    .select("id, name, region")
+    .eq("id", countryId)
+    .maybeSingle();
+
+  if (error || !data?.id) {
+    return {
+      countryId: null,
+      countryName: "",
+      countryRegion: "",
+      error: "選択した国が見つかりません。",
+    };
+  }
+
+  return {
+    countryId: String(data.id).trim(),
+    countryName: String(data.name ?? "").trim(),
+    countryRegion: String(data.region ?? "").trim(),
+    error: null,
+  };
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get("id");
@@ -78,7 +111,19 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const validationErrors = validateCityFields(body);
+  const countryId = String(body.countryId ?? "").trim();
+  const country = await resolveCountryForCity(countryId);
+
+  if (country.error) {
+    return NextResponse.json({ error: country.error }, { status: 400 });
+  }
+
+  const normalizedBody = {
+    ...body,
+    countryId,
+    country: country.countryName || body.country,
+  };
+  const validationErrors = validateCityFields(normalizedBody);
 
   if (validationErrors.length > 0) {
     return NextResponse.json(
@@ -88,14 +133,15 @@ export async function POST(request: Request) {
   }
 
   const city = String(body.city ?? "").trim();
-  const country = String(body.country ?? "").trim();
+  const countryName = String(normalizedBody.country ?? "").trim();
   const slug = String(body.slug ?? "").trim();
 
   const payload = {
     slug,
     city,
-    country,
-    region: String(body.region ?? ""),
+    country_id: country.countryId,
+    country: countryName,
+    region: String(body.region ?? country.countryRegion ?? ""),
     summary: String(body.summary ?? ""),
     description: String(body.description ?? ""),
     image_url: String(body.imageUrl ?? ""),
@@ -124,11 +170,23 @@ export async function POST(request: Request) {
 
 export async function PATCH(request: Request) {
   const body = await request.json();
-  const validationErrors = validateCityFields(body);
 
   const id = String(body.id ?? "").trim();
+  const countryId = String(body.countryId ?? "").trim();
+  const country = await resolveCountryForCity(countryId);
+
+  if (country.error) {
+    return NextResponse.json({ error: country.error }, { status: 400 });
+  }
+
+  const normalizedBody = {
+    ...body,
+    countryId,
+    country: country.countryName || body.country,
+  };
+  const validationErrors = validateCityFields(normalizedBody);
   const city = String(body.city ?? "").trim();
-  const country = String(body.country ?? "").trim();
+  const countryName = String(normalizedBody.country ?? "").trim();
   const slug = String(body.slug ?? "").trim();
 
   if (!id) {
@@ -145,8 +203,9 @@ export async function PATCH(request: Request) {
   const payload = {
     slug,
     city,
-    country,
-    region: String(body.region ?? ""),
+    country_id: country.countryId,
+    country: countryName,
+    region: String(body.region ?? country.countryRegion ?? ""),
     summary: String(body.summary ?? ""),
     description: String(body.description ?? ""),
     image_url: String(body.imageUrl ?? ""),

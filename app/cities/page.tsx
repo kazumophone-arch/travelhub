@@ -16,6 +16,7 @@ export const metadata: Metadata = createPublicMetadata({
 
 type SupabaseCityRow = {
   id: string;
+  country_id?: string | null;
   slug: string;
   city: string;
   country: string;
@@ -37,7 +38,9 @@ function toDirectoryCity(row: SupabaseCityRow): City {
     id: row.id,
     slug: row.slug,
     city: row.city,
+    countryId: row.country_id ?? null,
     country: row.country,
+    countryName: row.country,
     region: row.region,
     summary: row.summary,
     description: row.description,

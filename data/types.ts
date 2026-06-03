@@ -41,7 +41,10 @@ export type Spot = {
 export type City = {
   slug: string;
   city: string;
+  countryId?: string | null;
   country: string;
+  countryName?: string;
+  countrySlug?: string;
   stops: [string, string, string];
 
   description?: string;

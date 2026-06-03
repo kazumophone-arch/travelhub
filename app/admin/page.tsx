@@ -12,6 +12,12 @@ export const metadata = {
 
 const adminItems = [
   {
+    title: "国管理",
+    label: "コンテンツ",
+    description: "都市に紐づける国データを管理します。",
+    href: "/admin/countries",
+  },
+  {
     title: "都市管理",
     label: "コンテンツ",
     description: "Supabase に保存された都市データを管理します。",
@@ -48,7 +54,7 @@ export default function AdminPage() {
         <h1 style={titleStyle}>管理メニュー</h1>
 
         <p style={textStyle}>
-          都市、スポット、クリック分析をここから管理できます。
+          国、都市、スポット、クリック分析をここから管理できます。
         </p>
 
         <div style={gridStyle}>

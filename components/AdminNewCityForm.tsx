@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type CSSProperties } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import {
   AdminContentGuidance,
   AdminFieldHint,
@@ -19,6 +19,7 @@ import {
 type CityForm = {
   city: string;
   slug: string;
+  countryId: string;
   country: string;
   region: string;
   summary: string;
@@ -33,11 +34,20 @@ type CityForm = {
   sortRank: number;
 };
 
+type CountryOption = {
+  id: string;
+  name: string;
+  slug: string;
+  region: string | null;
+  is_published: boolean;
+};
+
 type StatusKind = "info" | "success" | "error";
 
 const initialForm: CityForm = {
   city: "",
   slug: "",
+  countryId: "",
   country: "",
   region: "",
   summary: "",
@@ -64,6 +74,7 @@ async function readResponse(response: Response) {
 
 export function AdminNewCityForm() {
   const [form, setForm] = useState<CityForm>(initialForm);
+  const [countryOptions, setCountryOptions] = useState<CountryOption[]>([]);
   const [status, setStatus] = useState("");
   const [statusKind, setStatusKind] = useState<StatusKind>("info");
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -74,6 +85,30 @@ export function AdminNewCityForm() {
     setStatusKind(kind);
   }
 
+  useEffect(() => {
+    async function loadCountries() {
+      const response = await fetch("/api/admin/countries");
+      const data = await readResponse(response);
+
+      if (!response.ok) {
+        setStatusMessage(data.error ?? "国の読み込みに失敗しました。", "error");
+        return;
+      }
+
+      const nextCountries = ((data.countries ?? []) as CountryOption[])
+        .map((country) => ({
+          ...country,
+          id: String(country.id ?? "").trim(),
+          name: String(country.name ?? "").trim(),
+        }))
+        .filter((country) => country.id && country.name);
+
+      setCountryOptions(nextCountries);
+    }
+
+    loadCountries();
+  }, []);
+
   function update<K extends keyof CityForm>(key: K, value: CityForm[K]) {
     setForm((current) => ({
       ...current,
@@ -81,6 +116,26 @@ export function AdminNewCityForm() {
       ...(key === "city" && !current.slug
         ? { slug: slugify(String(value)) }
         : {}),
+    }));
+  }
+
+  function updateCountry(countryId: string) {
+    const nextCountryId = String(countryId ?? "").trim();
+    const selectedCountry = countryOptions.find((country) => country.id === nextCountryId);
+
+    setForm((current) => ({
+      ...current,
+      countryId: nextCountryId,
+      country: selectedCountry?.name ?? current.country,
+      region: current.region || selectedCountry?.region || "",
+    }));
+  }
+
+  function updateManualCountry(country: string) {
+    setForm((current) => ({
+      ...current,
+      countryId: "",
+      country,
     }));
   }
 
@@ -206,9 +261,29 @@ export function AdminNewCityForm() {
 
         <label style={labelStyle}>
           国
+          <select
+            value={form.countryId}
+            onChange={(event) => updateCountry(event.target.value)}
+            style={inputStyle}
+          >
+            <option value="">国を選択</option>
+            {countryOptions.map((country) => (
+              <option key={country.id} value={country.id}>
+                {country.name}
+                {country.is_published ? "" : " — 下書き"}
+              </option>
+            ))}
+          </select>
+        </label>
+        <AdminFieldHint>
+          国管理のデータを選ぶと、互換性のため国名にも同じ名前を保存します。
+        </AdminFieldHint>
+
+        <label style={labelStyle}>
+          国名
           <input
             value={form.country}
-            onChange={(event) => update("country", event.target.value)}
+            onChange={(event) => updateManualCountry(event.target.value)}
             placeholder="Italy"
             style={inputStyle}
           />

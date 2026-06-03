@@ -56,6 +56,7 @@ export function formatValidationErrors(errors: string[]) {
 export type CityValidationInput = {
   city?: unknown;
   slug?: unknown;
+  countryId?: unknown;
   country?: unknown;
   imageUrl?: unknown;
   imageSourceUrl?: unknown;
@@ -98,6 +99,45 @@ export function validateCityFields(input: CityValidationInput) {
     "ツアーアフィリエイトURL"
   );
   if (tourUrlError) errors.push(tourUrlError);
+
+  if (
+    input.sortRank !== undefined &&
+    input.sortRank !== null &&
+    input.sortRank !== "" &&
+    !Number.isFinite(Number(input.sortRank))
+  ) {
+    errors.push("表示順は数値で入力してください。");
+  }
+
+  return errors;
+}
+
+export type CountryValidationInput = {
+  name?: unknown;
+  slug?: unknown;
+  imageUrl?: unknown;
+  imageSourceUrl?: unknown;
+  sortRank?: unknown;
+};
+
+export function validateCountryFields(input: CountryValidationInput) {
+  const errors: string[] = [];
+
+  if (!asString(input.name)) {
+    errors.push("国名は必須です。");
+  }
+
+  const slugError = validateSlug(input.slug, "国スラッグ");
+  if (slugError) errors.push(slugError);
+
+  const imageUrlError = validateOptionalUrl(input.imageUrl, "画像URL");
+  if (imageUrlError) errors.push(imageUrlError);
+
+  const imageSourceUrlError = validateOptionalUrl(
+    input.imageSourceUrl,
+    "画像出典URL"
+  );
+  if (imageSourceUrlError) errors.push(imageSourceUrlError);
 
   if (
     input.sortRank !== undefined &&

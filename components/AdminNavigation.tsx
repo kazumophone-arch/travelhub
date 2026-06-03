@@ -7,6 +7,9 @@ export function AdminNavigation() {
       <Link href="/admin" style={linkStyle}>
         ダッシュボード
       </Link>
+      <Link href="/admin/countries" style={linkStyle}>
+        国管理
+      </Link>
       <Link href="/admin/cities" style={linkStyle}>
         都市管理
       </Link>
