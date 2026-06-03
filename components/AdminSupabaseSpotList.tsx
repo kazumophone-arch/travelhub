@@ -10,6 +10,9 @@ type SupabaseSpot = {
   slug: string;
   summary: string;
   image_url: string;
+  image_source_url: string | null;
+  affiliate_hotel_url: string | null;
+  affiliate_tour_url: string | null;
   is_published: boolean;
   created_at: string;
 };
@@ -21,12 +24,22 @@ type SupabaseCity = {
   country: string;
 };
 
-type Filter = "all" | "draft" | "published";
+type Filter =
+  | "all"
+  | "draft"
+  | "published"
+  | "missing-city"
+  | "missing-image"
+  | "missing-hotel"
+  | "missing-tour";
+
+type BadgeTone = "ok" | "missing" | "neutral";
 
 export function AdminSupabaseSpotList() {
   const [spots, setSpots] = useState<SupabaseSpot[]>([]);
   const [cities, setCities] = useState<SupabaseCity[]>([]);
   const [filter, setFilter] = useState<Filter>("all");
+  const [query, setQuery] = useState("");
   const [status, setStatus] = useState("読み込み中...");
 
   useEffect(() => {
@@ -52,24 +65,49 @@ export function AdminSupabaseSpotList() {
     loadData();
   }, []);
 
+  const citiesById = useMemo(() => {
+    return new Map(cities.map((city) => [city.id, city]));
+  }, [cities]);
+
   const filteredSpots = useMemo(() => {
-    if (filter === "published") {
-      return spots.filter((spot) => spot.is_published);
-    }
+    const normalizedQuery = normalizeSearch(query);
 
-    if (filter === "draft") {
-      return spots.filter((spot) => !spot.is_published);
-    }
+    return spots.filter((spot) => {
+      const city = spot.city_id ? citiesById.get(spot.city_id) : undefined;
+      const hasCity = Boolean(spot.city_id && city);
 
-    return spots;
-  }, [spots, filter]);
+      if (filter === "published" && !spot.is_published) return false;
+      if (filter === "draft" && spot.is_published) return false;
+      if (filter === "missing-city" && hasCity) return false;
+      if (filter === "missing-image" && hasText(spot.image_url)) return false;
+      if (filter === "missing-hotel" && hasText(spot.affiliate_hotel_url)) return false;
+      if (filter === "missing-tour" && hasText(spot.affiliate_tour_url)) return false;
+      if (!normalizedQuery) return true;
+
+      return [spot.name, spot.slug, city?.city, city?.country]
+        .some((value) => normalizeSearch(value).includes(normalizedQuery));
+    });
+  }, [citiesById, filter, query, spots]);
+
+  const summaryItems = useMemo(() => {
+    const publishedCount = spots.filter((spot) => spot.is_published).length;
+
+    return [
+      { label: "スポット数", value: spots.length },
+      { label: "公開", value: publishedCount },
+      { label: "下書き", value: spots.length - publishedCount },
+      { label: "画像なし", value: spots.filter((spot) => !hasText(spot.image_url)).length },
+      { label: "Hotel URLなし", value: spots.filter((spot) => !hasText(spot.affiliate_hotel_url)).length },
+      { label: "Tour URLなし", value: spots.filter((spot) => !hasText(spot.affiliate_tour_url)).length },
+    ];
+  }, [spots]);
 
   function getCityLabel(spot: SupabaseSpot) {
     if (!spot.city_id) {
       return "city_id が未設定です";
     }
 
-    const city = cities.find((item) => item.id === spot.city_id);
+    const city = citiesById.get(spot.city_id);
 
     if (!city) {
       return "不明な都市ID";
@@ -81,7 +119,7 @@ export function AdminSupabaseSpotList() {
   function getCitySlug(spot: SupabaseSpot) {
     if (!spot.city_id) return "";
 
-    const city = cities.find((item) => item.id === spot.city_id);
+    const city = citiesById.get(spot.city_id);
 
     return city?.slug ?? "";
   }
@@ -106,8 +144,33 @@ export function AdminSupabaseSpotList() {
 
   return (
     <section style={wrapStyle}>
+      <div style={summaryGridStyle}>
+        {summaryItems.map((item) => (
+          <div key={item.label} style={summaryCardStyle}>
+            <div style={summaryLabelStyle}>{item.label}</div>
+            <div style={summaryValueStyle}>{item.value}</div>
+          </div>
+        ))}
+      </div>
+
+      <input
+        type="search"
+        value={query}
+        onChange={(event) => setQuery(event.target.value)}
+        placeholder="スポット名・slug・都市名・国名で検索"
+        style={searchInputStyle}
+      />
+
       <div style={filterRowStyle}>
-        {(["all", "draft", "published"] as const).map((value) => (
+        {([
+          "all",
+          "published",
+          "draft",
+          "missing-city",
+          "missing-image",
+          "missing-hotel",
+          "missing-tour",
+        ] as const).map((value) => (
           <button
             key={value}
             type="button"
@@ -127,7 +190,9 @@ export function AdminSupabaseSpotList() {
 
       <div style={listStyle}>
         {filteredSpots.map((spot) => {
+          const city = spot.city_id ? citiesById.get(spot.city_id) : undefined;
           const citySlug = getCitySlug(spot);
+          const hasCity = Boolean(spot.city_id && city);
 
           return (
             <div key={spot.id} style={itemStyle}>
@@ -143,6 +208,15 @@ export function AdminSupabaseSpotList() {
                 <code style={codeStyle}>
                   {citySlug ? `/c/${citySlug}/spot/${spot.slug}` : "公開URLはまだありません"}
                 </code>
+
+                <div style={badgeRowStyle}>
+                  <Badge label={spot.is_published ? "公開" : "下書き"} tone={spot.is_published ? "ok" : "missing"} />
+                  <Badge label={hasCity ? "都市紐づけあり" : "都市未紐づけ"} tone={hasCity ? "ok" : "missing"} />
+                  <Badge label={hasText(spot.image_url) ? "画像あり" : "画像なし"} tone={hasText(spot.image_url) ? "ok" : "missing"} />
+                  <Badge label={hasText(spot.image_source_url) ? "画像出典あり" : "画像出典なし"} tone={hasText(spot.image_source_url) ? "ok" : "missing"} />
+                  <Badge label={hasText(spot.affiliate_hotel_url) ? "Hotel URLあり" : "Hotel URLなし"} tone={hasText(spot.affiliate_hotel_url) ? "ok" : "missing"} />
+                  <Badge label={hasText(spot.affiliate_tour_url) ? "Tour URLあり" : "Tour URLなし"} tone={hasText(spot.affiliate_tour_url) ? "ok" : "missing"} />
+                </div>
               </div>
 
               <div style={buttonRowStyle}>
@@ -175,11 +249,73 @@ export function AdminSupabaseSpotList() {
 function getFilterLabel(filter: Filter) {
   if (filter === "published") return "公開";
   if (filter === "draft") return "下書き";
+  if (filter === "missing-city") return "都市未紐づけ";
+  if (filter === "missing-image") return "画像なし";
+  if (filter === "missing-hotel") return "Hotel URLなし";
+  if (filter === "missing-tour") return "Tour URLなし";
   return "すべて";
+}
+
+function Badge({ label, tone }: { label: string; tone: BadgeTone }) {
+  return <span style={getBadgeStyle(tone)}>{label}</span>;
+}
+
+function getBadgeStyle(tone: BadgeTone): CSSProperties {
+  if (tone === "ok") return { ...badgeStyle, ...okBadgeStyle };
+  if (tone === "missing") return { ...badgeStyle, ...missingBadgeStyle };
+  return { ...badgeStyle, ...neutralBadgeStyle };
+}
+
+function hasText(value: unknown) {
+  return String(value ?? "").trim().length > 0;
+}
+
+function normalizeSearch(value: unknown) {
+  return String(value ?? "").trim().toLowerCase();
 }
 
 const wrapStyle: CSSProperties = {
   marginTop: 22,
+};
+
+const summaryGridStyle: CSSProperties = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
+  gap: 10,
+  marginBottom: 16,
+};
+
+const summaryCardStyle: CSSProperties = {
+  padding: "13px 14px",
+  borderRadius: 18,
+  background: "#ffffff",
+  border: "1px solid rgba(23,32,42,.08)",
+  boxShadow: "0 6px 18px rgba(30,64,88,.04)",
+};
+
+const summaryLabelStyle: CSSProperties = {
+  fontSize: 12,
+  color: "#607080",
+  fontWeight: 850,
+};
+
+const summaryValueStyle: CSSProperties = {
+  marginTop: 4,
+  fontSize: 24,
+  color: "#17202a",
+  fontWeight: 900,
+};
+
+const searchInputStyle: CSSProperties = {
+  width: "100%",
+  marginBottom: 12,
+  padding: "12px 13px",
+  borderRadius: 16,
+  border: "1px solid rgba(23,32,42,.1)",
+  background: "#ffffff",
+  color: "#17202a",
+  fontSize: 14,
+  outline: "none",
 };
 
 const filterRowStyle: CSSProperties = {
@@ -250,6 +386,41 @@ const codeStyle: CSSProperties = {
   fontSize: 13,
   color: "#17202a",
   overflowWrap: "anywhere",
+};
+
+const badgeRowStyle: CSSProperties = {
+  display: "flex",
+  flexWrap: "wrap",
+  gap: 6,
+  marginTop: 12,
+};
+
+const badgeStyle: CSSProperties = {
+  display: "inline-flex",
+  alignItems: "center",
+  minHeight: 26,
+  padding: "4px 9px",
+  borderRadius: 999,
+  fontSize: 12,
+  fontWeight: 850,
+};
+
+const okBadgeStyle: CSSProperties = {
+  background: "#e8f7ef",
+  color: "#126b43",
+  border: "1px solid rgba(18,107,67,.14)",
+};
+
+const missingBadgeStyle: CSSProperties = {
+  background: "#fff4df",
+  color: "#9a5b12",
+  border: "1px solid rgba(154,91,18,.16)",
+};
+
+const neutralBadgeStyle: CSSProperties = {
+  background: "#f2f6f8",
+  color: "#607080",
+  border: "1px solid rgba(96,112,128,.14)",
 };
 
 const buttonRowStyle: CSSProperties = {
