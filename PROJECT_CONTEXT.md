@@ -84,7 +84,8 @@ Important environment variables inferred from the code:
 
 - The project uses Next.js 16, which has breaking App Router changes. Future sessions must read relevant docs in `node_modules/next/dist/docs/` before changing Next-specific code.
 - `TemporaryAdminTab` is mounted in the root layout, so a floating admin entry point can appear on public production pages unless hidden in local storage.
-- Supabase row-to-view-model mapping is duplicated across public data helpers, `/cities`, `/spots`, and the outbound redirect route. This increases the chance of inconsistent behavior.
+- Supabase row-to-view-model mapping is duplicated across public data helpers, `/cities`, and the outbound redirect route. This increases the chance of inconsistent behavior. The safe refactor already completed was only `/spots` reusing the shared public spot select/mapper from `data/supabase-public-spots.ts`.
+- `/cities` still has duplicated city normalization logic, but a direct replacement with `getPublishedSupabaseDirectoryCities()` is not behavior-equivalent. The main risk is `stops`: current `/cities` uses `stops: []`, while the shared helper can populate stops from published spots plus city/country/region fallbacks. Changing stops could affect visible city card chips, search text, category inference, filters, and reason copy, so `/cities` normalization should not be centralized until that visible behavior change is intentional.
 - Some static/legacy files and unused components remain in the repo, including older city data, fallback image data, and public Supabase helper components.
 - `data/types.ts` defines `City.stops` as a fixed 3-item tuple, but several dynamic mappings treat stops like a variable-length array and use casts.
 - Most public pages are marked `dynamic = "force-dynamic"`, so they query Supabase on every request. This is simple, but caching/revalidation should be planned before traffic scales.
