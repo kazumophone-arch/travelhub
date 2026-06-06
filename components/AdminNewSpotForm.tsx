@@ -419,7 +419,7 @@ export function AdminNewSpotForm() {
           />
         </label>
         <AdminFieldHint>
-          スポット詳細のホテルCTAで優先されるURLです。未入力なら都市側URLが使われる場合があります。
+          このスポットに直接対応するホテルURLがある場合だけ入力します。未入力の場合、公開スポットページのホテルCTAは表示されません。
         </AdminFieldHint>
         <AdminUrlTestLink url={form.affiliateHotelUrl} />
 
@@ -433,7 +433,7 @@ export function AdminNewSpotForm() {
           />
         </label>
         <AdminFieldHint>
-          スポット詳細のツアーCTAで優先されるURLです。未入力なら都市側URLが使われる場合があります。
+          このスポットに直接対応するツアーURLがある場合だけ入力します。未入力の場合、公開スポットページのツアーCTAは表示されません。
         </AdminFieldHint>
         <AdminUrlTestLink url={form.affiliateTourUrl} />
 
