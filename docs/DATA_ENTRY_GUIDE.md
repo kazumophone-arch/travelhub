@@ -42,7 +42,7 @@ The goal is consistency, not exhaustive travel coverage. Add enough clean inform
 
 - Use a stable, publicly accessible image URL.
 - Prefer a visually strong wide landscape image that clearly represents the city.
-- Avoid broken, temporary, watermarked, or low-quality URLs.
+- Avoid broken, temporary, watermarked, low-quality, or unclear URLs.
 
 ### Image position
 
@@ -50,23 +50,30 @@ The goal is consistency, not exhaustive travel coverage. Add enough clean inform
 - Use values like `center`, `top`, `bottom`, `left`, or `right` when available.
 - Check the public page after saving because CSS background crops can differ by screen size.
 
+### Image metadata
+
+- `imageAlt` should clearly describe the image for accessibility and SEO.
+- `imageCredit` should identify the photographer, image platform, or source when attribution is needed.
+- `imageSourceUrl` should store the original source URL for traceability and later license/source checks.
+- Use stable source URLs and avoid temporary, broken, or unclear image URLs.
+
 ### Seasons
 
-- Use seasons to describe when the city is especially useful or attractive.
-- Keep labels simple, for example `Spring`, `Summer`, `Autumn`, `Winter`, or `All year`.
-- Do not force seasonal labels if the admin UI does not currently expose them.
+- City seasons are not currently exposed in the admin UI/API/schema.
+- Treat seasons as a future field, not a currently editable admin field.
+- Do not force seasonal labels into unrelated fields.
 
 ### Travel styles
 
-- Use travel styles to support discovery and filtering.
-- Prefer reusable labels such as `Culture`, `Food`, `Nature`, `Shopping`, `Nightlife`, `Family`, or `Romantic`.
-- Avoid one-off labels that will only apply to one city.
+- City travel styles are not currently exposed in the admin UI/API/schema.
+- Treat travel styles as a future field, not a currently editable admin field.
+- Do not force travel-style labels into unrelated fields.
 
 ### Themes
 
-- Use themes for the main reason a traveler might choose the city.
-- Keep theme wording short and scannable.
-- Avoid duplicating the exact same values as travel styles unless that is intentional.
+- City themes are not currently exposed in the admin UI/API/schema.
+- Treat themes as a future field, not a currently editable admin field.
+- Do not force theme labels into unrelated fields.
 
 ### Sort rank
 
@@ -128,29 +135,80 @@ The goal is consistency, not exhaustive travel coverage. Add enough clean inform
 - Adjust image position so the spot remains visible in the hero crop.
 - Check the spot page after saving, especially on mobile.
 
+### Image metadata
+
+- `imageAlt` should clearly describe the image for accessibility and SEO.
+- `imageCredit` should identify the photographer, image platform, or source when attribution is needed.
+- `imageSourceUrl` should store the original source URL for traceability and later license/source checks.
+- Use stable source URLs and avoid temporary, broken, or unclear image URLs.
+
 ### Category and tags
 
-- Use category or tags only when the admin UI supports them.
-- Prefer reusable labels such as `Landmark`, `Temple`, `Museum`, `Viewpoint`, `Neighborhood`, `Food`, or `Nature`.
-- Keep tags useful for filtering and discovery, not decorative.
+- Spot category/tags are not currently exposed in the admin UI/API/schema.
+- Treat category and tags as future fields, not currently editable admin fields.
+- Do not force category or tag labels into unrelated fields.
 
 ### Affiliate hotel URL
 
 - Enter only a valid `http` or `https` hotel affiliate URL.
 - Spot-level hotel links should be directly relevant to that spot, such as hotels near the attraction.
 - Do not paste a generic city-level hotel URL into a spot unless it is truly spot-relevant.
+- Leave blank if this spot does not have a direct hotel affiliate URL; blank spot hotel URLs hide the public spot-page hotel CTA.
 
 ### Affiliate tour URL
 
 - Enter only a valid `http` or `https` tour affiliate URL.
 - Spot-level tour links should be directly relevant to that spot.
-- Leave blank if there is no good direct affiliate URL.
+- Leave blank if this spot does not have a direct tour affiliate URL; blank spot tour URLs hide the public spot-page tour CTA.
 
 ### Publish status
 
 - Publish only when the spot has a valid parent city, stable slug, readable copy, and working image.
 - Keep incomplete spots unpublished.
 - Published spots can appear on city pages, spot directories, and the sitemap.
+
+## Country Data Entry Rules
+
+### Country name
+
+- Use the common English country name.
+- Keep spelling consistent with city records and public pages.
+
+### Country slug
+
+- Use a lowercase, hyphen-separated country slug.
+- Keep the slug stable after publishing.
+- Avoid special characters, spaces, and punctuation.
+
+### ISO code
+
+- Use the standard country ISO code when available, for example `JP`, `IT`, or `US`.
+- Keep ISO codes uppercase and concise.
+
+### Region
+
+- Use a broad region label that matches city region usage, for example `Asia`, `Europe`, or `North America`.
+- Keep region names consistent because city forms can inherit the selected country's region.
+
+### Country image URL
+
+- Use a stable, publicly accessible image URL when a country-level image is needed.
+- Avoid temporary, broken, low-quality, or unclear image URLs.
+
+### Country image source URL
+
+- Store the original image source URL for traceability and later license/source checks.
+- Prefer source pages over transient CDN URLs when possible.
+
+### Publish status
+
+- Publish country records that are ready to be selected and shown in admin workflows.
+- Keep incomplete country records unpublished.
+
+### Sort rank
+
+- Lower numbers appear earlier in admin ordering.
+- Leave spacing between ranks, such as `10`, `20`, `30`, for easier future inserts.
 
 ## Slug Rules
 
@@ -171,9 +229,11 @@ Examples:
 
 - Only enter valid `http` or `https` URLs.
 - Do not enter placeholder URLs.
+- Published pages should not use placeholder affiliate URLs.
 - City pages can show city-level hotel and tour CTAs when the city has valid affiliate URLs.
 - Spot pages only show hotel/tour CTA buttons when the spot itself has valid direct affiliate URLs.
 - Spot pages should not surface city-level fallback CTAs.
+- Leaving spot affiliate URLs blank hides the public spot-page CTA for that affiliate type.
 - Do not add generic city-level affiliate URLs to spots unless they are truly spot-relevant.
 - If an affiliate URL is uncertain, leave it blank until it can be verified.
 
@@ -184,7 +244,24 @@ Examples:
 - Use image position to keep the main subject visible in different crops.
 - Avoid broken, temporary, watermarked, low-resolution, or low-quality URLs.
 - Check the public page after saving because background images may crop differently across desktop and mobile.
-- Use accurate alt text or image labels when the admin UI provides those fields.
+- Use `imageAlt` to describe the image clearly for accessibility and SEO.
+- Use `imageCredit` to identify the photographer/source when needed.
+- Use `imageSourceUrl` to keep the original source URL traceable.
+
+## Current Unsupported Fields
+
+- City seasons, travel styles, and themes are currently not exposed in the admin UI/API/schema.
+- Spot category/tags are currently not exposed in the admin UI/API/schema.
+- These may become future fields, but they should not be treated as currently editable admin fields.
+- Do not store future-only values in unrelated fields just to make them visible.
+
+## Validation Notes
+
+- Slugs must be lowercase, hyphen-separated, and stable after publishing.
+- Optional URLs must be valid `http` or `https` URLs.
+- Published pages should not use placeholder affiliate URLs.
+- Leaving spot affiliate URLs blank hides the public spot-page CTA for that affiliate type.
+- The admin UI/API validates URL shape, slug shape, and image position choices, but it does not verify image quality, image reachability, or whether an affiliate URL is genuinely relevant.
 
 ## Publishing Checklist
 
