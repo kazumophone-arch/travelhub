@@ -59,6 +59,11 @@ Important environment variables inferred from the code:
 - `lib/admin-auth.ts` - Password-based admin session cookie helpers.
 - `supabase/migrations/*.sql` - Database structure for countries, cities, spots, affiliate URLs, image positions, and click logs.
 
+## Documentation
+
+- `PROJECT_CONTEXT.md` - Project handoff and source-of-truth context for future Codex sessions.
+- `docs/DATA_ENTRY_GUIDE.md` - Admin data-entry guide for adding cities and spots consistently, including slug rules, affiliate URL rules, image guidance, publishing checklist, and spot CTA product rules. Read this guide before adding or editing many cities/spots.
+
 ## Current Features
 
 - Public landing page that highlights published cities and routes visitors into city pages.
@@ -119,7 +124,7 @@ Important environment variables inferred from the code:
 5. Add lightweight smoke tests or route-level checks for the public pages and `/out/[type]`.
 6. Revisit public route caching only after inspecting the active Next.js 16 caching model and confirming the intended freshness tradeoffs.
 7. Review the tracked root `h` file and remove it only after confirming it is not intentionally kept.
-8. Add a short data-entry guide for creating cities/spots consistently in the admin UI.
+8. Use `docs/DATA_ENTRY_GUIDE.md` before bulk adding or editing cities/spots in the admin UI.
 
 ## Development Rules for Future Codex Sessions
 
