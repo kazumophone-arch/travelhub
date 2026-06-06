@@ -57,7 +57,7 @@ export default function RootLayout({
 
         <div className="travelhub-site-page-shell">
           {children}
-        <TemporaryAdminTab />
+          {process.env.NODE_ENV !== "production" ? <TemporaryAdminTab /> : null}
           <SiteFooter />
         </div>
       </body>
