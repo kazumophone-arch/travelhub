@@ -1,9 +1,10 @@
-import { isAffiliateLinkType } from "@/data/affiliate-links";
 import type { AffiliateLink, AffiliateLinkType } from "@/data/types";
 import { supabase } from "@/lib/supabase";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { getOptionalHttpUrl } from "@/lib/url-fields";
 import { NextResponse } from "next/server";
+
+type RedirectableAffiliateType = Extract<AffiliateLinkType, "hotels" | "tours">;
 
 type SupabaseRedirectCity = {
   id: string;
@@ -24,7 +25,7 @@ type SupabaseRedirectSpot = {
 };
 
 type ClickLogInput = {
-  type: AffiliateLinkType;
+  type: RedirectableAffiliateType;
   cityId: string | null;
   spotId: string | null;
   citySlug: string | null;
@@ -44,6 +45,10 @@ type SupabaseError = {
 type OutboundRouteContext = {
   params: Promise<{ type: string }>;
 };
+
+function isRedirectableAffiliateType(type: string): type is RedirectableAffiliateType {
+  return type === "hotels" || type === "tours";
+}
 
 function isPrefetchRequest(request: Request) {
   const purpose = request.headers.get("purpose")?.toLowerCase();
@@ -170,7 +175,7 @@ function getSupabaseSpotAffiliateLink({
   type,
 }: {
   spot: SupabaseRedirectSpot;
-  type: AffiliateLinkType;
+  type: RedirectableAffiliateType;
 }): AffiliateLink | null {
   if (type === "hotels" && spot.affiliate_hotel_url) {
     const url = getOptionalHttpUrl(spot.affiliate_hotel_url);
@@ -206,7 +211,7 @@ function getSupabaseCityAffiliateLink({
   type,
 }: {
   city: SupabaseRedirectCity;
-  type: AffiliateLinkType;
+  type: RedirectableAffiliateType;
 }): AffiliateLink | null {
   if (type === "hotels") {
     const url = getOptionalHttpUrl(city.affiliate_hotel_url);
@@ -265,8 +270,8 @@ async function logOutboundClick(input: ClickLogInput) {
 async function handleOutboundRedirect(request: Request, context: OutboundRouteContext) {
   const { type } = await context.params;
 
-  if (!isAffiliateLinkType(type)) {
-    return new NextResponse("Invalid link type", { status: 404 });
+  if (!isRedirectableAffiliateType(type)) {
+    return new NextResponse("Outbound affiliate type not found", { status: 404 });
   }
 
   const url = new URL(request.url);
