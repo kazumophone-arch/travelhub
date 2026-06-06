@@ -1,14 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import type { City } from "@/data/types";
 import { getCityImage } from "@/data/travel-images";
-import { getMapMagazineVisual } from "@/lib/mapMagazineVisuals";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { getDisplayStops } from "@/lib/displayText";
-import { citiesCopyVariants, pickDailyVariant } from "@/lib/copyVariants";
+import { citiesCopyVariants } from "@/lib/copyVariants";
 import {
   getCssImagePosition,
   getImageBackground,
@@ -230,7 +229,7 @@ function getCityPhotoCardStyle(city: City): CSSProperties {
 }
 export function CityDirectory({ cities }: Props) {
   const [query, setQuery] = useState("");
-  const [pageCopy, setPageCopy] = useState(citiesCopyVariants[0]);
+  const [pageCopy] = useState(citiesCopyVariants[0]);
   const [activeRegion, setActiveRegion] = useState("All");
   const [activeMonth, setActiveMonth] = useState("All");
   const [activeStyle, setActiveStyle] = useState("All");

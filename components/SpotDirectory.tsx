@@ -1,12 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import type { City } from "@/data/types";
-import { getMapMagazineSpotVisual } from "@/lib/mapMagazineVisuals";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { isValidDisplayText } from "@/lib/displayText";
 import { spotsCopyVariants, pickDailyVariant } from "@/lib/copyVariants";
 import {
   getCssImagePosition,
@@ -50,17 +48,6 @@ function slugify(value: string) {
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "") || "spot"
   );
-}
-
-function visualForIndex(index: number) {
-  const visuals = [
-    "linear-gradient(135deg, #d9a76f 0%, #b86b4b 44%, #3b2f2f 100%)",
-    "linear-gradient(135deg, #9cc9d7 0%, #e7c389 46%, #8b5f4d 100%)",
-    "linear-gradient(135deg, #c7d4df 0%, #d3b58d 44%, #4b4b58 100%)",
-    "linear-gradient(135deg, #f0b45f 0%, #d95850 45%, #2e6f89 100%)",
-  ];
-
-  return visuals[index % visuals.length];
 }
 
 function collectSpots(cities: City[]) {
@@ -228,13 +215,9 @@ function getSpotPhotoCardStyle(spot: SpotItem): CSSProperties {
 }
 export function SpotDirectory({ cities }: Props) {
   const [query, setQuery] = useState("");
-  const [pageCopy, setPageCopy] = useState(spotsCopyVariants[0]);
+  const [pageCopy] = useState(() => pickDailyVariant(spotsCopyVariants, "spots"));
   const [activeSpotType, setActiveSpotType] = useState("All");
   const [activeCitySlug, setActiveCitySlug] = useState("all");
-
-  useEffect(() => {
-    setPageCopy(pickDailyVariant(spotsCopyVariants, "spots"));
-  }, []);
 
   const allSpots = useMemo(() => collectSpots(cities), [cities]);
 

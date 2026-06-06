@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import type { City } from "@/data/types";
-import { getDisplayStops } from "@/lib/displayText";
 
 type Props = {
   cities: City[];

@@ -51,26 +51,25 @@ function toSpotDetail(spot: AdminSpot) {
 }
 
 export function withAdminSpotsForCity(city: City): City {
-  const cityRecord = city as City & Record<string, any>;
-  const adminSpots = getAdminSpotsForCity(cityRecord.slug);
+  const adminSpots = getAdminSpotsForCity(city.slug);
 
   if (adminSpots.length === 0) {
     return city;
   }
 
-  const existingSpotDetails = Array.isArray(cityRecord.spotDetails)
-    ? cityRecord.spotDetails
+  const existingSpotDetails = Array.isArray(city.spotDetails)
+    ? city.spotDetails
     : [];
 
-  const existingStops = Array.isArray(cityRecord.stops)
-    ? cityRecord.stops
+  const existingStops = Array.isArray(city.stops)
+    ? city.stops
     : [];
 
   const adminSpotDetails = adminSpots.map(toSpotDetail);
   const adminStopNames = adminSpots.map((spot) => spot.name);
 
   return {
-    ...cityRecord,
+    ...city,
     spotDetails: [...existingSpotDetails, ...adminSpotDetails],
     stops: Array.from(new Set([...existingStops, ...adminStopNames])),
   } as City;

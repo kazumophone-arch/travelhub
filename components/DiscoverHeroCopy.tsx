@@ -1,16 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { CSSProperties } from "react";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { discoverCopyVariants, pickDailyVariant } from "@/lib/copyVariants";
 
 export function DiscoverHeroCopy() {
-  const [copy, setCopy] = useState(discoverCopyVariants[0]);
-
-  useEffect(() => {
-    setCopy(pickDailyVariant(discoverCopyVariants, "discover"));
-  }, []);
+  const [copy] = useState(() => pickDailyVariant(discoverCopyVariants, "discover"));
 
   return (
     <section style={heroStyle}>

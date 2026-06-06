@@ -9,7 +9,11 @@ export function TemporaryAdminTab() {
   const [hidden, setHidden] = useState(true);
 
   useEffect(() => {
-    setHidden(window.localStorage.getItem(STORAGE_KEY) === "1");
+    const timer = window.setTimeout(() => {
+      setHidden(window.localStorage.getItem(STORAGE_KEY) === "1");
+    }, 0);
+
+    return () => window.clearTimeout(timer);
   }, []);
 
   function hideTab() {

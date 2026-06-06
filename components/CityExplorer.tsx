@@ -395,22 +395,20 @@ export function CityExplorer({ cities }: Props) {
     return ["All", ...ordered, ...rest];
   }, [cities]);
 
-  const thisMonthCities = useMemo(() => {
-    const monthly = cities.filter((city) => city.months?.includes(currentMonth));
-
-    if (monthly.length > 0) return monthly.slice(0, 6);
-
-    return cities
-      .filter((city) => {
-        const categories = getCityCategories(city);
-        return (
-          categories.includes("Scenic") ||
-          categories.includes("World Heritage") ||
-          categories.includes("Old Town")
-        );
-      })
-      .slice(0, 6);
-  }, [cities, currentMonth]);
+  const monthlyCities = cities.filter((city) => city.months?.includes(currentMonth));
+  const thisMonthCities =
+    monthlyCities.length > 0
+      ? monthlyCities.slice(0, 6)
+      : cities
+          .filter((city) => {
+            const categories = getCityCategories(city);
+            return (
+              categories.includes("Scenic") ||
+              categories.includes("World Heritage") ||
+              categories.includes("Old Town")
+            );
+          })
+          .slice(0, 6);
 
   const discoverySpots = useMemo(() => {
     return getDiscoverySpots(cities);
@@ -430,30 +428,27 @@ export function CityExplorer({ cities }: Props) {
       .slice(0, 3);
   }, [cities, activeCategory]);
 
-  const filteredCities = useMemo(() => {
-    const normalizedQuery = query.trim().toLowerCase();
+  const normalizedQuery = query.trim().toLowerCase();
+  const filteredCities = cities.filter((city) => {
+    const cityCategories = getCityCategories(city);
 
-    return cities.filter((city) => {
-      const cityCategories = getCityCategories(city);
+    const matchesCategory =
+      activeCategory === "All" || cityCategories.includes(activeCategory);
 
-      const matchesCategory =
-        activeCategory === "All" || cityCategories.includes(activeCategory);
+    const searchableText = [
+      city.city,
+      city.country,
+      ...city.stops,
+      ...cityCategories,
+    ]
+      .join(" ")
+      .toLowerCase();
 
-      const searchableText = [
-        city.city,
-        city.country,
-        ...city.stops,
-        ...cityCategories,
-      ]
-        .join(" ")
-        .toLowerCase();
+    const matchesSearch =
+      normalizedQuery === "" || searchableText.includes(normalizedQuery);
 
-      const matchesSearch =
-        normalizedQuery === "" || searchableText.includes(normalizedQuery);
-
-      return matchesCategory && matchesSearch;
-    });
-  }, [cities, query, activeCategory]);
+    return matchesCategory && matchesSearch;
+  });
 
   function handleMoodClick(label: string) {
     setQuery("");
