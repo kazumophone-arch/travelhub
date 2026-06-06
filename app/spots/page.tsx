@@ -1,5 +1,10 @@
 import type { Metadata } from "next";
 import type { City } from "@/data/types";
+import {
+  SUPABASE_PUBLIC_SPOT_SELECT,
+  toCitySpotFromSupabase,
+  type SupabasePublicSpot,
+} from "@/data/supabase-public-spots";
 import { SpotDirectory } from "@/components/SpotDirectory";
 import { sortByRank } from "@/data/visibility";
 import { createPublicMetadata } from "@/lib/site-metadata";
@@ -14,9 +19,6 @@ export const metadata: Metadata = createPublicMetadata({
     "Browse attractions, travel ideas, hotel links, and tour links across TravelHub spots.",
   path: "/spots",
 });
-
-const SUPABASE_SPOTS_SELECT =
-  "id, city_id, name, slug, summary, description, image_url, image_alt, image_credit, image_source_url, image_position, affiliate_hotel_url, affiliate_tour_url, is_published";
 
 type SupabaseCityRow = {
   id: string;
@@ -38,44 +40,7 @@ type SupabaseCityRow = {
   sort_rank: number;
 };
 
-type SupabaseSpotRow = {
-  id: string;
-  city_id: string | null;
-  name: string;
-  slug: string;
-  summary: string;
-  description: string;
-  image_url: string;
-  image_alt: string;
-  image_credit: string;
-  image_source_url: string;
-  image_position?: string | null;
-  affiliate_hotel_url: string;
-  affiliate_tour_url: string;
-  is_published: boolean;
-};
-
-function toDirectorySpot(row: SupabaseSpotRow) {
-  return {
-    name: row.name,
-    slug: row.slug,
-    summary: row.summary,
-    description: row.description,
-    imageUrl: row.image_url,
-    imagePosition: normalizeImagePosition(row.image_position),
-    imageAlt: row.image_alt || row.name,
-    imageCredit: row.image_credit,
-    imageSourceUrl: row.image_source_url,
-    tags: [],
-    highlights: [],
-    bestFor: [],
-    isPublished: row.is_published,
-    affiliateHotelUrl: row.affiliate_hotel_url,
-    affiliateTourUrl: row.affiliate_tour_url,
-  };
-}
-
-function toDirectoryCity(row: SupabaseCityRow, spots: SupabaseSpotRow[]): City {
+function toDirectoryCity(row: SupabaseCityRow, spots: SupabasePublicSpot[]): City {
   return {
     id: row.id,
     slug: row.slug,
@@ -103,7 +68,7 @@ function toDirectoryCity(row: SupabaseCityRow, spots: SupabaseSpotRow[]): City {
     themes: [row.region || "Travel city"],
     bestFor: ["First-time visitors"],
     stops: spots.map((spot) => spot.name),
-    spotDetails: spots.map(toDirectorySpot),
+    spotDetails: spots.map(toCitySpotFromSupabase),
   } as unknown as City;
 }
 
@@ -118,13 +83,13 @@ async function getSupabaseCitiesAndSpots() {
 
     supabase
       .from("spots")
-      .select(SUPABASE_SPOTS_SELECT)
+      .select(SUPABASE_PUBLIC_SPOT_SELECT)
       .eq("is_published", true)
       .order("created_at", { ascending: false }),
   ]);
 
   const supabaseCities = (citiesResult.data ?? []) as SupabaseCityRow[];
-  const supabaseSpots = (spotsResult.data ?? []) as SupabaseSpotRow[];
+  const supabaseSpots = (spotsResult.data ?? []) as SupabasePublicSpot[];
 
   return {
     supabaseCities,
@@ -134,13 +99,13 @@ async function getSupabaseCitiesAndSpots() {
 
 function mergeSupabaseSpotsIntoCities(
   supabaseCities: SupabaseCityRow[],
-  supabaseSpots: SupabaseSpotRow[]
+  supabaseSpots: SupabasePublicSpot[]
 ) {
   const supabaseCityById = new Map(
     supabaseCities.map((city) => [city.id, city])
   );
 
-  const spotsByCityId = new Map<string, SupabaseSpotRow[]>();
+  const spotsByCityId = new Map<string, SupabasePublicSpot[]>();
 
   for (const spot of supabaseSpots) {
     if (!spot.city_id || !supabaseCityById.has(spot.city_id)) continue;
