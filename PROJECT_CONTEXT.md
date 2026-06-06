@@ -74,6 +74,12 @@ Important environment variables inferred from the code:
 - Dynamic sitemap generation from published Supabase cities and spots.
 - Basic static legal/info pages and global site navigation/footer.
 
+## Product Rules
+
+- Spot pages should show hotel/tour CTA buttons only when the spot itself has valid direct affiliate URLs.
+- Spot pages should not show city-level fallback CTA buttons when the spot has no direct affiliate URL.
+- The internal `/out/hotels` and `/out/tours` city-level fallback may remain for direct or stale URLs, but that fallback should not be surfaced in the public spot page UI.
+
 ## Known Issues and Risks
 
 - The project uses Next.js 16, which has breaking App Router changes. Future sessions must read relevant docs in `node_modules/next/dist/docs/` before changing Next-specific code.
@@ -83,7 +89,6 @@ Important environment variables inferred from the code:
 - `data/types.ts` defines `City.stops` as a fixed 3-item tuple, but several dynamic mappings treat stops like a variable-length array and use casts.
 - Most public pages are marked `dynamic = "force-dynamic"`, so they query Supabase on every request. This is simple, but caching/revalidation should be planned before traffic scales.
 - The Supabase clients throw during import when required environment variables are missing. Builds and local development need the Supabase env vars present.
-- Spot detail pages only show spot-level affiliate CTA buttons. If a spot has no direct affiliate URL, city-level fallback links may still work through `/out`, but they are not surfaced as CTAs on the spot page.
 - The `/out/[type]` route supports more affiliate types than the current UI exposes. Tracking also depends on `c`, `s`, `src`, and `v` query conventions.
 - Images are mostly raw URLs/CSS backgrounds rather than `next/image`. That keeps the app simple, but image sizing/optimization is limited.
 - There are no automated tests in the repo yet. Verification currently depends on `npm run build` and manual checks.
@@ -95,12 +100,11 @@ Important environment variables inferred from the code:
 1. Run `npm run build` after this handoff document is created and fix only safe build errors.
 2. Decide whether the public `TemporaryAdminTab` should remain visible in production.
 3. Centralize Supabase city/spot normalization so all routes use one mapper.
-4. Clarify the intended fallback behavior for spot affiliate CTAs when a spot has no direct affiliate URL.
-5. Clean up or archive legacy/static data and unused components after confirming they are no longer needed.
-6. Add lightweight smoke tests or route-level checks for the public pages and `/out/[type]`.
-7. Consider simple revalidation/caching for public Supabase pages before scaling traffic.
-8. Review the tracked root `h` file and remove it only after confirming it is not intentionally kept.
-9. Add a short data-entry guide for creating cities/spots consistently in the admin UI.
+4. Clean up or archive legacy/static data and unused components after confirming they are no longer needed.
+5. Add lightweight smoke tests or route-level checks for the public pages and `/out/[type]`.
+6. Consider simple revalidation/caching for public Supabase pages before scaling traffic.
+7. Review the tracked root `h` file and remove it only after confirming it is not intentionally kept.
+8. Add a short data-entry guide for creating cities/spots consistently in the admin UI.
 
 ## Development Rules for Future Codex Sessions
 
