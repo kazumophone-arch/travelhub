@@ -263,6 +263,15 @@ Examples:
 - Leaving spot affiliate URLs blank hides the public spot-page CTA for that affiliate type.
 - The admin UI/API validates URL shape, slug shape, and image position choices, but it does not verify image quality, image reachability, or whether an affiliate URL is genuinely relevant.
 
+## Publish Readiness Warnings
+
+- When a city is marked as published, the admin form may show a non-blocking publish readiness warning if summary, description, hero image URL, or both city affiliate URLs are missing.
+- When a spot is marked as published, the admin form may show a non-blocking publish readiness warning if summary, description, or hero image URL is missing.
+- If both spot affiliate URLs are blank, the admin form shows an informational note that the public spot page will not show spot-level CTA buttons.
+- These warnings do not block saving or publishing.
+- Draft city/spot pages may remain incomplete.
+- Spot affiliate URLs remain optional.
+
 ## Publishing Checklist
 
 Before publishing a city or spot:
