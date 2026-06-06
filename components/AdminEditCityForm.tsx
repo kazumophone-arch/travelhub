@@ -87,6 +87,49 @@ async function readResponse(response: Response) {
   }
 }
 
+function hasText(value: string) {
+  return value.trim().length > 0;
+}
+
+function getCityPublishReadinessNotes(form: CityForm) {
+  if (!form.isPublished) return [];
+
+  const notes: string[] = [];
+
+  if (!hasText(form.summary)) {
+    notes.push("概要が未入力です。公開カードや一覧で内容が弱くなります。");
+  }
+
+  if (!hasText(form.description)) {
+    notes.push("説明が未入力です。都市ページ本文の情報が不足します。");
+  }
+
+  if (!hasText(form.imageUrl)) {
+    notes.push("画像URLが未入力です。公開ページは代替背景で表示されます。");
+  }
+
+  if (!hasText(form.affiliateHotelUrl) && !hasText(form.affiliateTourUrl)) {
+    notes.push("ホテル/ツアーURLが未入力です。都市ページのCTAは表示されません。");
+  }
+
+  return notes;
+}
+
+function PublishReadinessPanel({ notes }: { notes: string[] }) {
+  if (notes.length === 0) return null;
+
+  return (
+    <div style={publishReadinessStyle}>
+      <div style={publishReadinessTitleStyle}>公開前チェック</div>
+      <ul style={publishReadinessListStyle}>
+        {notes.map((note) => (
+          <li key={note}>{note}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 export function AdminEditCityForm({ id }: Props) {
   const [form, setForm] = useState<CityForm>(emptyForm);
   const [countryOptions, setCountryOptions] = useState<CountryOption[]>([]);
@@ -94,6 +137,7 @@ export function AdminEditCityForm({ id }: Props) {
   const [statusKind, setStatusKind] = useState<StatusKind>("info");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const publishReadinessNotes = getCityPublishReadinessNotes(form);
 
   function setStatusMessage(message: string, kind: StatusKind = "info") {
     setStatus(message);
@@ -454,6 +498,8 @@ export function AdminEditCityForm({ id }: Props) {
           公開
         </label>
 
+        <PublishReadinessPanel notes={publishReadinessNotes} />
+
         <div style={buttonRowStyle}>
           <button type="button" onClick={saveCity} style={buttonStyle}>
             保存
@@ -545,6 +591,32 @@ const checkStyle: CSSProperties = {
   color: "#607080",
   fontSize: 13,
   fontWeight: 750,
+};
+
+const publishReadinessStyle: CSSProperties = {
+  display: "grid",
+  gap: 8,
+  marginBottom: 16,
+  padding: 12,
+  borderRadius: 18,
+  background: "#fffdf8",
+  border: "1px solid rgba(168,116,50,.18)",
+  color: "#607080",
+};
+
+const publishReadinessTitleStyle: CSSProperties = {
+  color: "#9a6a2f",
+  fontSize: 12,
+  fontWeight: 850,
+};
+
+const publishReadinessListStyle: CSSProperties = {
+  display: "grid",
+  gap: 5,
+  margin: 0,
+  paddingLeft: 18,
+  fontSize: 12,
+  lineHeight: 1.55,
 };
 
 const buttonRowStyle: CSSProperties = {
