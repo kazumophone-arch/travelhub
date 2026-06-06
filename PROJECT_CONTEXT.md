@@ -63,6 +63,7 @@ Important environment variables inferred from the code:
 
 - `PROJECT_CONTEXT.md` - Project handoff and source-of-truth context for future Codex sessions.
 - `docs/DATA_ENTRY_GUIDE.md` - Admin data-entry guide for adding cities and spots consistently, including slug rules, affiliate URL rules, image guidance, publishing checklist, and spot CTA product rules. Read this guide before adding or editing many cities/spots.
+- `docs/PUBLIC_PAGE_QA_CHECKLIST.md` - Manual QA checklist for public pages after adding or editing cities/spots, including home/directory pages, city pages, spot pages, outbound links, admin-to-public checks, SEO/metadata, and final promotion checks. Use it before promoting newly added or edited destinations from SNS/video traffic.
 
 ## Current Features
 
