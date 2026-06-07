@@ -30,6 +30,12 @@ const adminItems = [
     href: "/admin/spots",
   },
   {
+    title: "タグ管理",
+    label: "コンテンツ",
+    description: "都市やスポットに使う再利用可能なタグを管理します。",
+    href: "/admin/tags",
+  },
+  {
     title: "クリック分析",
     label: "レポート",
     description: "ホテルとツアーの外部リンククリックを確認します。",

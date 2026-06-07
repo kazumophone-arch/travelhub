@@ -16,6 +16,9 @@ export function AdminNavigation() {
       <Link href="/admin/spots" style={linkStyle}>
         スポット管理
       </Link>
+      <Link href="/admin/tags" style={linkStyle}>
+        タグ管理
+      </Link>
       <Link href="/admin/analytics" style={linkStyle}>
         クリック分析
       </Link>
