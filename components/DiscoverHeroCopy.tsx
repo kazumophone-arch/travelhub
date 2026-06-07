@@ -27,33 +27,36 @@ export function DiscoverHeroCopy() {
 }
 
 const heroStyle: CSSProperties = {
-  marginBottom: 28,
+  marginBottom: 42,
+  padding: "20px 0 10px",
 };
 
 const eyebrowStyle: CSSProperties = {
   fontSize: 12,
   letterSpacing: 0,
   textTransform: "uppercase",
-  color: "#1769e0",
+  color: "#9a6a43",
   fontWeight: 850,
   marginBottom: 14,
 };
 
 const titleStyle: CSSProperties = {
   margin: "0 0 18px",
-  maxWidth: 760,
-  fontSize: 42,
-  lineHeight: 1.08,
+  maxWidth: 820,
+  fontSize: 52,
+  lineHeight: 1.02,
   letterSpacing: 0,
   fontWeight: 850,
+  color: "#1f1a17",
+  overflowWrap: "break-word",
 };
 
 const subtitleStyle: CSSProperties = {
   margin: 0,
-  maxWidth: 680,
+  maxWidth: 700,
   fontSize: 16,
-  lineHeight: 1.72,
-  color: "#4c5f6f",
+  lineHeight: 1.78,
+  color: "#6f6258",
 };
 
 

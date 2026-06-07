@@ -25,6 +25,41 @@ type Spot = {
   image_position?: string | null;
 };
 
+type EditorialTier = {
+  title: string;
+  text: string;
+};
+
+const stayTiers: EditorialTier[] = [
+  {
+    title: "Signature stays",
+    text: "For special trips, polished hotels, and memorable first nights.",
+  },
+  {
+    title: "Smart stays",
+    text: "Well-located hotels with a balance of comfort and price.",
+  },
+  {
+    title: "Essential stays",
+    text: "Simple stays for travelers who want to spend more on the city.",
+  },
+];
+
+const experienceTiers: EditorialTier[] = [
+  {
+    title: "Private experiences",
+    text: "A slower, more personal way to see the city.",
+  },
+  {
+    title: "Popular tours",
+    text: "Classic experiences for a first visit.",
+  },
+  {
+    title: "Easy activities",
+    text: "Short, flexible activities that fit into a simple day.",
+  },
+];
+
 export async function SupabaseCityDetail({ city, tracking }: Props) {
   const spots = (await getPublishedSupabaseSpotsForCity(city.slug)) as Spot[];
   const hasHotelAffiliate = Boolean(getOptionalHttpUrl(city.affiliate_hotel_url));
@@ -32,6 +67,8 @@ export async function SupabaseCityDetail({ city, tracking }: Props) {
   const trackingSrc = tracking?.src ?? "city-detail";
   const trackingV = tracking?.v ?? `city_${city.slug}`;
   const spotTrackingQuery = getTrackingQuery(tracking);
+  const hotelAffiliateHref = getAffiliateHref("hotels", city.slug, trackingSrc, trackingV);
+  const tourAffiliateHref = getAffiliateHref("tours", city.slug, trackingSrc, trackingV);
 
   return (
     <main style={pageStyle}>
@@ -75,6 +112,36 @@ export async function SupabaseCityDetail({ city, tracking }: Props) {
       </section>
 
       <section style={shellStyle}>
+        <EditorialTierSection
+          label="Where to Stay"
+          title={`Choose the right base in ${city.city}`}
+          copy="Use the guide first, then compare stays once the city starts to take shape."
+          tiers={stayTiers}
+          cta={
+            hasHotelAffiliate
+              ? {
+                  href: hotelAffiliateHref,
+                  label: `Find hotels in ${city.city}`,
+                }
+              : null
+          }
+        />
+
+        <EditorialTierSection
+          label="Experiences"
+          title={`Ways to experience ${city.city}`}
+          copy="For travelers who want the route, timing, or context handled with a little more ease."
+          tiers={experienceTiers}
+          cta={
+            hasTourAffiliate
+              ? {
+                  href: tourAffiliateHref,
+                  label: `Explore tours in ${city.city}`,
+                }
+              : null
+          }
+        />
+
         <div style={sectionIntroStyle}>
           <div>
             <div style={labelStyle}>Explore next</div>
@@ -120,6 +187,51 @@ export async function SupabaseCityDetail({ city, tracking }: Props) {
   );
 }
 
+function EditorialTierSection({
+  label,
+  title,
+  copy,
+  tiers,
+  cta,
+}: {
+  label: string;
+  title: string;
+  copy: string;
+  tiers: EditorialTier[];
+  cta: { href: string; label: string } | null;
+}) {
+  return (
+    <section style={editorialSectionStyle}>
+      <div style={editorialHeaderStyle}>
+        <div>
+          <div style={labelStyle}>{label}</div>
+          <h2 style={sectionTitleStyle}>{title}</h2>
+        </div>
+
+        <p style={editorialLeadStyle}>{copy}</p>
+      </div>
+
+      <div style={tierGridStyle}>
+        {tiers.map((tier) => (
+          <article key={tier.title} style={tierCardStyle}>
+            <div style={tierNumberStyle}>Guide note</div>
+            <h3 style={tierTitleStyle}>{tier.title}</h3>
+            <p style={tierTextStyle}>{tier.text}</p>
+          </article>
+        ))}
+      </div>
+
+      {cta ? (
+        <div style={sectionCtaRowStyle}>
+          <a href={cta.href} style={sectionCtaStyle}>
+            {cta.label}
+          </a>
+        </div>
+      ) : null}
+    </section>
+  );
+}
+
 function getTrackingQuery(tracking: TrackingParams | undefined) {
   const query = new URLSearchParams();
 
@@ -133,6 +245,21 @@ function getTrackingQuery(tracking: TrackingParams | undefined) {
 
   const queryString = query.toString();
   return queryString ? `?${queryString}` : "";
+}
+
+function getAffiliateHref(
+  type: "hotels" | "tours",
+  citySlug: string,
+  src: string,
+  v: string
+) {
+  const query = new URLSearchParams({
+    c: citySlug,
+    src,
+    v,
+  });
+
+  return `/out/${type}?${query.toString()}`;
 }
 
 const pageStyle: CSSProperties = {
@@ -237,6 +364,87 @@ const shellStyle: CSSProperties = {
   maxWidth: 1120,
   margin: "0 auto",
   padding: "54px 16px 78px",
+};
+
+const editorialSectionStyle: CSSProperties = {
+  marginBottom: 54,
+  paddingBottom: 8,
+};
+
+const editorialHeaderStyle: CSSProperties = {
+  display: "flex",
+  justifyContent: "space-between",
+  gap: 18,
+  alignItems: "end",
+  marginBottom: 18,
+  flexWrap: "wrap",
+};
+
+const editorialLeadStyle: CSSProperties = {
+  maxWidth: 390,
+  margin: 0,
+  color: "#6f665b",
+  fontSize: 14,
+  lineHeight: 1.7,
+};
+
+const tierGridStyle: CSSProperties = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 250px), 1fr))",
+  gap: 14,
+};
+
+const tierCardStyle: CSSProperties = {
+  minHeight: 190,
+  padding: 20,
+  borderRadius: 8,
+  background: "#fffdf8",
+  border: "1px solid #e4d8c8",
+  boxShadow: "0 12px 30px rgba(45, 36, 28, 0.07)",
+};
+
+const tierNumberStyle: CSSProperties = {
+  marginBottom: 36,
+  color: "#9a6a43",
+  fontSize: 12,
+  fontWeight: 850,
+  letterSpacing: 0,
+  textTransform: "uppercase",
+};
+
+const tierTitleStyle: CSSProperties = {
+  margin: 0,
+  color: "#1f211d",
+  fontSize: 23,
+  lineHeight: 1.12,
+  letterSpacing: 0,
+};
+
+const tierTextStyle: CSSProperties = {
+  margin: "10px 0 0",
+  color: "#6f665b",
+  fontSize: 14,
+  lineHeight: 1.62,
+};
+
+const sectionCtaRowStyle: CSSProperties = {
+  display: "flex",
+  justifyContent: "flex-start",
+  marginTop: 16,
+};
+
+const sectionCtaStyle: CSSProperties = {
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  minHeight: 44,
+  padding: "0 16px",
+  borderRadius: 8,
+  background: "#2a211c",
+  color: "#fff8ef",
+  textDecoration: "none",
+  fontSize: 14,
+  fontWeight: 850,
 };
 
 const sectionIntroStyle: CSSProperties = {

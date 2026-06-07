@@ -17,7 +17,6 @@ type SpotSearchResult = {
   spotSlug?: string;
   name?: string;
   summary?: string;
-  tags?: string[];
   imageUrl?: string;
   imagePosition?: string;
   canOpen?: boolean;
@@ -37,8 +36,8 @@ function getCityCardStyle(city: City): CSSProperties {
     ...cardStyle,
     backgroundImage: getImageBackground(
       imageUrl,
-      "linear-gradient(180deg, rgba(255,255,255,0), rgba(23,32,42,.08))",
-      "linear-gradient(135deg, #e8f4ff, #edf8f2)"
+      "linear-gradient(180deg, rgba(31,26,23,0.04) 0%, rgba(31,26,23,0.72) 100%)",
+      "linear-gradient(135deg, #d9c7ad 0%, #fffdf8 56%, #9a6a43 100%)"
     ),
     backgroundSize: "cover",
     backgroundPosition: getCssImagePosition(city.imagePosition),
@@ -55,8 +54,8 @@ function getSpotCardStyle(spot: SpotSearchResult): CSSProperties {
     ...cardStyle,
     backgroundImage: getImageBackground(
       imageUrl,
-      "linear-gradient(180deg, rgba(255,255,255,0), rgba(23,32,42,.08))",
-      "linear-gradient(135deg, #e8f4ff, #edf8f2)"
+      "linear-gradient(180deg, rgba(31,26,23,0.04) 0%, rgba(31,26,23,0.74) 100%)",
+      "linear-gradient(135deg, #cab394 0%, #fffdf8 56%, #9a6a43 100%)"
     ),
     backgroundSize: "cover",
     backgroundPosition: getCssImagePosition(spot.imagePosition),
@@ -98,7 +97,7 @@ export function HomeSearchResults({ cityResults, spotResults, query }: Props) {
       <div style={sectionHeaderStyle}>
         <div>
           <div style={smallLabelStyle}>Search results</div>
-          <h2 style={sectionTitleStyle}>Places matching “{query}”</h2>
+          <h2 style={sectionTitleStyle}>Places matching "{query}"</h2>
         </div>
       </div>
 
@@ -113,10 +112,8 @@ export function HomeSearchResults({ cityResults, spotResults, query }: Props) {
                 href={`/c/${city.slug}?src=home-search&v=city_${city.slug}`}
                 style={getCityCardStyle(city)}
               >
-                <div style={badgeStyle}>{city.country}</div>
-
                 <div style={textPanelStyle}>
-                  <div style={metaStyle}>City guide</div>
+                  <div style={metaStyle}>{city.country}</div>
 
                   <h3 style={cardTitleStyle}>{city.city}</h3>
 
@@ -148,26 +145,14 @@ export function HomeSearchResults({ cityResults, spotResults, query }: Props) {
                   href={getSpotHref(spot)}
                   style={getSpotCardStyle(spot)}
                 >
-                  <div style={badgeStyle}>{cityLabel || "Spot"}</div>
-
                   <div style={textPanelStyle}>
-                    <div style={metaStyle}>Spot guide</div>
+                    <div style={metaStyle}>{cityLabel || "Spot guide"}</div>
 
                     <h3 style={cardTitleStyle}>{spot.name ?? "Travel spot"}</h3>
 
                     <p style={cardTextStyle}>
                       {spot.summary ?? "Open the guide to see why this place fits the trip."}
                     </p>
-
-                    {spot.tags && spot.tags.length > 0 && (
-                      <div style={chipRowStyle}>
-                        {spot.tags.slice(0, 3).map((tag) => (
-                          <span key={tag} style={chipStyle}>
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
                   </div>
                 </Link>
               );
@@ -193,33 +178,34 @@ const sectionHeaderStyle: CSSProperties = {
 };
 
 const smallLabelStyle: CSSProperties = {
+  marginBottom: 8,
+  color: "#9A6A43",
   fontSize: 12,
+  fontWeight: 850,
   letterSpacing: 0,
   textTransform: "uppercase",
-  color: "#138a72",
-  fontWeight: 850,
-  marginBottom: 7,
 };
 
 const sectionTitleStyle: CSSProperties = {
   margin: 0,
+  color: "#1F1A17",
   fontSize: 30,
-  lineHeight: 1.08,
+  lineHeight: 1.1,
   letterSpacing: 0,
   fontWeight: 850,
-  color: "#17202a",
 };
 
 const resultBlockStyle: CSSProperties = {
-  marginTop: 18,
+  marginTop: 20,
 };
 
 const miniTitleStyle: CSSProperties = {
   margin: "0 0 12px",
-  fontSize: 17,
+  color: "#6F6258",
+  fontSize: 13,
   letterSpacing: 0,
+  textTransform: "uppercase",
   fontWeight: 850,
-  color: "#17202a",
 };
 
 const gridStyle: CSSProperties = {
@@ -230,95 +216,52 @@ const gridStyle: CSSProperties = {
 
 const cardStyle: CSSProperties = {
   position: "relative",
-  minHeight: 410,
+  minHeight: 360,
   display: "flex",
-  flexDirection: "column",
-  justifyContent: "flex-end",
-  borderRadius: 26,
+  alignItems: "flex-end",
   overflow: "hidden",
+  borderRadius: 8,
+  color: "#FFF8EF",
   textDecoration: "none",
-  color: "#17202a",
-  backgroundColor: "#edf8f2",
-  border: "1px solid rgba(23, 32, 42, 0.1)",
-  boxShadow: "0 12px 28px rgba(30, 64, 88, 0.12)",
-};
-
-const badgeStyle: CSSProperties = {
-  position: "absolute",
-  top: 14,
-  left: 14,
-  zIndex: 3,
-  maxWidth: "calc(100% - 28px)",
-  padding: "7px 10px",
-  borderRadius: 999,
-  background: "#ffffff",
-  border: "1px solid rgba(23, 32, 42, 0.08)",
-  color: "#17202a",
-  fontSize: 12,
-  fontWeight: 850,
-  whiteSpace: "nowrap",
-  overflow: "hidden",
-  textOverflow: "ellipsis",
+  backgroundColor: "#D8C7B3",
+  boxShadow: "0 14px 34px rgba(42, 33, 28, 0.1)",
 };
 
 const textPanelStyle: CSSProperties = {
-  position: "relative",
-  zIndex: 2,
-  margin: 0,
+  width: "100%",
   padding: 18,
-  borderRadius: "0 0 26px 26px",
-  background: "#ffffff",
-  borderTop: "1px solid rgba(23, 32, 42, 0.08)",
 };
 
 const metaStyle: CSSProperties = {
-  marginBottom: 7,
+  marginBottom: 8,
+  color: "rgba(255, 248, 239, 0.78)",
   fontSize: 12,
   letterSpacing: 0,
   textTransform: "uppercase",
-  color: "#607080",
   fontWeight: 850,
 };
 
 const cardTitleStyle: CSSProperties = {
   margin: 0,
-  fontSize: 24,
-  lineHeight: 1.12,
+  color: "#FFF8EF",
+  fontSize: 26,
+  lineHeight: 1.08,
   letterSpacing: 0,
-  color: "#17202a",
   fontWeight: 850,
 };
 
 const cardTextStyle: CSSProperties = {
   margin: "10px 0 0",
-  fontSize: 13,
-  lineHeight: 1.55,
-  color: "#4c5f6f",
-};
-
-const chipRowStyle: CSSProperties = {
-  display: "flex",
-  flexWrap: "wrap",
-  gap: 7,
-  marginTop: 14,
-};
-
-const chipStyle: CSSProperties = {
-  padding: "7px 9px",
-  borderRadius: 999,
-  background: "#eaf8f1",
-  color: "#0c7a58",
-  border: "1px solid rgba(12, 122, 88, 0.14)",
-  fontSize: 12,
-  fontWeight: 800,
+  color: "rgba(255, 248, 239, 0.82)",
+  fontSize: 14,
+  lineHeight: 1.58,
 };
 
 const emptyStyle: CSSProperties = {
   padding: 20,
-  borderRadius: 22,
-  background: "#fffdf8",
-  border: "1px solid rgba(168, 116, 50, 0.14)",
-  color: "#607080",
+  borderRadius: 8,
+  background: "#FFFDF8",
+  border: "1px solid #E4D8C8",
+  color: "#6F6258",
   fontSize: 14,
 };
-

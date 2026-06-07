@@ -59,8 +59,8 @@ function getPhotoCardStyle(city: City): CSSProperties {
     ...cityCardStyle,
     backgroundImage: getImageBackground(
       imageUrl,
-      "linear-gradient(180deg, rgba(255,255,255,0), rgba(23,32,42,.08))",
-      "linear-gradient(135deg, #e8f4ff, #edf8f2)"
+      "linear-gradient(180deg, rgba(31, 26, 23, 0.04) 0%, rgba(31, 26, 23, 0.20) 48%, rgba(31, 26, 23, 0.78) 100%)",
+      "linear-gradient(135deg, #eadbc8 0%, #b8936e 52%, #2a211c 100%)"
     ),
     backgroundSize: "cover",
     backgroundPosition: getCssImagePosition(city.imagePosition),
@@ -120,8 +120,6 @@ export function TravelTimingDiscovery({ cities }: Props) {
 
       <div style={cityGridStyle}>
         {matchingCities.map((city) => {
-          const stops = getDisplayStops(city, 3);
-
           return (
             <Link
               key={`${city.slug}-${activeMonth}-season-card`}
@@ -137,15 +135,7 @@ export function TravelTimingDiscovery({ cities }: Props) {
 
                 <p style={cardTextStyle}>{getMonthReason(city, activeMonth)}</p>
 
-                {stops.length > 0 && (
-                  <div style={chipRowStyle}>
-                    {stops.map((stop, index) => (
-                      <span key={`${city.slug}-${stop}-${index}`} style={chipStyle}>
-                        {stop}
-                      </span>
-                    ))}
-                  </div>
-                )}
+                <div style={openTextStyle}>Open destination guide</div>
               </div>
             </Link>
           );
@@ -156,7 +146,7 @@ export function TravelTimingDiscovery({ cities }: Props) {
 }
 
 const sectionStyle: CSSProperties = {
-  marginTop: 34,
+  marginTop: 46,
 };
 
 const sectionHeaderStyle: CSSProperties = {
@@ -172,18 +162,18 @@ const smallLabelStyle: CSSProperties = {
   fontSize: 12,
   letterSpacing: 0,
   textTransform: "uppercase",
-  color: "#138a72",
+  color: "#9a6a43",
   fontWeight: 850,
   marginBottom: 7,
 };
 
 const sectionTitleStyle: CSSProperties = {
   margin: 0,
-  fontSize: 32,
+  fontSize: 34,
   lineHeight: 1.06,
   letterSpacing: 0,
   fontWeight: 850,
-  color: "#17202a",
+  color: "#1f1a17",
 };
 
 const sectionLeadStyle: CSSProperties = {
@@ -191,7 +181,7 @@ const sectionLeadStyle: CSSProperties = {
   maxWidth: 680,
   fontSize: 14,
   lineHeight: 1.7,
-  color: "#607080",
+  color: "#6f6258",
 };
 
 const monthGridStyle: CSSProperties = {
@@ -202,11 +192,11 @@ const monthGridStyle: CSSProperties = {
 };
 
 const monthButtonStyle: CSSProperties = {
-  border: "1px solid rgba(23, 32, 42, 0.08)",
+  border: "1px solid #e4d8c8",
   borderRadius: 999,
   padding: "9px 12px",
-  background: "#ffffff",
-  color: "#607080",
+  background: "#fffdf8",
+  color: "#6f6258",
   fontSize: 13,
   fontWeight: 800,
   cursor: "pointer",
@@ -214,10 +204,10 @@ const monthButtonStyle: CSSProperties = {
 
 const activeMonthButtonStyle: CSSProperties = {
   ...monthButtonStyle,
-  background: "#e8f1ff",
-  border: "1px solid rgba(23, 105, 224, 0.14)",
-  color: "#1769e0",
-  boxShadow: "0 8px 22px rgba(30, 64, 88, 0.08)",
+  background: "#2a211c",
+  border: "1px solid #2a211c",
+  color: "#fff8ef",
+  boxShadow: "0 10px 24px rgba(70, 53, 38, 0.14)",
 };
 
 const resultTopStyle: CSSProperties = {
@@ -234,38 +224,38 @@ const miniTitleStyle: CSSProperties = {
   fontSize: 26,
   lineHeight: 1.08,
   letterSpacing: 0,
-  color: "#17202a",
+  color: "#1f1a17",
 };
 
 const countStyle: CSSProperties = {
   padding: "8px 11px",
   borderRadius: 999,
-  background: "#eaf8f1",
-  border: "1px solid rgba(12, 122, 88, 0.14)",
-  color: "#0c7a58",
+  background: "#f4eadc",
+  border: "1px solid #e4d8c8",
+  color: "#9a6a43",
   fontSize: 12,
   fontWeight: 850,
 };
 
 const cityGridStyle: CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 250px), 1fr))",
-  gap: 16,
+  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 270px), 1fr))",
+  gap: 18,
 };
 
 const cityCardStyle: CSSProperties = {
   position: "relative",
-  minHeight: 410,
+  minHeight: 470,
   display: "flex",
   flexDirection: "column",
   justifyContent: "flex-end",
-  borderRadius: 26,
+  borderRadius: 8,
   overflow: "hidden",
   textDecoration: "none",
-  color: "#17202a",
-  backgroundColor: "#edf8f2",
-  border: "1px solid rgba(23, 32, 42, 0.1)",
-  boxShadow: "0 12px 28px rgba(30, 64, 88, 0.12)",
+  color: "#fff8ef",
+  backgroundColor: "#2a211c",
+  border: "1px solid #e4d8c8",
+  boxShadow: "0 18px 42px rgba(70, 53, 38, 0.14)",
 };
 
 const badgeStyle: CSSProperties = {
@@ -275,9 +265,9 @@ const badgeStyle: CSSProperties = {
   zIndex: 3,
   padding: "7px 10px",
   borderRadius: 999,
-  background: "#ffffff",
-  border: "1px solid rgba(23, 32, 42, 0.08)",
-  color: "#17202a",
+  background: "rgba(255, 253, 248, 0.88)",
+  border: "1px solid rgba(255, 253, 248, 0.34)",
+  color: "#1f1a17",
   fontSize: 12,
   fontWeight: 850,
 };
@@ -286,10 +276,10 @@ const textPanelStyle: CSSProperties = {
   position: "relative",
   zIndex: 2,
   margin: 0,
-  padding: 18,
-  borderRadius: "0 0 26px 26px",
-  background: "#ffffff",
-  borderTop: "1px solid rgba(23, 32, 42, 0.08)",
+  padding: 20,
+  borderRadius: 0,
+  background: "rgba(42, 33, 28, 0.78)",
+  borderTop: "1px solid rgba(255, 248, 239, 0.18)",
 };
 
 const metaStyle: CSSProperties = {
@@ -297,16 +287,16 @@ const metaStyle: CSSProperties = {
   fontSize: 12,
   letterSpacing: 0,
   textTransform: "uppercase",
-  color: "#607080",
+  color: "rgba(255, 248, 239, 0.70)",
   fontWeight: 850,
 };
 
 const cardTitleStyle: CSSProperties = {
   margin: 0,
-  fontSize: 24,
-  lineHeight: 1.12,
+  fontSize: 27,
+  lineHeight: 1.08,
   letterSpacing: 0,
-  color: "#17202a",
+  color: "#fff8ef",
   fontWeight: 850,
 };
 
@@ -314,22 +304,12 @@ const cardTextStyle: CSSProperties = {
   margin: "10px 0 0",
   fontSize: 13,
   lineHeight: 1.55,
-  color: "#4c5f6f",
+  color: "rgba(255, 248, 239, 0.78)",
 };
 
-const chipRowStyle: CSSProperties = {
-  display: "flex",
-  flexWrap: "wrap",
-  gap: 7,
-  marginTop: 14,
-};
-
-const chipStyle: CSSProperties = {
-  padding: "7px 9px",
-  borderRadius: 999,
-  background: "#eaf8f1",
-  color: "#0c7a58",
-  border: "1px solid rgba(12, 122, 88, 0.14)",
-  fontSize: 12,
-  fontWeight: 800,
+const openTextStyle: CSSProperties = {
+  marginTop: 15,
+  fontSize: 13,
+  fontWeight: 850,
+  color: "#f3d7b5",
 };

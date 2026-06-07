@@ -4,6 +4,12 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import type { City } from "@/data/types";
+import { getCityImage } from "@/data/travel-images";
+import {
+  getCssImagePosition,
+  getImageBackground,
+  getOptionalHttpUrl,
+} from "@/lib/url-fields";
 
 type Props = {
   cities: City[];
@@ -92,6 +98,22 @@ function visualForCity(slug: string) {
     visuals[slug] ??
     "linear-gradient(135deg, #e5c7a5 0%, #9fb8c9 48%, #30394a 100%)"
   );
+}
+
+function getSwipeVisualStyle(city: City): CSSProperties {
+  const image = getCityImage(city.slug);
+  const imageUrl = getOptionalHttpUrl(city.imageUrl) || image.imageUrl;
+
+  return {
+    ...swipeVisualStyle,
+    backgroundImage: getImageBackground(
+      imageUrl,
+      "linear-gradient(180deg, rgba(31, 26, 23, 0.02) 0%, rgba(31, 26, 23, 0.20) 46%, rgba(31, 26, 23, 0.70) 100%)",
+      visualForCity(city.slug)
+    ),
+    backgroundSize: "cover",
+    backgroundPosition: getCssImagePosition(city.imagePosition),
+  };
 }
 
 function scoreCity(city: City, answer: QuizAnswer) {
@@ -209,7 +231,7 @@ export function TravelDiscoveryTools({ cities }: Props) {
                   <div style={resultTextStyle}>
                     <div style={resultCityStyle}>{city.city}</div>
                     <div style={resultMetaStyle}>
-                      {city.country} · {getCityTags(city).slice(0, 2).join(" · ")}
+                      {city.country} · {city.stops[0] ?? "City guide"}
                     </div>
                   </div>
 
@@ -280,10 +302,7 @@ export function TravelDiscoveryTools({ cities }: Props) {
           {swipeCity ? (
             <>
               <div
-                style={{
-                  ...swipeVisualStyle,
-                  background: visualForCity(swipeCity.slug),
-                }}
+                style={getSwipeVisualStyle(swipeCity)}
               >
                 <div style={visualBadgeStyle}>{swipeCity.country}</div>
               </div>
@@ -347,7 +366,7 @@ export function TravelDiscoveryTools({ cities }: Props) {
 }
 
 const wrapStyle: CSSProperties = {
-  marginBottom: 42,
+  marginBottom: 58,
 };
 
 const sectionHeaderStyle: CSSProperties = {
@@ -363,38 +382,40 @@ const smallLabelStyle: CSSProperties = {
   fontSize: 12,
   letterSpacing: 0,
   textTransform: "uppercase",
-  color: "#138a72",
+  color: "#9a6a43",
   fontWeight: 850,
   marginBottom: 6,
 };
 
 const sectionTitleStyle: CSSProperties = {
   margin: 0,
-  fontSize: 30,
+  fontSize: 34,
+  lineHeight: 1.08,
   letterSpacing: 0,
   fontWeight: 850,
+  color: "#1f1a17",
 };
 
 const gridStyle: CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 340px), 1fr))",
-  gap: 16,
+  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 320px), 1fr))",
+  gap: 18,
 };
 
 const quizCardStyle: CSSProperties = {
-  borderRadius: 32,
+  borderRadius: 8,
   padding: 18,
-  background: "#ffffff",
-  border: "1px solid rgba(23, 32, 42, 0.1)",
-  boxShadow: "0 12px 28px rgba(30, 64, 88, 0.1)",
+  background: "#fffdf8",
+  border: "1px solid #e4d8c8",
+  boxShadow: "0 18px 42px rgba(70, 53, 38, 0.08)",
 };
 
 const swipeCardStyle: CSSProperties = {
-  borderRadius: 32,
+  borderRadius: 8,
   padding: 18,
-  background: "#ffffff",
-  border: "1px solid rgba(23, 32, 42, 0.1)",
-  boxShadow: "0 12px 28px rgba(30, 64, 88, 0.1)",
+  background: "#fffdf8",
+  border: "1px solid #e4d8c8",
+  boxShadow: "0 18px 42px rgba(70, 53, 38, 0.08)",
 };
 
 const toolHeaderStyle: CSSProperties = {
@@ -408,16 +429,17 @@ const toolHeaderStyle: CSSProperties = {
 const toolTitleStyle: CSSProperties = {
   margin: 0,
   fontSize: 24,
-  lineHeight: 1.05,
+  lineHeight: 1.08,
   letterSpacing: 0,
   fontWeight: 850,
+  color: "#1f1a17",
 };
 
 const toolBadgeStyle: CSSProperties = {
   padding: "8px 10px",
   borderRadius: 999,
-  background: "#e8f1ff",
-  color: "#1769e0",
+  background: "#f4eadc",
+  color: "#9a6a43",
   fontSize: 12,
   fontWeight: 800,
   whiteSpace: "nowrap",
@@ -430,7 +452,7 @@ const questionBlockStyle: CSSProperties = {
 const questionLabelStyle: CSSProperties = {
   fontSize: 13,
   fontWeight: 800,
-  opacity: 0.68,
+  color: "#6f6258",
   marginBottom: 8,
 };
 
@@ -441,11 +463,11 @@ const optionRowStyle: CSSProperties = {
 };
 
 const optionStyle: CSSProperties = {
-  border: "1px solid rgba(0, 0, 0, 0.1)",
+  border: "1px solid #e4d8c8",
   borderRadius: 999,
   padding: "9px 11px",
-  background: "#ffffff",
-  color: "#171717",
+  background: "#fffdf8",
+  color: "#1f1a17",
   fontSize: 13,
   fontWeight: 750,
   cursor: "pointer",
@@ -453,17 +475,17 @@ const optionStyle: CSSProperties = {
 
 const activeOptionStyle: CSSProperties = {
   ...optionStyle,
-  background: "#1769e0",
-  color: "#ffffff",
-  border: "1px solid #1769e0",
+  background: "#2a211c",
+  color: "#fff8ef",
+  border: "1px solid #2a211c",
 };
 
 const resultBoxStyle: CSSProperties = {
   marginBottom: 18,
   padding: 14,
-  borderRadius: 24,
-  background: "#f7fbff",
-  border: "1px solid rgba(23, 32, 42, 0.08)",
+  borderRadius: 8,
+  background: "#f7f2ea",
+  border: "1px solid #e4d8c8",
 };
 
 const resultTitleStyle: CSSProperties = {
@@ -483,9 +505,9 @@ const resultItemStyle: CSSProperties = {
   alignItems: "center",
   gap: 10,
   padding: 12,
-  borderRadius: 18,
-  background: "#ffffff",
-  border: "1px solid rgba(23, 32, 42, 0.08)",
+  borderRadius: 8,
+  background: "#fffdf8",
+  border: "1px solid #e4d8c8",
   color: "inherit",
   textDecoration: "none",
 };
@@ -496,8 +518,8 @@ const resultRankStyle: CSSProperties = {
   display: "grid",
   placeItems: "center",
   borderRadius: "50%",
-  background: "#1769e0",
-  color: "#ffffff",
+  background: "#2a211c",
+  color: "#fff8ef",
   fontSize: 12,
   fontWeight: 850,
   flexShrink: 0,
@@ -510,12 +532,13 @@ const resultTextStyle: CSSProperties = {
 const resultCityStyle: CSSProperties = {
   fontSize: 15,
   fontWeight: 850,
+  color: "#1f1a17",
 };
 
 const resultMetaStyle: CSSProperties = {
   marginTop: 3,
   fontSize: 12,
-  opacity: 0.62,
+  color: "#6f6258",
   whiteSpace: "nowrap",
   overflow: "hidden",
   textOverflow: "ellipsis",
@@ -528,11 +551,13 @@ const resultArrowStyle: CSSProperties = {
 };
 
 const swipeVisualStyle: CSSProperties = {
-  height: "clamp(220px, 58vw, 320px)",
-  borderRadius: 26,
+  height: "min(70vw, 360px)",
+  minHeight: 250,
+  borderRadius: 8,
   position: "relative",
   overflow: "hidden",
   marginBottom: 16,
+  backgroundColor: "#2a211c",
 };
 
 const visualBadgeStyle: CSSProperties = {
@@ -541,10 +566,11 @@ const visualBadgeStyle: CSSProperties = {
   left: 14,
   padding: "8px 11px",
   borderRadius: 999,
-  background: "#ffffff",
+  background: "rgba(255, 253, 248, 0.88)",
   backdropFilter: "blur(12px)",
   fontSize: 12,
   fontWeight: 800,
+  color: "#1f1a17",
 };
 
 const swipeBodyStyle: CSSProperties = {
@@ -557,13 +583,14 @@ const swipeCityStyle: CSSProperties = {
   lineHeight: 1.02,
   letterSpacing: 0,
   fontWeight: 850,
+  color: "#1f1a17",
 };
 
 const swipeReasonStyle: CSSProperties = {
   margin: "10px 0 16px",
   fontSize: 14,
   lineHeight: 1.55,
-  opacity: 0.68,
+  color: "#6f6258",
 };
 
 const swipeButtonRowStyle: CSSProperties = {
@@ -573,11 +600,11 @@ const swipeButtonRowStyle: CSSProperties = {
 };
 
 const skipButtonStyle: CSSProperties = {
-  border: "1px solid rgba(0, 0, 0, 0.1)",
-  borderRadius: 18,
+  border: "1px solid #e4d8c8",
+  borderRadius: 999,
   padding: "14px 12px",
-  background: "#ffffff",
-  color: "#171717",
+  background: "#fffdf8",
+  color: "#1f1a17",
   fontSize: 14,
   fontWeight: 850,
   cursor: "pointer",
@@ -585,10 +612,10 @@ const skipButtonStyle: CSSProperties = {
 
 const pickButtonStyle: CSSProperties = {
   border: 0,
-  borderRadius: 18,
+  borderRadius: 999,
   padding: "14px 12px",
-  background: "#138a72",
-  color: "#ffffff",
+  background: "#2a211c",
+  color: "#fff8ef",
   fontSize: 14,
   fontWeight: 850,
   cursor: "pointer",
@@ -597,24 +624,23 @@ const pickButtonStyle: CSSProperties = {
 const viewCityLinkStyle: CSSProperties = {
   display: "block",
   marginTop: 13,
-  color: "inherit",
+  color: "#9a6a43",
   textDecoration: "none",
   fontSize: 13,
   fontWeight: 850,
-  opacity: 0.72,
 };
 
 const pickedBoxStyle: CSSProperties = {
   marginTop: 18,
   padding: 14,
-  borderRadius: 24,
-  background: "#f7fbff",
-  border: "1px solid rgba(23, 32, 42, 0.08)",
+  borderRadius: 8,
+  background: "#f7f2ea",
+  border: "1px solid #e4d8c8",
 };
 
 const pickedEmptyStyle: CSSProperties = {
   fontSize: 13,
-  opacity: 0.58,
+  color: "#6f6258",
 };
 
 const pickedListStyle: CSSProperties = {
@@ -626,8 +652,8 @@ const pickedListStyle: CSSProperties = {
 const pickedItemStyle: CSSProperties = {
   padding: "8px 10px",
   borderRadius: 999,
-  background: "#1769e0",
-  color: "#ffffff",
+  background: "#2a211c",
+  color: "#fff8ef",
   textDecoration: "none",
   fontSize: 12,
   fontWeight: 800,
@@ -635,11 +661,11 @@ const pickedItemStyle: CSSProperties = {
 
 const emptyStyle: CSSProperties = {
   padding: 18,
-  borderRadius: 20,
-  background: "#f7fbff",
-  border: "1px solid rgba(23, 32, 42, 0.08)",
+  borderRadius: 8,
+  background: "#f7f2ea",
+  border: "1px solid #e4d8c8",
   fontSize: 14,
-  opacity: 0.68,
+  color: "#6f6258",
 };
 
 

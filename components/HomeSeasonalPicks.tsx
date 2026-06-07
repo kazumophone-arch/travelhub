@@ -36,8 +36,8 @@ function getCardStyle(city: City): CSSProperties {
     ...cardStyle,
     backgroundImage: getImageBackground(
       imageUrl,
-      "linear-gradient(180deg, rgba(255,255,255,0), rgba(23,32,42,.08))",
-      "linear-gradient(135deg, #e8f4ff, #edf8f2)"
+      "linear-gradient(180deg, rgba(31,26,23,0.04) 0%, rgba(31,26,23,0.72) 100%)",
+      "linear-gradient(135deg, #d9c7ad 0%, #fffdf8 54%, #9a6a43 100%)"
     ),
     backgroundSize: "cover",
     backgroundPosition: getCssImagePosition(city.imagePosition),
@@ -49,8 +49,11 @@ export function HomeSeasonalPicks({ cities, currentMonth }: Props) {
     <section id="seasonal-preview" style={wrapStyle}>
       <div style={sectionHeaderStyle}>
         <div>
-          <div style={smallLabelStyle}>Seasonal picks</div>
-          <h2 style={sectionTitleStyle}>Best places in {currentMonth}</h2>
+          <div style={smallLabelStyle}>Seasonal Inspiration</div>
+          <h2 style={sectionTitleStyle}>Where {currentMonth} changes the mood</h2>
+          <p style={sectionCopyStyle}>
+            A quiet seasonal edit from the city guides already in TravelHub.
+          </p>
         </div>
 
         <Link href="/discover#travel-timing" style={viewAllStyle}>
@@ -60,41 +63,27 @@ export function HomeSeasonalPicks({ cities, currentMonth }: Props) {
 
       {cities.length === 0 ? (
         <div style={emptyStyle}>
-          No seasonal picks are available for {currentMonth} yet.
+          No seasonal inspiration is available for {currentMonth} yet.
         </div>
       ) : (
         <div style={gridStyle}>
-          {cities.slice(0, 6).map((city) => {
-            const stops = getDisplayStops(city, 3);
+          {cities.slice(0, 6).map((city) => (
+            <Link
+              key={`${city.slug}-home-seasonal-card`}
+              href={`/c/${city.slug}?src=home&v=seasonal_${currentMonth}_${city.slug}`}
+              style={getCardStyle(city)}
+            >
+              <div style={monthBadgeStyle}>{currentMonth}</div>
 
-            return (
-              <Link
-                key={`${city.slug}-home-seasonal-card`}
-                href={`/c/${city.slug}?src=home&v=seasonal_${currentMonth}_${city.slug}`}
-                style={getCardStyle(city)}
-              >
-                <div style={monthBadgeStyle}>{currentMonth}</div>
+              <div style={textPanelStyle}>
+                <div style={metaStyle}>{city.country}</div>
 
-                <div style={textPanelStyle}>
-                  <div style={metaStyle}>{city.country}</div>
+                <h3 style={cardTitleStyle}>{city.city}</h3>
 
-                  <h3 style={cardTitleStyle}>{city.city}</h3>
-
-                  <p style={cardTextStyle}>{getReason(city)}</p>
-
-                  {stops.length > 0 && (
-                    <div style={chipRowStyle}>
-                      {stops.map((stop, index) => (
-                        <span key={`${city.slug}-${stop}-${index}`} style={chipStyle}>
-                          {stop}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </Link>
-            );
-          })}
+                <p style={cardTextStyle}>{getReason(city)}</p>
+              </div>
+            </Link>
+          ))}
         </div>
       )}
     </section>
@@ -102,48 +91,56 @@ export function HomeSeasonalPicks({ cities, currentMonth }: Props) {
 }
 
 const wrapStyle: CSSProperties = {
-  marginTop: 34,
+  marginTop: 52,
 };
 
 const sectionHeaderStyle: CSSProperties = {
   display: "flex",
   justifyContent: "space-between",
-  gap: 12,
+  gap: 16,
   alignItems: "flex-end",
-  marginBottom: 16,
+  marginBottom: 18,
   flexWrap: "wrap",
 };
 
 const smallLabelStyle: CSSProperties = {
+  marginBottom: 8,
+  color: "#9A6A43",
   fontSize: 12,
+  fontWeight: 850,
   letterSpacing: 0,
   textTransform: "uppercase",
-  color: "#138a72",
-  fontWeight: 850,
-  marginBottom: 7,
 };
 
 const sectionTitleStyle: CSSProperties = {
   margin: 0,
-  fontSize: 30,
+  color: "#1F1A17",
+  fontSize: 34,
   lineHeight: 1.08,
   letterSpacing: 0,
   fontWeight: 850,
-  color: "#17202a",
+};
+
+const sectionCopyStyle: CSSProperties = {
+  margin: "10px 0 0",
+  maxWidth: 560,
+  color: "#6F6258",
+  fontSize: 15,
+  lineHeight: 1.65,
 };
 
 const viewAllStyle: CSSProperties = {
   display: "inline-flex",
   alignItems: "center",
-  gap: 8,
-  padding: "9px 12px",
-  borderRadius: 999,
-  background: "#e8f1ff",
-  color: "#1769e0",
+  minHeight: 40,
+  padding: "0 14px",
+  borderRadius: 8,
+  background: "#FFFDF8",
+  color: "#9A6A43",
   textDecoration: "none",
   fontSize: 13,
   fontWeight: 850,
-  border: "1px solid rgba(23, 105, 224, 0.12)",
+  border: "1px solid #E4D8C8",
 };
 
 const gridStyle: CSSProperties = {
@@ -154,17 +151,15 @@ const gridStyle: CSSProperties = {
 
 const cardStyle: CSSProperties = {
   position: "relative",
-  minHeight: 410,
+  minHeight: 390,
   display: "flex",
-  flexDirection: "column",
-  justifyContent: "flex-end",
-  borderRadius: 26,
+  alignItems: "flex-end",
   overflow: "hidden",
+  borderRadius: 8,
+  color: "#FFF8EF",
   textDecoration: "none",
-  color: "#17202a",
-  backgroundColor: "#edf8f2",
-  border: "1px solid rgba(23, 32, 42, 0.1)",
-  boxShadow: "0 12px 28px rgba(30, 64, 88, 0.12)",
+  backgroundColor: "#D8C7B3",
+  boxShadow: "0 14px 34px rgba(42, 33, 28, 0.1)",
 };
 
 const monthBadgeStyle: CSSProperties = {
@@ -173,10 +168,10 @@ const monthBadgeStyle: CSSProperties = {
   left: 14,
   zIndex: 3,
   padding: "7px 10px",
-  borderRadius: 999,
-  background: "#ffffff",
-  border: "1px solid rgba(23, 32, 42, 0.08)",
-  color: "#17202a",
+  borderRadius: 8,
+  background: "rgba(255, 248, 239, 0.9)",
+  border: "1px solid rgba(255, 248, 239, 0.52)",
+  color: "#2A211C",
   fontSize: 12,
   fontWeight: 850,
 };
@@ -184,60 +179,40 @@ const monthBadgeStyle: CSSProperties = {
 const textPanelStyle: CSSProperties = {
   position: "relative",
   zIndex: 2,
-  margin: 0,
+  width: "100%",
   padding: 18,
-  borderRadius: "0 0 26px 26px",
-  background: "#ffffff",
-  borderTop: "1px solid rgba(23, 32, 42, 0.08)",
 };
 
 const metaStyle: CSSProperties = {
-  marginBottom: 7,
+  marginBottom: 8,
+  color: "rgba(255, 248, 239, 0.78)",
   fontSize: 12,
   letterSpacing: 0,
   textTransform: "uppercase",
-  color: "#607080",
   fontWeight: 850,
 };
 
 const cardTitleStyle: CSSProperties = {
   margin: 0,
-  fontSize: 24,
-  lineHeight: 1.12,
+  color: "#FFF8EF",
+  fontSize: 28,
+  lineHeight: 1.08,
   letterSpacing: 0,
-  color: "#17202a",
   fontWeight: 850,
 };
 
 const cardTextStyle: CSSProperties = {
   margin: "10px 0 0",
-  fontSize: 13,
-  lineHeight: 1.55,
-  color: "#4c5f6f",
-};
-
-const chipRowStyle: CSSProperties = {
-  display: "flex",
-  flexWrap: "wrap",
-  gap: 7,
-  marginTop: 14,
-};
-
-const chipStyle: CSSProperties = {
-  padding: "7px 9px",
-  borderRadius: 999,
-  background: "#eaf8f1",
-  color: "#0c7a58",
-  border: "1px solid rgba(12, 122, 88, 0.14)",
-  fontSize: 12,
-  fontWeight: 800,
+  color: "rgba(255, 248, 239, 0.82)",
+  fontSize: 14,
+  lineHeight: 1.58,
 };
 
 const emptyStyle: CSSProperties = {
   padding: 20,
-  borderRadius: 22,
-  background: "#fffdf8",
-  border: "1px solid rgba(168, 116, 50, 0.14)",
-  color: "#607080",
+  borderRadius: 8,
+  background: "#FFFDF8",
+  border: "1px solid #E4D8C8",
+  color: "#6F6258",
   fontSize: 14,
 };

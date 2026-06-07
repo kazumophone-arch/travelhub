@@ -35,16 +35,16 @@ export default async function DiscoverPage() {
 const pageStyle: CSSProperties = {
   minHeight: "100vh",
   overflowX: "hidden",
-  background: "linear-gradient(180deg, #f7fbff 0%, #ffffff 48%, #f6faf8 100%)",
-  color: "#171717",
+  background: "linear-gradient(180deg, #f7f2ea 0%, #fffdf8 46%, #f5efe6 100%)",
+  color: "#1f1a17",
   fontFamily:
     '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif',
 };
 
 const shellStyle: CSSProperties = {
-  maxWidth: 1120,
+  maxWidth: 1180,
   margin: "0 auto",
-  padding: "28px 16px 56px",
+  padding: "34px 16px 70px",
 };
 
 

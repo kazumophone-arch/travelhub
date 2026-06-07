@@ -4,9 +4,9 @@ import { getPublishedSupabaseDirectoryCities } from "@/data/supabase-public-citi
 import { sortByRank } from "@/data/visibility";
 import { createPublicMetadata } from "@/lib/site-metadata";
 
-const title = "TravelHub | Travel Links, City Guides, Hotels, and Tours";
+const title = "TravelHub | Cinematic City Guides and Travel Spots";
 const description =
-  "Find city guides, travel spots, hotel links, and tour links from one simple travel hub.";
+  "Explore photo-led city guides and memorable travel spots for your next stay, wander, and return-worthy trip.";
 
 export const dynamic = "force-dynamic";
 
