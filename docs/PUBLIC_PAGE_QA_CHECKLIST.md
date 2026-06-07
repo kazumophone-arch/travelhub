@@ -85,6 +85,21 @@ After admin changes:
 - Edit spot affiliate URL and verify spot page CTA behavior updates.
 - Remember that future caching may delay public updates if caching is added later.
 
+## Admin-Only Tag Checks
+
+Check tag management in admin:
+
+- Create a tag in `/admin/tags`.
+- Edit the tag name, slug, description, active status, or sort rank.
+- Archive a tag and verify it becomes inactive rather than hard-deleted.
+- Assign active tags to a city in city create/edit forms.
+- Assign active tags to a spot in spot create/edit forms.
+- Save a city with no tags and verify saving still works.
+- Save a spot with no tags and verify saving still works.
+- Reopen city/spot edit forms and verify selected tags load.
+- Confirm assigned tags do not appear on public city or spot pages yet.
+- Confirm assigned tags do not change `/`, `/discover`, `/cities`, `/spots`, public search, public filters, CTA visibility, or outbound affiliate behavior.
+
 ## SEO And Metadata Checks
 
 Check:

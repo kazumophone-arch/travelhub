@@ -42,9 +42,10 @@ Important environment variables inferred from the code:
 - `/admin/countries`, `/admin/countries/new`, `/admin/countries/edit/[id]` - Country admin.
 - `/admin/cities`, `/admin/cities/new`, `/admin/cities/edit/[id]` - City admin.
 - `/admin/spots`, `/admin/spots/new`, `/admin/spots/edit/[id]` - Spot admin.
+- `/admin/tags` - Inline admin tag management.
 - `/admin/analytics` - Affiliate click analytics.
 - `/api/admin/auth/login`, `/api/admin/auth/logout` - Admin auth API.
-- `/api/admin/countries`, `/api/admin/cities`, `/api/admin/spots`, `/api/admin/uploads` - Protected admin APIs.
+- `/api/admin/countries`, `/api/admin/cities`, `/api/admin/spots`, `/api/admin/tags`, `/api/admin/uploads` - Protected admin APIs.
 
 ## Main Data Files
 
@@ -75,6 +76,7 @@ Important environment variables inferred from the code:
 - Click logging into the `click_logs` Supabase table, including type, city/spot, source, version, referer, and user agent.
 - Password-protected admin area guarded by `proxy.ts`.
 - Admin CRUD-style flows for countries, cities, and spots.
+- V1 admin/data-only tag management for reusable tags, including tag create/edit/archive and multi-tag assignment to cities and spots.
 - Supabase storage upload support through the admin uploads API.
 - Admin analytics dashboard for click counts, breakdowns, and recent click logs.
 - Dynamic sitemap generation from published Supabase cities and spots.
@@ -85,6 +87,8 @@ Important environment variables inferred from the code:
 - Spot pages should show hotel/tour CTA buttons only when the spot itself has valid direct affiliate URLs.
 - Spot pages should not show city-level fallback CTA buttons when the spot has no direct affiliate URL.
 - The internal `/out/hotels` and `/out/tours` city-level fallback may remain for direct or stale URLs, but that fallback should not be surfaced in the public spot page UI.
+- Tags are V1 admin/data-only metadata. They can be created, edited, archived, and assigned to cities/spots in admin, but they are not shown on public pages yet.
+- Tags are not yet used for public search, filtering, directory chips, category inference, sitemap behavior, or affiliate routing.
 
 ## Caching Strategy
 

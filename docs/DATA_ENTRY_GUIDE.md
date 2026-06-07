@@ -75,6 +75,14 @@ The goal is consistency, not exhaustive travel coverage. Add enough clean inform
 - Treat themes as a future field, not a currently editable admin field.
 - Do not force theme labels into unrelated fields.
 
+### Tags
+
+- Tags are optional admin/data-only metadata for organizing cities.
+- Select reusable active tags that could apply to multiple cities, such as `Historic streets`, `Food trip`, or `Family friendly`.
+- Avoid overly specific one-off tags that duplicate the city name or repeat text already in the summary.
+- Archived/inactive tags should not be used for new city entries.
+- Tags are not currently shown on public pages and do not affect public search/filter behavior.
+
 ### Sort rank
 
 - Lower numbers should appear earlier.
@@ -144,9 +152,12 @@ The goal is consistency, not exhaustive travel coverage. Add enough clean inform
 
 ### Category and tags
 
-- Spot category/tags are not currently exposed in the admin UI/API/schema.
-- Treat category and tags as future fields, not currently editable admin fields.
-- Do not force category or tag labels into unrelated fields.
+- Spot category is not currently exposed in the admin UI/API/schema.
+- Tags are optional admin/data-only metadata for organizing spots.
+- Select reusable active tags that could apply to multiple spots, such as `Viewpoint`, `Museum`, `Food market`, or `Rainy day`.
+- Avoid overly specific one-off tags that duplicate the spot name or create near-duplicates of existing tags.
+- Archived/inactive tags should not be used for new spot entries.
+- Tags are not currently shown on public pages and do not affect public search/filter behavior.
 
 ### Affiliate hotel URL
 
@@ -237,6 +248,17 @@ Examples:
 - Do not add generic city-level affiliate URLs to spots unless they are truly spot-relevant.
 - If an affiliate URL is uncertain, leave it blank until it can be verified.
 
+## Tag Usage Guidelines
+
+- Tags are optional; cities and spots may be saved with no tags.
+- Use short, reusable names that describe travel intent, content type, or practical context.
+- Prefer broad, consistent tags over many tiny variants, for example use `Food market` instead of separate near-duplicates like `Food markets`, `Street food market`, and `Markets for food`.
+- Keep tag capitalization natural and readable in admin.
+- Do not create tags only to mirror existing city/spot names.
+- Use `/admin/tags` to create, edit, or archive tags before assigning them.
+- Archived/inactive tags are kept for history but should not be assigned to new or edited entries.
+- V1 tags are admin/data-only. They do not appear publicly and do not change public search, filters, affiliate CTAs, or sitemap behavior.
+
 ## Image Guidance
 
 - Use visually strong travel images that clearly show the city or spot.
@@ -251,8 +273,9 @@ Examples:
 ## Current Unsupported Fields
 
 - City seasons, travel styles, and themes are currently not exposed in the admin UI/API/schema.
-- Spot category/tags are currently not exposed in the admin UI/API/schema.
-- These may become future fields, but they should not be treated as currently editable admin fields.
+- Spot category is currently not exposed in the admin UI/API/schema.
+- Tags are supported in admin as V1 data-only metadata, but they are not public-facing yet.
+- Unsupported fields may become future fields, but they should not be treated as currently editable admin fields.
 - Do not store future-only values in unrelated fields just to make them visible.
 
 ## Validation Notes
@@ -292,4 +315,4 @@ Before publishing a city or spot:
 - Do not publish incomplete pages.
 - Do not enter placeholder affiliate URLs.
 - Do not use city fallback CTAs on spot pages unless the product rule changes later.
-- Do not force future-only data such as seasons, travel styles, themes, categories, or tags into unrelated fields if the admin UI does not expose them yet.
+- Do not force future-only data such as seasons, travel styles, themes, or categories into unrelated fields if the admin UI does not expose them yet.
