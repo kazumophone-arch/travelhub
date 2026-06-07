@@ -397,7 +397,7 @@ export function HomeLanding({ cities }: Props) {
 
         <section style={sectionStyle}>
           <div style={sectionHeaderStyle}>
-            <div>
+            <div style={sectionHeaderTextStyle}>
               <div style={smallLabelStyle}>Editor's Picks</div>
               <h2 style={sectionTitleStyle}>City guides with a point of view</h2>
             </div>
@@ -430,7 +430,7 @@ export function HomeLanding({ cities }: Props) {
 
         <section style={sectionStyle}>
           <div style={sectionHeaderStyle}>
-            <div>
+            <div style={sectionHeaderTextStyle}>
               <div style={smallLabelStyle}>Recently Featured</div>
               <h2 style={sectionTitleStyle}>Places pulled from the feed</h2>
             </div>
@@ -494,9 +494,11 @@ const pageStyle: CSSProperties = {
 };
 
 const heroShellStyle: CSSProperties = {
+  width: "100%",
   maxWidth: 1240,
   margin: "0 auto",
   padding: "20px 12px 0",
+  boxSizing: "border-box",
 };
 
 const heroStyle: CSSProperties = {
@@ -510,6 +512,8 @@ const heroStyle: CSSProperties = {
 };
 
 const heroContentStyle: CSSProperties = {
+  width: "100%",
+  minWidth: 0,
   maxWidth: 820,
   color: "#FFF8EF",
 };
@@ -525,11 +529,12 @@ const heroEyebrowStyle: CSSProperties = {
 
 const heroTitleStyle: CSSProperties = {
   margin: 0,
-  maxWidth: 820,
-  fontSize: 52,
-  lineHeight: 1.04,
+  maxWidth: "min(820px, 100%)",
+  fontSize: "clamp(38px, 10.5vw, 52px)",
+  lineHeight: 1.08,
   letterSpacing: 0,
   fontWeight: 850,
+  overflowWrap: "break-word",
 };
 
 const heroSubtitleStyle: CSSProperties = {
@@ -595,9 +600,11 @@ const heroPlaceLabelStyle: CSSProperties = {
 };
 
 const shellStyle: CSSProperties = {
+  width: "100%",
   maxWidth: 1180,
   margin: "0 auto",
   padding: "26px 16px 64px",
+  boxSizing: "border-box",
 };
 
 const searchArchiveStyle: CSSProperties = {
@@ -677,17 +684,26 @@ const sectionHeaderStyle: CSSProperties = {
   flexWrap: "wrap",
 };
 
+const sectionHeaderTextStyle: CSSProperties = {
+  flex: "1 0 100%",
+  minWidth: 0,
+  maxWidth: "100%",
+};
+
 const sectionTitleStyle: CSSProperties = {
   margin: 0,
-  maxWidth: 720,
+  width: "100%",
+  maxWidth: "clamp(300px, 66vw, 720px)",
   color: "#1F1A17",
-  fontSize: 34,
-  lineHeight: 1.08,
+  fontSize: "clamp(24px, 6vw, 34px)",
+  lineHeight: 1.18,
   letterSpacing: 0,
   fontWeight: 850,
+  overflowWrap: "break-word",
 };
 
 const textLinkStyle: CSSProperties = {
+  flexShrink: 0,
   color: "#9A6A43",
   fontSize: 14,
   fontWeight: 850,
@@ -715,6 +731,7 @@ const editorCardStyle: CSSProperties = {
 
 const imageCardTextStyle: CSSProperties = {
   width: "100%",
+  minWidth: 0,
   padding: 18,
 };
 
@@ -729,19 +746,22 @@ const imageMetaStyle: CSSProperties = {
 
 const imageCardTitleStyle: CSSProperties = {
   margin: 0,
+  maxWidth: "100%",
   color: "#FFF8EF",
-  fontSize: 30,
-  lineHeight: 1.04,
+  fontSize: "clamp(26px, 7vw, 30px)",
+  lineHeight: 1.12,
   letterSpacing: 0,
   fontWeight: 850,
+  overflowWrap: "break-word",
 };
 
 const imageCardCopyStyle: CSSProperties = {
   margin: "10px 0 0",
-  maxWidth: 420,
+  maxWidth: "clamp(240px, 72vw, 420px)",
   color: "rgba(255, 248, 239, 0.82)",
   fontSize: 14,
   lineHeight: 1.58,
+  overflowWrap: "break-word",
 };
 
 const featureGridStyle: CSSProperties = {
@@ -765,11 +785,13 @@ const featureCardStyle: CSSProperties = {
 
 const featureCardTitleStyle: CSSProperties = {
   margin: 0,
+  maxWidth: "100%",
   color: "#FFF8EF",
-  fontSize: 25,
-  lineHeight: 1.08,
+  fontSize: "clamp(22px, 6vw, 25px)",
+  lineHeight: 1.16,
   letterSpacing: 0,
   fontWeight: 850,
+  overflowWrap: "break-word",
 };
 
 const footerCtaStyle: CSSProperties = {
@@ -785,12 +807,14 @@ const footerCtaStyle: CSSProperties = {
 
 const footerTitleStyle: CSSProperties = {
   margin: 0,
-  maxWidth: 620,
+  width: "100%",
+  maxWidth: "clamp(300px, 66vw, 620px)",
   color: "#1F1A17",
-  fontSize: 30,
-  lineHeight: 1.12,
+  fontSize: "clamp(25px, 7vw, 30px)",
+  lineHeight: 1.16,
   letterSpacing: 0,
   fontWeight: 850,
+  overflowWrap: "break-word",
 };
 
 const footerButtonStyle: CSSProperties = {

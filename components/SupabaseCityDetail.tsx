@@ -203,7 +203,7 @@ function EditorialTierSection({
   return (
     <section style={editorialSectionStyle}>
       <div style={editorialHeaderStyle}>
-        <div>
+        <div style={editorialHeadingStyle}>
           <div style={labelStyle}>{label}</div>
           <h2 style={sectionTitleStyle}>{title}</h2>
         </div>
@@ -364,6 +364,7 @@ const shellStyle: CSSProperties = {
   maxWidth: 1120,
   margin: "0 auto",
   padding: "54px 16px 78px",
+  boxSizing: "border-box",
 };
 
 const editorialSectionStyle: CSSProperties = {
@@ -372,6 +373,7 @@ const editorialSectionStyle: CSSProperties = {
 };
 
 const editorialHeaderStyle: CSSProperties = {
+  width: "100%",
   display: "flex",
   justifyContent: "space-between",
   gap: 18,
@@ -380,12 +382,23 @@ const editorialHeaderStyle: CSSProperties = {
   flexWrap: "wrap",
 };
 
+const editorialHeadingStyle: CSSProperties = {
+  flex: "1 1 320px",
+  width: "100%",
+  minWidth: 0,
+  maxWidth: "100%",
+};
+
 const editorialLeadStyle: CSSProperties = {
-  maxWidth: 390,
+  flex: "1 1 260px",
+  minWidth: 0,
+  width: "100%",
+  maxWidth: "clamp(260px, 70vw, 390px)",
   margin: 0,
   color: "#6f665b",
   fontSize: 14,
   lineHeight: 1.7,
+  overflowWrap: "break-word",
 };
 
 const tierGridStyle: CSSProperties = {
@@ -395,6 +408,8 @@ const tierGridStyle: CSSProperties = {
 };
 
 const tierCardStyle: CSSProperties = {
+  minWidth: 0,
+  boxSizing: "border-box",
   minHeight: 190,
   padding: 20,
   borderRadius: 8,
@@ -414,17 +429,21 @@ const tierNumberStyle: CSSProperties = {
 
 const tierTitleStyle: CSSProperties = {
   margin: 0,
+  maxWidth: "clamp(240px, 70vw, 390px)",
   color: "#1f211d",
-  fontSize: 23,
-  lineHeight: 1.12,
+  fontSize: "clamp(20px, 5.5vw, 23px)",
+  lineHeight: 1.18,
   letterSpacing: 0,
+  overflowWrap: "break-word",
 };
 
 const tierTextStyle: CSSProperties = {
   margin: "10px 0 0",
+  maxWidth: "clamp(240px, 70vw, 390px)",
   color: "#6f665b",
   fontSize: 14,
-  lineHeight: 1.62,
+  lineHeight: 1.7,
+  overflowWrap: "break-word",
 };
 
 const sectionCtaRowStyle: CSSProperties = {
@@ -467,10 +486,13 @@ const labelStyle: CSSProperties = {
 
 const sectionTitleStyle: CSSProperties = {
   margin: 0,
-  fontSize: 34,
-  lineHeight: 1.08,
+  width: "100%",
+  maxWidth: "clamp(280px, 70vw, 760px)",
+  fontSize: "clamp(24px, 6.4vw, 34px)",
+  lineHeight: 1.18,
   letterSpacing: 0,
   color: "#1f211d",
+  overflowWrap: "break-word",
 };
 
 const sectionLeadStyle: CSSProperties = {

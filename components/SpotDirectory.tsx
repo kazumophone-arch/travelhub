@@ -444,12 +444,15 @@ const pageStyle: CSSProperties = {
 };
 
 const shellStyle: CSSProperties = {
+  width: "100%",
   maxWidth: 1180,
   margin: "0 auto",
   padding: "34px 16px 70px",
+  boxSizing: "border-box",
 };
 
 const heroStyle: CSSProperties = {
+  minWidth: 0,
   marginBottom: 34,
   paddingTop: 8,
 };
@@ -465,12 +468,14 @@ const eyebrowStyle: CSSProperties = {
 
 const titleStyle: CSSProperties = {
   margin: "0 0 18px",
+  width: "calc(100vw - 32px)",
   maxWidth: 760,
-  fontSize: 52,
-  lineHeight: 1.02,
+  fontSize: "clamp(30px, 7.5vw, 52px)",
+  lineHeight: 1.12,
   letterSpacing: 0,
   fontWeight: 850,
   color: "#1f1a17",
+  overflowWrap: "break-word",
 };
 
 const subtitleStyle: CSSProperties = {
@@ -483,6 +488,7 @@ const subtitleStyle: CSSProperties = {
 
 const searchBoxStyle: CSSProperties = {
   maxWidth: 590,
+  boxSizing: "border-box",
   display: "flex",
   alignItems: "center",
   gap: 10,
@@ -511,6 +517,7 @@ const searchInputStyle: CSSProperties = {
 };
 
 const filterPanelStyle: CSSProperties = {
+  boxSizing: "border-box",
   marginBottom: 34,
   padding: 16,
   borderRadius: 8,
@@ -539,10 +546,14 @@ const smallLabelStyle: CSSProperties = {
 
 const sectionTitleStyle: CSSProperties = {
   margin: 0,
-  fontSize: 30,
+  width: "calc(100vw - 32px)",
+  maxWidth: "100%",
+  fontSize: "clamp(22px, 5.8vw, 30px)",
+  lineHeight: 1.2,
   letterSpacing: 0,
   fontWeight: 850,
   color: "#1f1a17",
+  overflowWrap: "break-word",
 };
 
 const resetButtonStyle: CSSProperties = {
@@ -676,6 +687,7 @@ const spotGridStyle: CSSProperties = {
 
 const spotCardStyle: CSSProperties = {
   position: "relative",
+  minWidth: 0,
   display: "flex",
   flexDirection: "column",
   justifyContent: "flex-end",
@@ -712,6 +724,8 @@ const visualBadgeStyle: CSSProperties = {
 const spotBodyStyle: CSSProperties = {
   position: "relative",
   zIndex: 2,
+  minWidth: 0,
+  boxSizing: "border-box",
   margin: 0,
   padding: 20,
   borderRadius: 0,
@@ -730,11 +744,14 @@ const spotMetaStyle: CSSProperties = {
 
 const spotTitleStyle: CSSProperties = {
   margin: 0,
-  fontSize: 27,
-  lineHeight: 1.08,
+  width: "100%",
+  maxWidth: "calc(100vw - 72px)",
+  fontSize: "clamp(18px, 5vw, 27px)",
+  lineHeight: 1.2,
   letterSpacing: 0,
   fontWeight: 850,
   color: "#1f1a17",
+  overflowWrap: "anywhere",
 };
 
 const spotTextStyle: CSSProperties = {
