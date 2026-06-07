@@ -9,6 +9,7 @@ import {
   AdminUrlTestLink,
   buildCityDescription,
 } from "@/components/AdminContentTools";
+import { AdminTagSelector } from "@/components/AdminTagSelector";
 import { AdminLivePreview, hasPreviewUrl } from "@/components/AdminLivePreview";
 import {
   formatValidationErrors,
@@ -42,6 +43,7 @@ type CityForm = {
   imageSourceUrl: string;
   affiliateHotelUrl: string;
   affiliateTourUrl: string;
+  tagIds: string[];
   isPublished: boolean;
   sortRank: number;
 };
@@ -73,6 +75,7 @@ const emptyForm: CityForm = {
   imageSourceUrl: "",
   affiliateHotelUrl: "",
   affiliateTourUrl: "",
+  tagIds: [],
   isPublished: false,
   sortRank: 999,
 };
@@ -172,6 +175,9 @@ export function AdminEditCityForm({ id }: Props) {
       }
 
       const cityData = data.city as CityApiRow | null;
+      const cityTagIds = Array.isArray(data.tagIds)
+        ? data.tagIds.map((tagId: unknown) => String(tagId ?? "").trim()).filter(Boolean)
+        : [];
 
       if (!cityData) {
         setStatusMessage("都市が見つかりません。", "error");
@@ -204,6 +210,7 @@ export function AdminEditCityForm({ id }: Props) {
         imageSourceUrl: String(cityData.image_source_url ?? ""),
         affiliateHotelUrl: String(cityData.affiliate_hotel_url ?? ""),
         affiliateTourUrl: String(cityData.affiliate_tour_url ?? ""),
+        tagIds: cityTagIds,
         isPublished: Boolean(cityData.is_published),
         sortRank: Number(cityData.sort_rank ?? 999),
       });
@@ -474,6 +481,12 @@ export function AdminEditCityForm({ id }: Props) {
           表示順
           <input type="number" value={form.sortRank} onChange={(event) => update("sortRank", Number(event.target.value))} style={inputStyle} />
         </label>
+
+        <AdminTagSelector
+          selectedTagIds={form.tagIds}
+          onChange={(tagIds) => update("tagIds", tagIds)}
+          helperText="都市の整理用タグです。公開ページや検索にはまだ使われません。"
+        />
 
         <label style={labelStyle}>
           ホテルアフィリエイトURL（https）

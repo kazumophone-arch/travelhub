@@ -8,6 +8,7 @@ import {
   AdminUrlTestLink,
   buildSpotDescription,
 } from "@/components/AdminContentTools";
+import { AdminTagSelector } from "@/components/AdminTagSelector";
 import { AdminLivePreview, hasPreviewUrl } from "@/components/AdminLivePreview";
 import {
   formatValidationErrors,
@@ -42,6 +43,7 @@ type SpotForm = {
   imageSourceUrl: string;
   affiliateHotelUrl: string;
   affiliateTourUrl: string;
+  tagIds: string[];
   isPublished: boolean;
 };
 
@@ -60,6 +62,7 @@ const initialForm: SpotForm = {
   imageSourceUrl: "",
   affiliateHotelUrl: "",
   affiliateTourUrl: "",
+  tagIds: [],
   isPublished: false,
 };
 
@@ -452,6 +455,12 @@ export function AdminNewSpotForm() {
           写真提供元やライセンス確認用のURLです。
         </AdminFieldHint>
         <AdminUrlTestLink url={form.imageSourceUrl} />
+
+        <AdminTagSelector
+          selectedTagIds={form.tagIds}
+          onChange={(tagIds) => update("tagIds", tagIds)}
+          helperText="スポットの整理用タグです。公開ページや検索にはまだ使われません。"
+        />
 
         <label style={labelStyle}>
           ホテルアフィリエイトURL（https）

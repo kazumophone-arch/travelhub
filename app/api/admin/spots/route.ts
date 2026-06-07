@@ -4,6 +4,13 @@ import {
   formatValidationErrors,
   validateSpotFields,
 } from "@/lib/admin-validation";
+import {
+  getSpotTagIds,
+  hasTagIdsField,
+  normalizeTagIds,
+  replaceSpotTags,
+  validateAssignableTagIds,
+} from "@/lib/admin-tag-assignments";
 import { normalizeImagePosition } from "@/lib/url-fields";
 
 export const runtime = "nodejs";
@@ -81,7 +88,13 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ spot: data });
+    const tagResult = await getSpotTagIds(id);
+
+    if (tagResult.error) {
+      return NextResponse.json({ error: tagResult.error }, { status: 500 });
+    }
+
+    return NextResponse.json({ spot: data, tagIds: tagResult.tagIds });
   }
 
   const { data, error } = await supabaseAdmin
@@ -117,6 +130,13 @@ export async function POST(request: Request) {
       { error: formatValidationErrors(validationErrors) },
       { status: 400 }
     );
+  }
+
+  const tagIds = normalizeTagIds(body.tagIds);
+  const tagValidationError = await validateAssignableTagIds(tagIds);
+
+  if (tagValidationError) {
+    return NextResponse.json({ error: tagValidationError }, { status: 400 });
   }
 
   const name = String(body.name ?? "").trim();
@@ -162,11 +182,28 @@ export async function POST(request: Request) {
     return spotErrorResponse(error);
   }
 
-  return NextResponse.json({ ok: true, spot: data });
+  const createdSpotId = String(data?.id ?? "").trim();
+
+  if (!createdSpotId) {
+    return NextResponse.json(
+      { error: "スポットのタグ保存に必要なidを取得できませんでした。" },
+      { status: 500 }
+    );
+  }
+
+  const tagUpdate = await replaceSpotTags(createdSpotId, tagIds);
+
+  if (tagUpdate.error) {
+    return NextResponse.json({ error: tagUpdate.error }, { status: 500 });
+  }
+
+  return NextResponse.json({ ok: true, spot: data, tagIds });
 }
 
 export async function PATCH(request: Request) {
   const body = await request.json();
+  const shouldUpdateTags = hasTagIdsField(body);
+  const tagIds = shouldUpdateTags ? normalizeTagIds(body.tagIds) : [];
 
   const id = String(body.id ?? "").trim();
 
@@ -197,6 +234,14 @@ export async function PATCH(request: Request) {
       { error: formatValidationErrors(validationErrors) },
       { status: 400 }
     );
+  }
+
+  if (shouldUpdateTags) {
+    const tagValidationError = await validateAssignableTagIds(tagIds);
+
+    if (tagValidationError) {
+      return NextResponse.json({ error: tagValidationError }, { status: 400 });
+    }
   }
 
   const name = String(body.name ?? "").trim();
@@ -234,6 +279,16 @@ export async function PATCH(request: Request) {
 
   if (error) {
     return spotErrorResponse(error);
+  }
+
+  if (shouldUpdateTags) {
+    const tagUpdate = await replaceSpotTags(id, tagIds);
+
+    if (tagUpdate.error) {
+      return NextResponse.json({ error: tagUpdate.error }, { status: 500 });
+    }
+
+    return NextResponse.json({ ok: true, spot: data, tagIds });
   }
 
   return NextResponse.json({ ok: true, spot: data });

@@ -8,6 +8,7 @@ import {
   AdminUrlTestLink,
   buildCityDescription,
 } from "@/components/AdminContentTools";
+import { AdminTagSelector } from "@/components/AdminTagSelector";
 import { AdminLivePreview, hasPreviewUrl } from "@/components/AdminLivePreview";
 import {
   formatValidationErrors,
@@ -36,6 +37,7 @@ type CityForm = {
   imageSourceUrl: string;
   affiliateHotelUrl: string;
   affiliateTourUrl: string;
+  tagIds: string[];
   isPublished: boolean;
   sortRank: number;
 };
@@ -65,6 +67,7 @@ const initialForm: CityForm = {
   imageSourceUrl: "",
   affiliateHotelUrl: "",
   affiliateTourUrl: "",
+  tagIds: [],
   isPublished: false,
   sortRank: 999,
 };
@@ -471,6 +474,12 @@ export function AdminNewCityForm() {
             style={inputStyle}
           />
         </label>
+
+        <AdminTagSelector
+          selectedTagIds={form.tagIds}
+          onChange={(tagIds) => update("tagIds", tagIds)}
+          helperText="都市の整理用タグです。公開ページや検索にはまだ使われません。"
+        />
 
         <label style={labelStyle}>
           ホテルアフィリエイトURL（https）

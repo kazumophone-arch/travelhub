@@ -4,6 +4,13 @@ import {
   formatValidationErrors,
   validateCityFields,
 } from "@/lib/admin-validation";
+import {
+  getCityTagIds,
+  hasTagIdsField,
+  normalizeTagIds,
+  replaceCityTags,
+  validateAssignableTagIds,
+} from "@/lib/admin-tag-assignments";
 import { normalizeImagePosition } from "@/lib/url-fields";
 
 export const runtime = "nodejs";
@@ -97,7 +104,13 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ city: data });
+    const tagResult = await getCityTagIds(id);
+
+    if (tagResult.error) {
+      return NextResponse.json({ error: tagResult.error }, { status: 500 });
+    }
+
+    return NextResponse.json({ city: data, tagIds: tagResult.tagIds });
   }
 
   const { data, error } = await supabaseAdmin
@@ -136,6 +149,13 @@ export async function POST(request: Request) {
     );
   }
 
+  const tagIds = normalizeTagIds(body.tagIds);
+  const tagValidationError = await validateAssignableTagIds(tagIds);
+
+  if (tagValidationError) {
+    return NextResponse.json({ error: tagValidationError }, { status: 400 });
+  }
+
   const city = String(body.city ?? "").trim();
   const countryName = String(normalizedBody.country ?? "").trim();
   const slug = String(body.slug ?? "").trim();
@@ -171,11 +191,28 @@ export async function POST(request: Request) {
     return cityErrorResponse(error);
   }
 
-  return NextResponse.json({ ok: true, city: data });
+  const createdCityId = String(data?.id ?? "").trim();
+
+  if (!createdCityId) {
+    return NextResponse.json(
+      { error: "都市のタグ保存に必要なidを取得できませんでした。" },
+      { status: 500 }
+    );
+  }
+
+  const tagUpdate = await replaceCityTags(createdCityId, tagIds);
+
+  if (tagUpdate.error) {
+    return NextResponse.json({ error: tagUpdate.error }, { status: 500 });
+  }
+
+  return NextResponse.json({ ok: true, city: data, tagIds });
 }
 
 export async function PATCH(request: Request) {
   const body = await request.json();
+  const shouldUpdateTags = hasTagIdsField(body);
+  const tagIds = shouldUpdateTags ? normalizeTagIds(body.tagIds) : [];
 
   const id = String(body.id ?? "").trim();
   const countryId = String(body.countryId ?? "").trim();
@@ -207,6 +244,14 @@ export async function PATCH(request: Request) {
     );
   }
 
+  if (shouldUpdateTags) {
+    const tagValidationError = await validateAssignableTagIds(tagIds);
+
+    if (tagValidationError) {
+      return NextResponse.json({ error: tagValidationError }, { status: 400 });
+    }
+  }
+
   const payload = {
     slug,
     city,
@@ -236,6 +281,16 @@ export async function PATCH(request: Request) {
 
   if (error) {
     return cityErrorResponse(error);
+  }
+
+  if (shouldUpdateTags) {
+    const tagUpdate = await replaceCityTags(id, tagIds);
+
+    if (tagUpdate.error) {
+      return NextResponse.json({ error: tagUpdate.error }, { status: 500 });
+    }
+
+    return NextResponse.json({ ok: true, city: data, tagIds });
   }
 
   return NextResponse.json({ ok: true, city: data });
