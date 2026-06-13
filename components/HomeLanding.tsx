@@ -1,841 +1,262 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
-import type { CSSProperties } from "react";
-import type { City, Spot } from "@/data/types";
-import { getCityImage, getSpotImage } from "@/data/travel-images";
-import { getDisplayStops } from "@/lib/displayText";
-import {
-  getCssImagePosition,
-  getImageBackground,
-  getOptionalHttpUrl,
-} from "@/lib/url-fields";
-import { HomeSearchResults } from "@/components/HomeSearchResults";
-import { HomeSeasonalPicks } from "@/components/HomeSeasonalPicks";
+import type { City } from "@/data/types";
+import styles from "./HomeLanding.module.css";
 
 type Props = {
   cities: City[];
 };
 
-type SpotSearchResult = {
-  citySlug: string;
-  cityName: string;
-  country: string;
-  slug: string;
-  name: string;
-  summary: string;
-  imageUrl?: string;
-  imagePosition?: string;
-  canOpen: boolean;
+type Tile = {
+  title: string;
+  subtitle: string;
+  href: string;
+  image: string;
+  icon?: "peace" | "wonder" | "culture" | "adventure" | "camera";
 };
 
-type FeaturedSpotItem = SpotSearchResult;
-
-const monthNames = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
+const previews: Tile[] = [
+  {
+    title: "Rome, Italy",
+    subtitle: "Eternal city, timeless beauty.",
+    href: "/c/rome-it",
+    image: "/assets/home/rome-preview.jpg",
+  },
+  {
+    title: "Paris, France",
+    subtitle: "Iconic sights, endless charm.",
+    href: "/c/paris-fr",
+    image: "/assets/home/paris-preview.jpg",
+  },
 ];
 
-function getCurrentMonth() {
-  return monthNames[new Date().getMonth()];
-}
+const featured: Tile[] = [
+  {
+    title: "The Algarve",
+    subtitle: "Portugal — Golden cliffs and quiet beaches.",
+    href: "/cities",
+    image: "/assets/home/algarve.jpg",
+  },
+  {
+    title: "Lake Bled",
+    subtitle: "Slovenia — A fairytale in every season.",
+    href: "/cities",
+    image: "/assets/home/lake-bled.jpg",
+  },
+  {
+    title: "Marrakech",
+    subtitle: "Morocco — Color, culture, and calm.",
+    href: "/cities",
+    image: "/assets/home/marrakech.jpg",
+  },
+  {
+    title: "Queenstown",
+    subtitle: "New Zealand — Adventure in every direction.",
+    href: "/cities",
+    image: "/assets/home/queenstown.jpg",
+  },
+];
 
-function slugify(value: string) {
-  return (
-    value
-      .toLowerCase()
-      .replaceAll("&", "and")
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "") || "spot"
-  );
-}
+const feelings: Tile[] = [
+  {
+    title: "Find Peace",
+    subtitle: "Quiet escapes",
+    href: "/themes",
+    image: "/assets/home/find-peace.jpg",
+    icon: "peace",
+  },
+  {
+    title: "Seek Wonder",
+    subtitle: "Nature escapes",
+    href: "/themes",
+    image: "/assets/home/seek-wonder.jpg",
+    icon: "wonder",
+  },
+  {
+    title: "Taste Culture",
+    subtitle: "Food journeys",
+    href: "/themes",
+    image: "/assets/home/taste-culture.jpg",
+    icon: "culture",
+  },
+  {
+    title: "Chase Adventure",
+    subtitle: "First trip",
+    href: "/themes",
+    image: "/assets/home/chase-adventure.jpg",
+    icon: "adventure",
+  },
+  {
+    title: "Live the Moment",
+    subtitle: "Couples getaways",
+    href: "/themes",
+    image: "/assets/home/live-the-moment.jpg",
+    icon: "camera",
+  },
+];
 
-function getShortText(value: string | undefined, fallback: string, maxLength = 140) {
-  const text = value?.trim() || fallback;
+function Icon({ type }: { type: NonNullable<Tile["icon"]> }) {
+  if (type === "peace") {
+    return (
+      <svg viewBox="0 0 72 56" width="68" height="52" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M16 23c5.2-3.4 10.4-3.4 15.6 0s10.4 3.4 15.6 0 10.4-3.4 15.6 0" />
+        <path d="M16 31c5.2-3.4 10.4-3.4 15.6 0s10.4 3.4 15.6 0 10.4-3.4 15.6 0" />
+        <path d="M16 39c5.2-3.4 10.4-3.4 15.6 0s10.4 3.4 15.6 0 10.4-3.4 15.6 0" />
+      </svg>
+    );
+  }
 
-  if (text.length <= maxLength) return text;
+  if (type === "wonder") {
+    return (
+      <svg viewBox="0 0 72 72" width="70" height="70" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M36 10c11.4 0 20.5 8.7 20.5 19.5 0 8.7-5.5 16.4-13.3 19.2H28.8C21 45.9 15.5 38.2 15.5 29.5 15.5 18.7 24.6 10 36 10Z" />
+        <path d="M24.5 28.5c1.2-9.8 5.6-16.2 11.5-18.5" />
+        <path d="M47.5 28.5C46.3 18.7 41.9 12.3 36 10" />
+        <path d="M36 10c2.8 6.4 4.2 12.9 4.2 19.5 0 6.7-1.4 13.1-4.2 19.2" />
+        <path d="M36 10c-2.8 6.4-4.2 12.9-4.2 19.5 0 6.7 1.4 13.1 4.2 19.2" />
+        <path d="M26.5 48.7h19" />
+        <path d="M30.5 54.5h11" />
+        <path d="M29.5 60h13" />
+        <path d="M29.8 48.7l2.7 5.8" />
+        <path d="M42.2 48.7l-2.7 5.8" />
+      </svg>
+    );
+  }
 
-  return `${text.slice(0, maxLength).trimEnd()}...`;
-}
+  if (type === "culture") {
+    return (
+      <svg viewBox="0 0 72 72" width="66" height="66" fill="none" stroke="currentColor" strokeWidth="2.45" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M15 48h42" />
+        <path d="M20 43h32" />
+        <path d="M24 43c.7-10.8 5.5-17.2 12-17.2S47.3 32.2 48 43" />
+        <path d="M36 20v5.8" />
+        <path d="M32.5 20h7" />
+        <path d="M22 53h28" />
+        <path d="M18 48c1.2 3.2 4 5 8 5" />
+        <path d="M54 48c-1.2 3.2-4 5-8 5" />
+      </svg>
+    );
+  }
 
-function getCityImageUrl(city: City) {
-  const image = getCityImage(city.slug);
-
-  return getOptionalHttpUrl(city.imageUrl) || image.imageUrl;
-}
-
-function getCityCardStyle(city: City): CSSProperties {
-  return {
-    ...editorCardStyle,
-    backgroundImage: getImageBackground(
-      getCityImageUrl(city),
-      "linear-gradient(180deg, rgba(31,26,23,0.08) 0%, rgba(31,26,23,0.7) 100%)",
-      "linear-gradient(135deg, #d9c7ad 0%, #f5efe6 54%, #b58a63 100%)"
-    ),
-    backgroundSize: "cover",
-    backgroundPosition: getCssImagePosition(city.imagePosition),
-  };
-}
-
-function getHeroStyle(city: City | null): CSSProperties {
-  const imageUrl = city ? getCityImageUrl(city) : "";
-
-  return {
-    ...heroStyle,
-    backgroundImage: getImageBackground(
-      imageUrl,
-      "linear-gradient(90deg, rgba(31,26,23,0.82) 0%, rgba(31,26,23,0.52) 54%, rgba(31,26,23,0.16) 100%), linear-gradient(180deg, rgba(31,26,23,0.1) 0%, rgba(31,26,23,0.68) 100%)",
-      "linear-gradient(135deg, #2a211c 0%, #7e5d43 50%, #f5efe6 100%)"
-    ),
-    backgroundSize: "cover",
-    backgroundPosition: city
-      ? getCssImagePosition(city.imagePosition)
-      : "center",
-  };
-}
-
-function getFeaturedSpotImageUrl(spot: FeaturedSpotItem) {
-  const image = getSpotImage(spot.citySlug, spot.slug);
-
-  return getOptionalHttpUrl(spot.imageUrl) || image.imageUrl;
-}
-
-function getFeaturedSpotCardStyle(spot: FeaturedSpotItem): CSSProperties {
-  return {
-    ...featureCardStyle,
-    backgroundImage: getImageBackground(
-      getFeaturedSpotImageUrl(spot),
-      "linear-gradient(180deg, rgba(31,26,23,0.04) 0%, rgba(31,26,23,0.72) 100%)",
-      "linear-gradient(135deg, #cab394 0%, #fffdf8 52%, #9a6a43 100%)"
-    ),
-    backgroundSize: "cover",
-    backgroundPosition: getCssImagePosition(spot.imagePosition),
-  };
-}
-
-function getCityIntro(city: City) {
-  const stops = getDisplayStops(city, 2);
-  const fallback =
-    stops.length > 0
-      ? `Start with ${stops.join(" and ")}.`
-      : `Open the ${city.city} guide for a slower look at the city.`;
-
-  return getShortText(city.description, fallback, 132);
-}
-
-function getSpotSummary(spot: Spot, city: City) {
-  return getShortText(
-    spot.summary,
-    `A memorable stop inside the ${city.city} guide.`,
-    124
-  );
-}
-
-function getFeaturedSpots(cities: City[]) {
-  const spots: FeaturedSpotItem[] = [];
-
-  cities.forEach((city) => {
-    if (city.spotDetails && city.spotDetails.length > 0) {
-      city.spotDetails.forEach((spot) => {
-        if (spot.isPublished === false) return;
-
-        spots.push({
-          citySlug: city.slug,
-          cityName: city.city,
-          country: city.country,
-          slug: spot.slug,
-          name: spot.name,
-          summary: getSpotSummary(spot, city),
-          imageUrl: spot.imageUrl,
-          imagePosition: spot.imagePosition,
-          canOpen: true,
-        });
-      });
-
-      return;
-    }
-
-    getDisplayStops(city, 2).forEach((stop) => {
-      spots.push({
-        citySlug: city.slug,
-        cityName: city.city,
-        country: city.country,
-        slug: slugify(stop),
-        name: stop,
-        summary: `A place to begin a slower wander through ${city.city}.`,
-        canOpen: false,
-      });
-    });
-  });
-
-  return spots.slice(0, 6);
-}
-
-function getSpotSearchResults(cities: City[], query: string) {
-  const normalizedQuery = query.trim().toLowerCase();
-
-  if (!normalizedQuery) return [];
-
-  const results: SpotSearchResult[] = [];
-
-  cities.forEach((city) => {
-    if (city.spotDetails && city.spotDetails.length > 0) {
-      city.spotDetails.forEach((spot) => {
-        if (spot.isPublished === false) return;
-
-        const searchableText = [
-          spot.name,
-          spot.summary,
-          ...spot.highlights,
-          ...spot.bestFor,
-          city.city,
-          city.country,
-          ...(city.months ?? []),
-          ...(city.travelStyles ?? []),
-          ...(city.themes ?? []),
-          ...(city.categories ?? []),
-        ]
-          .join(" ")
-          .toLowerCase();
-
-        if (!searchableText.includes(normalizedQuery)) return;
-
-        results.push({
-          citySlug: city.slug,
-          cityName: city.city,
-          country: city.country,
-          slug: spot.slug,
-          name: spot.name,
-          summary: spot.summary,
-          imageUrl: spot.imageUrl,
-          imagePosition: spot.imagePosition,
-          canOpen: true,
-        });
-      });
-
-      return;
-    }
-
-    city.stops.forEach((stop) => {
-      const searchableText = [stop, city.city, city.country]
-        .join(" ")
-        .toLowerCase();
-
-      if (!searchableText.includes(normalizedQuery)) return;
-
-      results.push({
-        citySlug: city.slug,
-        cityName: city.city,
-        country: city.country,
-        slug: slugify(stop),
-        name: stop,
-        summary: `A featured place from ${city.city}.`,
-        canOpen: false,
-      });
-    });
-  });
-
-  return results.slice(0, 8);
-}
-
-function getCitySearchResults(cities: City[], query: string) {
-  const normalizedQuery = query.trim().toLowerCase();
-
-  if (!normalizedQuery) return [];
-
-  return cities
-    .filter((city) => {
-      const searchableText = [
-        city.city,
-        city.country,
-        city.description ?? "",
-        ...city.stops,
-        ...(city.months ?? []),
-        ...(city.travelStyles ?? []),
-        ...(city.themes ?? []),
-        ...(city.categories ?? []),
-      ]
-        .join(" ")
-        .toLowerCase();
-
-      return searchableText.includes(normalizedQuery);
-    })
-    .slice(0, 4);
-}
-
-export function HomeLanding({ cities }: Props) {
-  const [query, setQuery] = useState("");
-
-  useEffect(() => {
-    const shouldRestore =
-      sessionStorage.getItem("travelhubRestoreHomeScroll") === "1";
-
-    if (!shouldRestore) return;
-
-    const savedY = Number(sessionStorage.getItem("travelhubHomeScrollY") ?? "0");
-
-    requestAnimationFrame(() => {
-      window.scrollTo({
-        top: savedY,
-        behavior: "auto",
-      });
-    });
-
-    sessionStorage.removeItem("travelhubRestoreHomeScroll");
-  }, []);
-
-  const currentMonth = getCurrentMonth();
-  const isSearching = query.trim().length > 0;
-  const heroCity = cities[0] ?? null;
-  const editorCities = cities.slice(0, 4);
-  const featuredSpots = useMemo(() => getFeaturedSpots(cities), [cities]);
-
-  const monthlyCities = cities.filter((city) => city.months?.includes(currentMonth));
-  const thisMonthCities =
-    monthlyCities.length > 0 ? monthlyCities.slice(0, 4) : cities.slice(0, 4);
-
-  const citySearchResults = useMemo(() => {
-    return getCitySearchResults(cities, query);
-  }, [cities, query]);
-
-  const searchResults = useMemo(() => {
-    return getSpotSearchResults(cities, query);
-  }, [cities, query]);
-
-  function rememberHomeScroll() {
-    sessionStorage.setItem("travelhubHomeScrollY", String(window.scrollY));
+  if (type === "adventure") {
+    return (
+      <svg viewBox="0 0 72 72" width="66" height="66" fill="none" stroke="currentColor" strokeWidth="2.45" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M12 51h48" />
+        <path d="M14 51l17-29 12 19 7-11 10 21" />
+        <path d="M31 22l4.8 7.5" />
+        <path d="M43 41l4.2-6.4" />
+        <path d="M24 39l5.5-5.8 5.5 5.8" />
+      </svg>
+    );
   }
 
   return (
-    <main
-      style={pageStyle}
-      onClickCapture={(event) => {
-        const target = event.target;
+    <svg viewBox="0 0 72 72" width="58" height="58" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="20" y="26" width="32" height="24" rx="4" />
+      <circle cx="36" cy="38" r="6.2" />
+      <path d="M27 26l3.2-5h11.6l3.2 5" />
+      <path d="M48 31h.1" />
+    </svg>
+  );
+}
 
-        if (!(target instanceof Element)) return;
+export function HomeLanding({ cities }: Props) {
+  void cities;
 
-        const anchor = target.closest("a");
-        const href = anchor?.getAttribute("href");
-
-        if (href?.startsWith("/c/")) {
-          rememberHomeScroll();
-        }
-      }}
-    >
-      <section style={heroShellStyle}>
-        <section style={getHeroStyle(heroCity)}>
-          <div style={heroContentStyle}>
-            <div style={heroEyebrowStyle}>Destination discovery</div>
-
-            <h1 style={heroTitleStyle}>
-              Find your next city to stay, wander, and remember.
-            </h1>
-
-            <p style={heroSubtitleStyle}>
-              Photo-led city guides and memorable places for travelers arriving
-              from short-form inspiration and looking for the next real trip.
-            </p>
-
-            <div style={heroActionsStyle}>
-              <Link href="/cities" style={primaryHeroButtonStyle}>
-                Explore cities
-              </Link>
-
-              <Link href="/spots" style={secondaryHeroButtonStyle}>
-                Browse featured spots
+  return (
+    <main className={styles.root}>
+      <section className={styles.hero}>
+        <div className={styles.heroGrid}>
+          <article
+            className={styles.heroMain}
+            style={{ backgroundImage: "url('/assets/home/kyoto-hero.jpg')" }}
+          >
+            <div className={`${styles.overlay} ${styles.heroOverlay}`} />
+            <div className={styles.heroCopy}>
+              <p className={styles.eyebrow}>FEATURED DESTINATION</p>
+              <h1 className={styles.heroTitle}>Kyoto, Japan</h1>
+              <p className={styles.heroText}>Quiet temples and old streets.</p>
+              <Link href="/c/kyoto" className={styles.textLink}>
+                OPEN GUIDE →
               </Link>
             </div>
+          </article>
 
-            {heroCity && (
-              <div style={heroPlaceStyle}>
-                <span style={heroPlaceLabelStyle}>Featured guide</span>
-                <span>
-                  {heroCity.city}, {heroCity.country}
-                </span>
-              </div>
-            )}
+          <div className={styles.heroRight}>
+            {previews.map((item) => (
+              <Link
+                key={item.title}
+                href={item.href}
+                className={styles.previewCard}
+                style={{ backgroundImage: `url('${item.image}')` }}
+              >
+                <div className={styles.overlay} />
+                <div className={styles.previewCopy}>
+                  <p className={styles.eyebrow}>Featured</p>
+                  <h2 className={styles.previewTitle}>{item.title}</h2>
+                  <p className={styles.previewSubtitle}>{item.subtitle}</p>
+                </div>
+              </Link>
+            ))}
           </div>
-        </section>
+        </div>
       </section>
 
-      <section style={shellStyle}>
-        <section style={searchArchiveStyle}>
-          <div style={searchCopyStyle}>
-            <div style={smallLabelStyle}>Travel archive</div>
-            <h2 style={searchTitleStyle}>Search softly, after the spark.</h2>
-          </div>
-
-          <div id="home-search" style={searchBoxStyle}>
-            <span style={searchIconStyle}>Search</span>
-            <input
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="City, country, season, or spot"
-              style={searchInputStyle}
-            />
-          </div>
-        </section>
-
-        {isSearching && (
-          <HomeSearchResults
-            cityResults={citySearchResults}
-            spotResults={searchResults}
-            query={query.trim()}
-          />
-        )}
-
-        <section style={sectionStyle}>
-          <div style={sectionHeaderStyle}>
-            <div style={sectionHeaderTextStyle}>
-              <div style={smallLabelStyle}>Editor's Picks</div>
-              <h2 style={sectionTitleStyle}>City guides with a point of view</h2>
-            </div>
-
-            <Link href="/cities" style={textLinkStyle}>
-              Explore cities
-            </Link>
-          </div>
-
-          {editorCities.length === 0 ? (
-            <div style={emptyStyle}>No city guides are available yet.</div>
-          ) : (
-            <div style={editorGridStyle}>
-              {editorCities.map((city) => (
-                <Link
-                  key={`${city.slug}-home-editor-card`}
-                  href={`/c/${city.slug}`}
-                  style={getCityCardStyle(city)}
-                >
-                  <div style={imageCardTextStyle}>
-                    <div style={imageMetaStyle}>{city.country}</div>
-                    <h3 style={imageCardTitleStyle}>{city.city}</h3>
-                    <p style={imageCardCopyStyle}>{getCityIntro(city)}</p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
-        </section>
-
-        <section style={sectionStyle}>
-          <div style={sectionHeaderStyle}>
-            <div style={sectionHeaderTextStyle}>
-              <div style={smallLabelStyle}>Recently Featured</div>
-              <h2 style={sectionTitleStyle}>Places pulled from the feed</h2>
-            </div>
-
-            <Link href="/spots" style={textLinkStyle}>
-              Browse spots
-            </Link>
-          </div>
-
-          {featuredSpots.length === 0 ? (
-            <div style={emptyStyle}>No featured spots are available yet.</div>
-          ) : (
-            <div style={featureGridStyle}>
-              {featuredSpots.map((spot, index) => (
-                <Link
-                  key={`${spot.citySlug}-${spot.slug}-${index}-home-feature-card`}
-                  href={
-                    spot.canOpen
-                      ? `/c/${spot.citySlug}/spot/${spot.slug}`
-                      : `/c/${spot.citySlug}`
-                  }
-                  style={getFeaturedSpotCardStyle(spot)}
-                >
-                  <div style={imageCardTextStyle}>
-                    <div style={imageMetaStyle}>
-                      {spot.cityName}, {spot.country}
-                    </div>
-                    <h3 style={featureCardTitleStyle}>{spot.name}</h3>
-                    <p style={imageCardCopyStyle}>{spot.summary}</p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
-        </section>
-
-        <HomeSeasonalPicks cities={thisMonthCities} currentMonth={currentMonth} />
-
-        <section style={footerCtaStyle}>
-          <div>
-            <div style={smallLabelStyle}>Where to next</div>
-            <h2 style={footerTitleStyle}>Start with the destination, not the booking form.</h2>
-          </div>
-
-          <Link href="/cities" style={footerButtonStyle}>
-            Explore destinations
+      <section className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <h2 className={styles.sectionTitle}>Recently Featured</h2>
+          <Link href="/spots" className={styles.sectionLink}>
+            VIEW ALL JOURNAL STORIES →
           </Link>
-        </section>
+        </div>
+
+        <div className={styles.featureGrid}>
+          {featured.map((item) => (
+            <Link
+              key={item.title}
+              href={item.href}
+              className={styles.featureCard}
+              style={{ backgroundImage: `url('${item.image}')` }}
+            >
+              <div className={styles.overlay} />
+              <div className={styles.featureCopy}>
+                <p className={styles.featureSubtitle}>{item.subtitle}</p>
+                <h3 className={styles.featureTitle}>{item.title}</h3>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <h2 className={styles.sectionTitle}>Choose by Feeling</h2>
+          <Link href="/themes" className={styles.sectionLink}>
+            EXPLORE ALL →
+          </Link>
+        </div>
+
+        <div className={styles.feelingGrid}>
+          {feelings.map((item) => (
+            <Link
+              key={item.title}
+              href={item.href}
+              className={styles.feelingCard}
+              style={{ backgroundImage: `url('${item.image}')` }}
+            >
+              <div className={styles.overlay} />
+              <div className={styles.feelingContent}>
+                <div className={styles.feelingIcon}>
+                  <Icon type={item.icon ?? "camera"} />
+                </div>
+                <h3 className={styles.feelingTitle}>{item.title}</h3>
+                <p className={styles.feelingSubtitle}>{item.subtitle}</p>
+              </div>
+            </Link>
+          ))}
+        </div>
       </section>
     </main>
   );
 }
-
-const pageStyle: CSSProperties = {
-  minHeight: "100vh",
-  overflowX: "hidden",
-  background: "#F7F2EA",
-  color: "#1F1A17",
-  fontFamily:
-    '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif',
-};
-
-const heroShellStyle: CSSProperties = {
-  width: "100%",
-  maxWidth: 1240,
-  margin: "0 auto",
-  padding: "20px 12px 0",
-  boxSizing: "border-box",
-};
-
-const heroStyle: CSSProperties = {
-  minHeight: 620,
-  borderRadius: 8,
-  overflow: "hidden",
-  display: "flex",
-  alignItems: "flex-end",
-  padding: "34px 22px",
-  boxShadow: "0 24px 70px rgba(42, 33, 28, 0.18)",
-};
-
-const heroContentStyle: CSSProperties = {
-  width: "100%",
-  minWidth: 0,
-  maxWidth: 820,
-  color: "#FFF8EF",
-};
-
-const heroEyebrowStyle: CSSProperties = {
-  marginBottom: 14,
-  color: "#E9D2B8",
-  fontSize: 12,
-  fontWeight: 850,
-  letterSpacing: 0,
-  textTransform: "uppercase",
-};
-
-const heroTitleStyle: CSSProperties = {
-  margin: 0,
-  maxWidth: "min(820px, 100%)",
-  fontSize: "clamp(38px, 10.5vw, 52px)",
-  lineHeight: 1.08,
-  letterSpacing: 0,
-  fontWeight: 850,
-  overflowWrap: "break-word",
-};
-
-const heroSubtitleStyle: CSSProperties = {
-  margin: "18px 0 0",
-  maxWidth: 620,
-  color: "rgba(255, 248, 239, 0.86)",
-  fontSize: 17,
-  lineHeight: 1.72,
-};
-
-const heroActionsStyle: CSSProperties = {
-  display: "flex",
-  flexWrap: "wrap",
-  gap: 10,
-  marginTop: 24,
-};
-
-const primaryHeroButtonStyle: CSSProperties = {
-  display: "inline-flex",
-  alignItems: "center",
-  justifyContent: "center",
-  minHeight: 46,
-  padding: "0 18px",
-  borderRadius: 8,
-  background: "#FFF8EF",
-  color: "#2A211C",
-  textDecoration: "none",
-  fontSize: 14,
-  fontWeight: 850,
-};
-
-const secondaryHeroButtonStyle: CSSProperties = {
-  display: "inline-flex",
-  alignItems: "center",
-  justifyContent: "center",
-  minHeight: 46,
-  padding: "0 18px",
-  borderRadius: 8,
-  background: "rgba(255, 248, 239, 0.08)",
-  border: "1px solid rgba(255, 248, 239, 0.44)",
-  color: "#FFF8EF",
-  textDecoration: "none",
-  fontSize: 14,
-  fontWeight: 820,
-};
-
-const heroPlaceStyle: CSSProperties = {
-  display: "flex",
-  flexWrap: "wrap",
-  gap: 8,
-  marginTop: 26,
-  color: "rgba(255, 248, 239, 0.86)",
-  fontSize: 13,
-  lineHeight: 1.5,
-};
-
-const heroPlaceLabelStyle: CSSProperties = {
-  color: "#E9D2B8",
-  fontWeight: 850,
-  textTransform: "uppercase",
-  fontSize: 11,
-  letterSpacing: 0,
-};
-
-const shellStyle: CSSProperties = {
-  width: "100%",
-  maxWidth: 1180,
-  margin: "0 auto",
-  padding: "26px 16px 64px",
-  boxSizing: "border-box",
-};
-
-const searchArchiveStyle: CSSProperties = {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))",
-  gap: 18,
-  alignItems: "center",
-  padding: "22px 0 28px",
-  borderBottom: "1px solid #E4D8C8",
-};
-
-const searchCopyStyle: CSSProperties = {
-  minWidth: 0,
-};
-
-const smallLabelStyle: CSSProperties = {
-  marginBottom: 8,
-  color: "#9A6A43",
-  fontSize: 12,
-  fontWeight: 850,
-  letterSpacing: 0,
-  textTransform: "uppercase",
-};
-
-const searchTitleStyle: CSSProperties = {
-  margin: 0,
-  color: "#1F1A17",
-  fontSize: 24,
-  lineHeight: 1.18,
-  letterSpacing: 0,
-  fontWeight: 850,
-};
-
-const searchBoxStyle: CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-  gap: 12,
-  width: "100%",
-  maxWidth: 520,
-  justifySelf: "end",
-  padding: "8px 10px 8px 14px",
-  borderRadius: 8,
-  background: "#FFFDF8",
-  border: "1px solid #E4D8C8",
-  boxShadow: "0 10px 30px rgba(42, 33, 28, 0.06)",
-};
-
-const searchIconStyle: CSSProperties = {
-  flexShrink: 0,
-  color: "#9A6A43",
-  fontSize: 12,
-  fontWeight: 850,
-  textTransform: "uppercase",
-};
-
-const searchInputStyle: CSSProperties = {
-  width: "100%",
-  minWidth: 0,
-  padding: "13px 4px",
-  border: 0,
-  outline: "none",
-  background: "transparent",
-  color: "#1F1A17",
-  fontSize: 15,
-};
-
-const sectionStyle: CSSProperties = {
-  marginTop: 48,
-};
-
-const sectionHeaderStyle: CSSProperties = {
-  display: "flex",
-  justifyContent: "space-between",
-  gap: 16,
-  alignItems: "flex-end",
-  marginBottom: 18,
-  flexWrap: "wrap",
-};
-
-const sectionHeaderTextStyle: CSSProperties = {
-  flex: "1 0 100%",
-  minWidth: 0,
-  maxWidth: "100%",
-};
-
-const sectionTitleStyle: CSSProperties = {
-  margin: 0,
-  width: "100%",
-  maxWidth: "clamp(300px, 66vw, 720px)",
-  color: "#1F1A17",
-  fontSize: "clamp(24px, 6vw, 34px)",
-  lineHeight: 1.18,
-  letterSpacing: 0,
-  fontWeight: 850,
-  overflowWrap: "break-word",
-};
-
-const textLinkStyle: CSSProperties = {
-  flexShrink: 0,
-  color: "#9A6A43",
-  fontSize: 14,
-  fontWeight: 850,
-  textDecoration: "none",
-};
-
-const editorGridStyle: CSSProperties = {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 250px), 1fr))",
-  gap: 16,
-};
-
-const editorCardStyle: CSSProperties = {
-  position: "relative",
-  minHeight: 460,
-  display: "flex",
-  alignItems: "flex-end",
-  overflow: "hidden",
-  borderRadius: 8,
-  color: "#FFF8EF",
-  textDecoration: "none",
-  backgroundColor: "#D8C7B3",
-  boxShadow: "0 18px 40px rgba(42, 33, 28, 0.12)",
-};
-
-const imageCardTextStyle: CSSProperties = {
-  width: "100%",
-  minWidth: 0,
-  padding: 18,
-};
-
-const imageMetaStyle: CSSProperties = {
-  marginBottom: 8,
-  color: "rgba(255, 248, 239, 0.78)",
-  fontSize: 12,
-  fontWeight: 850,
-  letterSpacing: 0,
-  textTransform: "uppercase",
-};
-
-const imageCardTitleStyle: CSSProperties = {
-  margin: 0,
-  maxWidth: "100%",
-  color: "#FFF8EF",
-  fontSize: "clamp(26px, 7vw, 30px)",
-  lineHeight: 1.12,
-  letterSpacing: 0,
-  fontWeight: 850,
-  overflowWrap: "break-word",
-};
-
-const imageCardCopyStyle: CSSProperties = {
-  margin: "10px 0 0",
-  maxWidth: "clamp(240px, 72vw, 420px)",
-  color: "rgba(255, 248, 239, 0.82)",
-  fontSize: 14,
-  lineHeight: 1.58,
-  overflowWrap: "break-word",
-};
-
-const featureGridStyle: CSSProperties = {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 230px), 1fr))",
-  gap: 16,
-};
-
-const featureCardStyle: CSSProperties = {
-  position: "relative",
-  minHeight: 380,
-  display: "flex",
-  alignItems: "flex-end",
-  overflow: "hidden",
-  borderRadius: 8,
-  color: "#FFF8EF",
-  textDecoration: "none",
-  backgroundColor: "#D8C7B3",
-  boxShadow: "0 14px 34px rgba(42, 33, 28, 0.1)",
-};
-
-const featureCardTitleStyle: CSSProperties = {
-  margin: 0,
-  maxWidth: "100%",
-  color: "#FFF8EF",
-  fontSize: "clamp(22px, 6vw, 25px)",
-  lineHeight: 1.16,
-  letterSpacing: 0,
-  fontWeight: 850,
-  overflowWrap: "break-word",
-};
-
-const footerCtaStyle: CSSProperties = {
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  gap: 18,
-  flexWrap: "wrap",
-  marginTop: 54,
-  padding: "28px 0 4px",
-  borderTop: "1px solid #E4D8C8",
-};
-
-const footerTitleStyle: CSSProperties = {
-  margin: 0,
-  width: "100%",
-  maxWidth: "clamp(300px, 66vw, 620px)",
-  color: "#1F1A17",
-  fontSize: "clamp(25px, 7vw, 30px)",
-  lineHeight: 1.16,
-  letterSpacing: 0,
-  fontWeight: 850,
-  overflowWrap: "break-word",
-};
-
-const footerButtonStyle: CSSProperties = {
-  display: "inline-flex",
-  alignItems: "center",
-  justifyContent: "center",
-  minHeight: 46,
-  padding: "0 18px",
-  borderRadius: 8,
-  background: "#2A211C",
-  color: "#FFF8EF",
-  textDecoration: "none",
-  fontSize: 14,
-  fontWeight: 850,
-};
-
-const emptyStyle: CSSProperties = {
-  padding: 20,
-  borderRadius: 8,
-  background: "#FFFDF8",
-  border: "1px solid #E4D8C8",
-  color: "#6F6258",
-  fontSize: 14,
-};
