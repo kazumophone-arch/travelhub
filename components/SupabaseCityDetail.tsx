@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
+import styles from "./SupabaseCityDetail.module.css";
 import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
 import type { SupabasePublicCity } from "@/data/supabase-public-cities";
 import { getPublishedSupabaseSpotsForCity } from "@/data/supabase-public-spots";
@@ -71,10 +72,10 @@ export async function SupabaseCityDetail({ city, tracking }: Props) {
   const tourAffiliateHref = getAffiliateHref("tours", city.slug, trackingSrc, trackingV);
 
   return (
-    <main style={pageStyle}>
+    <main className={styles.page}>
       <section
+        className={styles.hero}
         style={{
-          ...heroStyle,
           backgroundImage: getImageBackground(
             city.image_url,
             "linear-gradient(90deg, rgba(9, 16, 20, 0.82) 0%, rgba(9, 16, 20, 0.62) 45%, rgba(9, 16, 20, 0.18) 100%), linear-gradient(180deg, rgba(9, 16, 20, 0.08) 0%, rgba(9, 16, 20, 0.72) 100%)",
@@ -83,19 +84,19 @@ export async function SupabaseCityDetail({ city, tracking }: Props) {
           backgroundPosition: getCssImagePosition(city.imagePosition ?? city.image_position),
         }}
       >
-        <div style={heroInnerStyle}>
-          <div style={heroCopyStyle}>
-            <div style={eyebrowStyle}>TravelHub city guide</div>
-            <div style={countryPillStyle}>{city.country}</div>
-            <h1 style={titleStyle}>{city.city}</h1>
-            <p style={leadStyle}>
+        <div className={styles.heroInner}>
+          <div className={styles.heroCopy}>
+            <div className={styles.eyebrow}>TravelHub city guide</div>
+            <div className={styles.countryPill}>{city.country}</div>
+            <h1 className={styles.heroTitle}>{city.city}</h1>
+            <p className={styles.heroLead}>
               {city.summary || city.description || "A TravelHub city guide."}
             </p>
           </div>
 
           {hasHotelAffiliate || hasTourAffiliate ? (
-            <div style={heroCtaStyle}>
-              <div style={ctaKickerStyle}>Plan this trip</div>
+            <div className={styles.heroCta}>
+              <div className={styles.ctaKicker}>Plan this trip</div>
               <AffiliateButtonGroup
                 city={city}
                 src={trackingSrc}
@@ -111,7 +112,7 @@ export async function SupabaseCityDetail({ city, tracking }: Props) {
         </div>
       </section>
 
-      <section style={shellStyle}>
+      <section className={styles.body}>
         <EditorialTierSection
           label="Where to Stay"
           title={`Choose the right base in ${city.city}`}
@@ -142,27 +143,27 @@ export async function SupabaseCityDetail({ city, tracking }: Props) {
           }
         />
 
-        <div style={sectionIntroStyle}>
+        <div className={styles.sectionIntro}>
           <div>
-            <div style={labelStyle}>Explore next</div>
-            <h2 style={sectionTitleStyle}>Popular spots in {city.city}</h2>
+            <div className={styles.label}>Explore next</div>
+            <h2 className={styles.sectionTitle}>Popular spots in {city.city}</h2>
           </div>
 
-          <p style={sectionLeadStyle}>
+          <p className={styles.sectionLead}>
             Start with the places visitors usually want to understand first.
           </p>
         </div>
 
         {spots.length === 0 ? (
-          <div style={emptyStyle}>No published spots yet.</div>
+          <div className={styles.empty}>No published spots yet.</div>
         ) : (
-          <div style={gridStyle}>
+          <div className={styles.spotGrid}>
             {spots.map((spot) => (
               <Link
                 key={spot.id}
                 href={`/c/${city.slug}/spot/${spot.slug}${spotTrackingQuery}`}
+                className={styles.spotTile}
                 style={{
-                  ...cardStyle,
                   backgroundImage: getImageBackground(
                     spot.image_url,
                     "linear-gradient(180deg, rgba(10, 18, 24, 0.02) 0%, rgba(10, 18, 24, 0.28) 44%, rgba(10, 18, 24, 0.82) 100%)",
@@ -171,12 +172,12 @@ export async function SupabaseCityDetail({ city, tracking }: Props) {
                   backgroundPosition: getCssImagePosition(spot.image_position),
                 }}
               >
-                <div style={badgeStyle}>{city.city}</div>
+                <div className={styles.spotCity}>{city.city}</div>
 
-                <div style={panelStyle}>
-                  <h3 style={cardTitleStyle}>{spot.name}</h3>
-                  <p style={cardTextStyle}>{spot.summary || "No summary yet."}</p>
-                  <div style={cardActionStyle}>Open spot guide →</div>
+                <div className={styles.spotPanel}>
+                  <h3 className={styles.spotTitle}>{spot.name}</h3>
+                  <p className={styles.spotText}>{spot.summary || "No summary yet."}</p>
+                  <div className={styles.spotAction}>Open spot guide →</div>
                 </div>
               </Link>
             ))}
@@ -201,29 +202,29 @@ function EditorialTierSection({
   cta: { href: string; label: string } | null;
 }) {
   return (
-    <section style={editorialSectionStyle}>
-      <div style={editorialHeaderStyle}>
-        <div style={editorialHeadingStyle}>
-          <div style={labelStyle}>{label}</div>
-          <h2 style={sectionTitleStyle}>{title}</h2>
+    <section className={styles.tierSection}>
+      <div className={styles.sectionIntro}>
+        <div>
+          <div className={styles.label}>{label}</div>
+          <h2 className={styles.sectionTitle}>{title}</h2>
         </div>
 
-        <p style={editorialLeadStyle}>{copy}</p>
+        <p className={styles.sectionLead}>{copy}</p>
       </div>
 
-      <div style={tierGridStyle}>
+      <div className={styles.tierList}>
         {tiers.map((tier) => (
-          <article key={tier.title} style={tierCardStyle}>
-            <div style={tierNumberStyle}>Guide note</div>
-            <h3 style={tierTitleStyle}>{tier.title}</h3>
-            <p style={tierTextStyle}>{tier.text}</p>
+          <article key={tier.title} className={styles.tierItem}>
+            <div className={styles.tierKicker}>Guide note</div>
+            <h3 className={styles.tierTitle}>{tier.title}</h3>
+            <p className={styles.tierText}>{tier.text}</p>
           </article>
         ))}
       </div>
 
       {cta ? (
-        <div style={sectionCtaRowStyle}>
-          <a href={cta.href} style={sectionCtaStyle}>
+        <div className={styles.sectionCtaRow}>
+          <a href={cta.href} className={styles.sectionCta}>
             {cta.label}
           </a>
         </div>
@@ -588,3 +589,8 @@ const emptyStyle: CSSProperties = {
   border: "1px solid rgba(143, 93, 43, 0.16)",
   color: "#6f665b",
 };
+
+
+
+
+
