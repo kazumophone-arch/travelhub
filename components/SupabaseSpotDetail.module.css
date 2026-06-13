@@ -1,0 +1,372 @@
+.page {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 18% 0%, rgba(185, 139, 90, 0.12), transparent 32rem),
+    linear-gradient(180deg, #f8f2e9 0%, #fffdf8 46%, #f3ecdf 100%);
+  color: #211f1a;
+}
+
+.heroGrid {
+  width: min(1280px, calc(100% - 64px));
+  margin: 0 auto;
+  padding: 54px 0 34px;
+  display: grid;
+  grid-template-columns: minmax(360px, 440px) minmax(0, 1fr);
+  gap: clamp(30px, 4vw, 58px);
+  align-items: center;
+}
+
+.heroCopy {
+  min-width: 0;
+}
+
+.eyebrow,
+.sectionLabel {
+  color: #8f5f36;
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 820;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.title {
+  margin: 22px 0 0;
+  color: #211f1a;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(46px, 5.1vw, 76px);
+  line-height: 0.94;
+  font-weight: 520;
+  letter-spacing: -0.055em;
+  text-wrap: balance;
+}
+
+.location {
+  margin: 18px 0 0;
+  color: #342b23;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 21px;
+  line-height: 1.25;
+}
+
+.rule {
+  width: 38px;
+  height: 1px;
+  margin: 20px 0;
+  background: #9b6339;
+}
+
+.lead {
+  max-width: 360px;
+  margin: 0;
+  color: #5f554b;
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+.backInline {
+  display: inline-flex;
+  margin-top: 32px;
+  color: #7d4e2c;
+  font-size: 12px;
+  font-weight: 820;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+
+.collage {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(260px, 0.85fr);
+  gap: 4px;
+  min-height: 500px;
+}
+
+.collageMain,
+.collageSmall {
+  background-size: cover;
+  background-position: center;
+  background-color: #2a211c;
+}
+
+.collageMain {
+  min-height: 500px;
+}
+
+.collageSide {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+}
+
+.collageSmall:first-child {
+  grid-column: span 2;
+}
+
+.guideShell {
+  width: min(1280px, calc(100% - 64px));
+  margin: 0 auto;
+  padding: 18px 0 88px;
+}
+
+.notesGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(18px, 3vw, 42px);
+  padding: 30px 0 44px;
+  border-top: 1px solid rgba(103, 78, 49, 0.20);
+  border-bottom: 1px solid rgba(103, 78, 49, 0.16);
+}
+
+.noteIcon {
+  color: #9a6338;
+  font-size: 25px;
+  line-height: 1;
+  margin-bottom: 14px;
+}
+
+.note h2 {
+  margin: 0;
+  color: #211f1a;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 19px;
+  line-height: 1.15;
+  font-weight: 520;
+}
+
+.note p {
+  margin: 10px 0 0;
+  color: #5f554b;
+  font-size: 13px;
+  line-height: 1.62;
+}
+
+.planSection {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(280px, 0.72fr);
+  gap: clamp(22px, 4vw, 52px);
+  align-items: center;
+  margin: 44px 0 54px;
+  padding: 30px;
+  background: #2a211c;
+  color: #fff8ef;
+}
+
+.planCopy h2,
+.whySection h2,
+.nearbyHeader h2,
+.backSection h2 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 520;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+
+.planCopy h2 {
+  margin-top: 12px;
+  color: #fff8ef;
+  font-size: clamp(34px, 4.2vw, 58px);
+  line-height: 0.98;
+}
+
+.planCopy p {
+  max-width: 520px;
+  margin: 14px 0 0;
+  color: rgba(255, 248, 239, 0.72);
+  font-size: 14px;
+  line-height: 1.75;
+}
+
+.planCta {
+  min-width: 0;
+}
+
+.whySection {
+  max-width: 780px;
+  margin: 0 0 58px;
+}
+
+.whySection h2 {
+  margin-top: 12px;
+  color: #211f1a;
+  font-size: clamp(38px, 5vw, 68px);
+  line-height: 0.96;
+}
+
+.whySection p {
+  margin: 18px 0 0;
+  color: #5f554b;
+  font-size: 16px;
+  line-height: 1.86;
+}
+
+.nearbySection {
+  margin: 0 0 58px;
+}
+
+.nearbyHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 22px;
+  align-items: end;
+  margin-bottom: 20px;
+}
+
+.nearbyHeader h2 {
+  margin-top: 12px;
+  color: #211f1a;
+  font-size: clamp(32px, 4vw, 52px);
+  line-height: 1;
+}
+
+.viewAll {
+  color: #7d4e2c;
+  font-size: 12px;
+  font-weight: 820;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.nearbyGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.nearbyCard {
+  min-height: 310px;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  color: #fff8ef;
+  text-decoration: none;
+}
+
+.nearbyBody {
+  width: 100%;
+  padding: 24px;
+}
+
+.nearbyBody h3 {
+  margin: 0;
+  color: #fff8ef;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(25px, 2.4vw, 36px);
+  line-height: 0.98;
+  font-weight: 520;
+  letter-spacing: -0.045em;
+}
+
+.nearbyBody p {
+  margin: 10px 0 0;
+  color: rgba(255, 248, 239, 0.78);
+  font-size: 13px;
+  line-height: 1.58;
+}
+
+.backSection {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: center;
+  padding-top: 30px;
+  border-top: 1px solid rgba(103, 78, 49, 0.18);
+}
+
+.backSection h2 {
+  margin-top: 12px;
+  color: #211f1a;
+  font-size: clamp(30px, 4vw, 50px);
+  line-height: 1;
+}
+
+.cityLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 12px 17px;
+  background: #fffdf8;
+  color: #211f1a;
+  border: 1px solid #e4d8c8;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 780;
+  white-space: nowrap;
+}
+
+@media (max-width: 980px) {
+  .heroGrid {
+    grid-template-columns: 1fr;
+    width: min(100% - 32px, 760px);
+    padding-top: 34px;
+  }
+
+  .collage {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .collageMain {
+    min-height: 460px;
+  }
+
+  .collageSide {
+    min-height: 320px;
+  }
+
+  .guideShell {
+    width: min(100% - 32px, 760px);
+  }
+
+  .notesGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .planSection {
+    grid-template-columns: 1fr;
+  }
+
+  .nearbyHeader,
+  .backSection {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .nearbyGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .title {
+    font-size: clamp(46px, 16vw, 66px);
+  }
+
+  .notesGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .collageMain {
+    min-height: 390px;
+  }
+
+  .collageSide {
+    grid-template-columns: 1fr;
+  }
+
+  .collageSmall:first-child {
+    grid-column: auto;
+  }
+
+  .collageSmall {
+    min-height: 210px;
+  }
+}
+
