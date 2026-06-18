@@ -1,82 +1,91 @@
+import Link from "next/link";
 import type { Metadata } from "next";
-import type { City } from "@/data/types";
 import {
   SUPABASE_PUBLIC_SPOT_SELECT,
-  toCitySpotFromSupabase,
   type SupabasePublicSpot,
 } from "@/data/supabase-public-spots";
-import { SpotDirectory } from "@/components/SpotDirectory";
-import { sortByRank } from "@/data/visibility";
 import { createPublicMetadata } from "@/lib/site-metadata";
 import { supabase } from "@/lib/supabase";
-import { normalizeImagePosition } from "@/lib/url-fields";
+import styles from "./PlacesPage.module.css";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = createPublicMetadata({
-  title: "Browse Travel Spots | TravelHub",
+  title: "Places | TravelHub",
   description:
-    "Browse attractions, travel ideas, hotel links, and tour links across TravelHub spots.",
+    "TravelHub places: editorial spot guides and specific places worth building a trip around.",
   path: "/spots",
 });
 
 type SupabaseCityRow = {
   id: string;
-  country_id?: string | null;
   slug: string;
   city: string;
   country: string;
-  region: string;
-  summary: string;
-  description: string;
-  image_url: string;
-  image_alt: string;
-  image_credit: string;
-  image_source_url: string;
-  image_position?: string | null;
-  affiliate_hotel_url?: string | null;
-  affiliate_tour_url?: string | null;
-  is_published: boolean;
-  sort_rank: number;
+  region?: string | null;
 };
 
-function toDirectoryCity(row: SupabaseCityRow, spots: SupabasePublicSpot[]): City {
-  return {
-    id: row.id,
-    slug: row.slug,
-    city: row.city,
-    countryId: row.country_id ?? null,
-    country: row.country,
-    countryName: row.country,
-    region: row.region,
-    summary: row.summary,
-    description: row.description,
-    imageUrl: row.image_url,
-    imagePosition: normalizeImagePosition(row.image_position),
-    imageAlt: row.image_alt || row.city,
-    imageCredit: row.image_credit,
-    imageSourceUrl: row.image_source_url,
-    affiliateHotelUrl: row.affiliate_hotel_url ?? "",
-    affiliateTourUrl: row.affiliate_tour_url ?? "",
-    affHotelsUrl: row.affiliate_hotel_url ?? "",
-    affToursUrl: row.affiliate_tour_url ?? "",
-    rank: row.sort_rank ?? 999,
-    sortRank: row.sort_rank ?? 999,
-    isPublished: row.is_published,
-    seasons: ["All year"],
-    travelStyles: [row.region || "City break"],
-    themes: [row.region || "Travel city"],
-    bestFor: ["First-time visitors"],
-    stops: spots.map((spot) => spot.name),
-    spotDetails: spots.map(toCitySpotFromSupabase),
-  } as unknown as City;
-}
+type RawSpot = SupabasePublicSpot & Record<string, unknown>;
+
+const fallbackImages = [
+  "/assets/home/kyoto-hero.jpg",
+  "/assets/home/rome-preview.jpg",
+  "/assets/home/marrakech.jpg",
+  "/assets/home/lake-bled.jpg",
+  "/assets/home/find-peace.jpg",
+  "/assets/home/queenstown.jpg",
+];
+
+const moodLinks = [
+  {
+    title: "Quiet",
+    text: "Soft mornings, calm paths, and slower visits.",
+    href: "/discover",
+    image: "/assets/home/find-peace.jpg",
+  },
+  {
+    title: "Scenic",
+    text: "Views, water, mountains, and visual landmarks.",
+    href: "/discover",
+    image: "/assets/home/lake-bled.jpg",
+  },
+  {
+    title: "Culture",
+    text: "Temples, old streets, museums, and local texture.",
+    href: "/themes",
+    image: "/assets/home/rome-preview.jpg",
+  },
+  {
+    title: "City life",
+    text: "Markets, cafés, alleys, and evening neighborhoods.",
+    href: "/journal",
+    image: "/assets/home/marrakech.jpg",
+  },
+];
+
+const planningLinks = [
+  {
+    title: "Pair with nearby places",
+    text: "Use spot guides to understand what belongs in the same day.",
+    href: "/guides",
+  },
+  {
+    title: "Choose the city first",
+    text: "If the place is not decided yet, start from destination pages.",
+    href: "/cities",
+  },
+  {
+    title: "Plan by season",
+    text: "Some places change completely depending on timing.",
+    href: "/themes",
+  },
+];
 
 async function getSupabaseCitiesAndSpots() {
   const [citiesResult, spotsResult] = await Promise.all([
     supabase
       .from("cities")
-      .select("*")
+      .select("id, slug, city, country, region")
       .eq("is_published", true)
       .order("sort_rank", { ascending: true })
       .order("created_at", { ascending: false }),
@@ -88,51 +97,218 @@ async function getSupabaseCitiesAndSpots() {
       .order("created_at", { ascending: false }),
   ]);
 
-  const supabaseCities = (citiesResult.data ?? []) as SupabaseCityRow[];
-  const supabaseSpots = (spotsResult.data ?? []) as SupabasePublicSpot[];
-
   return {
-    supabaseCities,
-    supabaseSpots,
+    cities: (citiesResult.data ?? []) as SupabaseCityRow[],
+    spots: (spotsResult.data ?? []) as RawSpot[],
   };
 }
 
-function mergeSupabaseSpotsIntoCities(
-  supabaseCities: SupabaseCityRow[],
-  supabaseSpots: SupabasePublicSpot[]
-) {
-  const supabaseCityById = new Map(
-    supabaseCities.map((city) => [city.id, city])
-  );
+function getText(item: Record<string, unknown>, keys: string[]) {
+  for (const key of keys) {
+    const value = item[key];
 
-  const spotsByCityId = new Map<string, SupabasePublicSpot[]>();
+    if (typeof value === "string" && value.trim()) {
+      return value.trim();
+    }
 
-  for (const spot of supabaseSpots) {
-    if (!spot.city_id || !supabaseCityById.has(spot.city_id)) continue;
-
-    const current = spotsByCityId.get(spot.city_id) ?? [];
-    current.push(spot);
-    spotsByCityId.set(spot.city_id, current);
+    if (typeof value === "number") {
+      return String(value);
+    }
   }
 
-  const supabaseDirectoryCities = supabaseCities
-    .map((city) => {
-      const citySpots = spotsByCityId.get(city.id) ?? [];
+  return "";
+}
 
-      return toDirectoryCity(city, citySpots);
-    });
+function getSpotName(spot: RawSpot) {
+  return getText(spot, ["name", "spot", "title"]) || "Place";
+}
 
-  return sortByRank(supabaseDirectoryCities);
+function getSpotSlug(spot: RawSpot) {
+  return getText(spot, ["slug"]);
+}
+
+function getSpotDescription(spot: RawSpot) {
+  return (
+    getText(spot, ["summary", "description", "intro", "excerpt"]) ||
+    "A specific place worth building part of the trip around."
+  );
+}
+
+function getCuratedImage(spot: RawSpot, city?: SupabaseCityRow) {
+  const key = `${getSpotName(spot)} ${getSpotSlug(spot)} ${city?.city ?? ""} ${
+    city?.country ?? ""
+  }`.toLowerCase();
+
+  if (key.includes("arashiyama")) return "/assets/home/kyoto-hero.jpg";
+  if (key.includes("bamboo")) return "/assets/home/kyoto-hero.jpg";
+  if (key.includes("fushimi")) return "/assets/home/kyoto-hero.jpg";
+  if (key.includes("kiyomizu")) return "/assets/home/kyoto-hero.jpg";
+  if (key.includes("kyoto")) return "/assets/home/kyoto-hero.jpg";
+  if (key.includes("rome") || key.includes("italy")) return "/assets/home/rome-preview.jpg";
+  if (key.includes("marrakech") || key.includes("morocco")) return "/assets/home/marrakech.jpg";
+  if (key.includes("paris") || key.includes("france")) return "/assets/home/paris-preview.jpg";
+  if (key.includes("tokyo") || key.includes("japan")) return "/assets/home/kyoto-hero.jpg";
+
+  return "";
+}
+
+function getImage(spot: RawSpot, index: number, city?: SupabaseCityRow) {
+  return (
+    getCuratedImage(spot, city) ||
+    getText(spot, ["image_url", "imageUrl", "image", "heroImage", "hero_image"]) ||
+    fallbackImages[index % fallbackImages.length]
+  );
+}
+
+function getCityForSpot(
+  spot: RawSpot,
+  cityById: Map<string, SupabaseCityRow>
+) {
+  const cityId = getText(spot, ["city_id", "cityId"]);
+  return cityId ? cityById.get(cityId) : undefined;
+}
+
+function getSpotHref(spot: RawSpot, city?: SupabaseCityRow) {
+  const spotSlug = getSpotSlug(spot);
+
+  if (city?.slug && spotSlug) {
+    return `/c/${city.slug}/spot/${spotSlug}`;
+  }
+
+  if (city?.slug) {
+    return `/c/${city.slug}`;
+  }
+
+  return "/spots";
 }
 
 export default async function SpotsPage() {
-  const { supabaseCities, supabaseSpots } = await getSupabaseCitiesAndSpots();
+  const { cities, spots } = await getSupabaseCitiesAndSpots();
+  const cityById = new Map(cities.map((city) => [city.id, city]));
 
-  const mergedCities = mergeSupabaseSpotsIntoCities(
-    supabaseCities,
-    supabaseSpots
+  const publishedSpots = spots.filter((spot) => getSpotName(spot));
+
+  const featured =
+    publishedSpots.find((spot) => {
+      const key = `${getSpotName(spot)} ${getSpotSlug(spot)}`.toLowerCase();
+      return key.includes("arashiyama") || key.includes("bamboo");
+    }) ?? publishedSpots[0];
+
+  const featuredCity = featured
+    ? getCityForSpot(featured, cityById)
+    : undefined;
+
+  const gridSpots = publishedSpots.slice(0, 9);
+
+  return (
+    <main className={styles.page}>
+      <section className={styles.hero}>
+
+        <div className={styles.heroHeader}>
+          <div className={styles.eyebrow}>Places</div>
+          <h1>Specific places worth building a trip around.</h1>
+          <p>
+            Start with one memorable place, then connect it to the right city,
+            nearby highlights, and the kind of day it belongs in.
+          </p>
+        </div>
+
+        {featured ? (
+          <Link
+            href={getSpotHref(featured, featuredCity)}
+            className={styles.featured}
+          >
+            <div
+              className={styles.featuredImage}
+              style={{
+                backgroundImage: `linear-gradient(180deg, rgba(31, 26, 23, 0.03) 0%, rgba(31, 26, 23, 0.32) 100%), url("${getImage(featured, 0, featuredCity)}")`,
+              }}
+            />
+
+            <article className={styles.featuredCopy}>
+              <div className={styles.eyebrow}>Featured place</div>
+              <h2>{getSpotName(featured)}</h2>
+              <div className={styles.placeMeta}>
+                {featuredCity
+                  ? `${featuredCity.city}, ${featuredCity.country}`
+                  : "TravelHub place guide"}
+              </div>
+              <div className={styles.starLine}>✦</div>
+              <p>{getSpotDescription(featured)}</p>
+              <strong>Open place guide →</strong>
+            </article>
+          </Link>
+        ) : null}
+      </section>
+
+      <section className={styles.places}>
+        <div className={styles.sectionHeader}>
+          <h2>All Places</h2>
+          <span>{publishedSpots.length} places</span>
+        </div>
+
+        <div className={styles.placeGrid}>
+          {gridSpots.map((spot, index) => {
+            const city = getCityForSpot(spot, cityById);
+
+            return (
+              <Link
+                key={`${getSpotSlug(spot)}-${index}`}
+                href={getSpotHref(spot, city)}
+                className={styles.placeCard}
+              >
+                <div
+                  className={styles.placeImage}
+                  style={{
+                    backgroundImage: `linear-gradient(180deg, rgba(31, 26, 23, 0.02) 0%, rgba(31, 26, 23, 0.34) 100%), url("${getImage(spot, index + 1, city)}")`,
+                  }}
+                />
+
+                <div className={styles.placeBody}>
+                  <div className={styles.country}>
+                    {city ? `${city.city}, ${city.country}` : "TravelHub"}
+                  </div>
+                  <h3>{getSpotName(spot)}</h3>
+                  <p>{getSpotDescription(spot)}</p>
+                  <strong>Open place guide →</strong>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className={styles.moodPanel}>
+        <div className={styles.panelHeader}>
+          <div className={styles.eyebrow}>Plan by mood</div>
+          <h2>Choose the kind of place the day needs.</h2>
+        </div>
+
+        <div className={styles.moodGrid}>
+          {moodLinks.map((item) => (
+            <Link key={item.title} href={item.href} className={styles.moodItem}>
+              <div
+                className={styles.moodImage}
+                style={{ backgroundImage: `url("${item.image}")` }}
+              />
+              <h3>{item.title}</h3>
+              <p>{item.text}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className={styles.planningPanel}>
+        {planningLinks.map((item) => (
+          <Link key={item.title} href={item.href}>
+            <h3>{item.title}</h3>
+            <p>{item.text}</p>
+            <strong>Continue →</strong>
+          </Link>
+        ))}
+      </section>
+    </main>
   );
-
-  return <SpotDirectory cities={mergedCities as City[]} />;
 }
+
 

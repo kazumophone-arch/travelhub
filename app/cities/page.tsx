@@ -149,11 +149,6 @@ export default async function CitiesPage() {
   return (
     <main className={styles.page}>
       <section className={styles.hero}>
-        <div className={styles.breadcrumb}>
-          <Link href="/">Home</Link>
-          <span>/</span>
-          <strong>Destinations</strong>
-        </div>
 
         <div className={styles.heroHeader}>
           <h1>Destinations</h1>
@@ -260,4 +255,5 @@ export default async function CitiesPage() {
     </main>
   );
 }
+
 

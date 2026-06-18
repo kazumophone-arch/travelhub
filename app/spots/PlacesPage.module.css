@@ -7,9 +7,9 @@
 }
 
 .hero,
-.destinations,
-.explorePanel,
-.closing {
+.places,
+.moodPanel,
+.planningPanel {
   width: min(1180px, calc(100% - 64px));
   margin: 0 auto;
 }
@@ -37,27 +37,41 @@
 }
 
 .heroHeader {
-  margin-top: 0;
+  max-width: 760px;
+  margin: 0 auto;
   text-align: center;
 }
 
+.eyebrow,
+.country {
+  color: #8f5f36;
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 850;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
 .heroHeader h1 {
-  margin: 0;
+  margin: 18px 0 0;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(52px, 5vw, 76px);
+  font-size: clamp(48px, 5vw, 76px);
   line-height: 0.96;
   font-weight: 520;
   letter-spacing: -0.06em;
+  text-wrap: balance;
 }
 
 .heroHeader p {
-  margin: 18px 0 0;
+  max-width: 620px;
+  margin: 20px auto 0;
   color: #5f564d;
   font-size: 16px;
+  line-height: 1.78;
 }
 
 .featured {
-  margin-top: 34px;
+  margin-top: 36px;
   display: grid;
   grid-template-columns: minmax(0, 0.64fr) minmax(320px, 0.36fr);
   overflow: hidden;
@@ -81,16 +95,6 @@
   align-content: center;
 }
 
-.eyebrow,
-.country {
-  color: #8f5f36;
-  font-size: 11px;
-  line-height: 1;
-  font-weight: 850;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
 .featuredCopy h2 {
   margin: 24px 0 0;
   font-family: Georgia, "Times New Roman", serif;
@@ -98,6 +102,12 @@
   line-height: 1;
   font-weight: 520;
   letter-spacing: -0.05em;
+}
+
+.placeMeta {
+  margin-top: 14px;
+  color: #5f564d;
+  font-size: 14px;
 }
 
 .starLine {
@@ -123,8 +133,8 @@
 }
 
 .featuredCopy strong,
-.cityBody strong,
-.panelLink {
+.placeBody strong,
+.planningPanel strong {
   margin-top: 24px;
   color: #7d4e2c;
   font-size: 12px;
@@ -134,7 +144,7 @@
   text-decoration: none;
 }
 
-.destinations {
+.places {
   padding: 10px 0 48px;
 }
 
@@ -146,7 +156,8 @@
   margin-bottom: 22px;
 }
 
-.sectionHeader h2 {
+.sectionHeader h2,
+.panelHeader h2 {
   margin: 0;
   font-family: Georgia, "Times New Roman", serif;
   font-size: clamp(34px, 3vw, 44px);
@@ -161,13 +172,13 @@
   font-weight: 760;
 }
 
-.destinationGrid {
+.placeGrid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 20px;
 }
 
-.cityCard {
+.placeCard {
   overflow: hidden;
   border: 1px solid rgba(103, 78, 49, 0.14);
   border-radius: 8px;
@@ -177,30 +188,32 @@
   transition: transform 180ms ease;
 }
 
-.cityCard:hover {
+.placeCard:hover,
+.moodItem:hover,
+.planningPanel a:hover {
   transform: translateY(-2px);
 }
 
-.cityImage {
-  min-height: 190px;
+.placeImage {
+  min-height: 220px;
   background-size: cover;
   background-position: center;
 }
 
-.cityBody {
-  padding: 22px;
+.placeBody {
+  padding: 24px;
 }
 
-.cityBody h3 {
+.placeBody h3 {
   margin: 12px 0 0;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: 31px;
+  font-size: 32px;
   line-height: 1;
   font-weight: 520;
   letter-spacing: -0.045em;
 }
 
-.cityBody p {
+.placeBody p {
   min-height: 78px;
   margin: 14px 0 0;
   color: #5f564d;
@@ -208,129 +221,110 @@
   line-height: 1.72;
 }
 
-.cityBody strong {
+.placeBody strong {
   display: inline-flex;
 }
 
-.explorePanel {
-  margin-bottom: 32px;
+.moodPanel {
+  margin-bottom: 28px;
   padding: 34px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 36px;
   border: 1px solid rgba(103, 78, 49, 0.14);
   border-radius: 12px;
   background: rgba(255, 253, 248, 0.48);
 }
 
-.exploreColumn + .exploreColumn {
-  border-left: 1px solid rgba(103, 78, 49, 0.13);
-  padding-left: 36px;
+.panelHeader {
+  max-width: 620px;
+  margin-bottom: 24px;
 }
 
-.panelTitle {
-  margin-bottom: 22px;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 29px;
-  line-height: 1;
-  letter-spacing: -0.04em;
+.panelHeader h2 {
+  margin-top: 14px;
 }
 
-.miniGrid {
+.moodGrid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
+  gap: 18px;
 }
 
-.miniItem {
+.moodItem {
   color: inherit;
   text-decoration: none;
+  transition: transform 180ms ease;
 }
 
-.miniImage {
-  min-height: 88px;
+.moodImage {
+  min-height: 120px;
   border-radius: 8px;
   background-size: cover;
   background-position: center;
 }
 
-.miniItem h3 {
-  margin: 14px 0 0;
-  font-size: 15px;
-  line-height: 1.2;
+.moodItem h3,
+.planningPanel h3 {
+  margin: 16px 0 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 26px;
+  line-height: 1.04;
+  font-weight: 520;
+  letter-spacing: -0.04em;
 }
 
-.miniItem p {
-  margin: 6px 0 0;
+.moodItem p,
+.planningPanel p {
+  margin: 10px 0 0;
   color: #5f564d;
-  font-size: 12px;
-  line-height: 1.55;
-}
-
-.panelLink {
-  display: inline-flex;
-  margin-top: 24px;
-}
-
-.closing {
-  margin-bottom: 54px;
-  padding: 24px 0;
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: 18px;
-  align-items: center;
-  border-top: 1px solid rgba(103, 78, 49, 0.14);
-  color: #5f564d;
-}
-
-.closing span {
-  color: #8f5f36;
-}
-
-.closing p {
-  margin: 0;
   font-size: 14px;
+  line-height: 1.72;
+}
+
+.planningPanel {
+  margin-bottom: 58px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.planningPanel a {
+  min-height: 180px;
+  padding: 26px;
+  border: 1px solid rgba(103, 78, 49, 0.14);
+  border-radius: 8px;
+  background: rgba(255, 253, 248, 0.56);
+  color: inherit;
+  text-decoration: none;
+  transition: transform 180ms ease;
+}
+
+.planningPanel strong {
+  display: inline-flex;
 }
 
 @media (max-width: 980px) {
   .hero,
-  .destinations,
-  .explorePanel,
-  .closing {
+  .places,
+  .moodPanel,
+  .planningPanel {
     width: min(100% - 32px, 760px);
   }
 
-  .featured,
-  .explorePanel {
+  .featured {
     grid-template-columns: 1fr;
   }
 
-  .destinationGrid,
-  .miniGrid {
+  .placeGrid,
+  .moodGrid,
+  .planningPanel {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .exploreColumn + .exploreColumn {
-    border-left: 0;
-    padding-left: 0;
-    border-top: 1px solid rgba(103, 78, 49, 0.13);
-    padding-top: 32px;
-  }
-
-  .closing {
-    grid-template-columns: auto 1fr;
-  }
-
-  .closing p:last-child {
-    grid-column: 2;
   }
 }
 
 @media (max-width: 620px) {
   .hero,
-  .destinations,
-  .explorePanel,
-  .closing {
+  .places,
+  .moodPanel,
+  .planningPanel {
     width: min(100% - 24px, 520px);
   }
 
@@ -342,12 +336,13 @@
     min-height: 260px;
   }
 
-  .destinationGrid,
-  .miniGrid {
+  .placeGrid,
+  .moodGrid,
+  .planningPanel {
     grid-template-columns: 1fr;
   }
 
-  .explorePanel {
+  .moodPanel {
     padding: 22px;
   }
 }
