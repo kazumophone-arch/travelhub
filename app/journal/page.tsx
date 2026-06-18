@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Metadata } from "next";
 import {
   journalArticles,
@@ -48,12 +49,15 @@ export default function JournalPage() {
         />
       </section>
 
-      <section className={styles.featured}>
+      <Link
+        href={`/journal/${featuredArticle.slug}`}
+        className={styles.featured}
+      >
         <div
           className={styles.featureImage}
           style={{
             backgroundImage:
-              'linear-gradient(180deg, rgba(31, 26, 23, 0.02) 0%, rgba(31, 26, 23, 0.24) 52%, rgba(31, 26, 23, 0.70) 100%), url("/assets/home/find-peace.jpg")',
+              `linear-gradient(180deg, rgba(31, 26, 23, 0.02) 0%, rgba(31, 26, 23, 0.24) 52%, rgba(31, 26, 23, 0.70) 100%), url("${featuredArticle.image}")`,
           }}
         />
 
@@ -63,7 +67,7 @@ export default function JournalPage() {
           <p>{featuredArticle.description}</p>
           <span>{featuredArticle.ctaLabel ?? "Read the guide"} →</span>
         </article>
-      </section>
+      </Link>
 
       {groupedArticles.map(({ category, articles }) => (
         <section key={category} className={styles.articleSection}>
@@ -85,7 +89,7 @@ export default function JournalPage() {
 
 function ArticleCard({ article }: { article: JournalArticle }) {
   return (
-    <article className={styles.articleCard}>
+    <Link href={`/journal/${article.slug}`} className={styles.articleCard}>
       <div
         className={styles.articleImage}
         style={{
@@ -97,6 +101,6 @@ function ArticleCard({ article }: { article: JournalArticle }) {
         <h3>{article.title}</h3>
         <p>{article.description}</p>
       </div>
-    </article>
+    </Link>
   );
 }
