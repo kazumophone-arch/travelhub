@@ -1,110 +1,185 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
 
-const footerLinks = [
-  { href: "/about", label: "About" },
-  { href: "/affiliate-disclosure", label: "Affiliate Disclosure" },
-  { href: "/privacy", label: "Privacy" },
-  { href: "/terms", label: "Terms" },
-  { href: "/contact", label: "Contact" },
+const footerColumns = [
+  {
+    title: "Explore",
+    links: [
+      { href: "/discover", label: "Discover" },
+      { href: "/cities", label: "Destinations" },
+      { href: "/themes", label: "Themes" },
+      { href: "/guides", label: "Guides" },
+      { href: "/journal", label: "Journal" },
+    ],
+  },
+  {
+    title: "Company",
+    links: [
+      { href: "/about", label: "About" },
+      { href: "/contact", label: "Contact" },
+    ],
+  },
+  {
+    title: "Legal",
+    links: [
+      { href: "/affiliate-disclosure", label: "Affiliate Disclosure" },
+      { href: "/privacy", label: "Privacy Policy" },
+      { href: "/terms", label: "Terms" },
+    ],
+  },
 ];
 
 export function SiteFooter() {
   return (
     <footer style={footerStyle}>
       <div style={innerStyle}>
-        <div style={brandBlockStyle}>
-          <Link href="/" style={brandStyle}>
-            TravelHub
-          </Link>
+        <div style={topStyle}>
+          <div style={brandBlockStyle}>
+            <Link href="/" style={brandStyle}>
+              <span style={brandMarkStyle}>⌖</span>
+              <span>TravelHub</span>
+            </Link>
 
-          <p style={textStyle}>
-            A lightweight travel discovery hub for cities, featured spots,
-            seasonal ideas, and travel planning links.
-          </p>
+            <p style={textStyle}>
+              A calm travel discovery site for finding destinations, seasonal
+              ideas, city guides, spot guides, and practical planning notes.
+            </p>
+          </div>
+
+          <nav style={columnsStyle} aria-label="Footer navigation">
+            {footerColumns.map((column) => (
+              <div key={column.title} style={columnStyle}>
+                <div style={columnTitleStyle}>{column.title}</div>
+
+                <div style={linkListStyle}>
+                  {column.links.map((link) => (
+                    <Link key={link.href} href={link.href} style={linkStyle}>
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </nav>
         </div>
 
-        <nav style={linkWrapStyle} aria-label="Footer navigation">
-          {footerLinks.map((link) => (
-            <Link key={link.href} href={link.href} style={linkStyle}>
-              {link.label}
-            </Link>
-          ))}
-        </nav>
+        <div style={bottomStyle}>
+          <p style={noticeStyle}>
+            Some links may be affiliate links. TravelHub may earn a commission
+            if you book through them, at no additional cost to you.
+          </p>
 
-        <p style={noticeStyle}>
-          Some links may be affiliate links. We may earn a commission if you book
-          through them, at no extra cost to you.
-        </p>
+          <p style={copyrightStyle}>© 2026 TravelHub</p>
+        </div>
       </div>
     </footer>
   );
 }
 
 const footerStyle: CSSProperties = {
-  padding: "34px 16px 42px",
-  background: "transparent",
-  color: "#17202a",
+  padding: "42px 24px 48px",
+  background: "linear-gradient(180deg, rgba(243, 236, 223, 0) 0%, #eee3d2 100%)",
+  color: "#211f1a",
 };
 
 const innerStyle: CSSProperties = {
-  maxWidth: 1120,
+  maxWidth: 1180,
   margin: "0 auto",
-  padding: 22,
-  borderRadius: 30,
-  background: "rgba(255, 255, 255, 0.86)",
-  border: "1px solid rgba(23, 32, 42, 0.08)",
-  boxShadow: "0 12px 34px rgba(30, 64, 88, 0.08)",
-  backdropFilter: "blur(18px)",
+  padding: "34px 0 0",
+  borderTop: "1px solid rgba(103, 78, 49, 0.16)",
+};
+
+const topStyle: CSSProperties = {
+  display: "grid",
+  gridTemplateColumns: "minmax(260px, 0.42fr) minmax(0, 0.58fr)",
+  gap: 48,
+  alignItems: "start",
 };
 
 const brandBlockStyle: CSSProperties = {
-  marginBottom: 18,
+  maxWidth: 420,
 };
 
 const brandStyle: CSSProperties = {
   display: "inline-flex",
+  alignItems: "center",
+  gap: 9,
   color: "inherit",
   textDecoration: "none",
-  fontSize: 18,
-  fontWeight: 850,
-  letterSpacing: "-0.035em",
-  marginBottom: 8,
+  fontFamily: 'Georgia, "Times New Roman", serif',
+  fontSize: 28,
+  fontWeight: 520,
+  letterSpacing: "-0.045em",
+};
+
+const brandMarkStyle: CSSProperties = {
+  color: "#8f5f36",
+  fontSize: 19,
+  lineHeight: 1,
 };
 
 const textStyle: CSSProperties = {
-  margin: 0,
-  maxWidth: 560,
-  fontSize: 13,
-  lineHeight: 1.65,
-  opacity: 0.62,
+  margin: "18px 0 0",
+  color: "#5f564d",
+  fontSize: 14,
+  lineHeight: 1.8,
 };
 
-const linkWrapStyle: CSSProperties = {
-  display: "flex",
-  flexWrap: "wrap",
+const columnsStyle: CSSProperties = {
+  display: "grid",
+  gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+  gap: 28,
+};
+
+const columnStyle: CSSProperties = {
+  display: "grid",
+  gap: 14,
+};
+
+const columnTitleStyle: CSSProperties = {
+  color: "#8f5f36",
+  fontSize: 11,
+  lineHeight: 1,
+  fontWeight: 850,
+  letterSpacing: "0.16em",
+  textTransform: "uppercase",
+};
+
+const linkListStyle: CSSProperties = {
+  display: "grid",
   gap: 10,
-  marginBottom: 18,
 };
 
 const linkStyle: CSSProperties = {
-  display: "inline-flex",
-  padding: "8px 10px",
-  borderRadius: 999,
-  background: "#eef8f5",
-  color: "inherit",
+  width: "fit-content",
+  color: "#3f372f",
   textDecoration: "none",
-  fontSize: 12,
-  fontWeight: 800,
+  fontSize: 13,
+  lineHeight: 1.3,
+  fontWeight: 650,
+};
+
+const bottomStyle: CSSProperties = {
+  display: "flex",
+  justifyContent: "space-between",
+  gap: 24,
+  marginTop: 34,
+  paddingTop: 22,
+  borderTop: "1px solid rgba(103, 78, 49, 0.12)",
 };
 
 const noticeStyle: CSSProperties = {
   margin: 0,
-  maxWidth: 620,
+  maxWidth: 640,
+  color: "#6d6257",
   fontSize: 12,
-  lineHeight: 1.6,
-  opacity: 0.52,
+  lineHeight: 1.7,
 };
 
-
+const copyrightStyle: CSSProperties = {
+  margin: 0,
+  color: "#8a7c6d",
+  fontSize: 12,
+  whiteSpace: "nowrap",
+};
 
