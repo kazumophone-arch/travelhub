@@ -477,3 +477,22 @@ body::before {
 }
 
 /* TRAVELHUB_PUBLIC_SHELL_OFFSET_FIX_END */
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+img,
+video,
+canvas,
+svg {
+  max-width: 100%;
+}
+
+/* mobileViewportEdgeFix */
+html,
+body {
+  background: #fbf7ef;
+}

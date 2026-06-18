@@ -319,3 +319,4 @@ const footerLinkStyle: CSSProperties = {
   fontWeight: 850,
   fontSize: 14,
 };
+
