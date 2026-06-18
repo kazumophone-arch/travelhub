@@ -318,7 +318,7 @@ async function handleOutboundRedirect(request: Request, context: OutboundRouteCo
     return new NextResponse("City not found", { status: 404 });
   }
 
-  if (!affiliateLink) {
+  if (!affiliateLink && !inferredSpotSlug) {
     affiliateLink = getSupabaseCityAffiliateLink({
       city: supabaseCity,
       type,
@@ -326,7 +326,12 @@ async function handleOutboundRedirect(request: Request, context: OutboundRouteCo
   }
 
   if (!affiliateLink) {
-    const fallbackUrl = new URL(`/c/${supabaseCity.slug}`, url.origin);
+    const fallbackUrl = new URL(
+      supabaseSpot
+        ? `/c/${supabaseCity.slug}/spot/${supabaseSpot.slug}`
+        : `/c/${supabaseCity.slug}`,
+      url.origin
+    );
     fallbackUrl.searchParams.set("src", src);
     fallbackUrl.searchParams.set("v", videoId);
 
@@ -396,3 +401,4 @@ export async function GET(request: Request, context: OutboundRouteContext) {
 export async function HEAD(request: Request, context: OutboundRouteContext) {
   return handleOutboundRedirect(request, context);
 }
+
