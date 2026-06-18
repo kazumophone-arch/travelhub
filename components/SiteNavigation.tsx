@@ -12,6 +12,7 @@ const adminNavLinks = [
 ];
 
 const publicNavLinks = [
+  { href: "/discover", label: "Discover" },
   { href: "/cities", label: "Destinations" },
   { href: "/themes", label: "Themes" },
   { href: "/guides", label: "Guides" },
@@ -43,16 +44,24 @@ function SearchIcon() {
 function isActivePath(pathname: string, href: string) {
   if (href === "/") return pathname === "/";
 
-  if (href === "/cities") {
-    return pathname === "/cities" || /^\/c\/[^/]+$/.test(pathname);
+  if (href === "/discover") {
+    return pathname === "/discover";
   }
 
-  if (href === "/journal") {
-    return pathname === "/journal" || pathname === "/spots" || pathname.includes("/spot/");
+  if (href === "/cities") {
+    return pathname === "/cities" || pathname.startsWith("/c/");
+  }
+
+  if (href === "/themes") {
+    return pathname === "/themes" || pathname.startsWith("/themes/");
   }
 
   if (href === "/guides") {
-    return pathname === "/guides" || pathname === "/discover";
+    return pathname === "/guides";
+  }
+
+  if (href === "/journal") {
+    return pathname === "/journal" || pathname.startsWith("/journal/");
   }
 
   return pathname === href || pathname.startsWith(`${href}/`);
@@ -296,3 +305,4 @@ export function SiteNavigation() {
     </>
   );
 }
+
