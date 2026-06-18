@@ -20,13 +20,13 @@ const previews: Tile[] = [
   {
     title: "Rome, Italy",
     subtitle: "Eternal city, timeless beauty.",
-    href: "/c/rome-it",
+    href: "/c/rome",
     image: "/assets/home/rome-preview.jpg",
   },
   {
     title: "Paris, France",
     subtitle: "Iconic sights, endless charm.",
-    href: "/c/paris-fr",
+    href: "/cities",
     image: "/assets/home/paris-preview.jpg",
   },
 ];
@@ -260,3 +260,4 @@ export function HomeLanding({ cities }: Props) {
     </main>
   );
 }
+
