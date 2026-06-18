@@ -1,88 +1,263 @@
+import Link from "next/link";
 import type { Metadata } from "next";
-import type { City } from "@/data/types";
-import { CityDirectory } from "@/components/CityDirectory";
-import { sortByRank } from "@/data/visibility";
-import { createPublicMetadata } from "@/lib/site-metadata";
-import { supabase } from "@/lib/supabase";
-import { normalizeImagePosition } from "@/lib/url-fields";
+import { getPublishedSupabaseDirectoryCities } from "@/data/supabase-public-cities";
+import styles from "./DestinationsPage.module.css";
 
-export const dynamic = "force-dynamic";
-
-export const metadata: Metadata = createPublicMetadata({
-  title: "Browse Travel Cities | TravelHub",
+export const metadata: Metadata = {
+  title: "Destinations | TravelHub",
   description:
-    "Browse TravelHub city guides with featured spots, hotel links, tour links, and travel ideas.",
-  path: "/cities",
-});
-
-type SupabaseCityRow = {
-  id: string;
-  country_id?: string | null;
-  slug: string;
-  city: string;
-  country: string;
-  region: string;
-  summary: string;
-  description: string;
-  image_url: string;
-  image_alt: string;
-  image_credit: string;
-  image_source_url: string;
-  image_position?: string | null;
-  affiliate_hotel_url?: string | null;
-  affiliate_tour_url?: string | null;
-  is_published: boolean;
-  sort_rank: number;
+    "TravelHub destinations: editorial city guides and places worth planning around.",
 };
 
-function toDirectoryCity(row: SupabaseCityRow): City {
-  return {
-    id: row.id,
-    slug: row.slug,
-    city: row.city,
-    countryId: row.country_id ?? null,
-    country: row.country,
-    countryName: row.country,
-    region: row.region,
-    summary: row.summary,
-    description: row.description,
-    imageUrl: row.image_url,
-    imagePosition: normalizeImagePosition(row.image_position),
-    imageAlt: row.image_alt || row.city,
-    imageCredit: row.image_credit,
-    imageSourceUrl: row.image_source_url,
-    affiliateHotelUrl: row.affiliate_hotel_url ?? "",
-    affiliateTourUrl: row.affiliate_tour_url ?? "",
-    affHotelsUrl: row.affiliate_hotel_url ?? "",
-    affToursUrl: row.affiliate_tour_url ?? "",
-    rank: row.sort_rank ?? 999,
-    sortRank: row.sort_rank ?? 999,
-    isPublished: row.is_published,
-    seasons: ["All year"],
-    travelStyles: [row.region || "City break"],
-    themes: [row.region || "Travel city"],
-    bestFor: ["First-time visitors"],
-    stops: [],
-    spotDetails: [],
-  } as unknown as City;
+type RawCity = Record<string, unknown>;
+
+const fallbackImages = [
+  "/assets/home/kyoto-hero.jpg",
+  "/assets/home/rome-preview.jpg",
+  "/assets/home/marrakech.jpg",
+  "/assets/home/lake-bled.jpg",
+  "/assets/home/paris-preview.jpg",
+  "/assets/home/queenstown.jpg",
+];
+
+const seasonLinks = [
+  {
+    title: "Spring",
+    text: "Soft light, flowers, and gentle city walks.",
+    href: "/themes/spring",
+    image: "/assets/home/kyoto-hero.jpg",
+  },
+  {
+    title: "Summer",
+    text: "Coastal escapes, lakes, and long evenings.",
+    href: "/themes/summer",
+    image: "/assets/home/lake-bled.jpg",
+  },
+  {
+    title: "Autumn",
+    text: "Foliage, culture, and slower scenic towns.",
+    href: "/themes/autumn",
+    image: "/assets/home/rome-preview.jpg",
+  },
+  {
+    title: "Winter",
+    text: "Clear air, quiet streets, and calm stays.",
+    href: "/themes/winter",
+    image: "/assets/home/find-peace.jpg",
+  },
+];
+
+const moodLinks = [
+  {
+    title: "Relax",
+    text: "Slow down and unwind.",
+    href: "/discover",
+    image: "/assets/home/find-peace.jpg",
+  },
+  {
+    title: "Adventure",
+    text: "Outdoor scenery and active trips.",
+    href: "/discover",
+    image: "/assets/home/queenstown.jpg",
+  },
+  {
+    title: "Culture",
+    text: "Art, history, and local traditions.",
+    href: "/discover",
+    image: "/assets/home/rome-preview.jpg",
+  },
+  {
+    title: "City Break",
+    text: "Short trips with big city energy.",
+    href: "/discover",
+    image: "/assets/home/marrakech.jpg",
+  },
+];
+
+function getText(item: RawCity, keys: string[]) {
+  for (const key of keys) {
+    const value = item[key];
+
+    if (typeof value === "string" && value.trim()) {
+      return value.trim();
+    }
+
+    if (typeof value === "number") {
+      return String(value);
+    }
+  }
+
+  return "";
 }
 
-async function getSupabasePublishedCities() {
-  const { data, error } = await supabase
-    .from("cities")
-    .select("*")
-    .eq("is_published", true)
-    .order("sort_rank", { ascending: true })
-    .order("created_at", { ascending: false });
+function getCityName(city: RawCity) {
+  return getText(city, ["city", "name", "title"]) || "Destination";
+}
 
-  if (error || !data) return [];
+function getCountry(city: RawCity) {
+  return getText(city, ["country", "countryName", "region"]) || "TravelHub";
+}
 
-  return (data as SupabaseCityRow[]).map(toDirectoryCity);
+function getDescription(city: RawCity) {
+  return (
+    getText(city, ["description", "summary", "intro", "excerpt"]) ||
+    "A destination worth slowing down for, with places, stays, and scenes to build a trip around."
+  );
+}
+
+function getSlug(city: RawCity) {
+  return getText(city, ["slug"]);
+}
+
+function getCuratedImage(city: RawCity) {
+  const key = `${getCityName(city)} ${getSlug(city)} ${getCountry(city)}`.toLowerCase();
+
+  if (key.includes("kyoto")) return "/assets/home/kyoto-hero.jpg";
+  if (key.includes("rome") || key.includes("italy")) return "/assets/home/rome-preview.jpg";
+  if (key.includes("marrakech") || key.includes("morocco")) return "/assets/home/marrakech.jpg";
+  if (key.includes("paris") || key.includes("france")) return "/assets/home/paris-preview.jpg";
+  if (key.includes("bled") || key.includes("slovenia")) return "/assets/home/lake-bled.jpg";
+  if (key.includes("queenstown") || key.includes("zealand")) return "/assets/home/queenstown.jpg";
+
+  return "";
+}
+
+function getImage(city: RawCity, index: number) {
+  return (
+    getCuratedImage(city) ||
+    fallbackImages[index % fallbackImages.length]
+  );
+}
+
+function getCityHref(city: RawCity) {
+  const slug = getSlug(city);
+  return slug ? `/c/${slug}` : "/cities";
 }
 
 export default async function CitiesPage() {
-  const supabaseCities = await getSupabasePublishedCities();
-  const mergedCities = sortByRank(supabaseCities);
+  const records = await getPublishedSupabaseDirectoryCities();
+  const cities = (records as unknown as RawCity[]).filter((city) =>
+    getCityName(city)
+  );
 
-  return <CityDirectory cities={mergedCities} />;
+  const featured =
+    cities.find((city) => getSlug(city).toLowerCase().includes("kyoto")) ??
+    cities[0];
+
+  const gridCities = cities.slice(0, 8);
+
+  return (
+    <main className={styles.page}>
+      <section className={styles.hero}>
+        <div className={styles.breadcrumb}>
+          <Link href="/">Home</Link>
+          <span>/</span>
+          <strong>Destinations</strong>
+        </div>
+
+        <div className={styles.heroHeader}>
+          <h1>Destinations</h1>
+          <p>Places worth planning around.</p>
+        </div>
+
+        {featured ? (
+          <Link href={getCityHref(featured)} className={styles.featured}>
+            <div
+              className={styles.featuredImage}
+              style={{
+                backgroundImage: `linear-gradient(180deg, rgba(31, 26, 23, 0.03) 0%, rgba(31, 26, 23, 0.28) 100%), url("${getImage(featured, 0)}")`,
+              }}
+            />
+
+            <article className={styles.featuredCopy}>
+              <div className={styles.eyebrow}>Featured destination</div>
+              <h2>
+                {getCityName(featured)}, {getCountry(featured)}
+              </h2>
+              <div className={styles.starLine}>✦</div>
+              <p>{getDescription(featured)}</p>
+              <strong>Open city guide →</strong>
+            </article>
+          </Link>
+        ) : null}
+      </section>
+
+      <section className={styles.destinations}>
+        <div className={styles.sectionHeader}>
+          <h2>All Destinations</h2>
+          <span>{cities.length} cities</span>
+        </div>
+
+        <div className={styles.destinationGrid}>
+          {gridCities.map((city, index) => (
+            <Link key={`${getSlug(city)}-${index}`} href={getCityHref(city)} className={styles.cityCard}>
+              <div
+                className={styles.cityImage}
+                style={{
+                  backgroundImage: `linear-gradient(180deg, rgba(31, 26, 23, 0.02) 0%, rgba(31, 26, 23, 0.34) 100%), url("${getImage(city, index + 1)}")`,
+                }}
+              />
+              <div className={styles.cityBody}>
+                <div className={styles.country}>{getCountry(city)}</div>
+                <h3>{getCityName(city)}</h3>
+                <p>{getDescription(city)}</p>
+                <strong>Open city guide →</strong>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className={styles.explorePanel}>
+        <div className={styles.exploreColumn}>
+          <div className={styles.panelTitle}>✦ Explore by season</div>
+
+          <div className={styles.miniGrid}>
+            {seasonLinks.map((item) => (
+              <Link key={item.title} href={item.href} className={styles.miniItem}>
+                <div
+                  className={styles.miniImage}
+                  style={{ backgroundImage: `url("${item.image}")` }}
+                />
+                <h3>{item.title}</h3>
+                <p>{item.text}</p>
+              </Link>
+            ))}
+          </div>
+
+          <Link href="/themes" className={styles.panelLink}>
+            View seasonal ideas →
+          </Link>
+        </div>
+
+        <div className={styles.exploreColumn}>
+          <div className={styles.panelTitle}>✦ Explore by mood</div>
+
+          <div className={styles.miniGrid}>
+            {moodLinks.map((item) => (
+              <Link key={item.title} href={item.href} className={styles.miniItem}>
+                <div
+                  className={styles.miniImage}
+                  style={{ backgroundImage: `url("${item.image}")` }}
+                />
+                <h3>{item.title}</h3>
+                <p>{item.text}</p>
+              </Link>
+            ))}
+          </div>
+
+          <Link href="/discover" className={styles.panelLink}>
+            View mood ideas →
+          </Link>
+        </div>
+      </section>
+
+      <section className={styles.closing}>
+        <span>✦</span>
+        <p>The world is full of places that stay with you forever.</p>
+        <p>Find the right kind of place for your next journey.</p>
+      </section>
+    </main>
+  );
 }
+
