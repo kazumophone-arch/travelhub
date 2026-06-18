@@ -1,53 +1,210 @@
+import Link from "next/link";
 import type { Metadata } from "next";
-import type { CSSProperties } from "react";
-import { DiscoverHeroCopy } from "@/components/DiscoverHeroCopy";
-import { TravelDiscoveryTools } from "@/components/TravelDiscoveryTools";
-import { TravelTimingDiscovery } from "@/components/TravelTimingDiscovery";
-import { getPublishedSupabaseDirectoryCities } from "@/data/supabase-public-cities";
-import { sortByRank } from "@/data/visibility";
-import { createPublicMetadata } from "@/lib/site-metadata";
+import styles from "./DiscoverPage.module.css";
 
-export const dynamic = "force-dynamic";
-
-export const metadata: Metadata = createPublicMetadata({
-  title: "Discover Travel Ideas | TravelHub",
+export const metadata: Metadata = {
+  title: "Discover | TravelHub",
   description:
-    "Find TravelHub city ideas by feeling, season, travel style, and trip timing.",
-  path: "/discover",
-});
+    "Discover travel ideas by feeling, scene, pace, season, destination, and places worth building a trip around.",
+};
 
-export default async function DiscoverPage() {
-  const supabaseCities = await getPublishedSupabaseDirectoryCities();
-  const publishedCities = sortByRank(supabaseCities);
+const feelings = [
+  {
+    title: "Seek calm",
+    text: "Quiet cities, soft mornings, slower routes.",
+    href: "/themes",
+    label: "Explore peaceful places",
+    image: "/assets/home/find-peace.jpg",
+    icon: "◒",
+  },
+  {
+    title: "See culture",
+    text: "Old streets, temples, museums, local texture.",
+    href: "/themes",
+    label: "Explore cultural places",
+    image: "/assets/home/rome-preview.jpg",
+    icon: "⌂",
+  },
+  {
+    title: "Chase scenery",
+    text: "Mountains, coastlines, lakes, dramatic views.",
+    href: "/themes",
+    label: "Explore scenic places",
+    image: "/assets/home/lake-bled.jpg",
+    icon: "△",
+  },
+  {
+    title: "Eat and wander",
+    text: "Markets, cafés, neighborhoods, night streets.",
+    href: "/journal",
+    label: "Explore city life",
+    image: "/assets/home/marrakech.jpg",
+    icon: "☕",
+  },
+];
 
+const discoveries = [
+  {
+    number: "01",
+    title: "Kyoto in spring",
+    text: "Soft light, temples, quiet streets.",
+    href: "/themes/spring",
+    label: "Open city guide",
+    image: "/assets/home/kyoto-hero.jpg",
+  },
+  {
+    number: "02",
+    title: "Lake Bled in summer",
+    text: "Still water, mountains, slow mornings.",
+    href: "/themes/summer",
+    label: "Open destination",
+    image: "/assets/home/lake-bled.jpg",
+  },
+  {
+    number: "03",
+    title: "Marrakech for color and calm",
+    text: "Courtyards, markets, warm texture.",
+    href: "/cities",
+    label: "Open city guide",
+    image: "/assets/home/marrakech.jpg",
+  },
+];
+
+const entryPoints = [
+  {
+    title: "Season",
+    text: "Spring, summer, autumn, winter.",
+    href: "/themes",
+    label: "Explore themes",
+    icon: "◌",
+  },
+  {
+    title: "Destination",
+    text: "Cities and countries worth planning around.",
+    href: "/cities",
+    label: "Explore cities",
+    icon: "◎",
+  },
+  {
+    title: "Places",
+    text: "Specific spots to build a trip around.",
+    href: "/spots",
+    label: "Explore spots",
+    icon: "⌖",
+  },
+  {
+    title: "Essentials",
+    text: "Internet, luggage, airport, hotels.",
+    href: "/journal",
+    label: "Explore journal",
+    icon: "□",
+  },
+];
+
+export default function DiscoverPage() {
   return (
-    <main style={pageStyle}>
-      <section style={shellStyle}>
-        <DiscoverHeroCopy />
-        <TravelDiscoveryTools cities={publishedCities} />
+    <main className={styles.page}>
+      <section className={styles.hero}>
+        <div className={styles.heroCopy}>
+          <div className={styles.eyebrow}>Discover</div>
+          <h1>Find the kind of place your next trip is asking for.</h1>
+          <div className={styles.rule} />
+          <p>
+            Not every journey begins with a city name. Start from a feeling, a
+            season, a pace, or a scene — then move into the destinations and
+            places that fit.
+          </p>
 
-        <TravelTimingDiscovery cities={publishedCities} />
+          <div className={styles.quickLinks}>
+            <Link href="/themes">Seasonal places</Link>
+            <span>/</span>
+            <Link href="/themes/quiet-escapes">Quiet cities</Link>
+            <span>/</span>
+            <Link href="/cities">Coastal stays</Link>
+            <span>/</span>
+            <Link href="/guides">First trips</Link>
+          </div>
+        </div>
+
+        <div
+          className={styles.heroImage}
+          style={{
+            backgroundImage:
+              'linear-gradient(180deg, rgba(31, 26, 23, 0.04) 0%, rgba(31, 26, 23, 0.32) 100%), url("/assets/home/lake-bled.jpg")',
+          }}
+        />
+      </section>
+
+      <section className={styles.feelings}>
+        <h2>Start from a feeling</h2>
+
+        <div className={styles.feelingGrid}>
+          {feelings.map((item) => (
+            <Link key={item.title} href={item.href} className={styles.feelingCard}>
+              <div
+                className={styles.feelingImage}
+                style={{
+                  backgroundImage: `linear-gradient(180deg, rgba(31, 26, 23, 0.02) 0%, rgba(31, 26, 23, 0.36) 100%), url("${item.image}")`,
+                }}
+              />
+              <div className={styles.iconCircle}>{item.icon}</div>
+              <div className={styles.feelingBody}>
+                <h3>{item.title}</h3>
+                <p>{item.text}</p>
+                <strong>{item.label} →</strong>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className={styles.discoverySection}>
+        <h2>Featured discoveries</h2>
+
+        <div className={styles.discoveryList}>
+          {discoveries.map((item) => (
+            <Link key={item.number} href={item.href} className={styles.discoveryRow}>
+              <div className={styles.discoveryCopy}>
+                <span>{item.number}</span>
+                <h3>{item.title}</h3>
+                <p>{item.text}</p>
+                <strong>{item.label} →</strong>
+              </div>
+
+              <div
+                className={styles.discoveryImage}
+                style={{
+                  backgroundImage: `linear-gradient(180deg, rgba(31, 26, 23, 0.02) 0%, rgba(31, 26, 23, 0.28) 100%), url("${item.image}")`,
+                }}
+              />
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className={styles.entrySection}>
+        <h2>Browse by entry point</h2>
+
+        <div className={styles.entryGrid}>
+          {entryPoints.map((item) => (
+            <Link key={item.title} href={item.href} className={styles.entryCard}>
+              <div className={styles.entryIcon}>{item.icon}</div>
+              <div>
+                <h3>{item.title}</h3>
+                <p>{item.text}</p>
+                <strong>{item.label} →</strong>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className={styles.closing}>
+        <span>✦</span>
+        <p>Travel is personal. Find the right kind of place for your next journey.</p>
       </section>
     </main>
   );
 }
-
-const pageStyle: CSSProperties = {
-  minHeight: "100vh",
-  overflowX: "hidden",
-  background: "linear-gradient(180deg, #f7f2ea 0%, #fffdf8 46%, #f5efe6 100%)",
-  color: "#1f1a17",
-  fontFamily:
-    '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif',
-};
-
-const shellStyle: CSSProperties = {
-  maxWidth: 1180,
-  margin: "0 auto",
-  padding: "34px 16px 70px",
-};
-
-
-
 
 
