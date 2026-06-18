@@ -1,0 +1,577 @@
+.page {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(238, 178, 171, 0.18), transparent 34rem),
+    linear-gradient(180deg, #fbf5ec 0%, #fffdf8 44%, #f4ede2 100%);
+  color: #22201b;
+}
+
+.page::before,
+.page::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.58;
+}
+
+.page::before {
+  top: 74px;
+  left: -80px;
+  width: 520px;
+  height: 760px;
+  background:
+    radial-gradient(circle at 24% 18%, rgba(231, 165, 158, 0.32) 0 14px, transparent 15px),
+    radial-gradient(circle at 32% 23%, rgba(231, 165, 158, 0.24) 0 10px, transparent 11px),
+    radial-gradient(circle at 43% 32%, rgba(156, 172, 127, 0.20) 0 12px, transparent 13px),
+    radial-gradient(ellipse at 42% 44%, transparent 0 76px, rgba(178, 154, 95, 0.22) 77px 79px, transparent 80px),
+    radial-gradient(ellipse at 20% 54%, transparent 0 82px, rgba(178, 154, 95, 0.18) 83px 85px, transparent 86px);
+}
+
+.page::after {
+  top: 92px;
+  right: -70px;
+  width: 680px;
+  height: 720px;
+  background:
+    radial-gradient(circle at 64% 22%, rgba(231, 165, 158, 0.28) 0 22px, transparent 23px),
+    radial-gradient(circle at 73% 28%, rgba(231, 165, 158, 0.24) 0 16px, transparent 17px),
+    radial-gradient(circle at 58% 36%, rgba(156, 172, 127, 0.20) 0 14px, transparent 15px),
+    radial-gradient(ellipse at 44% 30%, transparent 0 98px, rgba(178, 154, 95, 0.18) 99px 101px, transparent 102px),
+    radial-gradient(ellipse at 64% 48%, transparent 0 112px, rgba(178, 154, 95, 0.16) 113px 115px, transparent 116px);
+}
+
+.hero,
+.notes,
+.destinations,
+.collections {
+  position: relative;
+  z-index: 1;
+}
+
+.hero {
+  width: min(1180px, calc(100% - 64px));
+  margin: 0 auto;
+  padding: clamp(34px, 5vw, 58px) 0 0;
+}
+
+.seasonTabs {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin: 0 auto 46px;
+  flex-wrap: wrap;
+}
+
+.seasonTab {
+  min-width: 152px;
+  min-height: 66px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 0 20px;
+  border: 1px solid rgba(193, 170, 139, 0.54);
+  background: rgba(255, 253, 248, 0.72);
+  color: #3a332b;
+  text-decoration: none;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 22px;
+  line-height: 1;
+  box-shadow: 0 12px 30px rgba(74, 52, 33, 0.06);
+  backdrop-filter: blur(12px);
+}
+
+.seasonTab.activeSeason {
+  border-color: rgba(197, 123, 113, 0.36);
+  background: rgba(255, 247, 244, 0.9);
+  box-shadow: 0 18px 40px rgba(126, 80, 52, 0.10);
+}
+
+.seasonIcon {
+  color: #a86d4a;
+  font-size: 27px;
+  line-height: 1;
+}
+
+.heroCopy {
+  max-width: 760px;
+  padding: 6px 0 52px;
+}
+
+.heroCopy h1 {
+  margin: 0;
+  color: #2a2823;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(72px, 10vw, 132px);
+  line-height: 0.92;
+  font-weight: 520;
+  letter-spacing: -0.075em;
+}
+
+.subtitle {
+  margin: 10px 0 0;
+  color: #6f8667;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(28px, 3.5vw, 45px);
+  font-style: italic;
+  line-height: 1.08;
+}
+
+.intro {
+  max-width: 430px;
+  margin: 24px 0 0;
+  color: #5d574f;
+  font-size: 16px;
+  line-height: 1.72;
+}
+
+.textLink,
+.sectionLink {
+  display: inline-flex;
+  margin-top: 24px;
+  color: #7c5a35;
+  font-size: 13px;
+  font-weight: 760;
+  text-decoration: none;
+  letter-spacing: 0.01em;
+}
+
+.notes {
+  width: min(1180px, calc(100% - 64px));
+  margin: 0 auto 42px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border: 1px solid rgba(193, 170, 139, 0.36);
+  background: rgba(255, 253, 248, 0.56);
+  backdrop-filter: blur(10px);
+}
+
+.note {
+  min-height: 156px;
+  padding: 28px;
+  border-right: 1px solid rgba(193, 170, 139, 0.28);
+}
+
+.note:last-child {
+  border-right: 0;
+}
+
+.noteIcon {
+  margin-bottom: 18px;
+  color: #9d6b43;
+  font-size: 27px;
+  line-height: 1;
+}
+
+.note h2 {
+  margin: 0;
+  color: #2a2823;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 21px;
+  line-height: 1.14;
+  font-weight: 520;
+}
+
+.note p {
+  margin: 9px 0 0;
+  color: #625b52;
+  font-size: 14px;
+  line-height: 1.56;
+}
+
+.destinations,
+.collections {
+  width: min(1180px, calc(100% - 64px));
+  margin: 0 auto;
+}
+
+.destinations {
+  padding: 0 0 46px;
+}
+
+.collections {
+  padding: 0 0 92px;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 24px;
+  margin-bottom: 18px;
+}
+
+.sectionHeader h2 {
+  margin: 0;
+  color: #2a2823;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(28px, 3vw, 42px);
+  font-weight: 520;
+  letter-spacing: -0.035em;
+}
+
+.sectionLink {
+  margin-top: 0;
+  white-space: nowrap;
+}
+
+.destinationGrid,
+.collectionGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.destinationCard,
+.collectionCard {
+  min-height: 265px;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  color: #fff8ef;
+  text-decoration: none;
+  box-shadow: 0 10px 26px rgba(74, 52, 33, 0.10);
+}
+
+.collectionCard {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.cardBody,
+.collectionCard > div {
+  width: 100%;
+  padding: 24px;
+}
+
+.cardBody h3,
+.collectionCard h3 {
+  margin: 0;
+  color: #fff8ef;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(24px, 2.4vw, 35px);
+  line-height: 1;
+  font-weight: 520;
+  letter-spacing: -0.04em;
+}
+
+.cardBody p,
+.collectionCard p {
+  margin: 10px 0 0;
+  color: rgba(255, 248, 239, 0.82);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.cardBody span {
+  display: inline-flex;
+  margin-top: 12px;
+  color: #f3d7b5;
+  font-size: 12px;
+  font-weight: 820;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.collectionIcon {
+  margin-bottom: 14px;
+  color: #fff8ef;
+  font-size: 36px;
+  line-height: 1;
+}
+
+.empty {
+  padding: 22px;
+  border: 1px solid rgba(103, 78, 49, 0.18);
+  color: #62584d;
+}
+
+@media (max-width: 980px) {
+  .hero,
+  .notes,
+  .destinations,
+  .collections {
+    width: min(100% - 32px, 760px);
+  }
+
+  .heroCopy {
+    padding-bottom: 42px;
+  }
+
+  .notes,
+  .destinationGrid,
+  .collectionGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .note:nth-child(2) {
+    border-right: 0;
+  }
+
+  .note:nth-child(1),
+  .note:nth-child(2) {
+    border-bottom: 1px solid rgba(193, 170, 139, 0.28);
+  }
+}
+
+@media (max-width: 620px) {
+  .seasonTabs {
+    gap: 10px;
+  }
+
+  .seasonTab {
+    min-width: calc(50% - 6px);
+    min-height: 58px;
+    font-size: 18px;
+  }
+
+  .heroCopy h1 {
+    font-size: clamp(58px, 18vw, 82px);
+  }
+
+  .subtitle {
+    font-size: clamp(24px, 8vw, 34px);
+  }
+
+  .notes,
+  .destinationGrid,
+  .collectionGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .note {
+    border-right: 0;
+    border-bottom: 1px solid rgba(193, 170, 139, 0.28);
+  }
+
+  .note:last-child {
+    border-bottom: 0;
+  }
+
+  .sectionHeader {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+/* THEME_DETAIL_REFERENCE_TUNING_START */
+
+.page {
+  background:
+    radial-gradient(circle at 50% 0%, rgba(238, 178, 171, 0.18), transparent 34rem),
+    linear-gradient(180deg, #fbf5ec 0%, #fffdf8 42%, #f4ede2 100%);
+}
+
+.page::before {
+  top: 82px;
+  left: -42px;
+  width: 640px;
+  height: 900px;
+  opacity: 0.72;
+  background:
+    radial-gradient(circle at 16% 12%, rgba(231, 165, 158, 0.38) 0 14px, transparent 15px),
+    radial-gradient(circle at 22% 18%, rgba(231, 165, 158, 0.28) 0 9px, transparent 10px),
+    radial-gradient(circle at 34% 28%, rgba(156, 172, 127, 0.22) 0 11px, transparent 12px),
+    radial-gradient(ellipse at 26% 34%, transparent 0 78px, rgba(178, 154, 95, 0.24) 79px 81px, transparent 82px),
+    radial-gradient(ellipse at 10% 48%, transparent 0 92px, rgba(178, 154, 95, 0.20) 93px 95px, transparent 96px),
+    radial-gradient(ellipse at 42% 55%, transparent 0 128px, rgba(178, 154, 95, 0.16) 129px 131px, transparent 132px);
+}
+
+.page::after {
+  top: 94px;
+  right: -20px;
+  width: 760px;
+  height: 840px;
+  opacity: 0.76;
+  background:
+    radial-gradient(circle at 63% 18%, rgba(231, 165, 158, 0.36) 0 24px, transparent 25px),
+    radial-gradient(circle at 72% 25%, rgba(231, 165, 158, 0.26) 0 15px, transparent 16px),
+    radial-gradient(circle at 54% 33%, rgba(156, 172, 127, 0.22) 0 13px, transparent 14px),
+    radial-gradient(circle at 80% 44%, rgba(231, 165, 158, 0.22) 0 12px, transparent 13px),
+    radial-gradient(ellipse at 52% 28%, transparent 0 116px, rgba(178, 154, 95, 0.20) 117px 119px, transparent 120px),
+    radial-gradient(ellipse at 70% 48%, transparent 0 134px, rgba(178, 154, 95, 0.18) 135px 137px, transparent 138px),
+    radial-gradient(ellipse at 42% 61%, transparent 0 82px, rgba(178, 154, 95, 0.14) 83px 85px, transparent 86px);
+}
+
+.hero {
+  width: min(1240px, calc(100% - 64px));
+  padding: 34px 0 0;
+}
+
+.seasonTabs {
+  margin-bottom: 36px;
+  gap: 14px;
+}
+
+.seasonTab {
+  min-width: 142px;
+  min-height: 58px;
+  padding: 0 18px;
+  border-radius: 4px;
+  background: rgba(255, 253, 248, 0.82);
+}
+
+.seasonTab.activeSeason {
+  transform: translateY(-1px);
+}
+
+.heroCopy {
+  max-width: 620px;
+  padding: 18px 0 60px;
+  margin-left: 44px;
+}
+
+.heroCopy h1 {
+  font-size: clamp(78px, 9.4vw, 138px);
+  line-height: 0.88;
+}
+
+.subtitle {
+  margin-top: 8px;
+  font-size: clamp(30px, 3.6vw, 48px);
+}
+
+.intro {
+  max-width: 430px;
+  margin-top: 22px;
+}
+
+.notes {
+  width: min(1180px, calc(100% - 64px));
+  margin-bottom: 46px;
+  background: rgba(255, 253, 248, 0.62);
+}
+
+.note {
+  min-height: 148px;
+  padding: 26px 30px;
+}
+
+.destinations,
+.collections {
+  width: min(1180px, calc(100% - 64px));
+}
+
+.sectionHeader {
+  margin-bottom: 20px;
+}
+
+.destinationGrid,
+.collectionGrid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.destinationCard,
+.collectionCard {
+  min-height: 280px;
+  border-radius: 6px;
+}
+
+.cardBody,
+.collectionCard > div {
+  padding: 24px;
+}
+
+.cardBody h3,
+.collectionCard h3 {
+  font-size: clamp(25px, 2.2vw, 34px);
+}
+
+@media (max-width: 980px) {
+  .heroCopy {
+    margin-left: 0;
+  }
+
+  .destinationGrid,
+  .collectionGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .destinationGrid,
+  .collectionGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* THEME_DETAIL_REFERENCE_TUNING_END */
+
+
+
+
+/* FORCE_SPRING_BACKGROUND_IMAGE_START */
+.page {
+  background:
+    url("/assets/theme/spring-bg.png?v=2") top center / min(1600px, 100vw) auto no-repeat,
+    linear-gradient(180deg, #fbf5ec 0%, #fffdf8 42%, #f4ede2 100%) !important;
+}
+
+.page::before,
+.page::after {
+  display: none !important;
+  content: none !important;
+}
+/* FORCE_SPRING_BACKGROUND_IMAGE_END */
+
+/* FINAL_SPRING_BACKGROUND_BALANCE_START */
+.page {
+  background:
+    linear-gradient(180deg, #fbf5ec 0%, #fffdf8 42%, #f4ede2 100%) !important;
+}
+
+.page::before {
+  content: "" !important;
+  display: block !important;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: url("/assets/theme/spring-bg.png?v=3") top center / min(1680px, 104vw) auto no-repeat;
+  opacity: 0.58;
+}
+
+.page::after {
+  display: none !important;
+  content: none !important;
+}
+
+.hero,
+.notes,
+.destinations,
+.collections {
+  position: relative;
+  z-index: 1;
+}
+/* FINAL_SPRING_BACKGROUND_BALANCE_END */
+
+/* RESTORE_SPRING_BACKGROUND_DIRECT_START */
+.page {
+  background:
+    linear-gradient(180deg, rgba(251, 245, 236, 0.58) 0%, rgba(255, 253, 248, 0.62) 42%, rgba(244, 237, 226, 0.86) 100%),
+    url("/assets/theme/spring-bg.png?v=4") top center / min(1600px, 100vw) auto no-repeat,
+    linear-gradient(180deg, #fbf5ec 0%, #fffdf8 42%, #f4ede2 100%) !important;
+}
+
+.page::before,
+.page::after {
+  display: none !important;
+  content: none !important;
+}
+/* RESTORE_SPRING_BACKGROUND_DIRECT_END */
+
+/* FINAL_SPRING_BACKGROUND_VISIBILITY_START */
+.page {
+  background:
+    linear-gradient(180deg, rgba(251, 245, 236, 0.34) 0%, rgba(255, 253, 248, 0.40) 42%, rgba(244, 237, 226, 0.72) 100%),
+    url("/assets/theme/spring-bg.png?v=5") top center / min(1600px, 100vw) auto no-repeat,
+    linear-gradient(180deg, #fbf5ec 0%, #fffdf8 42%, #f4ede2 100%) !important;
+}
+/* FINAL_SPRING_BACKGROUND_VISIBILITY_END */
