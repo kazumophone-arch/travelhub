@@ -57,13 +57,14 @@ export default function RootLayout({
 
         <div className="travelhub-site-page-shell">
           {children}
-          {process.env.NODE_ENV !== "production" ? <TemporaryAdminTab /> : null}
+          {process.env.NEXT_PUBLIC_SHOW_ADMIN_TAB === "true" ? <TemporaryAdminTab /> : null}
           <SiteFooter />
         </div>
       </body>
     </html>
   );
 }
+
 
 
 
