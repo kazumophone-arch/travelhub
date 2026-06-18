@@ -3,7 +3,7 @@ import { getOptionalHttpUrl } from "@/lib/url-fields";
 
 export const SITE_NAME = "TravelHub";
 export const DEFAULT_SITE_DESCRIPTION =
-  "Find travel links, city guides, spots, hotels, and tours from one simple travel hub.";
+  "An editorial travel guide for discovering cities, seasonal escapes, and places worth planning around.";
 
 const FALLBACK_SITE_URL = "https://travelhub-murex.vercel.app";
 
@@ -99,3 +99,4 @@ function normalizeSiteUrl(value: string) {
     return "";
   }
 }
+

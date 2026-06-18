@@ -1,4 +1,6 @@
 import type { MetadataRoute } from "next";
+import { journalArticles } from "@/data/journal";
+import { themes } from "@/data/themes";
 import { getAbsoluteUrl } from "@/lib/site-metadata";
 import { supabase } from "@/lib/supabase";
 
@@ -49,9 +51,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
   const { cities: supabaseCities, spots: supabaseSpots } =
     await getSupabaseSitemapData();
+
   const supabaseCityById = new Map(
     supabaseCities.map((city) => [city.id, city])
   );
+
   const seenUrls = new Set<string>();
 
   function addEntry(
@@ -64,6 +68,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     if (seenUrls.has(url)) return null;
 
     seenUrls.add(url);
+
     return {
       url,
       lastModified: now,
@@ -77,12 +82,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     addEntry("/discover", "weekly", 0.9),
     addEntry("/cities", "weekly", 0.9),
     addEntry("/spots", "weekly", 0.9),
+    addEntry("/themes", "weekly", 0.9),
+    addEntry("/guides", "monthly", 0.8),
+    addEntry("/journal", "weekly", 0.8),
     addEntry("/about", "monthly", 0.5),
+    addEntry("/contact", "yearly", 0.3),
     addEntry("/affiliate-disclosure", "monthly", 0.4),
     addEntry("/privacy", "yearly", 0.3),
     addEntry("/terms", "yearly", 0.3),
-    addEntry("/contact", "yearly", 0.3),
   ].filter(isSitemapEntry);
+
+  const themePages: MetadataRoute.Sitemap = themes
+    .map((theme) => addEntry(`/themes/${theme.slug}`, "weekly", 0.75))
+    .filter(isSitemapEntry);
+
+  const journalPages: MetadataRoute.Sitemap = journalArticles
+    .map((article) => addEntry(`/journal/${article.slug}`, "monthly", 0.65))
+    .filter(isSitemapEntry);
 
   const cityPages: MetadataRoute.Sitemap = supabaseCities
     .map((city) => addEntry(`/c/${city.slug}`, "weekly", 0.8))
@@ -102,9 +118,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [
     ...staticPages,
+    ...themePages,
+    ...journalPages,
     ...cityPages,
     ...spotPages,
   ];
 }
-
-
