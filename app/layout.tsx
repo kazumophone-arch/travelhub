@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SiteFooter } from "@/components/SiteFooter";
+import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import { SiteNavigation } from "@/components/SiteNavigation";
 import {
   DEFAULT_SITE_DESCRIPTION,
@@ -63,10 +64,12 @@ export default function RootLayout({
           {process.env.NEXT_PUBLIC_SHOW_ADMIN_TAB === "true" ? <TemporaryAdminTab /> : null}
           <SiteFooter />
         </div>
+              <GoogleAnalytics />
       </body>
     </html>
   );
 }
+
 
 
 
