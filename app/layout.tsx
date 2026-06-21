@@ -28,6 +28,9 @@ export const metadata: Metadata = {
   },
   description: DEFAULT_SITE_DESCRIPTION,
   applicationName: SITE_NAME,
+  verification: {
+    google: "4yPw_RTDC3w8wg8ujSjJpDzPy92-eyLahYUymQOamog",
+  },
   openGraph: {
     title: SITE_NAME,
     description: DEFAULT_SITE_DESCRIPTION,
@@ -64,6 +67,7 @@ export default function RootLayout({
     </html>
   );
 }
+
 
 
 
