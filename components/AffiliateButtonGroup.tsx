@@ -1,4 +1,6 @@
-import type { CSSProperties } from "react";
+"use client";
+
+import type { CSSProperties, MouseEvent } from "react";
 import type { City } from "@/data/types";
 
 type AffiliateCity = Pick<City, "slug" | "city">;
@@ -32,6 +34,27 @@ type AffiliateItem = {
   title: string;
   note: string;
 };
+
+type GtagEventParams = {
+  affiliate_type: AffiliatePrimary;
+  city_slug: string;
+  spot_slug?: string;
+  source: string;
+  variant: AffiliateVariant;
+  value: string;
+  event_callback?: () => void;
+  event_timeout?: number;
+};
+
+declare global {
+  interface Window {
+    gtag?: (
+      command: "event",
+      eventName: "affiliate_click",
+      params: GtagEventParams
+    ) => void;
+  }
+}
 
 export function AffiliateButtonGroup({
   city,
@@ -96,7 +119,20 @@ export function AffiliateButtonGroup({
         const noteStyle = getNoteStyle(isPrimary, tone);
 
         return (
-          <a key={item.key} href={item.href} style={buttonStyle}>
+          <a
+            key={item.key}
+            href={item.href}
+            style={buttonStyle}
+            onClick={(event) =>
+              handleAffiliateClick(event, {
+                item,
+                citySlug: city.slug,
+                spotSlug,
+                src,
+                variant,
+              })
+            }
+          >
             <div style={buttonTextStyle}>
               <span style={labelStyle}>{item.label}</span>
               <span style={titleStyle}>{item.title}</span>
@@ -113,6 +149,58 @@ export function AffiliateButtonGroup({
       </p>
     </div>
   );
+}
+
+type AffiliateClickInput = {
+  item: AffiliateItem;
+  citySlug: string;
+  spotSlug?: string;
+  src: string;
+  variant: AffiliateVariant;
+};
+
+function handleAffiliateClick(
+  event: MouseEvent<HTMLAnchorElement>,
+  { item, citySlug, spotSlug, src, variant }: AffiliateClickInput
+) {
+  if (
+    event.defaultPrevented ||
+    event.button !== 0 ||
+    event.metaKey ||
+    event.ctrlKey ||
+    event.shiftKey ||
+    event.altKey
+  ) {
+    return;
+  }
+
+  if (typeof window === "undefined" || typeof window.gtag !== "function") {
+    return;
+  }
+
+  event.preventDefault();
+
+  const href = event.currentTarget.href;
+  let didNavigate = false;
+
+  const navigate = () => {
+    if (didNavigate) return;
+    didNavigate = true;
+    window.location.href = href;
+  };
+
+  window.gtag("event", "affiliate_click", {
+    affiliate_type: item.key,
+    city_slug: citySlug,
+    spot_slug: spotSlug,
+    source: src,
+    variant,
+    value: item.href,
+    event_callback: navigate,
+    event_timeout: 300,
+  });
+
+  window.setTimeout(navigate, 350);
 }
 
 function getHotelCopy(city: AffiliateCity, variant: AffiliateVariant) {
@@ -339,6 +427,7 @@ const disclosureStyle: CSSProperties = {
   lineHeight: 1.45,
   opacity: 0.6,
 };
+
 
 
 
