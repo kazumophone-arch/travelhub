@@ -1,322 +1,470 @@
-import type { CSSProperties } from "react";
 import Link from "next/link";
-import { themes, type Theme } from "@/data/themes";
+import type { CSSProperties } from "react";
 import { createPublicMetadata } from "@/lib/site-metadata";
-import { getImageBackground } from "@/lib/url-fields";
+import { themes, type Theme } from "@/data/themes";
+import styles from "./ThemesPage.module.css";
 
 export const metadata = createPublicMetadata({
   title: "Browse Themes | TravelHub",
   description:
-    "Choose your next trip by season or travel style with TravelHub theme guides.",
+    "Choose your next trip by season, feeling, and travel style with TravelHub theme guides.",
   path: "/themes",
 });
 
 const seasonThemes = themes.filter((theme) => theme.group === "season");
 const styleThemes = themes.filter((theme) => theme.group === "style");
 
-function getThemeBackground(theme: Theme) {
-  return getImageBackground(
-    `https://picsum.photos/seed/${encodeURIComponent(theme.imageSeed)}/1200/800`,
-    "linear-gradient(180deg, rgba(25, 20, 17, 0.08) 0%, rgba(25, 20, 17, 0.58) 38%, rgba(25, 20, 17, 0.88) 100%)",
-    "linear-gradient(180deg, #f9f5ef 0%, #f2ede6 42%, #e9e2d8 100%)"
-  );
-}
+const seasonImages: Record<string, string> = {
+  spring: "/assets/home/kyoto-hero.jpg",
+  summer: "/assets/home/algarve.jpg",
+  autumn: "/assets/home/lake-bled.jpg",
+  winter: "/assets/home/queenstown.jpg",
+};
 
-function getStyleBackground(theme: Theme) {
-  return getImageBackground(
-    `https://picsum.photos/seed/${encodeURIComponent(theme.imageSeed)}/900/700`,
-    "linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.06) 100%)",
-    "linear-gradient(180deg, #fbf7f0 0%, #f8f3ea 48%, #f2e8de 100%)"
-  );
-}
+const moodImages: Record<string, string> = {
+  nature: "/assets/home/queenstown.jpg",
+  food: "/assets/home/taste-culture.jpg",
+  luxury: "/assets/home/rome-preview.jpg",
+  couples: "/assets/home/live-the-moment.jpg",
+  "first-trip": "/assets/home/seek-wonder.jpg",
+  "quiet-escapes": "/assets/home/find-peace.jpg",
+};
+
+const moodIcons: Record<string, string> = {
+  nature: "◇",
+  food: "◐",
+  luxury: "♕",
+  couples: "♡",
+  "first-trip": "✦",
+  "quiet-escapes": "○",
+};
 
 export default function ThemesPage() {
   return (
-    <main style={pageStyle}>
-      <section style={shellStyle}>
-        <div style={heroStyle}>
-          <div style={heroCopyStyle}>
-            <div style={eyebrowStyle}>Browse by theme</div>
-            <h1 style={heroTitleStyle}>Choose the feeling of your next trip.</h1>
-            <p style={heroTextStyle}>
-              Discover destinations through season, travel mood, and destination style
-              to find the right trip without overwhelming options.
-            </p>
-          </div>
+    <main className={styles.page} style={pageStyle}>
+      <section style={heroStyle}>
+        <div style={decorLeftStyle} aria-hidden="true" />
+        <div style={decorRightStyle} aria-hidden="true" />
+
+        <div style={eyebrowStyle}>Browse by theme</div>
+        <h1 style={heroTitleStyle}>Choose the feeling of your next trip.</h1>
+        <p style={heroTextStyle}>
+          Travel is more than a place — it is a feeling. Explore by season or
+          style to find inspiration that matches your mood.
+        </p>
+      </section>
+
+      <section style={sectionStyle} aria-labelledby="seasonal-edits">
+        <div style={sectionEyebrowStyle}>Seasonal edits</div>
+        <h2 id="seasonal-edits" style={sectionTitleStyle}>
+          Travel with the best season in mind.
+        </h2>
+
+        <div className={styles.seasonRail} style={seasonRailStyle}>
+          {seasonThemes.map((theme, index) => (
+            <Link
+              key={theme.slug}
+              href={`/themes/${theme.slug}`}
+              className={index === 2 ? styles.seasonFeatured : undefined}
+              style={{
+                ...seasonCardStyle,
+                ...(index === 2 ? featuredSeasonCardStyle : null),
+                backgroundImage: getImageBackground(
+                  seasonImages[theme.slug],
+                  "linear-gradient(180deg, rgba(18, 14, 10, 0.05) 0%, rgba(18, 14, 10, 0.38) 48%, rgba(18, 14, 10, 0.82) 100%)"
+                ),
+              }}
+            >
+              <div>
+                <div style={seasonEyebrowStyle}>{theme.eyebrow}</div>
+                <h3 style={seasonTitleStyle}>{theme.title}</h3>
+                <p style={seasonTextStyle}>{getSeasonLine(theme.slug)}</p>
+              </div>
+
+              {index === 2 ? (
+                <span style={seasonActionStyle}>
+                  Explore {theme.title} →
+                </span>
+              ) : null}
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section style={moodSectionStyle} aria-labelledby="travel-moods">
+        <div style={centerEyebrowStyle}>Travel styles & moods</div>
+
+        <div id="travel-moods" className={styles.moodGrid} style={moodGridStyle}>
+          {styleThemes.map((theme) => (
+            <Link
+              key={theme.slug}
+              href={`/themes/${theme.slug}`}
+              style={{
+                ...moodCardStyle,
+                backgroundImage: getImageBackground(
+                  moodImages[theme.slug],
+                  "linear-gradient(180deg, rgba(20, 16, 12, 0.18) 0%, rgba(20, 16, 12, 0.46) 58%, rgba(20, 16, 12, 0.78) 100%)"
+                ),
+              }}
+            >
+              <span style={moodIconStyle}>{moodIcons[theme.slug] ?? "✦"}</span>
+              <h3 style={moodTitleStyle}>{theme.title}</h3>
+              <p style={moodTextStyle}>{getMoodLine(theme)}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className={styles.cta} style={ctaStyle}>
+        <div style={ctaMapStyle} aria-hidden="true" />
+        <div>
+          <h2 style={ctaTitleStyle}>Ready to find your perfect destination?</h2>
+          <p style={ctaTextStyle}>
+            Explore destination guides with curated cities, places, and trip
+            inspiration.
+          </p>
         </div>
 
-        <section style={sectionStyle}>
-          <div style={sectionHeadingStyle}>
-            <div>
-              <div style={sectionEyebrowStyle}>Seasonal edits</div>
-              <h2 style={sectionTitleStyle}>Travel with the best season in mind.</h2>
-            </div>
-          </div>
-
-          <div style={seasonGridStyle}>
-            {seasonThemes.map((theme) => (
-              <Link
-                key={theme.slug}
-                href={`/themes/${theme.slug}`}
-                style={{
-                  ...seasonCardStyle,
-                  backgroundImage: getThemeBackground(theme),
-                }}
-              >
-                <div>
-                  <div style={themeEyebrowStyle}>{theme.eyebrow}</div>
-                  <h3 style={themeTitleStyle}>{theme.title}</h3>
-                  <p style={themeDescriptionStyle}>{theme.description}</p>
-                </div>
-                <span style={themeActionStyle}>Open theme →</span>
-              </Link>
-            ))}
-          </div>
-        </section>
-
-        <section style={sectionStyle}>
-          <div style={sectionHeadingStyle}>
-            <div>
-              <div style={sectionEyebrowStyle}>Travel mood</div>
-              <h2 style={sectionTitleStyle}>Choose a travel style that fits the trip.</h2>
-            </div>
-          </div>
-
-          <div style={styleGridStyle}>
-            {styleThemes.map((theme) => (
-              <Link
-                key={theme.slug}
-                href={`/themes/${theme.slug}`}
-                style={{
-                  ...styleCardStyle,
-                  backgroundImage: getStyleBackground(theme),
-                }}
-              >
-                <div>
-                  <div style={themeEyebrowStyle}>{theme.eyebrow}</div>
-                  <h3 style={styleTitleStyle}>{theme.title}</h3>
-                  <p style={styleDescriptionStyle}>{theme.description}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </section>
-
-        <section style={footerStyle}>
-          <div>
-            <div style={footerEyebrowStyle}>Start with destinations</div>
-            <h2 style={footerTitleStyle}>Browse destination guides next.</h2>
-          </div>
-          <Link href="/cities" style={footerLinkStyle}>
-            Browse destinations
-          </Link>
-        </section>
+        <Link href="/cities" className={styles.ctaLink} style={ctaLinkStyle}>
+          Explore destinations →
+        </Link>
       </section>
     </main>
   );
 }
 
-const pageStyle: CSSProperties = {
-  minHeight: "100vh",
-  background: "linear-gradient(180deg, #fbf6ef 0%, #f5efe6 42%, #ede5dc 100%)",
-  color: "#22201d",
-};
+function getImageBackground(imageUrl: string | undefined, overlay: string) {
+  if (!imageUrl) {
+    return "linear-gradient(180deg, #e8ded1 0%, #b9aa99 100%)";
+  }
 
-const shellStyle: CSSProperties = {
-  maxWidth: 1200,
-  margin: "0 auto",
-  padding: "32px 16px 64px",
+  return `${overlay}, url("${imageUrl}")`;
+}
+
+function getSeasonLine(slug: string) {
+  if (slug === "spring") {
+    return "New beginnings and blossoming landscapes.";
+  }
+
+  if (slug === "summer") {
+    return "Sun-drenched days and endless adventures.";
+  }
+
+  if (slug === "autumn") {
+    return "Golden landscapes and crisp, cozy days.";
+  }
+
+  if (slug === "winter") {
+    return "Snowy escapes and magical moments.";
+  }
+
+  return "Seasonal places worth planning around.";
+}
+
+function getMoodLine(theme: Theme) {
+  if (theme.slug === "nature") {
+    return "Breathtaking landscapes and wild places.";
+  }
+
+  if (theme.slug === "food") {
+    return "Local flavors and culinary journeys.";
+  }
+
+  if (theme.slug === "luxury") {
+    return "Timeless comfort, design, and style.";
+  }
+
+  if (theme.slug === "couples") {
+    return "Romantic places made for two.";
+  }
+
+  if (theme.slug === "first-trip") {
+    return "Easy first destinations with less friction.";
+  }
+
+  if (theme.slug === "quiet-escapes") {
+    return "Peaceful places to slow down and reset.";
+  }
+
+  return theme.description;
+}
+
+const pageStyle: CSSProperties = {
+  width: "100%",
+  maxWidth: "100%",
+  overflowX: "hidden",
+  minHeight: "100vh",
+  padding: "54px clamp(18px, 3.2vw, 64px) 42px",
+  background:
+    "radial-gradient(circle at 14% 14%, rgba(187, 132, 68, 0.08), transparent 24%), radial-gradient(circle at 88% 18%, rgba(187, 132, 68, 0.08), transparent 24%), linear-gradient(180deg, #fbf7ef 0%, #f7f0e7 48%, #f0e7dc 100%)",
+  color: "#201d19",
+  boxSizing: "border-box",
 };
 
 const heroStyle: CSSProperties = {
-  padding: "54px 0 26px",
-  maxWidth: 860,
+  position: "relative",
+  maxWidth: 980,
+  margin: "0 auto",
+  padding: "18px 0 44px",
+  textAlign: "center",
 };
 
-const heroCopyStyle: CSSProperties = {
-  display: "grid",
-  gap: 18,
+const decorLeftStyle: CSSProperties = {
+  position: "absolute",
+  left: -260,
+  top: 30,
+  width: 260,
+  height: 260,
+  opacity: 0.28,
+  background:
+    "radial-gradient(circle at 50% 50%, rgba(154, 104, 52, 0.18), transparent 62%)",
+  borderRadius: "50%",
+};
+
+const decorRightStyle: CSSProperties = {
+  position: "absolute",
+  right: -260,
+  top: 20,
+  width: 280,
+  height: 280,
+  opacity: 0.24,
+  background:
+    "radial-gradient(circle at 50% 50%, rgba(154, 104, 52, 0.18), transparent 62%)",
+  borderRadius: "50%",
 };
 
 const eyebrowStyle: CSSProperties = {
-  fontSize: 12,
+  marginBottom: 18,
+  color: "#a5713b",
+  fontSize: 13,
+  fontWeight: 800,
+  letterSpacing: "0.32em",
   textTransform: "uppercase",
-  letterSpacing: "0.13em",
-  color: "#8c6e45",
-  fontWeight: 850,
 };
 
 const heroTitleStyle: CSSProperties = {
   margin: 0,
-  fontSize: "clamp(36px, 6vw, 64px)",
-  lineHeight: 1.02,
-  letterSpacing: "-0.06em",
-  maxWidth: 700,
-  fontWeight: 850,
+  fontFamily: "Georgia, 'Times New Roman', serif",
+  fontSize: "clamp(46px, 5.8vw, 86px)",
+  lineHeight: 0.98,
+  fontWeight: 500,
+  letterSpacing: "-0.055em",
 };
 
 const heroTextStyle: CSSProperties = {
-  margin: 0,
-  maxWidth: 640,
-  fontSize: 18,
-  lineHeight: 1.78,
-  color: "#4f453d",
+  maxWidth: 700,
+  margin: "24px auto 0",
+  color: "#756b61",
+  fontSize: "clamp(16px, 1.5vw, 21px)",
+  lineHeight: 1.7,
 };
 
 const sectionStyle: CSSProperties = {
-  marginTop: 42,
-};
-
-const sectionHeadingStyle: CSSProperties = {
-  marginBottom: 24,
+  maxWidth: 1500,
+  margin: "0 auto",
 };
 
 const sectionEyebrowStyle: CSSProperties = {
-  fontSize: 12,
-  textTransform: "uppercase",
-  letterSpacing: "0.14em",
-  color: "#8c6e45",
-  marginBottom: 10,
+  marginBottom: 12,
+  color: "#a5713b",
+  textAlign: "center",
+  fontSize: 13,
   fontWeight: 850,
+  letterSpacing: "0.32em",
+  textTransform: "uppercase",
+};
+
+const centerEyebrowStyle: CSSProperties = {
+  ...sectionEyebrowStyle,
+  marginBottom: 22,
 };
 
 const sectionTitleStyle: CSSProperties = {
-  margin: 0,
-  fontSize: "clamp(28px, 4vw, 38px)",
+  margin: "0 0 26px",
+  textAlign: "center",
+  fontSize: "clamp(26px, 3vw, 40px)",
   lineHeight: 1.1,
   letterSpacing: "-0.04em",
   fontWeight: 850,
 };
 
-const seasonGridStyle: CSSProperties = {
+const seasonRailStyle: CSSProperties = {
   display: "grid",
-  gap: 20,
-  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))",
+  alignItems: "stretch",
+  gap: 8,
 };
 
 const seasonCardStyle: CSSProperties = {
-  minHeight: 320,
+  minHeight: 360,
+  padding: "clamp(24px, 3vw, 38px)",
   display: "flex",
   flexDirection: "column",
-  justifyContent: "space-between",
-  padding: "28px 28px 24px",
-  borderRadius: 28,
+  justifyContent: "flex-end",
   color: "#fff",
   textDecoration: "none",
   backgroundSize: "cover",
   backgroundPosition: "center",
-  boxShadow: "0 22px 68px rgba(22, 18, 14, 0.18)",
-  border: "1px solid rgba(255, 255, 255, 0.18)",
+  boxShadow: "0 28px 70px rgba(32, 25, 18, 0.13)",
+  boxSizing: "border-box",
 };
 
-const themeEyebrowStyle: CSSProperties = {
+const featuredSeasonCardStyle: CSSProperties = {
+  transform: "scale(1.055)",
+  zIndex: 2,
+  border: "8px solid rgba(255, 255, 255, 0.86)",
+  boxShadow: "0 34px 90px rgba(32, 25, 18, 0.28)",
+};
+
+const seasonEyebrowStyle: CSSProperties = {
+  marginBottom: 14,
+  color: "rgba(255, 255, 255, 0.78)",
   fontSize: 12,
+  fontWeight: 850,
+  letterSpacing: "0.2em",
   textTransform: "uppercase",
-  letterSpacing: "0.12em",
-  opacity: 0.92,
-  marginBottom: 10,
-  fontWeight: 850,
 };
 
-const themeTitleStyle: CSSProperties = {
-  margin: "0 0 12px",
-  fontSize: 26,
-  lineHeight: 1.08,
-  fontWeight: 850,
+const seasonTitleStyle: CSSProperties = {
+  margin: "0 0 16px",
+  fontFamily: "Georgia, 'Times New Roman', serif",
+  fontSize: "clamp(34px, 3.4vw, 58px)",
+  lineHeight: 0.95,
+  fontWeight: 500,
+  letterSpacing: "-0.055em",
 };
 
-const themeDescriptionStyle: CSSProperties = {
+const seasonTextStyle: CSSProperties = {
+  maxWidth: 320,
   margin: 0,
-  maxWidth: 440,
-  fontSize: 15,
-  lineHeight: 1.72,
-  color: "rgba(255, 255, 255, 0.92)",
+  fontSize: "clamp(15px, 1.3vw, 19px)",
+  lineHeight: 1.55,
+  color: "rgba(255, 255, 255, 0.9)",
 };
 
-const themeActionStyle: CSSProperties = {
-  marginTop: 20,
-  display: "inline-flex",
-  alignItems: "center",
+const seasonActionStyle: CSSProperties = {
+  marginTop: 26,
+  color: "#d9a463",
+  fontSize: 14,
+  fontWeight: 850,
+  letterSpacing: "0.08em",
+  textTransform: "uppercase",
+};
+
+const moodSectionStyle: CSSProperties = {
+  maxWidth: 1500,
+  margin: "70px auto 0",
+};
+
+const moodGridStyle: CSSProperties = {
+  display: "grid",
   gap: 8,
+};
+
+const moodCardStyle: CSSProperties = {
+  minHeight: 230,
+  padding: "28px 22px",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",
+  alignItems: "center",
+  textAlign: "center",
   color: "#fff",
-  fontSize: 13,
-  fontWeight: 850,
-};
-
-const styleGridStyle: CSSProperties = {
-  display: "grid",
-  gap: 16,
-  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 250px), 1fr))",
-};
-
-const styleCardStyle: CSSProperties = {
-  minHeight: 240,
-  padding: "24px",
-  borderRadius: 24,
+  textDecoration: "none",
   backgroundSize: "cover",
   backgroundPosition: "center",
+  boxShadow: "0 20px 54px rgba(32, 25, 18, 0.12)",
+  boxSizing: "border-box",
+};
+
+const moodIconStyle: CSSProperties = {
+  marginBottom: 18,
+  fontSize: 34,
+  lineHeight: 1,
+  color: "rgba(255, 255, 255, 0.9)",
+};
+
+const moodTitleStyle: CSSProperties = {
+  margin: "0 0 10px",
+  fontFamily: "Georgia, 'Times New Roman', serif",
+  fontSize: "clamp(24px, 2.2vw, 36px)",
+  lineHeight: 1,
+  fontWeight: 500,
+};
+
+const moodTextStyle: CSSProperties = {
+  maxWidth: 230,
+  margin: 0,
+  color: "rgba(255, 255, 255, 0.88)",
+  fontSize: 15,
+  lineHeight: 1.55,
+};
+
+const ctaStyle: CSSProperties = {
+  position: "relative",
+  maxWidth: 1500,
+  margin: "42px auto 0",
+  padding: "32px clamp(24px, 4vw, 58px)",
+  minHeight: 112,
   display: "grid",
-  gap: 10,
-  color: "#1f1a17",
-  textDecoration: "none",
-  border: "1px solid rgba(31, 26, 23, 0.08)",
-  boxShadow: "0 16px 42px rgba(38, 30, 23, 0.08)",
-};
-
-const styleTitleStyle: CSSProperties = {
-  margin: "0 0 8px",
-  fontSize: 22,
-  lineHeight: 1.12,
-  fontWeight: 850,
-};
-
-const styleDescriptionStyle: CSSProperties = {
-  margin: 0,
-  fontSize: 14,
-  lineHeight: 1.7,
-  color: "#3b332e",
-};
-
-const footerStyle: CSSProperties = {
-  marginTop: 42,
-  padding: "32px 30px",
-  borderRadius: 24,
-  background: "#fff8f0",
-  display: "flex",
+  gridTemplateColumns: "1fr auto",
   alignItems: "center",
-  justifyContent: "space-between",
-  gap: 18,
-  border: "1px solid rgba(148, 118, 83, 0.14)",
+  gap: 28,
+  overflow: "hidden",
+  borderRadius: 4,
+  background:
+    "linear-gradient(90deg, rgba(255, 250, 243, 0.94) 0%, rgba(247, 238, 226, 0.9) 100%)",
+  boxShadow: "inset 0 0 0 1px rgba(155, 115, 72, 0.1)",
+  boxSizing: "border-box",
 };
 
-const footerEyebrowStyle: CSSProperties = {
-  fontSize: 12,
+const ctaMapStyle: CSSProperties = {
+  position: "absolute",
+  inset: 0,
+  opacity: 0.22,
+  background:
+    "radial-gradient(circle at 12% 50%, rgba(144, 96, 45, 0.25), transparent 18%), linear-gradient(135deg, transparent 0 42%, rgba(144, 96, 45, 0.16) 43%, transparent 44% 100%)",
+  pointerEvents: "none",
+};
+
+const ctaTitleStyle: CSSProperties = {
+  position: "relative",
+  margin: 0,
+  fontFamily: "Georgia, 'Times New Roman', serif",
+  fontSize: "clamp(28px, 3vw, 44px)",
+  lineHeight: 1.05,
+  fontWeight: 500,
+  textAlign: "center",
+};
+
+const ctaTextStyle: CSSProperties = {
+  position: "relative",
+  margin: "10px 0 0",
+  color: "#776c61",
+  textAlign: "center",
+  fontSize: 16,
+  lineHeight: 1.6,
+};
+
+const ctaLinkStyle: CSSProperties = {
+  position: "relative",
+  color: "#9b6730",
+  textDecoration: "none",
+  fontSize: 14,
+  fontWeight: 850,
+  letterSpacing: "0.08em",
   textTransform: "uppercase",
-  letterSpacing: "0.14em",
-  color: "#8c6e45",
-  fontWeight: 850,
-  marginBottom: 8,
+  borderBottom: "2px solid rgba(155, 103, 48, 0.45)",
+  paddingBottom: 8,
+  whiteSpace: "nowrap",
 };
 
-const footerTitleStyle: CSSProperties = {
-  margin: 0,
-  fontSize: "clamp(24px, 4vw, 32px)",
-  lineHeight: 1.1,
-  fontWeight: 850,
-  color: "#231f1b",
-};
+const mobileStyles = `
+@media (max-width: 980px) {
+  .themeSeasonRail {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+`;
 
-const footerLinkStyle: CSSProperties = {
-  display: "inline-flex",
-  alignItems: "center",
-  justifyContent: "center",
-  minWidth: 220,
-  padding: "14px 18px",
-  borderRadius: 999,
-  background: "#2b221c",
-  color: "#fff",
-  textDecoration: "none",
-  fontWeight: 850,
-  fontSize: 14,
-};
+
 

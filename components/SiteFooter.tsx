@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
+import styles from "./SiteFooter.module.css";
 
 const footerColumns = [
   {
@@ -31,9 +32,9 @@ const footerColumns = [
 
 export function SiteFooter() {
   return (
-    <footer style={footerStyle}>
-      <div style={innerStyle}>
-        <div style={topStyle}>
+    <footer className={styles.footer} style={footerStyle}>
+      <div className={styles.inner} style={innerStyle}>
+        <div className={styles.top} style={topStyle}>
           <div style={brandBlockStyle}>
             <Link href="/" style={brandStyle}>
               <span style={brandMarkStyle}>⌖</span>
@@ -46,7 +47,7 @@ export function SiteFooter() {
             </p>
           </div>
 
-          <nav style={columnsStyle} aria-label="Footer navigation">
+          <nav className={styles.columns} style={columnsStyle} aria-label="Footer navigation">
             {footerColumns.map((column) => (
               <div key={column.title} style={columnStyle}>
                 <div style={columnTitleStyle}>{column.title}</div>
@@ -63,7 +64,7 @@ export function SiteFooter() {
           </nav>
         </div>
 
-        <div style={bottomStyle}>
+        <div className={styles.bottom} style={bottomStyle}>
           <p style={noticeStyle}>
             Some links may be affiliate links. TravelHub may earn a commission
             if you book through them, at no additional cost to you.
@@ -182,4 +183,5 @@ const copyrightStyle: CSSProperties = {
   fontSize: 12,
   whiteSpace: "nowrap",
 };
+
 

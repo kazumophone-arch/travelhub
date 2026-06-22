@@ -1,0 +1,36 @@
+.footer {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+.inner,
+.top,
+.columns,
+.bottom {
+  box-sizing: border-box;
+}
+
+@media (max-width: 700px) {
+  .footer {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+
+  .top {
+    grid-template-columns: 1fr !important;
+    gap: 30px !important;
+  }
+
+  .columns {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+  }
+
+  .bottom {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+  }
+}
