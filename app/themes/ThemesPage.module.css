@@ -33,7 +33,18 @@
   }
 
   .moodGrid {
-    grid-template-columns: 1fr;
+    display: flex !important;
+    grid-template-columns: none !important;
+    overflow-x: auto;
+    gap: 12px !important;
+    padding-bottom: 6px;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .moodCard {
+    flex: 0 0 78%;
+    scroll-snap-align: start;
   }
 
   .seasonFeatured {

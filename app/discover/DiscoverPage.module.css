@@ -305,8 +305,22 @@
     min-height: 280px;
   }
 
-  .feelingGrid,
   .entryGrid {
     grid-template-columns: 1fr;
+  }
+
+  .feelingGrid {
+    display: flex;
+    grid-template-columns: none;
+    overflow-x: auto;
+    gap: 14px;
+    padding-bottom: 6px;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .feelingCard {
+    flex: 0 0 78%;
+    scroll-snap-align: start;
   }
 }

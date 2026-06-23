@@ -90,6 +90,7 @@ export default function ThemesPage() {
             <Link
               key={theme.slug}
               href={`/themes/${theme.slug}`}
+              className={styles.moodCard}
               style={{
                 ...moodCardStyle,
                 backgroundImage: getImageBackground(

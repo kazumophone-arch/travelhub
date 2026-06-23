@@ -362,10 +362,35 @@
     min-height: 260px;
   }
 
-  .situationGrid,
   .pathGrid,
   .entranceGrid {
     grid-template-columns: 1fr;
+  }
+
+  .situationGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .situationCard {
+    min-height: 0;
+    padding: 20px 16px;
+  }
+
+  .situationNumber {
+    margin-bottom: 10px;
+    font-size: 18px;
+  }
+
+  .situationCard h3 {
+    font-size: 19px;
+    line-height: 1.12;
+  }
+
+  .situationCard p {
+    min-height: 0;
+    margin: 10px 0 14px;
+    font-size: 13px;
   }
 
   .pathItem,
