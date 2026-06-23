@@ -9,12 +9,14 @@ export const dynamic = "force-dynamic";
 type SupabaseSitemapCity = {
   id: string;
   slug: string;
+  updated_at: string | null;
 };
 
 type SupabaseSitemapSpot = {
   id: string;
   city_id: string | null;
   slug: string;
+  updated_at: string | null;
 };
 
 type SitemapEntry = MetadataRoute.Sitemap[number];
@@ -24,17 +26,25 @@ function isSitemapEntry(entry: SitemapEntry | null): entry is SitemapEntry {
   return entry !== null;
 }
 
+function toOptionalDate(value: string | null): Date | undefined {
+  if (!value) return undefined;
+
+  const date = new Date(value);
+
+  return Number.isNaN(date.getTime()) ? undefined : date;
+}
+
 async function getSupabaseSitemapData() {
   const [citiesResult, spotsResult] = await Promise.all([
     supabase
       .from("cities")
-      .select("id, slug")
+      .select("id, slug, updated_at")
       .eq("is_published", true)
       .order("sort_rank", { ascending: true })
       .order("created_at", { ascending: false }),
     supabase
       .from("spots")
-      .select("id, city_id, slug")
+      .select("id, city_id, slug, updated_at")
       .eq("is_published", true)
       .order("created_at", { ascending: false }),
   ]);
@@ -48,7 +58,6 @@ async function getSupabaseSitemapData() {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const now = new Date();
   const { cities: supabaseCities, spots: supabaseSpots } =
     await getSupabaseSitemapData();
 
@@ -61,7 +70,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   function addEntry(
     path: string,
     changeFrequency: ChangeFrequency,
-    priority: number
+    priority: number,
+    lastModified?: Date
   ): SitemapEntry | null {
     const url = getAbsoluteUrl(path);
 
@@ -71,7 +81,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     return {
       url,
-      lastModified: now,
+      ...(lastModified ? { lastModified } : {}),
       changeFrequency,
       priority,
     };
@@ -101,7 +111,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .filter(isSitemapEntry);
 
   const cityPages: MetadataRoute.Sitemap = supabaseCities
-    .map((city) => addEntry(`/c/${city.slug}`, "weekly", 0.8))
+    .map((city) =>
+      addEntry(
+        `/c/${city.slug}`,
+        "weekly",
+        0.8,
+        toOptionalDate(city.updated_at)
+      )
+    )
     .filter(isSitemapEntry);
 
   const spotPages: MetadataRoute.Sitemap = supabaseSpots
@@ -112,7 +129,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
       if (!city) return null;
 
-      return addEntry(`/c/${city.slug}/spot/${spot.slug}`, "weekly", 0.7);
+      return addEntry(
+        `/c/${city.slug}/spot/${spot.slug}`,
+        "weekly",
+        0.7,
+        toOptionalDate(spot.updated_at)
+      );
     })
     .filter(isSitemapEntry);
 
