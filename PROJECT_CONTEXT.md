@@ -107,7 +107,6 @@ Important environment variables inferred from the code:
 ## Known Issues and Risks
 
 - The project uses Next.js 16, which has breaking App Router changes. Future sessions must read relevant docs in `node_modules/next/dist/docs/` before changing Next-specific code.
-- `TemporaryAdminTab` is mounted in the root layout, so a floating admin entry point can appear on public production pages unless hidden in local storage.
 - Supabase row-to-view-model mapping is duplicated across public data helpers, `/cities`, and the outbound redirect route. This increases the chance of inconsistent behavior. The safe refactor already completed was only `/spots` reusing the shared public spot select/mapper from `data/supabase-public-spots.ts`.
 - `/cities` still has duplicated city normalization logic, but a direct replacement with `getPublishedSupabaseDirectoryCities()` is not behavior-equivalent. The main risk is `stops`: current `/cities` uses `stops: []`, while the shared helper can populate stops from published spots plus city/country/region fallbacks. Changing stops could affect visible city card chips, search text, category inference, filters, and reason copy, so `/cities` normalization should not be centralized until that visible behavior change is intentional.
 - Some static/legacy files and unused components remain in the repo, including older city data and fallback image data. The unused public Supabase components `components/PublicSupabaseCities.tsx` and `components/PublicSupabaseSpots.tsx` were removed, and `npm run build` passed after the deletion.
@@ -123,13 +122,12 @@ Important environment variables inferred from the code:
 ## Next Recommended Tasks
 
 1. Run `npm run build` after this handoff document is created and fix only safe build errors.
-2. Decide whether the public `TemporaryAdminTab` should remain visible in production.
-3. Centralize Supabase city/spot normalization so all routes use one mapper.
-4. Clean up or archive legacy/static data and unused components after confirming they are no longer needed.
-5. Add lightweight smoke tests or route-level checks for the public pages and `/out/[type]`.
-6. Revisit public route caching only after inspecting the active Next.js 16 caching model and confirming the intended freshness tradeoffs.
-7. Review the tracked root `h` file and remove it only after confirming it is not intentionally kept.
-8. Use `docs/DATA_ENTRY_GUIDE.md` before bulk adding or editing cities/spots in the admin UI.
+2. Centralize Supabase city/spot normalization so all routes use one mapper.
+3. Clean up or archive legacy/static data and unused components after confirming they are no longer needed.
+4. Add lightweight smoke tests or route-level checks for the public pages and `/out/[type]`.
+5. Revisit public route caching only after inspecting the active Next.js 16 caching model and confirming the intended freshness tradeoffs.
+6. Review the tracked root `h` file and remove it only after confirming it is not intentionally kept.
+7. Use `docs/DATA_ENTRY_GUIDE.md` before bulk adding or editing cities/spots in the admin UI.
 
 ## Development Rules for Future Codex Sessions
 

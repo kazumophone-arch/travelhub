@@ -9,7 +9,6 @@ import {
   getSiteUrl,
 } from "@/lib/site-metadata";
 import "./globals.css";
-import { TemporaryAdminTab } from "@/components/TemporaryAdminTab";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -61,7 +60,6 @@ export default function RootLayout({
 
         <div className="travelhub-site-page-shell">
           {children}
-          {process.env.NEXT_PUBLIC_SHOW_ADMIN_TAB === "true" ? <TemporaryAdminTab /> : null}
           <SiteFooter />
         </div>
               <GoogleAnalytics />
