@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 import styles from "./SupabaseSpotDetail.module.css";
 import type { SupabasePublicCity } from "@/data/supabase-public-cities";
 import {
@@ -50,6 +51,14 @@ export async function SupabaseSpotDetail({ city, spot, tracking }: Props) {
     <main className={styles.page}>
       <section className={styles.heroGrid}>
         <aside className={styles.heroCopy}>
+          <Breadcrumbs
+            items={[
+              { label: "Home", href: "/" },
+              { label: "Destinations", href: "/cities" },
+              { label: city.city, href: `/c/${city.slug}` },
+              { label: spot.name },
+            ]}
+          />
           <div className={styles.eyebrow}>Place guide</div>
           <h1 className={styles.title}>{spot.name}</h1>
           <p className={styles.location}>

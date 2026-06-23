@@ -6,26 +6,35 @@ type BreadcrumbItem = {
   href?: string;
 };
 
+type Tone = "light" | "dark";
+
 type Props = {
   items: BreadcrumbItem[];
+  tone?: Tone;
 };
 
-export function Breadcrumbs({ items }: Props) {
+export function Breadcrumbs({ items, tone = "dark" }: Props) {
+  const isLight = tone === "light";
+
   return (
-    <nav style={wrapStyle} aria-label="Breadcrumb">
+    <nav style={isLight ? wrapStyleLight : wrapStyle} aria-label="Breadcrumb">
       {items.map((item, index) => {
         const isLast = index === items.length - 1;
 
         return (
           <span key={`${item.label}-${index}`} style={itemWrapStyle}>
-            {index > 0 && <span style={separatorStyle}>/</span>}
+            {index > 0 && (
+              <span style={isLight ? separatorStyleLight : separatorStyle}>/</span>
+            )}
 
             {item.href && !isLast ? (
-              <Link href={item.href} style={linkStyle}>
+              <Link href={item.href} style={isLight ? linkStyleLight : linkStyle}>
                 {item.label}
               </Link>
             ) : (
-              <span style={currentStyle}>{item.label}</span>
+              <span style={isLight ? currentStyleLight : currentStyle}>
+                {item.label}
+              </span>
             )}
           </span>
         );
@@ -63,6 +72,25 @@ const linkStyle: CSSProperties = {
 
 const currentStyle: CSSProperties = {
   opacity: 0.9,
+};
+
+const wrapStyleLight: CSSProperties = {
+  ...wrapStyle,
+  color: "#ffffff",
+};
+
+const separatorStyleLight: CSSProperties = {
+  opacity: 0.4,
+};
+
+const linkStyleLight: CSSProperties = {
+  color: "inherit",
+  textDecoration: "none",
+  opacity: 0.7,
+};
+
+const currentStyleLight: CSSProperties = {
+  opacity: 0.92,
 };
 
 

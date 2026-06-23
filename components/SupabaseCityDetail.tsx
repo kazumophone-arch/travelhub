@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { CSSProperties } from "react";
 import styles from "./SupabaseCityDetail.module.css";
 import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 import type { SupabasePublicCity } from "@/data/supabase-public-cities";
 import { getPublishedSupabaseSpotsForCity } from "@/data/supabase-public-spots";
 import type { TrackingParams } from "@/lib/tracking-query";
@@ -86,6 +87,14 @@ export async function SupabaseCityDetail({ city, tracking }: Props) {
       >
         <div className={styles.heroInner}>
           <div className={styles.heroCopy}>
+            <Breadcrumbs
+              tone="light"
+              items={[
+                { label: "Home", href: "/" },
+                { label: "Destinations", href: "/cities" },
+                { label: city.city },
+              ]}
+            />
             <div className={styles.eyebrow}>TravelHub city guide</div>
             <div className={styles.countryPill}>{city.country}</div>
             <h1 className={styles.heroTitle}>{city.city}</h1>
