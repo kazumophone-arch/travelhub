@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { getPublishedSupabaseDirectoryCities } from "@/data/supabase-public-cities";
+import { getText } from "@/lib/content-fallback";
 import styles from "./DestinationsPage.module.css";
 
 export const metadata: Metadata = {
@@ -73,22 +74,6 @@ const moodLinks = [
     image: "/assets/home/marrakech.jpg",
   },
 ];
-
-function getText(item: RawCity, keys: string[]) {
-  for (const key of keys) {
-    const value = item[key];
-
-    if (typeof value === "string" && value.trim()) {
-      return value.trim();
-    }
-
-    if (typeof value === "number") {
-      return String(value);
-    }
-  }
-
-  return "";
-}
 
 function getCityName(city: RawCity) {
   return getText(city, ["city", "name", "title"]) || "Destination";

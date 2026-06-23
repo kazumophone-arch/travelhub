@@ -6,6 +6,7 @@ import {
 } from "@/data/supabase-public-spots";
 import { createPublicMetadata } from "@/lib/site-metadata";
 import { supabase } from "@/lib/supabase";
+import { getText } from "@/lib/content-fallback";
 import styles from "./PlacesPage.module.css";
 
 export const dynamic = "force-dynamic";
@@ -101,22 +102,6 @@ async function getSupabaseCitiesAndSpots() {
     cities: (citiesResult.data ?? []) as SupabaseCityRow[],
     spots: (spotsResult.data ?? []) as RawSpot[],
   };
-}
-
-function getText(item: Record<string, unknown>, keys: string[]) {
-  for (const key of keys) {
-    const value = item[key];
-
-    if (typeof value === "string" && value.trim()) {
-      return value.trim();
-    }
-
-    if (typeof value === "number") {
-      return String(value);
-    }
-  }
-
-  return "";
 }
 
 function getSpotName(spot: RawSpot) {
