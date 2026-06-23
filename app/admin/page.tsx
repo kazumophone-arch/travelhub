@@ -1,6 +1,9 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import { AdminNavigation } from "@/components/AdminNavigation";
+import { supabaseAdmin } from "@/lib/supabase-admin";
+
+export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "管理画面 | TravelHub Admin",
@@ -9,6 +12,26 @@ export const metadata = {
     follow: false,
   },
 };
+
+function hasText(value: unknown) {
+  return String(value ?? "").trim().length > 0;
+}
+
+async function getUnmonetizedSpotCount(): Promise<number | null> {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from("spots")
+      .select("affiliate_hotel_url, affiliate_tour_url");
+
+    if (error || !data) return null;
+
+    return data.filter(
+      (spot) => !hasText(spot.affiliate_hotel_url) && !hasText(spot.affiliate_tour_url)
+    ).length;
+  } catch {
+    return null;
+  }
+}
 
 const adminItems = [
   {
@@ -49,7 +72,9 @@ const adminItems = [
   },
 ];
 
-export default function AdminPage() {
+export default async function AdminPage() {
+  const unmonetizedSpotCount = await getUnmonetizedSpotCount();
+
   return (
     <main style={pageStyle}>
       <section style={shellStyle}>
@@ -69,6 +94,9 @@ export default function AdminPage() {
               <span style={labelStyle}>{item.label}</span>
               <strong style={cardTitleStyle}>{item.title}</strong>
               <p style={cardTextStyle}>{item.description}</p>
+              {item.href === "/admin/spots" && unmonetizedSpotCount ? (
+                <span style={warningStyle}>{unmonetizedSpotCount} 件が収益化未設定</span>
+              ) : null}
               <span style={openStyle}>開く →</span>
             </Link>
           ))}
@@ -137,6 +165,16 @@ const cardStyle: CSSProperties = {
   boxShadow: "0 8px 24px rgba(96, 76, 48, 0.07)",
   color: "inherit",
   textDecoration: "none",
+};
+
+const warningStyle: CSSProperties = {
+  width: "fit-content",
+  padding: "4px 9px",
+  borderRadius: 999,
+  background: "#fff4df",
+  color: "#9a5b12",
+  fontSize: 12,
+  fontWeight: 850,
 };
 
 const labelStyle: CSSProperties = {

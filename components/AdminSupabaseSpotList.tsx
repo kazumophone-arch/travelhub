@@ -31,7 +31,8 @@ type Filter =
   | "missing-city"
   | "missing-image"
   | "missing-hotel"
-  | "missing-tour";
+  | "missing-tour"
+  | "missing-both";
 
 type BadgeTone = "ok" | "missing" | "neutral";
 
@@ -82,6 +83,7 @@ export function AdminSupabaseSpotList() {
       if (filter === "missing-image" && hasText(spot.image_url)) return false;
       if (filter === "missing-hotel" && hasText(spot.affiliate_hotel_url)) return false;
       if (filter === "missing-tour" && hasText(spot.affiliate_tour_url)) return false;
+      if (filter === "missing-both" && !isUnmonetized(spot)) return false;
       if (!normalizedQuery) return true;
 
       return [spot.name, spot.slug, city?.city, city?.country]
@@ -99,6 +101,7 @@ export function AdminSupabaseSpotList() {
       { label: "画像なし", value: spots.filter((spot) => !hasText(spot.image_url)).length },
       { label: "Hotel URLなし", value: spots.filter((spot) => !hasText(spot.affiliate_hotel_url)).length },
       { label: "Tour URLなし", value: spots.filter((spot) => !hasText(spot.affiliate_tour_url)).length },
+      { label: "収益化なし", value: spots.filter(isUnmonetized).length },
     ];
   }, [spots]);
 
@@ -170,6 +173,7 @@ export function AdminSupabaseSpotList() {
           "missing-image",
           "missing-hotel",
           "missing-tour",
+          "missing-both",
         ] as const).map((value) => (
           <button
             key={value}
@@ -216,6 +220,7 @@ export function AdminSupabaseSpotList() {
                   <Badge label={hasText(spot.image_source_url) ? "画像出典あり" : "画像出典なし"} tone={hasText(spot.image_source_url) ? "ok" : "missing"} />
                   <Badge label={hasText(spot.affiliate_hotel_url) ? "Hotel URLあり" : "Hotel URLなし"} tone={hasText(spot.affiliate_hotel_url) ? "ok" : "missing"} />
                   <Badge label={hasText(spot.affiliate_tour_url) ? "Tour URLあり" : "Tour URLなし"} tone={hasText(spot.affiliate_tour_url) ? "ok" : "missing"} />
+                  {isUnmonetized(spot) && <Badge label="収益化なし" tone="missing" />}
                 </div>
               </div>
 
@@ -253,6 +258,7 @@ function getFilterLabel(filter: Filter) {
   if (filter === "missing-image") return "画像なし";
   if (filter === "missing-hotel") return "Hotel URLなし";
   if (filter === "missing-tour") return "Tour URLなし";
+  if (filter === "missing-both") return "収益化なし";
   return "すべて";
 }
 
@@ -268,6 +274,10 @@ function getBadgeStyle(tone: BadgeTone): CSSProperties {
 
 function hasText(value: unknown) {
   return String(value ?? "").trim().length > 0;
+}
+
+function isUnmonetized(spot: SupabaseSpot) {
+  return !hasText(spot.affiliate_hotel_url) && !hasText(spot.affiliate_tour_url);
 }
 
 function normalizeSearch(value: unknown) {
