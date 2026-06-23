@@ -28,7 +28,6 @@ type ThemeCopy = {
   intro: string;
   linkLabel: string;
   notes: Array<{
-    icon: string;
     title: string;
     text: string;
   }>;
@@ -82,7 +81,6 @@ export default async function ThemeDetailPage({ params }: PageProps) {
                   season.slug === theme.slug ? styles.activeSeason : ""
                 }`}
               >
-                <span className={styles.seasonIcon}>{getSeasonIcon(season.slug)}</span>
                 <span>{season.title}</span>
               </Link>
             ))}
@@ -101,9 +99,9 @@ export default async function ThemeDetailPage({ params }: PageProps) {
       </section>
 
       <section className={styles.notes}>
-        {copy.notes.map((note) => (
+        {copy.notes.map((note, index) => (
           <article key={note.title} className={styles.note}>
-            <div className={styles.noteIcon}>{note.icon}</div>
+            <div className={styles.noteNumber}>{String(index + 1).padStart(2, "0")}</div>
             <h2>{note.title}</h2>
             <p>{note.text}</p>
           </article>
@@ -169,7 +167,6 @@ export default async function ThemeDetailPage({ params }: PageProps) {
               }}
             >
               <div>
-                <div className={styles.collectionIcon}>{getCollectionIcon(collection)}</div>
                 <h3>{collection.title}</h3>
                 <p>{collection.description}</p>
               </div>
@@ -191,22 +188,18 @@ function getThemeCopy(theme: Theme): ThemeCopy {
       linkLabel: "Why travel in spring",
       notes: [
         {
-          icon: "✿",
           title: "Blooming landscapes",
           text: "Cherry blossoms, wildflowers, fresh gardens, and brighter city walks.",
         },
         {
-          icon: "☼",
           title: "Pleasant weather",
           text: "Comfortable temperatures that make walking and outdoor days easier.",
         },
         {
-          icon: "◌",
           title: "Fewer crowds",
           text: "A gentler season for popular places when timed carefully.",
         },
         {
-          icon: "♡",
           title: "Seasonal experiences",
           text: "Festivals, local flavors, and cultural moments that feel tied to the season.",
         },
@@ -223,22 +216,18 @@ function getThemeCopy(theme: Theme): ThemeCopy {
       linkLabel: "Why travel in summer",
       notes: [
         {
-          icon: "≈",
           title: "Coastal escapes",
           text: "Beaches, lakes, islands, and breezy waterfront cities.",
         },
         {
-          icon: "☼",
           title: "Longer days",
           text: "More daylight for slow mornings, late dinners, and flexible routes.",
         },
         {
-          icon: "⌁",
           title: "Outdoor rhythm",
           text: "Markets, terraces, open-air walks, and scenic day trips.",
         },
         {
-          icon: "✧",
           title: "Bright energy",
           text: "Cities feel social, warm, and easier to explore after sunset.",
         },
@@ -255,22 +244,18 @@ function getThemeCopy(theme: Theme): ThemeCopy {
       linkLabel: "Why travel in autumn",
       notes: [
         {
-          icon: "☙",
           title: "Seasonal color",
           text: "Forests, gardens, temple paths, and old streets turn warmer.",
         },
         {
-          icon: "◷",
           title: "Better pacing",
           text: "A calmer travel rhythm after the peak summer rush.",
         },
         {
-          icon: "⌂",
           title: "City comfort",
           text: "Milder days make museums, cafés, and walking routes easier.",
         },
         {
-          icon: "✦",
           title: "Atmospheric stays",
           text: "A good season for ryokan, boutique hotels, and slower evenings.",
         },
@@ -287,22 +272,18 @@ function getThemeCopy(theme: Theme): ThemeCopy {
       linkLabel: "Why travel in winter",
       notes: [
         {
-          icon: "❄",
           title: "Quiet atmosphere",
           text: "Fewer crowds and a softer pace in many classic destinations.",
         },
         {
-          icon: "☾",
           title: "Clearer views",
           text: "Cold air can make skylines, mountains, and night walks feel sharper.",
         },
         {
-          icon: "♨",
           title: "Warm interiors",
           text: "A better season for hotels, baths, restaurants, and slow evenings.",
         },
         {
-          icon: "✧",
           title: "Seasonal scenes",
           text: "Illuminations, snow, markets, and winter-only landscapes.",
         },
@@ -317,22 +298,18 @@ function getThemeCopy(theme: Theme): ThemeCopy {
     linkLabel: `Explore ${theme.title.toLowerCase()}`,
     notes: [
       {
-        icon: "✦",
         title: "Curated mood",
         text: "A focused edit of destinations that fit this travel style.",
       },
       {
-        icon: "◌",
         title: "Easy browsing",
         text: "Start with the feeling before choosing the exact city.",
       },
       {
-        icon: "⌁",
         title: "Flexible routes",
         text: "Use each city guide as a calm starting point.",
       },
       {
-        icon: "♡",
         title: "Better planning",
         text: "Move from inspiration into places, stays, and experiences.",
       },
@@ -412,27 +389,6 @@ function getThemeImage(theme: Theme) {
   if (key.includes("luxury")) return "/assets/home/rome-preview.jpg";
 
   return "/assets/home/seek-wonder.jpg";
-}
-
-function getSeasonIcon(slug: string) {
-  if (slug === "spring") return "✿";
-  if (slug === "summer") return "≈";
-  if (slug === "autumn") return "☙";
-  if (slug === "winter") return "❄";
-  return "✧";
-}
-
-function getCollectionIcon(theme: Theme) {
-  const key = `${theme.slug} ${theme.title}`.toLowerCase();
-
-  if (key.includes("food")) return "♨";
-  if (key.includes("couple")) return "♡";
-  if (key.includes("first")) return "✧";
-  if (key.includes("quiet")) return "≋";
-  if (key.includes("nature")) return "✿";
-  if (key.includes("luxury")) return "◇";
-
-  return "✦";
 }
 
 function getConciseText(value: string | null | undefined, fallback: string) {

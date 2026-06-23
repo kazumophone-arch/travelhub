@@ -14,28 +14,24 @@ const situations = [
     text: "You have chosen the country, but not the city yet.",
     href: "/cities",
     label: "Choose a city guide",
-    icon: "◎",
   },
   {
     title: "I know the city",
     text: "You know the city and want to choose areas, stays, and places.",
     href: "/cities",
     label: "Explore city guides",
-    icon: "⌖",
   },
   {
     title: "I know the spot",
     text: "You have a place in mind and want to plan when and how to visit.",
     href: "/spots",
     label: "See spot guides",
-    icon: "◇",
   },
   {
     title: "I am still unsure",
     text: "You are looking for seasons, moods, and trip styles to start from.",
     href: "/themes",
     label: "Explore themes",
-    icon: "✦",
   },
 ];
 
@@ -158,9 +154,11 @@ export default function GuidesPage() {
         </div>
 
         <div className={styles.situationGrid}>
-          {situations.map((item) => (
+          {situations.map((item, index) => (
             <Link key={item.title} href={item.href} className={styles.situationCard}>
-              <div className={styles.iconCircle}>{item.icon}</div>
+              <span className={styles.situationNumber}>
+                {String(index + 1).padStart(2, "0")}
+              </span>
               <h3>{item.title}</h3>
               <p>{item.text}</p>
               <strong>{item.label} →</strong>

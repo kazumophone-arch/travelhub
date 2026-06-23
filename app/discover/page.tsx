@@ -15,7 +15,6 @@ const feelings = [
     href: "/themes",
     label: "Explore peaceful places",
     image: "/assets/home/find-peace.jpg",
-    icon: "◒",
   },
   {
     title: "See culture",
@@ -23,7 +22,6 @@ const feelings = [
     href: "/themes",
     label: "Explore cultural places",
     image: "/assets/home/rome-preview.jpg",
-    icon: "⌂",
   },
   {
     title: "Chase scenery",
@@ -31,7 +29,6 @@ const feelings = [
     href: "/themes",
     label: "Explore scenic places",
     image: "/assets/home/lake-bled.jpg",
-    icon: "△",
   },
   {
     title: "Eat and wander",
@@ -39,7 +36,6 @@ const feelings = [
     href: "/journal",
     label: "Explore city life",
     image: "/assets/home/marrakech.jpg",
-    icon: "☕",
   },
 ];
 
@@ -76,28 +72,24 @@ const entryPoints = [
     text: "Spring, summer, autumn, winter.",
     href: "/themes",
     label: "Explore themes",
-    icon: "◌",
   },
   {
     title: "Destination",
     text: "Cities and countries worth planning around.",
     href: "/cities",
     label: "Explore cities",
-    icon: "◎",
   },
   {
     title: "Places",
     text: "Specific spots to build a trip around.",
     href: "/spots",
     label: "Explore spots",
-    icon: "⌖",
   },
   {
     title: "Essentials",
     text: "Internet, luggage, airport, hotels.",
     href: "/journal",
     label: "Explore journal",
-    icon: "□",
   },
 ];
 
@@ -147,7 +139,6 @@ export default function DiscoverPage() {
                   backgroundImage: `linear-gradient(180deg, rgba(31, 26, 23, 0.02) 0%, rgba(31, 26, 23, 0.36) 100%), url("${item.image}")`,
                 }}
               />
-              <div className={styles.iconCircle}>{item.icon}</div>
               <div className={styles.feelingBody}>
                 <h3>{item.title}</h3>
                 <p>{item.text}</p>
@@ -188,7 +179,6 @@ export default function DiscoverPage() {
         <div className={styles.entryGrid}>
           {entryPoints.map((item) => (
             <Link key={item.title} href={item.href} className={styles.entryCard}>
-              <div className={styles.entryIcon}>{item.icon}</div>
               <div>
                 <h3>{item.title}</h3>
                 <p>{item.text}</p>

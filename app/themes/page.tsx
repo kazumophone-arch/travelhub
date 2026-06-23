@@ -30,15 +30,6 @@ const moodImages: Record<string, string> = {
   "quiet-escapes": "/assets/home/find-peace.jpg",
 };
 
-const moodIcons: Record<string, string> = {
-  nature: "◇",
-  food: "◐",
-  luxury: "♕",
-  couples: "♡",
-  "first-trip": "✦",
-  "quiet-escapes": "○",
-};
-
 export default function ThemesPage() {
   return (
     <main className={styles.page} style={pageStyle}>
@@ -107,7 +98,6 @@ export default function ThemesPage() {
                 ),
               }}
             >
-              <span style={moodIconStyle}>{moodIcons[theme.slug] ?? "✦"}</span>
               <h3 style={moodTitleStyle}>{theme.title}</h3>
               <p style={moodTextStyle}>{getMoodLine(theme)}</p>
             </Link>
@@ -374,13 +364,6 @@ const moodCardStyle: CSSProperties = {
   backgroundPosition: "center",
   boxShadow: "0 20px 54px rgba(32, 25, 18, 0.12)",
   boxSizing: "border-box",
-};
-
-const moodIconStyle: CSSProperties = {
-  marginBottom: 18,
-  fontSize: 34,
-  lineHeight: 1,
-  color: "rgba(255, 255, 255, 0.9)",
 };
 
 const moodTitleStyle: CSSProperties = {

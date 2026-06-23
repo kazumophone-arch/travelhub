@@ -90,12 +90,6 @@
   box-shadow: 0 18px 40px rgba(126, 80, 52, 0.10);
 }
 
-.seasonIcon {
-  color: #a86d4a;
-  font-size: 27px;
-  line-height: 1;
-}
-
 .heroCopy {
   max-width: 760px;
   padding: 6px 0 52px;
@@ -159,11 +153,12 @@
   border-right: 0;
 }
 
-.noteIcon {
-  margin-bottom: 18px;
+.noteNumber {
+  margin-bottom: 14px;
   color: #9d6b43;
-  font-size: 27px;
-  line-height: 1;
+  font-size: 12px;
+  font-weight: 850;
+  letter-spacing: 0.14em;
 }
 
 .note h2 {
@@ -277,13 +272,6 @@
   font-weight: 820;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-}
-
-.collectionIcon {
-  margin-bottom: 14px;
-  color: #fff8ef;
-  font-size: 36px;
-  line-height: 1;
 }
 
 .empty {
