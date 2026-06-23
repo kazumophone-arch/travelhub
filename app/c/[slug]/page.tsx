@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { SupabaseCityDetail } from "@/components/SupabaseCityDetail";
 import { getPublishedSupabaseCity } from "@/data/supabase-public-cities";
 import { createPublicMetadata } from "@/lib/site-metadata";
+import { getCityTouristDestinationJsonLd } from "@/lib/structured-data";
 import { getTrackingParams, type TrackingSearchParams } from "@/lib/tracking-query";
 
 export const dynamic = "force-dynamic";
@@ -50,5 +51,15 @@ export default async function CityPage({
 
   if (!city) return notFound();
 
-  return <SupabaseCityDetail city={city} tracking={tracking} />;
+  const jsonLd = getCityTouristDestinationJsonLd(city);
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <SupabaseCityDetail city={city} tracking={tracking} />
+    </>
+  );
 }
