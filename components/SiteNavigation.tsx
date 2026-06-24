@@ -9,6 +9,7 @@ const adminNavLinks = [
   { href: "/discover", label: "Discover" },
   { href: "/cities", label: "Cities" },
   { href: "/spots", label: "Spots" },
+  { href: "/admin/analytics", label: "Analytics" },
 ];
 
 const publicNavLinks = [
