@@ -70,8 +70,12 @@ function isPrefetchRequest(request: Request) {
   );
 }
 
-function shouldLogOutboundClick(request: Request) {
-  return request.method.toUpperCase() !== "HEAD" && !isPrefetchRequest(request);
+function shouldLogOutboundClick(request: Request, src: string) {
+  return (
+    request.method.toUpperCase() !== "HEAD" &&
+    !isPrefetchRequest(request) &&
+    src !== "admin-preview"
+  );
 }
 
 function isMissingCityAffiliateColumnError(error: SupabaseError) {
@@ -284,7 +288,7 @@ async function handleOutboundRedirect(request: Request, context: OutboundRouteCo
   const userAgent = request.headers.get("user-agent") ?? "";
   const forwardedFor = request.headers.get("x-forwarded-for") ?? "";
   const realIp = request.headers.get("x-real-ip") ?? "";
-  const shouldLogClick = shouldLogOutboundClick(request);
+  const shouldLogClick = shouldLogOutboundClick(request, src);
 
   const inferredSpotSlug = inferSpotSlug({
     citySlug,
