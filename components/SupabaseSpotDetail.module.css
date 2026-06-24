@@ -119,13 +119,6 @@
   border-bottom: 1px solid rgba(103, 78, 49, 0.16);
 }
 
-.noteIcon {
-  color: #9a6338;
-  font-size: 25px;
-  line-height: 1;
-  margin-bottom: 14px;
-}
-
 .note h2 {
   margin: 0;
   color: #211f1a;

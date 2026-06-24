@@ -113,13 +113,11 @@ export async function SupabaseSpotDetail({ city, spot, tracking }: Props) {
       <section className={styles.guideShell}>
         <section className={styles.notesGrid} aria-label="Place notes">
           <article className={styles.note}>
-            <div className={styles.noteIcon}>✦</div>
             <h2>Why go</h2>
             <p>{whyGoText}</p>
           </article>
 
           <article className={styles.note}>
-            <div className={styles.noteIcon}>◷</div>
             <h2>How to use it</h2>
             <p>
               Treat this as one focused stop, then connect it with nearby places
@@ -128,7 +126,6 @@ export async function SupabaseSpotDetail({ city, spot, tracking }: Props) {
           </article>
 
           <article className={styles.note}>
-            <div className={styles.noteIcon}>⌁</div>
             <h2>Best for</h2>
             <p>
               First-time visitors, slow walkers, visual routes, and travelers
@@ -137,7 +134,6 @@ export async function SupabaseSpotDetail({ city, spot, tracking }: Props) {
           </article>
 
           <article className={styles.note}>
-            <div className={styles.noteIcon}>⌖</div>
             <h2>Before you go</h2>
             <p>
               Check current access, opening conditions, and transport details
