@@ -157,6 +157,13 @@ export default async function AdminAnalyticsPage({ searchParams }: AdminAnalytic
 
         <RangeFilter selectedRange={selectedRange.key} />
 
+        <Link
+          href={`/admin/analytics/export?range=${selectedRange.key}`}
+          style={exportLinkStyle}
+        >
+          CSV をエクスポート ↓
+        </Link>
+
         <SnsGuide />
 
         {errorMessage ? (
@@ -799,6 +806,21 @@ const rangeLinkActiveStyle: CSSProperties = {
   background: "#17202a",
   borderColor: "#17202a",
   color: "#ffffff",
+};
+
+const exportLinkStyle: CSSProperties = {
+  display: "inline-flex",
+  alignItems: "center",
+  minHeight: 36,
+  marginBottom: 24,
+  padding: "8px 13px",
+  borderRadius: 999,
+  border: "1px solid rgba(19,138,114,.2)",
+  background: "#ffffff",
+  color: "#138a72",
+  fontSize: 13,
+  fontWeight: 850,
+  textDecoration: "none",
 };
 
 const guideStyle: CSSProperties = {
