@@ -33,6 +33,68 @@ async function getUnmonetizedSpotCount(): Promise<number | null> {
   }
 }
 
+async function getCitiesMissingAffiliateCount(): Promise<number | null> {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from("cities")
+      .select("affiliate_hotel_url, affiliate_tour_url");
+
+    if (error || !data) return null;
+
+    return data.filter(
+      (city) => !hasText(city.affiliate_hotel_url) && !hasText(city.affiliate_tour_url)
+    ).length;
+  } catch {
+    return null;
+  }
+}
+
+async function getPublishedCount(table: "cities" | "spots"): Promise<number | null> {
+  try {
+    const { count, error } = await supabaseAdmin
+      .from(table)
+      .select("id", { count: "exact", head: true })
+      .eq("is_published", true);
+
+    if (error) return null;
+
+    return count ?? null;
+  } catch {
+    return null;
+  }
+}
+
+async function getClickCountSince(since: string): Promise<number | null> {
+  try {
+    const { count, error } = await supabaseAdmin
+      .from("click_logs")
+      .select("id", { count: "exact", head: true })
+      .gte("created_at", since);
+
+    if (error) return null;
+
+    return count ?? null;
+  } catch {
+    return null;
+  }
+}
+
+function formatStatNumber(value: number) {
+  return new Intl.NumberFormat("ja-JP").format(value);
+}
+
+const JST_OFFSET_MS = 9 * 60 * 60 * 1000;
+
+function getStartOfTodayJstIso(): string {
+  const now = new Date();
+  const jstNow = new Date(now.getTime() + JST_OFFSET_MS);
+  const jstMidnightUtcMs =
+    Date.UTC(jstNow.getUTCFullYear(), jstNow.getUTCMonth(), jstNow.getUTCDate()) -
+    JST_OFFSET_MS;
+
+  return new Date(jstMidnightUtcMs).toISOString();
+}
+
 const adminItems = [
   {
     title: "国管理",
@@ -73,7 +135,42 @@ const adminItems = [
 ];
 
 export default async function AdminPage() {
-  const unmonetizedSpotCount = await getUnmonetizedSpotCount();
+  const now = new Date();
+  const startOfTodayJst = getStartOfTodayJstIso();
+  const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
+  const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
+  const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
+
+  const [
+    unmonetizedSpotCount,
+    citiesMissingAffiliateCount,
+    publishedCityCount,
+    publishedSpotCount,
+    todayClicks,
+    last24HoursClicks,
+    last7DaysClicks,
+    last30DaysClicks,
+  ] = await Promise.all([
+    getUnmonetizedSpotCount(),
+    getCitiesMissingAffiliateCount(),
+    getPublishedCount("cities"),
+    getPublishedCount("spots"),
+    getClickCountSince(startOfTodayJst),
+    getClickCountSince(twentyFourHoursAgo),
+    getClickCountSince(sevenDaysAgo),
+    getClickCountSince(thirtyDaysAgo),
+  ]);
+
+  const stats: { label: string; value: number | null }[] = [
+    { label: "公開都市", value: publishedCityCount },
+    { label: "公開スポット", value: publishedSpotCount },
+    { label: "収益化未設定の都市", value: citiesMissingAffiliateCount },
+    { label: "収益化未設定のスポット", value: unmonetizedSpotCount },
+    { label: "本日のクリック", value: todayClicks },
+    { label: "過去24時間のクリック", value: last24HoursClicks },
+    { label: "過去7日のクリック", value: last7DaysClicks },
+    { label: "過去30日のクリック", value: last30DaysClicks },
+  ];
 
   return (
     <main style={pageStyle}>
@@ -88,6 +185,17 @@ export default async function AdminPage() {
           国、都市、スポット、クリック分析をここから管理できます。
         </p>
 
+        <div style={statGridStyle} aria-label="運用サマリー">
+          {stats.map((stat) => (
+            <div key={stat.label} style={statCardStyle}>
+              <span style={statLabelStyle}>{stat.label}</span>
+              <strong style={stat.value === null ? statPlaceholderStyle : statValueStyle}>
+                {stat.value === null ? "—" : formatStatNumber(stat.value)}
+              </strong>
+            </div>
+          ))}
+        </div>
+
         <div style={gridStyle}>
           {adminItems.map((item) => (
             <Link key={item.href} href={item.href} style={cardStyle}>
@@ -96,6 +204,9 @@ export default async function AdminPage() {
               <p style={cardTextStyle}>{item.description}</p>
               {item.href === "/admin/spots" && unmonetizedSpotCount ? (
                 <span style={warningStyle}>{unmonetizedSpotCount} 件が収益化未設定</span>
+              ) : null}
+              {item.href === "/admin/cities" && citiesMissingAffiliateCount ? (
+                <span style={warningStyle}>{citiesMissingAffiliateCount} 件が収益化未設定</span>
               ) : null}
               <span style={openStyle}>開く →</span>
             </Link>
@@ -147,6 +258,42 @@ const textStyle: CSSProperties = {
   fontSize: 15,
   lineHeight: 1.75,
   color: "#607080",
+};
+
+const statGridStyle: CSSProperties = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 150px), 1fr))",
+  gap: 12,
+  marginBottom: 28,
+};
+
+const statCardStyle: CSSProperties = {
+  display: "grid",
+  gap: 6,
+  padding: 16,
+  borderRadius: 18,
+  background: "#fffdf8",
+  border: "1px solid rgba(168, 116, 50, 0.14)",
+};
+
+const statLabelStyle: CSSProperties = {
+  fontSize: 11,
+  color: "#9a6a2f",
+  fontWeight: 850,
+  textTransform: "uppercase",
+  letterSpacing: "0.1em",
+};
+
+const statValueStyle: CSSProperties = {
+  fontSize: 26,
+  letterSpacing: "-0.04em",
+  color: "#17202a",
+};
+
+const statPlaceholderStyle: CSSProperties = {
+  fontSize: 26,
+  letterSpacing: "-0.04em",
+  color: "#9aa3ab",
 };
 
 const gridStyle: CSSProperties = {
