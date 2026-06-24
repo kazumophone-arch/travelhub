@@ -194,17 +194,20 @@ export async function SupabaseSpotDetail({ city, spot, tracking }: Props) {
                   key={nearbySpot.id}
                   href={`/c/${city.slug}/spot/${nearbySpot.slug}?src=spot-detail&v=nearby_${city.slug}_${nearbySpot.slug}`}
                   className={styles.nearbyCard}
-                  style={{
-                    backgroundImage: getImageBackground(
-                      nearbySpot.image_url,
-                      "linear-gradient(180deg, rgba(31, 26, 23, 0.02) 0%, rgba(31, 26, 23, 0.30) 52%, rgba(31, 26, 23, 0.78) 100%)",
-                      "linear-gradient(135deg, #eadbc8 0%, #b8936e 52%, #2a211c 100%)"
-                    ),
-                    backgroundPosition: getCssImagePosition(
-                      nearbySpot.imagePosition ?? nearbySpot.image_position
-                    ),
-                  }}
                 >
+                  <div
+                    className={styles.nearbyImage}
+                    style={{
+                      backgroundImage: getImageBackground(
+                        nearbySpot.image_url,
+                        "linear-gradient(180deg, rgba(31, 26, 23, 0.02) 0%, rgba(31, 26, 23, 0.30) 52%, rgba(31, 26, 23, 0.78) 100%)",
+                        "linear-gradient(135deg, #eadbc8 0%, #b8936e 52%, #2a211c 100%)"
+                      ),
+                      backgroundPosition: getCssImagePosition(
+                        nearbySpot.imagePosition ?? nearbySpot.image_position
+                      ),
+                    }}
+                  />
                   <div className={styles.nearbyBody}>
                     <h3>{nearbySpot.name}</h3>
                     <p>
