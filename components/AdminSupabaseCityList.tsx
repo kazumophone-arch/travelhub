@@ -32,6 +32,7 @@ type Filter =
   | "missing-image"
   | "missing-hotel"
   | "missing-tour"
+  | "missing-both"
   | "zero-spots";
 
 type BadgeTone = "ok" | "missing" | "neutral";
@@ -94,6 +95,7 @@ export function AdminSupabaseCityList() {
       if (filter === "missing-image" && hasText(city.image_url)) return false;
       if (filter === "missing-hotel" && hasText(city.affiliate_hotel_url)) return false;
       if (filter === "missing-tour" && hasText(city.affiliate_tour_url)) return false;
+      if (filter === "missing-both" && !isUnmonetized(city)) return false;
       if (filter === "zero-spots" && spotCount > 0) return false;
       if (!normalizedQuery) return true;
 
@@ -115,6 +117,7 @@ export function AdminSupabaseCityList() {
         label: "スポット0件",
         value: cities.filter((city) => (spotCountsByCityId.get(city.id) ?? 0) === 0).length,
       },
+      { label: "収益化なし", value: cities.filter(isUnmonetized).length },
     ];
   }, [cities, spotCountsByCityId]);
 
@@ -165,6 +168,7 @@ export function AdminSupabaseCityList() {
           "missing-image",
           "missing-hotel",
           "missing-tour",
+          "missing-both",
           "zero-spots",
         ] as const).map((value) => (
           <button
@@ -209,6 +213,7 @@ export function AdminSupabaseCityList() {
                   <Badge label={hasText(city.affiliate_hotel_url) ? "Hotel URLあり" : "Hotel URLなし"} tone={hasText(city.affiliate_hotel_url) ? "ok" : "missing"} />
                   <Badge label={hasText(city.affiliate_tour_url) ? "Tour URLあり" : "Tour URLなし"} tone={hasText(city.affiliate_tour_url) ? "ok" : "missing"} />
                   <Badge label={spotCount > 0 ? `スポット数: ${spotCount}` : "スポット0件"} tone={spotCount > 0 ? "ok" : "missing"} />
+                  {isUnmonetized(city) && <Badge label="収益化なし" tone="missing" />}
                 </div>
               </div>
 
@@ -244,6 +249,7 @@ function getFilterLabel(filter: Filter) {
   if (filter === "missing-image") return "画像なし";
   if (filter === "missing-hotel") return "Hotel URLなし";
   if (filter === "missing-tour") return "Tour URLなし";
+  if (filter === "missing-both") return "収益化なし";
   if (filter === "zero-spots") return "スポット0件";
   return "すべて";
 }
@@ -260,6 +266,10 @@ function getBadgeStyle(tone: BadgeTone): CSSProperties {
 
 function hasText(value: unknown) {
   return String(value ?? "").trim().length > 0;
+}
+
+function isUnmonetized(city: CityRow) {
+  return !hasText(city.affiliate_hotel_url) && !hasText(city.affiliate_tour_url);
 }
 
 function normalizeSearch(value: unknown) {
