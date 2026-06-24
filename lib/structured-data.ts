@@ -41,3 +41,38 @@ export function getSpotTouristAttractionJsonLd(
     },
   };
 }
+
+// Keep in sync with the visible breadcrumb trail in components/SupabaseCityDetail.tsx
+export function getCityBreadcrumbJsonLd(city: SupabasePublicCity) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: getAbsoluteUrl("/") },
+      { "@type": "ListItem", position: 2, name: "Destinations", item: getAbsoluteUrl("/cities") },
+      { "@type": "ListItem", position: 3, name: city.city, item: getAbsoluteUrl(`/c/${city.slug}`) },
+    ],
+  };
+}
+
+// Keep in sync with the visible breadcrumb trail in components/SupabaseSpotDetail.tsx
+export function getSpotBreadcrumbJsonLd(
+  city: SupabasePublicCity,
+  spot: SupabasePublicSpot
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: getAbsoluteUrl("/") },
+      { "@type": "ListItem", position: 2, name: "Destinations", item: getAbsoluteUrl("/cities") },
+      { "@type": "ListItem", position: 3, name: city.city, item: getAbsoluteUrl(`/c/${city.slug}`) },
+      {
+        "@type": "ListItem",
+        position: 4,
+        name: spot.name,
+        item: getAbsoluteUrl(`/c/${city.slug}/spot/${spot.slug}`),
+      },
+    ],
+  };
+}

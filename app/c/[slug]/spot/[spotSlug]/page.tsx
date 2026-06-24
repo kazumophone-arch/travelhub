@@ -4,7 +4,10 @@ import { SupabaseSpotDetail } from "@/components/SupabaseSpotDetail";
 import { getPublishedSupabaseCity } from "@/data/supabase-public-cities";
 import { getPublishedSupabaseSpot } from "@/data/supabase-public-spots";
 import { createPublicMetadata } from "@/lib/site-metadata";
-import { getSpotTouristAttractionJsonLd } from "@/lib/structured-data";
+import {
+  getSpotBreadcrumbJsonLd,
+  getSpotTouristAttractionJsonLd,
+} from "@/lib/structured-data";
 import { getTrackingParams, type TrackingSearchParams } from "@/lib/tracking-query";
 
 export const dynamic = "force-dynamic";
@@ -55,12 +58,17 @@ export default async function SpotPage({
   if (!city || !spot) return notFound();
 
   const jsonLd = getSpotTouristAttractionJsonLd(city, spot);
+  const breadcrumbJsonLd = getSpotBreadcrumbJsonLd(city, spot);
 
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <SupabaseSpotDetail city={city} spot={spot} tracking={tracking} />
     </>
