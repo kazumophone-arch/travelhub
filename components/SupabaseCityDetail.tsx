@@ -3,6 +3,7 @@ import type { CSSProperties } from "react";
 import styles from "./SupabaseCityDetail.module.css";
 import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { TierCtaLink } from "@/components/TierCtaLink";
 import type { SupabasePublicCity } from "@/data/supabase-public-cities";
 import { getPublishedSupabaseSpotsForCity } from "@/data/supabase-public-spots";
 import type { TrackingParams } from "@/lib/tracking-query";
@@ -127,11 +128,14 @@ export async function SupabaseCityDetail({ city, tracking }: Props) {
           title={`Choose the right base in ${city.city}`}
           copy="Use the guide first, then compare stays once the city starts to take shape."
           tiers={stayTiers}
+          citySlug={city.slug}
+          source={trackingSrc}
           cta={
             hasHotelAffiliate
               ? {
                   href: hotelAffiliateHref,
                   label: `Find hotels in ${city.city}`,
+                  type: "hotels",
                 }
               : null
           }
@@ -142,11 +146,14 @@ export async function SupabaseCityDetail({ city, tracking }: Props) {
           title={`Ways to experience ${city.city}`}
           copy="For travelers who want the route, timing, or context handled with a little more ease."
           tiers={experienceTiers}
+          citySlug={city.slug}
+          source={trackingSrc}
           cta={
             hasTourAffiliate
               ? {
                   href: tourAffiliateHref,
                   label: `Explore tours in ${city.city}`,
+                  type: "tours",
                 }
               : null
           }
@@ -203,12 +210,16 @@ function EditorialTierSection({
   copy,
   tiers,
   cta,
+  citySlug,
+  source,
 }: {
   label: string;
   title: string;
   copy: string;
   tiers: EditorialTier[];
-  cta: { href: string; label: string } | null;
+  cta: { href: string; label: string; type: "hotels" | "tours" } | null;
+  citySlug: string;
+  source: string;
 }) {
   return (
     <section className={styles.tierSection}>
@@ -233,9 +244,15 @@ function EditorialTierSection({
 
       {cta ? (
         <div className={styles.sectionCtaRow}>
-          <a href={cta.href} className={styles.sectionCta}>
+          <TierCtaLink
+            href={cta.href}
+            className={styles.sectionCta}
+            affiliateType={cta.type}
+            citySlug={citySlug}
+            source={source}
+          >
             {cta.label}
-          </a>
+          </TierCtaLink>
         </div>
       ) : null}
     </section>
