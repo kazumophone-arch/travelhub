@@ -10,7 +10,8 @@ import {
   buildCityDescription,
 } from "@/components/AdminContentTools";
 import { AdminTagSelector } from "@/components/AdminTagSelector";
-import { AdminLivePreview, hasPreviewUrl } from "@/components/AdminLivePreview";
+import { AdminCityHeroPreview } from "@/components/AdminCityHeroPreview";
+import { hasPreviewUrl } from "@/components/AdminLivePreview";
 import {
   formatValidationErrors,
   slugify,
@@ -529,11 +530,10 @@ export function AdminEditCityForm({ id }: Props) {
           </p>
         )}
       </section>
-      <AdminLivePreview
-        label="ライブプレビュー"
-        title={form.city || "都市名未入力"}
-        subtitle={form.country || "国"}
-        description={form.description || form.summary}
+      <AdminCityHeroPreview
+        title={form.city}
+        country={form.country}
+        leadText={form.summary || form.description}
         imageUrl={form.imageUrl}
         imagePosition={form.imagePosition}
         isPublished={form.isPublished}
