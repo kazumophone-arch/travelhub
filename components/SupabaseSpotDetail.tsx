@@ -79,7 +79,7 @@ export async function SupabaseSpotDetail({ city, spot, tracking }: Props) {
               backgroundImage: getImageBackground(
                 spot.image_url,
                 "linear-gradient(180deg, rgba(31, 26, 23, 0.04) 0%, rgba(31, 26, 23, 0.20) 54%, rgba(31, 26, 23, 0.44) 100%)",
-                "linear-gradient(135deg, #efe1d0 0%, #c7a987 48%, #2a211c 100%)"
+                "linear-gradient(135deg, #efe1d0 0%, #c7a987 48%, #0D2B52 100%)"
               ),
               backgroundPosition: getCssImagePosition(
                 spot.imagePosition ?? spot.image_position
@@ -97,7 +97,7 @@ export async function SupabaseSpotDetail({ city, spot, tracking }: Props) {
                     backgroundImage: getImageBackground(
                       item.image_url,
                       "linear-gradient(180deg, rgba(31, 26, 23, 0.02) 0%, rgba(31, 26, 23, 0.22) 100%)",
-                      "linear-gradient(135deg, #eadbc8 0%, #b8936e 52%, #2a211c 100%)"
+                      "linear-gradient(135deg, #eadbc8 0%, #b8936e 52%, #0D2B52 100%)"
                     ),
                     backgroundPosition: getCssImagePosition(
                       item.imagePosition ?? item.image_position
@@ -201,7 +201,7 @@ export async function SupabaseSpotDetail({ city, spot, tracking }: Props) {
                       backgroundImage: getImageBackground(
                         nearbySpot.image_url,
                         "linear-gradient(180deg, rgba(31, 26, 23, 0.02) 0%, rgba(31, 26, 23, 0.30) 52%, rgba(31, 26, 23, 0.78) 100%)",
-                        "linear-gradient(135deg, #eadbc8 0%, #b8936e 52%, #2a211c 100%)"
+                        "linear-gradient(135deg, #eadbc8 0%, #b8936e 52%, #0D2B52 100%)"
                       ),
                       backgroundPosition: getCssImagePosition(
                         nearbySpot.imagePosition ?? nearbySpot.image_position

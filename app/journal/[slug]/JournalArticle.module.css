@@ -1,9 +1,9 @@
 .page {
   min-height: 100vh;
   background:
-    radial-gradient(circle at 16% 0%, rgba(185, 139, 90, 0.12), transparent 34rem),
-    linear-gradient(180deg, #f8f2e9 0%, #fffdf8 46%, #f3ecdf 100%);
-  color: #211f1a;
+    radial-gradient(circle at 16% 0%, rgba(191, 155, 48, 0), transparent 34rem),
+    linear-gradient(180deg, #FFFFFF 0%, #FFFFFF 46%, #FFFFFF 100%);
+  color: #0D2B52;
 }
 
 .hero {
@@ -13,7 +13,7 @@
   display: grid;
   grid-template-columns: minmax(360px, 0.42fr) minmax(0, 0.58fr);
   gap: 36px;
-  border-bottom: 1px solid rgba(103, 78, 49, 0.14);
+  border-bottom: 1px solid #D8E2F0;
 }
 
 .heroCopy {
@@ -22,7 +22,7 @@
 
 .kicker,
 .sectionLabel {
-  color: #8f5f36;
+  color: #BF9B30;
   font-size: 11px;
   line-height: 1;
   font-weight: 820;
@@ -32,7 +32,7 @@
 
 .heroCopy h1 {
   margin: 20px 0 0;
-  color: #211f1a;
+  color: #0D2B52;
   font-family: Georgia, "Times New Roman", serif;
   font-size: clamp(48px, 5.7vw, 86px);
   line-height: 0.94;
@@ -44,7 +44,7 @@
 .heroCopy p {
   max-width: 460px;
   margin: 24px 0 0;
-  color: #62584d;
+  color: #6B87A8;
   font-size: 16px;
   line-height: 1.76;
 }
@@ -52,7 +52,7 @@
 .backLink {
   display: inline-flex;
   margin-top: 28px;
-  color: #7d4e2c;
+  color: #BF9B30;
   font-size: 12px;
   font-weight: 820;
   letter-spacing: 0.12em;
@@ -77,7 +77,7 @@
 
 .articleBody h2 {
   margin: 14px 0 18px;
-  color: #211f1a;
+  color: #0D2B52;
   font-family: Georgia, "Times New Roman", serif;
   font-size: clamp(34px, 3.4vw, 54px);
   line-height: 1;
@@ -86,7 +86,7 @@
 }
 
 .articleBody p {
-  color: #514941;
+  color: #6B87A8;
   font-size: 17px;
   line-height: 1.9;
 }
@@ -101,8 +101,8 @@
 .compareGrid div,
 .ctaBox,
 .sidebarBox {
-  border: 1px solid rgba(103, 78, 49, 0.15);
-  background: rgba(255, 253, 248, 0.74);
+  border: 1px solid #D8E2F0;
+  background: rgba(255, 255, 255, 0.74);
 }
 
 .compareGrid div {
@@ -113,7 +113,7 @@
 .ctaBox h3,
 .sidebarBox h3 {
   margin: 0;
-  color: #211f1a;
+  color: #0D2B52;
   font-family: Georgia, "Times New Roman", serif;
   font-size: 27px;
   line-height: 1.04;
@@ -138,7 +138,7 @@
 }
 
 .ctaBox span {
-  color: #7d4e2c;
+  color: #BF9B30;
   font-size: 12px;
   font-weight: 820;
   letter-spacing: 0.12em;
@@ -163,7 +163,7 @@
 .sidebarBox a {
   display: block;
   margin-top: 16px;
-  color: #7d4e2c;
+  color: #BF9B30;
   font-size: 13px;
   font-weight: 760;
   text-decoration: none;

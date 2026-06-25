@@ -207,7 +207,7 @@ function getSpotPhotoCardStyle(spot: SpotItem): CSSProperties {
     backgroundImage: getImageBackground(
       imageUrl,
       "linear-gradient(180deg, rgba(31, 26, 23, 0.02) 0%, rgba(31, 26, 23, 0.18) 50%, rgba(31, 26, 23, 0.72) 100%)",
-      "linear-gradient(135deg, #eadbc8 0%, #b8936e 52%, #2a211c 100%)"
+      "linear-gradient(135deg, #eadbc8 0%, #b8936e 52%, #0D2B52 100%)"
     ),
     backgroundSize: "cover",
     backgroundPosition: getCssImagePosition(spot.imagePosition),
@@ -437,8 +437,8 @@ export function SpotDirectory({ cities }: Props) {
 const pageStyle: CSSProperties = {
   minHeight: "100vh",
   overflowX: "hidden",
-  background: "linear-gradient(180deg, #f7f2ea 0%, #fffdf8 46%, #f5efe6 100%)",
-  color: "#1f1a17",
+  background: "linear-gradient(180deg, #F0F4FA 0%, #FFFFFF 46%, #f5efe6 100%)",
+  color: "#0D2B52",
   fontFamily:
     '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif',
 };
@@ -461,7 +461,7 @@ const eyebrowStyle: CSSProperties = {
   fontSize: 12,
   letterSpacing: 0,
   textTransform: "uppercase",
-  color: "#9a6a43",
+  color: "#BF9B30",
   fontWeight: 850,
   marginBottom: 14,
 };
@@ -474,7 +474,7 @@ const titleStyle: CSSProperties = {
   lineHeight: 1.12,
   letterSpacing: 0,
   fontWeight: 850,
-  color: "#1f1a17",
+  color: "#0D2B52",
   overflowWrap: "break-word",
 };
 
@@ -483,7 +483,7 @@ const subtitleStyle: CSSProperties = {
   maxWidth: 640,
   fontSize: 16,
   lineHeight: 1.72,
-  color: "#6f6258",
+  color: "#6B87A8",
 };
 
 const searchBoxStyle: CSSProperties = {
@@ -494,14 +494,14 @@ const searchBoxStyle: CSSProperties = {
   gap: 10,
   padding: "7px 8px 7px 16px",
   borderRadius: 999,
-  background: "#fffdf8",
-  border: "1px solid #e4d8c8",
+  background: "#FFFFFF",
+  border: "1px solid #D8E2F0",
   boxShadow: "0 12px 28px rgba(70, 53, 38, 0.08)",
 };
 
 const searchIconStyle: CSSProperties = {
   fontSize: 22,
-  color: "#9a6a43",
+  color: "#BF9B30",
   flexShrink: 0,
 };
 
@@ -513,7 +513,7 @@ const searchInputStyle: CSSProperties = {
   outline: "none",
   background: "transparent",
   fontSize: 16,
-  color: "#1f1a17",
+  color: "#0D2B52",
 };
 
 const filterPanelStyle: CSSProperties = {
@@ -521,8 +521,8 @@ const filterPanelStyle: CSSProperties = {
   marginBottom: 34,
   padding: 16,
   borderRadius: 8,
-  background: "#fffdf8",
-  border: "1px solid #e4d8c8",
+  background: "#FFFFFF",
+  border: "1px solid #D8E2F0",
   boxShadow: "0 14px 34px rgba(70, 53, 38, 0.06)",
 };
 
@@ -539,7 +539,7 @@ const smallLabelStyle: CSSProperties = {
   fontSize: 12,
   letterSpacing: 0,
   textTransform: "uppercase",
-  color: "#9a6a43",
+  color: "#BF9B30",
   fontWeight: 850,
   marginBottom: 6,
 };
@@ -552,16 +552,16 @@ const sectionTitleStyle: CSSProperties = {
   lineHeight: 1.2,
   letterSpacing: 0,
   fontWeight: 850,
-  color: "#1f1a17",
+  color: "#0D2B52",
   overflowWrap: "break-word",
 };
 
 const resetButtonStyle: CSSProperties = {
-  border: "1px solid #e4d8c8",
+  border: "1px solid #D8E2F0",
   borderRadius: 999,
   padding: "9px 12px",
-  background: "#fffdf8",
-  color: "#1f1a17",
+  background: "#FFFFFF",
+  color: "#0D2B52",
   fontSize: 12,
   fontWeight: 800,
   cursor: "pointer",
@@ -577,8 +577,8 @@ const filterGroupStyle: CSSProperties = {
   minWidth: 0,
   padding: 13,
   borderRadius: 8,
-  background: "#f7f2ea",
-  border: "1px solid #e4d8c8",
+  background: "#F0F4FA",
+  border: "1px solid #D8E2F0",
 };
 
 const filterGroupTopStyle: CSSProperties = {
@@ -614,9 +614,9 @@ const filterWrapStyle: CSSProperties = {
 };
 
 const filterButtonStyle: CSSProperties = {
-  border: "1px solid #e4d8c8",
+  border: "1px solid #D8E2F0",
   background: "rgba(255, 253, 248, 0.72)",
-  color: "#1f1a17",
+  color: "#0D2B52",
   borderRadius: 999,
   padding: "8px 10px",
   fontSize: 12,
@@ -627,18 +627,18 @@ const filterButtonStyle: CSSProperties = {
 
 const activeFilterButtonStyle: CSSProperties = {
   ...filterButtonStyle,
-  background: "#2a211c",
-  color: "#fff8ef",
-  border: "1px solid #2a211c",
+  background: "#0D2B52",
+  color: "#FFFFFF",
+  border: "1px solid #0D2B52",
 };
 
 const selectStyle: CSSProperties = {
   width: "100%",
   padding: "12px 12px",
   borderRadius: 8,
-  border: "1px solid #e4d8c8",
-  background: "#fffdf8",
-  color: "#1f1a17",
+  border: "1px solid #D8E2F0",
+  background: "#FFFFFF",
+  color: "#0D2B52",
   fontSize: 14,
   fontWeight: 750,
   outline: "none",
@@ -651,7 +651,7 @@ const activeSummaryStyle: CSSProperties = {
   alignItems: "center",
   marginTop: 14,
   paddingTop: 14,
-  borderTop: "1px solid #e4d8c8",
+  borderTop: "1px solid #D8E2F0",
 };
 
 const activeSummaryLabelStyle: CSSProperties = {
@@ -693,12 +693,12 @@ const spotCardStyle: CSSProperties = {
   justifyContent: "flex-end",
   minHeight: 540,
   borderRadius: 8,
-  color: "#1f1a17",
+  color: "#0D2B52",
   textDecoration: "none",
   overflow: "hidden",
-  border: "1px solid #e4d8c8",
+  border: "1px solid #D8E2F0",
   boxShadow: "0 18px 42px rgba(70, 53, 38, 0.14)",
-  backgroundColor: "#2a211c",
+  backgroundColor: "#0D2B52",
 };
 
 const spotVisualStyle: CSSProperties = {
@@ -717,7 +717,7 @@ const visualBadgeStyle: CSSProperties = {
   background: "rgba(255, 253, 248, 0.88)",
   border: "1px solid rgba(255, 253, 248, 0.34)",
   fontSize: 12,
-  color: "#1f1a17",
+  color: "#0D2B52",
   fontWeight: 850,
 };
 
@@ -729,8 +729,8 @@ const spotBodyStyle: CSSProperties = {
   margin: 0,
   padding: 20,
   borderRadius: 0,
-  background: "#fffdf8",
-  borderTop: "1px solid #e4d8c8",
+  background: "#FFFFFF",
+  borderTop: "1px solid #D8E2F0",
 };
 
 const spotMetaStyle: CSSProperties = {
@@ -738,7 +738,7 @@ const spotMetaStyle: CSSProperties = {
   fontSize: 12,
   letterSpacing: 0,
   textTransform: "uppercase",
-  color: "#6f6258",
+  color: "#6B87A8",
   fontWeight: 850,
 };
 
@@ -750,7 +750,7 @@ const spotTitleStyle: CSSProperties = {
   lineHeight: 1.2,
   letterSpacing: 0,
   fontWeight: 850,
-  color: "#1f1a17",
+  color: "#0D2B52",
   overflowWrap: "anywhere",
 };
 
@@ -758,21 +758,21 @@ const spotTextStyle: CSSProperties = {
   margin: "10px 0 0",
   fontSize: 13,
   lineHeight: 1.55,
-  color: "#6f6258",
+  color: "#6B87A8",
 };
 
 const openTextStyle: CSSProperties = {
   marginTop: 15,
   fontSize: 13,
   fontWeight: 850,
-  color: "#9a6a43",
+  color: "#BF9B30",
 };
 
 const emptyStyle: CSSProperties = {
   padding: "28px",
   borderRadius: 8,
-  background: "#fffdf8",
-  border: "1px solid #e4d8c8",
+  background: "#FFFFFF",
+  border: "1px solid #D8E2F0",
   textAlign: "center",
   opacity: 0.72,
 };

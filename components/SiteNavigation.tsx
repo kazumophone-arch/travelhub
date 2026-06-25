@@ -64,6 +64,7 @@ export function SiteNavigation() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname() || "/";
   const isAdminRoute = pathname.startsWith("/admin");
+  const isHome = pathname === "/";
 
   useEffect(() => {
     const shell = document.querySelector(".travelhub-site-page-shell");
@@ -77,9 +78,13 @@ export function SiteNavigation() {
     return null;
   }
 
+  const headerClassName = isHome
+    ? "travelhub-public-header travelhub-public-header-home"
+    : "travelhub-public-header";
+
   return (
     <>
-      <header className="travelhub-public-header" aria-label="Main navigation">
+      <header className={headerClassName} aria-label="Main navigation">
         <Link href="/" className="travelhub-public-brand">
           <span className="travelhub-brand-mark">⌖</span>
           <span>TravelHub</span>

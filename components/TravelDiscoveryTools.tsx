@@ -382,7 +382,7 @@ const smallLabelStyle: CSSProperties = {
   fontSize: 12,
   letterSpacing: 0,
   textTransform: "uppercase",
-  color: "#9a6a43",
+  color: "#BF9B30",
   fontWeight: 850,
   marginBottom: 6,
 };
@@ -393,7 +393,7 @@ const sectionTitleStyle: CSSProperties = {
   lineHeight: 1.08,
   letterSpacing: 0,
   fontWeight: 850,
-  color: "#1f1a17",
+  color: "#0D2B52",
 };
 
 const gridStyle: CSSProperties = {
@@ -405,16 +405,16 @@ const gridStyle: CSSProperties = {
 const quizCardStyle: CSSProperties = {
   borderRadius: 8,
   padding: 18,
-  background: "#fffdf8",
-  border: "1px solid #e4d8c8",
+  background: "#FFFFFF",
+  border: "1px solid #D8E2F0",
   boxShadow: "0 18px 42px rgba(70, 53, 38, 0.08)",
 };
 
 const swipeCardStyle: CSSProperties = {
   borderRadius: 8,
   padding: 18,
-  background: "#fffdf8",
-  border: "1px solid #e4d8c8",
+  background: "#FFFFFF",
+  border: "1px solid #D8E2F0",
   boxShadow: "0 18px 42px rgba(70, 53, 38, 0.08)",
 };
 
@@ -432,14 +432,14 @@ const toolTitleStyle: CSSProperties = {
   lineHeight: 1.08,
   letterSpacing: 0,
   fontWeight: 850,
-  color: "#1f1a17",
+  color: "#0D2B52",
 };
 
 const toolBadgeStyle: CSSProperties = {
   padding: "8px 10px",
   borderRadius: 999,
-  background: "#f4eadc",
-  color: "#9a6a43",
+  background: "#F0F4FA",
+  color: "#BF9B30",
   fontSize: 12,
   fontWeight: 800,
   whiteSpace: "nowrap",
@@ -452,7 +452,7 @@ const questionBlockStyle: CSSProperties = {
 const questionLabelStyle: CSSProperties = {
   fontSize: 13,
   fontWeight: 800,
-  color: "#6f6258",
+  color: "#6B87A8",
   marginBottom: 8,
 };
 
@@ -463,11 +463,11 @@ const optionRowStyle: CSSProperties = {
 };
 
 const optionStyle: CSSProperties = {
-  border: "1px solid #e4d8c8",
+  border: "1px solid #D8E2F0",
   borderRadius: 999,
   padding: "9px 11px",
-  background: "#fffdf8",
-  color: "#1f1a17",
+  background: "#FFFFFF",
+  color: "#0D2B52",
   fontSize: 13,
   fontWeight: 750,
   cursor: "pointer",
@@ -475,17 +475,17 @@ const optionStyle: CSSProperties = {
 
 const activeOptionStyle: CSSProperties = {
   ...optionStyle,
-  background: "#2a211c",
-  color: "#fff8ef",
-  border: "1px solid #2a211c",
+  background: "#0D2B52",
+  color: "#FFFFFF",
+  border: "1px solid #0D2B52",
 };
 
 const resultBoxStyle: CSSProperties = {
   marginBottom: 18,
   padding: 14,
   borderRadius: 8,
-  background: "#f7f2ea",
-  border: "1px solid #e4d8c8",
+  background: "#F0F4FA",
+  border: "1px solid #D8E2F0",
 };
 
 const resultTitleStyle: CSSProperties = {
@@ -506,8 +506,8 @@ const resultItemStyle: CSSProperties = {
   gap: 10,
   padding: 12,
   borderRadius: 8,
-  background: "#fffdf8",
-  border: "1px solid #e4d8c8",
+  background: "#FFFFFF",
+  border: "1px solid #D8E2F0",
   color: "inherit",
   textDecoration: "none",
 };
@@ -518,8 +518,8 @@ const resultRankStyle: CSSProperties = {
   display: "grid",
   placeItems: "center",
   borderRadius: "50%",
-  background: "#2a211c",
-  color: "#fff8ef",
+  background: "#0D2B52",
+  color: "#FFFFFF",
   fontSize: 12,
   fontWeight: 850,
   flexShrink: 0,
@@ -532,13 +532,13 @@ const resultTextStyle: CSSProperties = {
 const resultCityStyle: CSSProperties = {
   fontSize: 15,
   fontWeight: 850,
-  color: "#1f1a17",
+  color: "#0D2B52",
 };
 
 const resultMetaStyle: CSSProperties = {
   marginTop: 3,
   fontSize: 12,
-  color: "#6f6258",
+  color: "#6B87A8",
   whiteSpace: "nowrap",
   overflow: "hidden",
   textOverflow: "ellipsis",
@@ -557,7 +557,7 @@ const swipeVisualStyle: CSSProperties = {
   position: "relative",
   overflow: "hidden",
   marginBottom: 16,
-  backgroundColor: "#2a211c",
+  backgroundColor: "#0D2B52",
 };
 
 const visualBadgeStyle: CSSProperties = {
@@ -570,7 +570,7 @@ const visualBadgeStyle: CSSProperties = {
   backdropFilter: "blur(12px)",
   fontSize: 12,
   fontWeight: 800,
-  color: "#1f1a17",
+  color: "#0D2B52",
 };
 
 const swipeBodyStyle: CSSProperties = {
@@ -583,14 +583,14 @@ const swipeCityStyle: CSSProperties = {
   lineHeight: 1.02,
   letterSpacing: 0,
   fontWeight: 850,
-  color: "#1f1a17",
+  color: "#0D2B52",
 };
 
 const swipeReasonStyle: CSSProperties = {
   margin: "10px 0 16px",
   fontSize: 14,
   lineHeight: 1.55,
-  color: "#6f6258",
+  color: "#6B87A8",
 };
 
 const swipeButtonRowStyle: CSSProperties = {
@@ -600,11 +600,11 @@ const swipeButtonRowStyle: CSSProperties = {
 };
 
 const skipButtonStyle: CSSProperties = {
-  border: "1px solid #e4d8c8",
+  border: "1px solid #D8E2F0",
   borderRadius: 999,
   padding: "14px 12px",
-  background: "#fffdf8",
-  color: "#1f1a17",
+  background: "#FFFFFF",
+  color: "#0D2B52",
   fontSize: 14,
   fontWeight: 850,
   cursor: "pointer",
@@ -614,8 +614,8 @@ const pickButtonStyle: CSSProperties = {
   border: 0,
   borderRadius: 999,
   padding: "14px 12px",
-  background: "#2a211c",
-  color: "#fff8ef",
+  background: "#0D2B52",
+  color: "#FFFFFF",
   fontSize: 14,
   fontWeight: 850,
   cursor: "pointer",
@@ -624,7 +624,7 @@ const pickButtonStyle: CSSProperties = {
 const viewCityLinkStyle: CSSProperties = {
   display: "block",
   marginTop: 13,
-  color: "#9a6a43",
+  color: "#BF9B30",
   textDecoration: "none",
   fontSize: 13,
   fontWeight: 850,
@@ -634,13 +634,13 @@ const pickedBoxStyle: CSSProperties = {
   marginTop: 18,
   padding: 14,
   borderRadius: 8,
-  background: "#f7f2ea",
-  border: "1px solid #e4d8c8",
+  background: "#F0F4FA",
+  border: "1px solid #D8E2F0",
 };
 
 const pickedEmptyStyle: CSSProperties = {
   fontSize: 13,
-  color: "#6f6258",
+  color: "#6B87A8",
 };
 
 const pickedListStyle: CSSProperties = {
@@ -652,8 +652,8 @@ const pickedListStyle: CSSProperties = {
 const pickedItemStyle: CSSProperties = {
   padding: "8px 10px",
   borderRadius: 999,
-  background: "#2a211c",
-  color: "#fff8ef",
+  background: "#0D2B52",
+  color: "#FFFFFF",
   textDecoration: "none",
   fontSize: 12,
   fontWeight: 800,
@@ -662,10 +662,10 @@ const pickedItemStyle: CSSProperties = {
 const emptyStyle: CSSProperties = {
   padding: 18,
   borderRadius: 8,
-  background: "#f7f2ea",
-  border: "1px solid #e4d8c8",
+  background: "#F0F4FA",
+  border: "1px solid #D8E2F0",
   fontSize: 14,
-  color: "#6f6258",
+  color: "#6B87A8",
 };
 
 

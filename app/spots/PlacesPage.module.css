@@ -1,9 +1,9 @@
 .page {
   min-height: 100vh;
   background:
-    radial-gradient(circle at 14% 0%, rgba(187, 139, 85, 0.12), transparent 34rem),
-    linear-gradient(180deg, #f8f2e9 0%, #fffdf8 46%, #f3ecdf 100%);
-  color: #211f1a;
+    radial-gradient(circle at 14% 0%, rgba(191, 155, 48, 0), transparent 34rem),
+    linear-gradient(180deg, #FFFFFF 0%, #FFFFFF 46%, #FFFFFF 100%);
+  color: #0D2B52;
 }
 
 .hero,
@@ -22,7 +22,7 @@
   display: flex;
   gap: 9px;
   align-items: center;
-  color: #8a8075;
+  color: #6B87A8;
   font-size: 12px;
   font-weight: 780;
 }
@@ -33,7 +33,7 @@
 }
 
 .breadcrumb strong {
-  color: #211f1a;
+  color: #0D2B52;
 }
 
 .heroHeader {
@@ -44,7 +44,7 @@
 
 .eyebrow,
 .country {
-  color: #8f5f36;
+  color: #BF9B30;
   font-size: 11px;
   line-height: 1;
   font-weight: 850;
@@ -65,7 +65,7 @@
 .heroHeader p {
   max-width: 620px;
   margin: 20px auto 0;
-  color: #5f564d;
+  color: #6B87A8;
   font-size: 16px;
   line-height: 1.78;
 }
@@ -75,12 +75,12 @@
   display: grid;
   grid-template-columns: minmax(0, 0.64fr) minmax(320px, 0.36fr);
   overflow: hidden;
-  border: 1px solid rgba(103, 78, 49, 0.15);
+  border: 1px solid #D8E2F0;
   border-radius: 14px;
-  background: rgba(255, 253, 248, 0.66);
+  background: rgba(255, 255, 255, 0.66);
   color: inherit;
   text-decoration: none;
-  box-shadow: 0 18px 48px rgba(95, 73, 50, 0.08);
+  box-shadow: 0 18px 48px rgba(13, 43, 82, 0.08);
 }
 
 .featuredImage {
@@ -106,13 +106,13 @@
 
 .placeMeta {
   margin-top: 14px;
-  color: #5f564d;
+  color: #6B87A8;
   font-size: 14px;
 }
 
 .starLine {
   margin: 24px 0 20px;
-  color: #8f5f36;
+  color: #BF9B30;
   display: flex;
   align-items: center;
   gap: 14px;
@@ -122,12 +122,12 @@
   content: "";
   flex: 1;
   height: 1px;
-  background: rgba(103, 78, 49, 0.18);
+  background: #D8E2F0;
 }
 
 .featuredCopy p {
   margin: 0;
-  color: #5f564d;
+  color: #6B87A8;
   font-size: 16px;
   line-height: 1.82;
 }
@@ -136,7 +136,7 @@
 .placeBody strong,
 .planningPanel strong {
   margin-top: 24px;
-  color: #7d4e2c;
+  color: #BF9B30;
   font-size: 12px;
   font-weight: 850;
   letter-spacing: 0.12em;
@@ -167,7 +167,7 @@
 }
 
 .sectionHeader span {
-  color: #8a8075;
+  color: #6B87A8;
   font-size: 12px;
   font-weight: 760;
 }
@@ -180,9 +180,9 @@
 
 .placeCard {
   overflow: hidden;
-  border: 1px solid rgba(103, 78, 49, 0.14);
+  border: 1px solid #D8E2F0;
   border-radius: 8px;
-  background: rgba(255, 253, 248, 0.62);
+  background: rgba(255, 255, 255, 0.62);
   color: inherit;
   text-decoration: none;
   transition: transform 180ms ease;
@@ -216,7 +216,7 @@
 .placeBody p {
   min-height: 78px;
   margin: 14px 0 0;
-  color: #5f564d;
+  color: #6B87A8;
   font-size: 14px;
   line-height: 1.72;
 }
@@ -228,9 +228,9 @@
 .moodPanel {
   margin-bottom: 28px;
   padding: 34px;
-  border: 1px solid rgba(103, 78, 49, 0.14);
+  border: 1px solid #D8E2F0;
   border-radius: 12px;
-  background: rgba(255, 253, 248, 0.48);
+  background: rgba(255, 255, 255, 0.48);
 }
 
 .panelHeader {
@@ -274,7 +274,7 @@
 .moodItem p,
 .planningPanel p {
   margin: 10px 0 0;
-  color: #5f564d;
+  color: #6B87A8;
   font-size: 14px;
   line-height: 1.72;
 }
@@ -289,9 +289,9 @@
 .planningPanel a {
   min-height: 180px;
   padding: 26px;
-  border: 1px solid rgba(103, 78, 49, 0.14);
+  border: 1px solid #D8E2F0;
   border-radius: 8px;
-  background: rgba(255, 253, 248, 0.56);
+  background: rgba(255, 255, 255, 0.56);
   color: inherit;
   text-decoration: none;
   transition: transform 180ms ease;

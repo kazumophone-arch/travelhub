@@ -35,7 +35,7 @@ const eyebrowStyle: CSSProperties = {
   fontSize: 12,
   letterSpacing: 0,
   textTransform: "uppercase",
-  color: "#9a6a43",
+  color: "#BF9B30",
   fontWeight: 850,
   marginBottom: 14,
 };
@@ -47,7 +47,7 @@ const titleStyle: CSSProperties = {
   lineHeight: 1.02,
   letterSpacing: 0,
   fontWeight: 850,
-  color: "#1f1a17",
+  color: "#0D2B52",
   overflowWrap: "break-word",
 };
 
@@ -56,7 +56,7 @@ const subtitleStyle: CSSProperties = {
   maxWidth: 700,
   fontSize: 16,
   lineHeight: 1.78,
-  color: "#6f6258",
+  color: "#6B87A8",
 };
 
 

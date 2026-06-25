@@ -880,7 +880,7 @@ const pageStyle: CSSProperties = {
   overflowX: "hidden",
   background:
     "radial-gradient(circle at 12% 0%, rgba(255, 221, 180, 0.72), transparent 30%), radial-gradient(circle at 88% 4%, rgba(175, 205, 255, 0.58), transparent 28%), linear-gradient(180deg, #fbf7f0 0%, #ffffff 44%, #eef4f8 100%)",
-  color: "#171717",
+  color: "#0D2B52",
   fontFamily:
     '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif',
 };
@@ -985,7 +985,7 @@ const searchInputStyle: CSSProperties = {
   outline: "none",
   background: "transparent",
   fontSize: 16,
-  color: "#171717",
+  color: "#0D2B52",
 };
 
 const heroActionsStyle: CSSProperties = {
@@ -999,7 +999,7 @@ const primaryHeroButtonStyle: CSSProperties = {
   border: 0,
   padding: "13px 16px",
   borderRadius: 999,
-  background: "#171717",
+  background: "#0D2B52",
   color: "#ffffff",
   fontSize: 14,
   fontWeight: 850,
@@ -1012,7 +1012,7 @@ const secondaryHeroButtonStyle: CSSProperties = {
   padding: "13px 16px",
   borderRadius: 999,
   background: "rgba(255, 255, 255, 0.78)",
-  color: "#171717",
+  color: "#0D2B52",
   fontSize: 14,
   fontWeight: 800,
   cursor: "pointer",
@@ -1299,13 +1299,13 @@ const moodCardStyle: CSSProperties = {
   padding: 18,
   background: "rgba(255, 255, 255, 0.78)",
   boxShadow: "0 18px 52px rgba(0, 0, 0, 0.07)",
-  color: "#171717",
+  color: "#0D2B52",
   cursor: "pointer",
 };
 
 const activeMoodCardStyle: CSSProperties = {
   ...moodCardStyle,
-  background: "#171717",
+  background: "#0D2B52",
   color: "#ffffff",
 };
 
@@ -1359,7 +1359,7 @@ const clearMoodButtonStyle: CSSProperties = {
   borderRadius: 999,
   padding: "8px 10px",
   background: "#ffffff",
-  color: "#171717",
+  color: "#0D2B52",
   fontSize: 12,
   fontWeight: 800,
   cursor: "pointer",
@@ -1410,7 +1410,7 @@ const categoryWrapStyle: CSSProperties = {
 const categoryButtonStyle: CSSProperties = {
   border: "1px solid rgba(0, 0, 0, 0.1)",
   background: "rgba(255, 255, 255, 0.74)",
-  color: "#171717",
+  color: "#0D2B52",
   borderRadius: 999,
   padding: "10px 13px",
   fontSize: 13,
@@ -1422,9 +1422,9 @@ const categoryButtonStyle: CSSProperties = {
 
 const activeCategoryStyle: CSSProperties = {
   ...categoryButtonStyle,
-  background: "#171717",
+  background: "#0D2B52",
   color: "#ffffff",
-  border: "1px solid #171717",
+  border: "1px solid #0D2B52",
 };
 
 const destinationGridStyle: CSSProperties = {
@@ -1505,7 +1505,7 @@ const arrowStyle: CSSProperties = {
   display: "grid",
   placeItems: "center",
   borderRadius: "50%",
-  background: "#171717",
+  background: "#0D2B52",
   color: "#ffffff",
   fontWeight: 800,
   flexShrink: 0,
@@ -1529,7 +1529,7 @@ const actionRowStyle: CSSProperties = {
 const primaryMiniStyle: CSSProperties = {
   padding: "7px 10px",
   borderRadius: 999,
-  background: "#171717",
+  background: "#0D2B52",
   color: "#ffffff",
   fontSize: 12,
   fontWeight: 750,
@@ -1539,7 +1539,7 @@ const secondaryMiniStyle: CSSProperties = {
   padding: "7px 10px",
   borderRadius: 999,
   background: "rgba(0, 0, 0, 0.06)",
-  color: "#171717",
+  color: "#0D2B52",
   fontSize: 12,
   fontWeight: 750,
 };

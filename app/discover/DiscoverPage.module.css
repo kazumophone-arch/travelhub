@@ -1,9 +1,9 @@
 .page {
   min-height: 100vh;
   background:
-    radial-gradient(circle at 12% 0%, rgba(187, 139, 85, 0.12), transparent 34rem),
-    linear-gradient(180deg, #f8f2e9 0%, #fffdf8 46%, #f3ecdf 100%);
-  color: #211f1a;
+    radial-gradient(circle at 12% 0%, rgba(191, 155, 48, 0), transparent 34rem),
+    linear-gradient(180deg, #FFFFFF 0%, #FFFFFF 46%, #FFFFFF 100%);
+  color: #0D2B52;
 }
 
 .hero,
@@ -24,7 +24,7 @@
 }
 
 .eyebrow {
-  color: #8f5f36;
+  color: #BF9B30;
   font-size: 11px;
   line-height: 1;
   font-weight: 850;
@@ -47,13 +47,13 @@
   width: 54px;
   height: 2px;
   margin: 28px 0 24px;
-  background: #8f5f36;
+  background: #BF9B30;
 }
 
 .heroCopy p {
   max-width: 500px;
   margin: 0;
-  color: #514941;
+  color: #6B87A8;
   font-size: 16px;
   line-height: 1.82;
 }
@@ -63,12 +63,12 @@
   flex-wrap: wrap;
   gap: 12px;
   margin-top: 28px;
-  color: #b28a62;
+  color: #6B87A8;
   font-size: 13px;
 }
 
 .quickLinks a {
-  color: #7d4e2c;
+  color: #BF9B30;
   text-decoration: none;
 }
 
@@ -77,7 +77,7 @@
   border-radius: 8px;
   background-size: cover;
   background-position: center;
-  box-shadow: 0 20px 52px rgba(95, 73, 50, 0.13);
+  box-shadow: 0 20px 52px rgba(13, 43, 82, 0.13);
 }
 
 .feelings {
@@ -105,9 +105,9 @@
 .feelingCard {
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(103, 78, 49, 0.14);
+  border: 1px solid #D8E2F0;
   border-radius: 8px;
-  background: rgba(255, 253, 248, 0.62);
+  background: rgba(255, 255, 255, 0.62);
   color: inherit;
   text-decoration: none;
   transition: transform 180ms ease, box-shadow 180ms ease;
@@ -146,7 +146,7 @@
 .feelingBody p,
 .discoveryCopy p,
 .entryCard p {
-  color: #5f564d;
+  color: #6B87A8;
   font-size: 14px;
   line-height: 1.72;
 }
@@ -159,7 +159,7 @@
 .feelingBody strong,
 .discoveryCopy strong,
 .entryCard strong {
-  color: #7d4e2c;
+  color: #BF9B30;
   font-size: 11px;
   font-weight: 850;
   letter-spacing: 0.12em;
@@ -180,9 +180,9 @@
   display: grid;
   grid-template-columns: minmax(260px, 0.42fr) minmax(0, 0.58fr);
   overflow: hidden;
-  border: 1px solid rgba(103, 78, 49, 0.14);
+  border: 1px solid #D8E2F0;
   border-radius: 8px;
-  background: rgba(255, 253, 248, 0.56);
+  background: rgba(255, 255, 255, 0.56);
   color: inherit;
   text-decoration: none;
   transition: transform 180ms ease;
@@ -194,7 +194,7 @@
 
 .discoveryCopy span {
   display: block;
-  color: #8f5f36;
+  color: #BF9B30;
   font-family: Georgia, "Times New Roman", serif;
   font-size: 26px;
   line-height: 1;
@@ -230,9 +230,9 @@
   min-height: 150px;
   display: grid;
   padding: 24px;
-  border: 1px solid rgba(103, 78, 49, 0.14);
+  border: 1px solid #D8E2F0;
   border-radius: 8px;
-  background: rgba(255, 253, 248, 0.58);
+  background: rgba(255, 255, 255, 0.58);
   color: inherit;
   text-decoration: none;
   transition: transform 180ms ease;
@@ -251,12 +251,12 @@
   display: flex;
   gap: 16px;
   align-items: center;
-  color: #5f564d;
-  border-top: 1px solid rgba(103, 78, 49, 0.14);
+  color: #6B87A8;
+  border-top: 1px solid #D8E2F0;
 }
 
 .closing span {
-  color: #8f5f36;
+  color: #BF9B30;
   font-size: 22px;
 }
 

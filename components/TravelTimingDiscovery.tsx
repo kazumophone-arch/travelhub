@@ -60,7 +60,7 @@ function getPhotoCardStyle(city: City): CSSProperties {
     backgroundImage: getImageBackground(
       imageUrl,
       "linear-gradient(180deg, rgba(31, 26, 23, 0.04) 0%, rgba(31, 26, 23, 0.20) 48%, rgba(31, 26, 23, 0.78) 100%)",
-      "linear-gradient(135deg, #eadbc8 0%, #b8936e 52%, #2a211c 100%)"
+      "linear-gradient(135deg, #eadbc8 0%, #b8936e 52%, #0D2B52 100%)"
     ),
     backgroundSize: "cover",
     backgroundPosition: getCssImagePosition(city.imagePosition),
@@ -162,7 +162,7 @@ const smallLabelStyle: CSSProperties = {
   fontSize: 12,
   letterSpacing: 0,
   textTransform: "uppercase",
-  color: "#9a6a43",
+  color: "#BF9B30",
   fontWeight: 850,
   marginBottom: 7,
 };
@@ -173,7 +173,7 @@ const sectionTitleStyle: CSSProperties = {
   lineHeight: 1.06,
   letterSpacing: 0,
   fontWeight: 850,
-  color: "#1f1a17",
+  color: "#0D2B52",
 };
 
 const sectionLeadStyle: CSSProperties = {
@@ -181,7 +181,7 @@ const sectionLeadStyle: CSSProperties = {
   maxWidth: 680,
   fontSize: 14,
   lineHeight: 1.7,
-  color: "#6f6258",
+  color: "#6B87A8",
 };
 
 const monthGridStyle: CSSProperties = {
@@ -192,11 +192,11 @@ const monthGridStyle: CSSProperties = {
 };
 
 const monthButtonStyle: CSSProperties = {
-  border: "1px solid #e4d8c8",
+  border: "1px solid #D8E2F0",
   borderRadius: 999,
   padding: "9px 12px",
-  background: "#fffdf8",
-  color: "#6f6258",
+  background: "#FFFFFF",
+  color: "#6B87A8",
   fontSize: 13,
   fontWeight: 800,
   cursor: "pointer",
@@ -204,9 +204,9 @@ const monthButtonStyle: CSSProperties = {
 
 const activeMonthButtonStyle: CSSProperties = {
   ...monthButtonStyle,
-  background: "#2a211c",
-  border: "1px solid #2a211c",
-  color: "#fff8ef",
+  background: "#0D2B52",
+  border: "1px solid #0D2B52",
+  color: "#FFFFFF",
   boxShadow: "0 10px 24px rgba(70, 53, 38, 0.14)",
 };
 
@@ -224,15 +224,15 @@ const miniTitleStyle: CSSProperties = {
   fontSize: 26,
   lineHeight: 1.08,
   letterSpacing: 0,
-  color: "#1f1a17",
+  color: "#0D2B52",
 };
 
 const countStyle: CSSProperties = {
   padding: "8px 11px",
   borderRadius: 999,
-  background: "#f4eadc",
-  border: "1px solid #e4d8c8",
-  color: "#9a6a43",
+  background: "#F0F4FA",
+  border: "1px solid #D8E2F0",
+  color: "#BF9B30",
   fontSize: 12,
   fontWeight: 850,
 };
@@ -252,9 +252,9 @@ const cityCardStyle: CSSProperties = {
   borderRadius: 8,
   overflow: "hidden",
   textDecoration: "none",
-  color: "#fff8ef",
-  backgroundColor: "#2a211c",
-  border: "1px solid #e4d8c8",
+  color: "#FFFFFF",
+  backgroundColor: "#0D2B52",
+  border: "1px solid #D8E2F0",
   boxShadow: "0 18px 42px rgba(70, 53, 38, 0.14)",
 };
 
@@ -267,7 +267,7 @@ const badgeStyle: CSSProperties = {
   borderRadius: 999,
   background: "rgba(255, 253, 248, 0.88)",
   border: "1px solid rgba(255, 253, 248, 0.34)",
-  color: "#1f1a17",
+  color: "#0D2B52",
   fontSize: 12,
   fontWeight: 850,
 };
@@ -296,7 +296,7 @@ const cardTitleStyle: CSSProperties = {
   fontSize: 27,
   lineHeight: 1.08,
   letterSpacing: 0,
-  color: "#fff8ef",
+  color: "#FFFFFF",
   fontWeight: 850,
 };
 
@@ -311,5 +311,5 @@ const openTextStyle: CSSProperties = {
   marginTop: 15,
   fontSize: 13,
   fontWeight: 850,
-  color: "#f3d7b5",
+  color: "#F0F4FA",
 };

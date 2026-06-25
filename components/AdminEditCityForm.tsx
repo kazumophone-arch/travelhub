@@ -1,9 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
 import {
-  AdminContentGuidance,
   AdminFieldHint,
   AdminInlineButton,
   AdminUrlTestLink,
@@ -11,6 +10,7 @@ import {
 } from "@/components/AdminContentTools";
 import { AdminTagSelector } from "@/components/AdminTagSelector";
 import { AdminCityHeroPreview } from "@/components/AdminCityHeroPreview";
+import layoutStyles from "@/components/AdminCityHeroPreview.module.css";
 import { hasPreviewUrl } from "@/components/AdminLivePreview";
 import {
   formatValidationErrors,
@@ -117,6 +117,24 @@ function getCityPublishReadinessNotes(form: CityForm) {
   }
 
   return notes;
+}
+
+function FormSection({
+  title,
+  hint,
+  children,
+}: {
+  title: string;
+  hint?: string;
+  children: ReactNode;
+}) {
+  return (
+    <section style={sectionStyle}>
+      <div style={sectionHeadingStyle}>{title}</div>
+      {hint ? <p style={sectionHintStyle}>{hint}</p> : null}
+      {children}
+    </section>
+  );
 }
 
 function PublishReadinessPanel({ notes }: { notes: string[] }) {
@@ -345,172 +363,203 @@ export function AdminEditCityForm({ id }: Props) {
     return <div style={emptyStyle}>読み込み中...</div>;
   }
 
+  const publicPath = form.slug ? `/c/${form.slug}` : "";
+
   return (
-    <div style={wrapStyle}>
+    <div className={layoutStyles.editLayout}>
       <section style={formStyle}>
-        <AdminContentGuidance kind="city" />
+        <FormSection
+          title="Page identity"
+          hint="都市の基本情報と公開状態です。右側プレビュー全体の元データになります。"
+        >
+          <label style={labelStyle}>
+            都市名
+            <input value={form.city} onChange={(event) => update("city", event.target.value)} style={inputStyle} />
+          </label>
 
-        <label style={labelStyle}>
-          都市名
-          <input value={form.city} onChange={(event) => update("city", event.target.value)} style={inputStyle} />
-        </label>
+          <label style={labelStyle}>
+            スラッグ
+            <input value={form.slug} onChange={(event) => update("slug", slugify(event.target.value))} style={inputStyle} />
+            <AdminInlineButton onClick={generateSlugFromCity}>
+              都市名から生成
+            </AdminInlineButton>
+          </label>
+          <AdminFieldHint>
+            英小文字・数字・ハイフンのみ。既存スラッグを変えると公開URLも変わります。
+          </AdminFieldHint>
 
-        <label style={labelStyle}>
-          スラッグ
-          <input value={form.slug} onChange={(event) => update("slug", slugify(event.target.value))} style={inputStyle} />
-          <AdminInlineButton onClick={generateSlugFromCity}>
-            都市名から生成
-          </AdminInlineButton>
-        </label>
-        <AdminFieldHint>
-          英小文字・数字・ハイフンのみ。既存スラッグを変えると公開URLも変わります。
-        </AdminFieldHint>
+          <label style={labelStyle}>
+            国
+            <select
+              value={form.countryId}
+              onChange={(event) => updateCountry(event.target.value)}
+              style={inputStyle}
+            >
+              <option value="">国を選択</option>
+              {countryOptions.map((country) => (
+                <option key={country.id} value={country.id}>
+                  {country.name}
+                  {country.is_published ? "" : " — 下書き"}
+                </option>
+              ))}
+            </select>
+          </label>
+          <AdminFieldHint>
+            国管理のデータを選ぶと、互換性のため国名にも同じ名前を保存します。
+          </AdminFieldHint>
 
-        <label style={labelStyle}>
-          国
-          <select
-            value={form.countryId}
-            onChange={(event) => updateCountry(event.target.value)}
-            style={inputStyle}
-          >
-            <option value="">国を選択</option>
-            {countryOptions.map((country) => (
-              <option key={country.id} value={country.id}>
-                {country.name}
-                {country.is_published ? "" : " — 下書き"}
-              </option>
-            ))}
-          </select>
-        </label>
-        <AdminFieldHint>
-          国管理のデータを選ぶと、互換性のため国名にも同じ名前を保存します。
-        </AdminFieldHint>
+          <label style={labelStyle}>
+            国名
+            <input value={form.country} onChange={(event) => updateManualCountry(event.target.value)} style={inputStyle} />
+          </label>
 
-        <label style={labelStyle}>
-          国名
-          <input value={form.country} onChange={(event) => updateManualCountry(event.target.value)} style={inputStyle} />
-        </label>
+          <label style={labelStyle}>
+            地域
+            <input value={form.region} onChange={(event) => update("region", event.target.value)} style={inputStyle} />
+          </label>
 
-        <label style={labelStyle}>
-          地域
-          <input value={form.region} onChange={(event) => update("region", event.target.value)} style={inputStyle} />
-        </label>
+          <label style={checkStyle}>
+            <input type="checkbox" checked={form.isPublished} onChange={(event) => update("isPublished", event.target.checked)} />
+            公開
+          </label>
 
-        <label style={labelStyle}>
-          概要
-          <textarea value={form.summary} onChange={(event) => update("summary", event.target.value)} rows={4} style={textareaStyle} />
-        </label>
+          {publicPath ? (
+            <Link href={publicPath} target="_blank" rel="noreferrer" style={inlinePublicLinkStyle}>
+              公開ページを開く →
+            </Link>
+          ) : null}
+        </FormSection>
 
-        <label style={labelStyle}>
-          説明
-          <textarea value={form.description} onChange={(event) => update("description", event.target.value)} rows={5} style={textareaStyle} />
-          <AdminInlineButton onClick={insertDescriptionTemplate}>
-            説明文テンプレートを挿入
-          </AdminInlineButton>
-        </label>
-        <AdminFieldHint>
-          公開ページ向けの英語説明文。空欄なら概要が使われます。
-        </AdminFieldHint>
+        <FormSection
+          title="Hero"
+          hint="右側プレビュー上部のヒーロー（画像・タイトル・リード文）に反映されます。"
+        >
+          <label style={labelStyle}>
+            概要（ヒーローのリード文）
+            <textarea value={form.summary} onChange={(event) => update("summary", event.target.value)} rows={4} style={textareaStyle} />
+          </label>
 
-        <label style={labelStyle}>
-          画像URL（https）
-          <input value={form.imageUrl} onChange={(event) => update("imageUrl", event.target.value)} placeholder="https://..." style={inputStyle} />
-        </label>
-        <AdminFieldHint>
-          公開ページとプレビューで使う画像URLです。https の実URLを入れてください。
-        </AdminFieldHint>
-        <AdminUrlTestLink url={form.imageUrl} />
+          <label style={labelStyle}>
+            画像URL（https）
+            <input value={form.imageUrl} onChange={(event) => update("imageUrl", event.target.value)} placeholder="https://..." style={inputStyle} />
+          </label>
+          <AdminFieldHint>
+            公開ページとプレビューで使う画像URLです。https の実URLを入れてください。
+          </AdminFieldHint>
+          <AdminUrlTestLink url={form.imageUrl} />
 
-        <label style={labelStyle}>
-          画像の表示位置
-          <select
-            value={form.imagePosition}
-            onChange={(event) =>
-              update("imagePosition", normalizeImagePosition(event.target.value))
-            }
-            style={inputStyle}
-          >
-            {IMAGE_POSITION_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </label>
-        <AdminFieldHint>
-          画像が切れる場合に、どの位置を優先して表示するかを選びます。
-        </AdminFieldHint>
+          <label style={labelStyle}>
+            画像の表示位置
+            <select
+              value={form.imagePosition}
+              onChange={(event) =>
+                update("imagePosition", normalizeImagePosition(event.target.value))
+              }
+              style={inputStyle}
+            >
+              {IMAGE_POSITION_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
+          <AdminFieldHint>
+            画像が切れる場合に、どの位置を優先して表示するかを選びます。
+          </AdminFieldHint>
 
-        <div style={uploadWrapStyle}>
-          <input
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-            onChange={(event) => setImageFile(event.target.files?.[0] ?? null)}
-            style={inputStyle}
+          <div style={uploadWrapStyle}>
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={(event) => setImageFile(event.target.files?.[0] ?? null)}
+              style={inputStyle}
+            />
+
+            <button
+              type="button"
+              onClick={uploadCityImage}
+              style={buttonStyle}
+              disabled={isUploadingImage}
+            >
+              画像をアップロード
+            </button>
+          </div>
+
+          <label style={labelStyle}>
+            画像代替テキスト
+            <input value={form.imageAlt} onChange={(event) => update("imageAlt", event.target.value)} style={inputStyle} />
+          </label>
+
+          <label style={labelStyle}>
+            画像クレジット
+            <input value={form.imageCredit} onChange={(event) => update("imageCredit", event.target.value)} style={inputStyle} />
+          </label>
+
+          <label style={labelStyle}>
+            画像出典URL（https）
+            <input value={form.imageSourceUrl} onChange={(event) => update("imageSourceUrl", event.target.value)} placeholder="https://source.example/photo" style={inputStyle} />
+          </label>
+          <AdminFieldHint>
+            写真提供元やライセンス確認用のURLです。
+          </AdminFieldHint>
+          <AdminUrlTestLink url={form.imageSourceUrl} />
+        </FormSection>
+
+        <FormSection
+          title="Where to Stay"
+          hint="ホテルURLを入力すると、プレビューのホテルCTAが「表示予定」になります。"
+        >
+          <label style={labelStyle}>
+            ホテルアフィリエイトURL（https）
+            <input value={form.affiliateHotelUrl} onChange={(event) => update("affiliateHotelUrl", event.target.value)} placeholder="https://..." style={inputStyle} />
+          </label>
+          <AdminFieldHint>
+            都市ページのホテルCTAで使う候補URLです。スポット側URLがある場合はそちらが優先されます。
+          </AdminFieldHint>
+          <AdminUrlTestLink url={form.affiliateHotelUrl} />
+        </FormSection>
+
+        <FormSection
+          title="Experiences"
+          hint="ツアーURLを入力すると、プレビューのツアーCTAが「表示予定」になります。"
+        >
+          <label style={labelStyle}>
+            ツアーアフィリエイトURL（https）
+            <input value={form.affiliateTourUrl} onChange={(event) => update("affiliateTourUrl", event.target.value)} placeholder="https://..." style={inputStyle} />
+          </label>
+          <AdminFieldHint>
+            都市ページのツアーCTAで使う候補URLです。スポット側URLがある場合はそちらが優先されます。
+          </AdminFieldHint>
+          <AdminUrlTestLink url={form.affiliateTourUrl} />
+        </FormSection>
+
+        <FormSection
+          title="Explore next / Supporting copy"
+          hint="現在のプレビューには直接表示されない補足情報です（説明は概要が空欄のときのみヒーローのリード文として使われます）。"
+        >
+          <label style={labelStyle}>
+            説明
+            <textarea value={form.description} onChange={(event) => update("description", event.target.value)} rows={5} style={textareaStyle} />
+            <AdminInlineButton onClick={insertDescriptionTemplate}>
+              説明文テンプレートを挿入
+            </AdminInlineButton>
+          </label>
+          <AdminFieldHint>
+            公開ページ向けの英語説明文。空欄なら概要が使われます。
+          </AdminFieldHint>
+
+          <label style={labelStyle}>
+            表示順
+            <input type="number" value={form.sortRank} onChange={(event) => update("sortRank", Number(event.target.value))} style={inputStyle} />
+          </label>
+
+          <AdminTagSelector
+            selectedTagIds={form.tagIds}
+            onChange={(tagIds) => update("tagIds", tagIds)}
+            helperText="都市の整理用タグです。公開ページや検索にはまだ使われません。"
           />
-
-          <button
-            type="button"
-            onClick={uploadCityImage}
-            style={buttonStyle}
-            disabled={isUploadingImage}
-          >
-            画像をアップロード
-          </button>
-        </div>
-
-        <label style={labelStyle}>
-          画像代替テキスト
-          <input value={form.imageAlt} onChange={(event) => update("imageAlt", event.target.value)} style={inputStyle} />
-        </label>
-
-        <label style={labelStyle}>
-          画像クレジット
-          <input value={form.imageCredit} onChange={(event) => update("imageCredit", event.target.value)} style={inputStyle} />
-        </label>
-
-        <label style={labelStyle}>
-          画像出典URL（https）
-          <input value={form.imageSourceUrl} onChange={(event) => update("imageSourceUrl", event.target.value)} placeholder="https://source.example/photo" style={inputStyle} />
-        </label>
-        <AdminFieldHint>
-          写真提供元やライセンス確認用のURLです。
-        </AdminFieldHint>
-        <AdminUrlTestLink url={form.imageSourceUrl} />
-
-        <label style={labelStyle}>
-          表示順
-          <input type="number" value={form.sortRank} onChange={(event) => update("sortRank", Number(event.target.value))} style={inputStyle} />
-        </label>
-
-        <AdminTagSelector
-          selectedTagIds={form.tagIds}
-          onChange={(tagIds) => update("tagIds", tagIds)}
-          helperText="都市の整理用タグです。公開ページや検索にはまだ使われません。"
-        />
-
-        <label style={labelStyle}>
-          ホテルアフィリエイトURL（https）
-          <input value={form.affiliateHotelUrl} onChange={(event) => update("affiliateHotelUrl", event.target.value)} placeholder="https://..." style={inputStyle} />
-        </label>
-        <AdminFieldHint>
-          都市ページのホテルCTAで使う候補URLです。スポット側URLがある場合はそちらが優先されます。
-        </AdminFieldHint>
-        <AdminUrlTestLink url={form.affiliateHotelUrl} />
-
-        <label style={labelStyle}>
-          ツアーアフィリエイトURL（https）
-          <input value={form.affiliateTourUrl} onChange={(event) => update("affiliateTourUrl", event.target.value)} placeholder="https://..." style={inputStyle} />
-        </label>
-        <AdminFieldHint>
-          都市ページのツアーCTAで使う候補URLです。スポット側URLがある場合はそちらが優先されます。
-        </AdminFieldHint>
-        <AdminUrlTestLink url={form.affiliateTourUrl} />
-
-        <label style={checkStyle}>
-          <input type="checkbox" checked={form.isPublished} onChange={(event) => update("isPublished", event.target.checked)} />
-          公開
-        </label>
+        </FormSection>
 
         <PublishReadinessPanel notes={publishReadinessNotes} />
 
@@ -530,43 +579,69 @@ export function AdminEditCityForm({ id }: Props) {
           </p>
         )}
       </section>
-      <AdminCityHeroPreview
-        title={form.city}
-        country={form.country}
-        leadText={form.summary || form.description}
-        imageUrl={form.imageUrl}
-        imagePosition={form.imagePosition}
-        isPublished={form.isPublished}
-        publicPath={form.slug ? `/c/${form.slug}` : ""}
-        ctas={[
-          {
-            label: "ホテル",
-            href: `/out/hotels?c=${encodeURIComponent(form.slug)}&src=admin-preview&v=city_preview`,
-            isVisible: Boolean(form.slug) && hasPreviewUrl(form.affiliateHotelUrl),
-          },
-          {
-            label: "ツアー",
-            href: `/out/tours?c=${encodeURIComponent(form.slug)}&src=admin-preview&v=city_preview`,
-            isVisible: Boolean(form.slug) && hasPreviewUrl(form.affiliateTourUrl),
-          },
-        ]}
-      />
+      <div className={layoutStyles.previewColumn}>
+        <AdminCityHeroPreview
+          title={form.city}
+          country={form.country}
+          leadText={form.summary || form.description}
+          imageUrl={form.imageUrl}
+          imagePosition={form.imagePosition}
+          isPublished={form.isPublished}
+          publicPath={publicPath}
+          ctas={[
+            {
+              label: "ホテル",
+              href: `/out/hotels?c=${encodeURIComponent(form.slug)}&src=admin-preview&v=city_preview`,
+              isVisible: Boolean(form.slug) && hasPreviewUrl(form.affiliateHotelUrl),
+            },
+            {
+              label: "ツアー",
+              href: `/out/tours?c=${encodeURIComponent(form.slug)}&src=admin-preview&v=city_preview`,
+              isVisible: Boolean(form.slug) && hasPreviewUrl(form.affiliateTourUrl),
+            },
+          ]}
+        />
+      </div>
     </div>
   );
 }
-
-const wrapStyle: CSSProperties = {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 360px), 1fr))",
-  gap: 18,
-  alignItems: "start",
-};
 
 const formStyle: CSSProperties = {
   padding: 18,
   borderRadius: 24,
   background: "#ffffff",
   border: "1px solid rgba(23,32,42,.08)",
+};
+
+const sectionStyle: CSSProperties = {
+  marginBottom: 24,
+  paddingBottom: 20,
+  borderBottom: "1px solid rgba(23,32,42,.08)",
+};
+
+const sectionHeadingStyle: CSSProperties = {
+  marginBottom: 6,
+  fontSize: 15,
+  fontWeight: 850,
+  color: "#17202a",
+  letterSpacing: "-.01em",
+};
+
+const sectionHintStyle: CSSProperties = {
+  margin: "0 0 14px",
+  fontSize: 12,
+  lineHeight: 1.55,
+  color: "#8d6139",
+};
+
+const inlinePublicLinkStyle: CSSProperties = {
+  display: "inline-flex",
+  width: "fit-content",
+  marginBottom: 4,
+  color: "#138a72",
+  fontSize: 12,
+  fontWeight: 850,
+  textDecoration: "none",
 };
 
 const labelStyle: CSSProperties = {

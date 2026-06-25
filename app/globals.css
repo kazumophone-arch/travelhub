@@ -3,6 +3,18 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  --color-bg: #FFFFFF;
+  --color-nav: #0D2B52;
+  --color-gold: #BF9B30;
+  --color-gold-hover: #A8882A;
+  --color-card: #F0F4FA;
+  --color-card-border: #D8E2F0;
+  --color-text-primary: #0D2B52;
+  --color-text-sub: #6B87A8;
+  --color-text-white: #FFFFFF;
+  --color-badge-bg: #FFF8E6;
+  --color-badge-border: #E8D080;
 }
 
 @theme inline {
@@ -27,7 +39,7 @@ body {
 
 /* TRAVELHUB_NAV_START */
 :root {
-  --travelhub-bg: #f6fbff;
+  --travelhub-bg: #FFFFFF;
   --travelhub-bg-soft: #eef8f5;
   --travelhub-surface: #ffffff;
   --travelhub-surface-soft: #f8fbfc;
@@ -53,10 +65,7 @@ body::before {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background:
-    radial-gradient(circle at 10% 0%, rgba(47, 128, 237, 0.10), transparent 32%),
-    radial-gradient(circle at 92% 8%, rgba(19, 138, 114, 0.12), transparent 30%),
-    linear-gradient(180deg, #f6fbff 0%, #ffffff 46%, #f2f8f6 100%);
+  background: #FFFFFF;
 }
 
 .travelhub-site-page-shell {
@@ -126,7 +135,7 @@ body::before {
   height: 2px;
   display: block;
   border-radius: 999px;
-  background: var(--travelhub-accent) !important;
+  background: #FFFFFF !important;
 }
 
 .travelhub-mobile-menu-wrap {
@@ -186,7 +195,7 @@ body::before {
   height: 38px;
   border: 0;
   border-radius: 14px;
-  background: #eff6f7 !important;
+  background: #F0F4FA !important;
   color: var(--travelhub-text) !important;
   font-size: 24px;
   line-height: 1;
@@ -210,12 +219,12 @@ body::before {
   display: flex;
   padding: 14px 14px;
   border-radius: 18px;
-  background: #f3f8fa !important;
+  background: #F0F4FA !important;
 }
 
 .travelhub-mobile-link-active {
-  background: var(--travelhub-accent-soft) !important;
-  color: var(--travelhub-accent) !important;
+  background: #FFF8E6 !important;
+  color: #BF9B30 !important;
 }
 
 .travelhub-mobile-note {
@@ -324,16 +333,16 @@ body::before {
   width: 100%;
   min-height: 76px !important;
   padding: 0 clamp(16px, 3vw, 36px) !important;
-  background: rgba(251, 247, 239, 0.97) !important;
-  border-bottom: 1px solid rgba(32, 22, 15, 0.07) !important;
-  backdrop-filter: blur(18px);
+  background: #0D2B52 !important;
+  border-bottom: 2px solid #BF9B30 !important;
+  backdrop-filter: none;
 }
 
 .travelhub-public-brand {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  color: #1f1a17 !important;
+  color: #FFFFFF !important;
   text-decoration: none;
   font-size: 22px;
   font-weight: 780;
@@ -345,11 +354,11 @@ body::before {
   width: 25px;
   height: 25px;
   border-radius: 999px;
-  background: rgba(255, 253, 248, 0.82) !important;
+  background: rgba(255, 255, 255, 0.12) !important;
   background-image: none !important;
-  border: 1px solid rgba(154, 106, 67, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.24);
   box-shadow: none;
-  color: #9a6a43 !important;
+  color: #BF9B30 !important;
   font-size: 13px;
 }
 
@@ -362,7 +371,7 @@ body::before {
 }
 
 .travelhub-public-nav-link {
-  color: #1f1a17 !important;
+  color: #A0B8D0 !important;
   text-decoration: none;
   font-size: 11px;
   line-height: 1;
@@ -370,12 +379,12 @@ body::before {
   letter-spacing: 0.22em;
   text-transform: uppercase;
   white-space: nowrap;
-  opacity: 0.9;
+  opacity: 1;
 }
 
 .travelhub-public-nav-link:hover,
 .travelhub-public-nav-link-active {
-  color: #9a6a43 !important;
+  color: #BF9B30 !important;
 }
 
 .travelhub-public-actions {
@@ -390,11 +399,11 @@ body::before {
   place-items: center;
   width: 34px;
   height: 34px;
-  color: #1f1a17 !important;
+  color: #FFFFFF !important;
   text-decoration: none;
-  border: 1px solid rgba(31, 26, 23, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.24);
   border-radius: 999px;
-  background: rgba(255, 253, 248, 0.62) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
   box-shadow: none;
 }
 
@@ -417,9 +426,9 @@ body::before {
   gap: 8px;
   min-height: 34px;
   padding: 0 11px;
-  color: #1f1a17 !important;
-  background: rgba(255, 253, 248, 0.7) !important;
-  border: 1px solid rgba(31, 26, 23, 0.14);
+  color: #FFFFFF !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.24);
   border-radius: 999px;
   box-shadow: none;
   cursor: pointer;
@@ -461,6 +470,33 @@ body::before {
   }
 }
 
+/* TRAVELHUB_HOME_HERO_NAV_START */
+
+.travelhub-public-header-home {
+  position: absolute !important;
+  top: 0 !important;
+  background: transparent !important;
+}
+
+.travelhub-public-header-home .travelhub-public-nav,
+.travelhub-public-header-home .travelhub-public-search-link {
+  display: none !important;
+}
+
+.travelhub-public-header-home .travelhub-public-menu-button {
+  display: inline-flex !important;
+}
+
+.travelhub-public-header-home .travelhub-menu-lines span {
+  background: #BF9B30 !important;
+}
+
+.travelhub-public-header-home .travelhub-public-menu-button .travelhub-explore-text {
+  color: #BF9B30 !important;
+}
+
+/* TRAVELHUB_HOME_HERO_NAV_END */
+
 /* TRAVELHUB_PUBLIC_HEADER_MINIMAL_END */
 
 /* TRAVELHUB_PUBLIC_SHELL_OFFSET_FIX_START */
@@ -494,5 +530,5 @@ svg {
 /* mobileViewportEdgeFix */
 html,
 body {
-  background: #fbf7ef;
+  background: #FFFFFF;
 }

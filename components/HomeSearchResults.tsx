@@ -37,7 +37,7 @@ function getCityCardStyle(city: City): CSSProperties {
     backgroundImage: getImageBackground(
       imageUrl,
       "linear-gradient(180deg, rgba(31,26,23,0.04) 0%, rgba(31,26,23,0.72) 100%)",
-      "linear-gradient(135deg, #d9c7ad 0%, #fffdf8 56%, #9a6a43 100%)"
+      "linear-gradient(135deg, #d9c7ad 0%, #FFFFFF 56%, #BF9B30 100%)"
     ),
     backgroundSize: "cover",
     backgroundPosition: getCssImagePosition(city.imagePosition),
@@ -55,7 +55,7 @@ function getSpotCardStyle(spot: SpotSearchResult): CSSProperties {
     backgroundImage: getImageBackground(
       imageUrl,
       "linear-gradient(180deg, rgba(31,26,23,0.04) 0%, rgba(31,26,23,0.74) 100%)",
-      "linear-gradient(135deg, #cab394 0%, #fffdf8 56%, #9a6a43 100%)"
+      "linear-gradient(135deg, #cab394 0%, #FFFFFF 56%, #BF9B30 100%)"
     ),
     backgroundSize: "cover",
     backgroundPosition: getCssImagePosition(spot.imagePosition),
@@ -179,7 +179,7 @@ const sectionHeaderStyle: CSSProperties = {
 
 const smallLabelStyle: CSSProperties = {
   marginBottom: 8,
-  color: "#9A6A43",
+  color: "#BF9B30",
   fontSize: 12,
   fontWeight: 850,
   letterSpacing: 0,
@@ -188,7 +188,7 @@ const smallLabelStyle: CSSProperties = {
 
 const sectionTitleStyle: CSSProperties = {
   margin: 0,
-  color: "#1F1A17",
+  color: "#0D2B52",
   fontSize: 30,
   lineHeight: 1.1,
   letterSpacing: 0,
@@ -201,7 +201,7 @@ const resultBlockStyle: CSSProperties = {
 
 const miniTitleStyle: CSSProperties = {
   margin: "0 0 12px",
-  color: "#6F6258",
+  color: "#6B87A8",
   fontSize: 13,
   letterSpacing: 0,
   textTransform: "uppercase",
@@ -221,9 +221,9 @@ const cardStyle: CSSProperties = {
   alignItems: "flex-end",
   overflow: "hidden",
   borderRadius: 8,
-  color: "#FFF8EF",
+  color: "#FFFFFF",
   textDecoration: "none",
-  backgroundColor: "#D8C7B3",
+  backgroundColor: "#D8E2F0",
   boxShadow: "0 14px 34px rgba(42, 33, 28, 0.1)",
 };
 
@@ -243,7 +243,7 @@ const metaStyle: CSSProperties = {
 
 const cardTitleStyle: CSSProperties = {
   margin: 0,
-  color: "#FFF8EF",
+  color: "#FFFFFF",
   fontSize: 26,
   lineHeight: 1.08,
   letterSpacing: 0,
@@ -260,8 +260,8 @@ const cardTextStyle: CSSProperties = {
 const emptyStyle: CSSProperties = {
   padding: 20,
   borderRadius: 8,
-  background: "#FFFDF8",
-  border: "1px solid #E4D8C8",
-  color: "#6F6258",
+  background: "#FFFFFF",
+  border: "1px solid #D8E2F0",
+  color: "#6B87A8",
   fontSize: 14,
 };

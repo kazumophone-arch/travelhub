@@ -1,9 +1,9 @@
 .page {
   min-height: 100vh;
   background:
-    radial-gradient(circle at 18% 0%, rgba(185, 139, 90, 0.12), transparent 32rem),
-    linear-gradient(180deg, #f8f2e9 0%, #fffdf8 46%, #f3ecdf 100%);
-  color: #211f1a;
+    radial-gradient(circle at 18% 0%, rgba(191, 155, 48, 0), transparent 32rem),
+    linear-gradient(180deg, #FFFFFF 0%, #FFFFFF 46%, #FFFFFF 100%);
+  color: #0D2B52;
 }
 
 .heroGrid {
@@ -22,7 +22,7 @@
 
 .eyebrow,
 .sectionLabel {
-  color: #8f5f36;
+  color: #BF9B30;
   font-size: 11px;
   line-height: 1;
   font-weight: 820;
@@ -32,7 +32,7 @@
 
 .title {
   margin: 22px 0 0;
-  color: #211f1a;
+  color: #0D2B52;
   font-family: Georgia, "Times New Roman", serif;
   font-size: clamp(46px, 5.1vw, 76px);
   line-height: 0.94;
@@ -43,7 +43,7 @@
 
 .location {
   margin: 18px 0 0;
-  color: #342b23;
+  color: #0D2B52;
   font-family: Georgia, "Times New Roman", serif;
   font-size: 21px;
   line-height: 1.25;
@@ -53,13 +53,13 @@
   width: 38px;
   height: 1px;
   margin: 20px 0;
-  background: #9b6339;
+  background: #BF9B30;
 }
 
 .lead {
   max-width: 360px;
   margin: 0;
-  color: #5f554b;
+  color: #6B87A8;
   font-size: 17px;
   line-height: 1.7;
 }
@@ -67,7 +67,7 @@
 .backInline {
   display: inline-flex;
   margin-top: 32px;
-  color: #7d4e2c;
+  color: #BF9B30;
   font-size: 12px;
   font-weight: 820;
   letter-spacing: 0.12em;
@@ -87,7 +87,7 @@
 .collageSmall {
   background-size: cover;
   background-position: center;
-  background-color: #2a211c;
+  background-color: #0D2B52;
 }
 
 .collageMain {
@@ -115,13 +115,13 @@
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: clamp(18px, 3vw, 42px);
   padding: 30px 0 44px;
-  border-top: 1px solid rgba(103, 78, 49, 0.20);
-  border-bottom: 1px solid rgba(103, 78, 49, 0.16);
+  border-top: 1px solid #D8E2F0;
+  border-bottom: 1px solid #D8E2F0;
 }
 
 .note h2 {
   margin: 0;
-  color: #211f1a;
+  color: #0D2B52;
   font-family: Georgia, "Times New Roman", serif;
   font-size: 19px;
   line-height: 1.15;
@@ -130,7 +130,7 @@
 
 .note p {
   margin: 10px 0 0;
-  color: #5f554b;
+  color: #6B87A8;
   font-size: 13px;
   line-height: 1.62;
 }
@@ -142,8 +142,8 @@
   align-items: center;
   margin: 44px 0 54px;
   padding: 30px;
-  background: #2a211c;
-  color: #fff8ef;
+  background: #0D2B52;
+  color: #FFFFFF;
 }
 
 .planCopy h2,
@@ -159,7 +159,7 @@
 
 .planCopy h2 {
   margin-top: 12px;
-  color: #fff8ef;
+  color: #FFFFFF;
   font-size: clamp(34px, 4.2vw, 58px);
   line-height: 0.98;
 }
@@ -167,7 +167,7 @@
 .planCopy p {
   max-width: 520px;
   margin: 14px 0 0;
-  color: rgba(255, 248, 239, 0.72);
+  color: rgba(255, 255, 255, 0.72);
   font-size: 14px;
   line-height: 1.75;
 }
@@ -183,14 +183,14 @@
 
 .whySection h2 {
   margin-top: 12px;
-  color: #211f1a;
+  color: #0D2B52;
   font-size: clamp(38px, 5vw, 68px);
   line-height: 0.96;
 }
 
 .whySection p {
   margin: 18px 0 0;
-  color: #5f554b;
+  color: #6B87A8;
   font-size: 16px;
   line-height: 1.86;
 }
@@ -209,13 +209,13 @@
 
 .nearbyHeader h2 {
   margin-top: 12px;
-  color: #211f1a;
+  color: #0D2B52;
   font-size: clamp(32px, 4vw, 52px);
   line-height: 1;
 }
 
 .viewAll {
-  color: #7d4e2c;
+  color: #BF9B30;
   font-size: 12px;
   font-weight: 820;
   letter-spacing: 0.12em;
@@ -235,7 +235,7 @@
   display: block;
   min-height: 310px;
   overflow: hidden;
-  color: #fff8ef;
+  color: #FFFFFF;
   text-decoration: none;
 }
 
@@ -256,7 +256,7 @@
 
 .nearbyBody h3 {
   margin: 0;
-  color: #fff8ef;
+  color: #FFFFFF;
   font-family: Georgia, "Times New Roman", serif;
   font-size: clamp(25px, 2.4vw, 36px);
   line-height: 0.98;
@@ -266,7 +266,7 @@
 
 .nearbyBody p {
   margin: 10px 0 0;
-  color: rgba(255, 248, 239, 0.78);
+  color: rgba(255, 255, 255, 0.78);
   font-size: 13px;
   line-height: 1.58;
 }
@@ -277,12 +277,12 @@
   gap: 24px;
   align-items: center;
   padding-top: 30px;
-  border-top: 1px solid rgba(103, 78, 49, 0.18);
+  border-top: 1px solid #D8E2F0;
 }
 
 .backSection h2 {
   margin-top: 12px;
-  color: #211f1a;
+  color: #0D2B52;
   font-size: clamp(30px, 4vw, 50px);
   line-height: 1;
 }
@@ -293,9 +293,9 @@
   justify-content: center;
   min-height: 46px;
   padding: 12px 17px;
-  background: #fffdf8;
-  color: #211f1a;
-  border: 1px solid #e4d8c8;
+  background: #FFFFFF;
+  color: #0D2B52;
+  border: 1px solid #D8E2F0;
   text-decoration: none;
   font-size: 14px;
   font-weight: 780;
@@ -349,8 +349,8 @@
     display: flex;
     align-items: center;
     min-height: 100px;
-    background-color: rgba(255, 253, 248, 0.62);
-    border: 1px solid rgba(103, 78, 49, 0.14);
+    background-color: rgba(255, 255, 255, 0.62);
+    border: 1px solid #D8E2F0;
   }
 
   .nearbyImage {
@@ -370,14 +370,14 @@
   }
 
   .nearbyBody h3 {
-    color: #211f1a;
+    color: #0D2B52;
     font-size: 19px;
     line-height: 1.1;
   }
 
   .nearbyBody p {
     margin-top: 6px;
-    color: #5f554b;
+    color: #6B87A8;
     font-size: 13px;
     line-height: 1.48;
     display: -webkit-box;

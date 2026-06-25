@@ -1,9 +1,9 @@
 .page {
   min-height: 100vh;
   background:
-    radial-gradient(circle at 17% 0%, rgba(187, 139, 85, 0.12), transparent 34rem),
-    linear-gradient(180deg, #f8f2e9 0%, #fffdf8 45%, #f3ecdf 100%);
-  color: #211f1a;
+    radial-gradient(circle at 17% 0%, rgba(191, 155, 48, 0), transparent 34rem),
+    linear-gradient(180deg, #FFFFFF 0%, #FFFFFF 45%, #FFFFFF 100%);
+  color: #0D2B52;
 }
 
 .hero {
@@ -17,7 +17,7 @@
 }
 
 .eyebrow {
-  color: #8f5f36;
+  color: #BF9B30;
   font-size: 11px;
   line-height: 1;
   font-weight: 850;
@@ -39,7 +39,7 @@
 .heroCopy p {
   max-width: 480px;
   margin: 26px 0 0;
-  color: #5a5148;
+  color: #6B87A8;
   font-size: 16px;
   line-height: 1.82;
 }
@@ -49,7 +49,7 @@
   border-radius: 8px;
   background-size: cover;
   background-position: center;
-  box-shadow: 0 18px 48px rgba(95, 73, 50, 0.12);
+  box-shadow: 0 18px 48px rgba(13, 43, 82, 0.12);
 }
 
 .situationSection,
@@ -72,7 +72,7 @@
 .centerHeader > span {
   width: 52px;
   height: 1px;
-  background: rgba(103, 78, 49, 0.22);
+  background: #D8E2F0;
 }
 
 .centerHeader h2 {
@@ -86,7 +86,7 @@
 
 .centerHeader p {
   margin: 8px 0 0;
-  color: #675d52;
+  color: #6B87A8;
   font-size: 14px;
 }
 
@@ -99,8 +99,8 @@
 .situationCard {
   min-height: 250px;
   padding: 30px 24px;
-  border: 1px solid rgba(103, 78, 49, 0.14);
-  background: rgba(255, 253, 248, 0.58);
+  border: 1px solid #D8E2F0;
+  background: rgba(255, 255, 255, 0.58);
   color: inherit;
   text-align: center;
   text-decoration: none;
@@ -117,7 +117,7 @@
 .situationNumber {
   display: block;
   margin-bottom: 18px;
-  color: #8f5f36;
+  color: #BF9B30;
   font-family: Georgia, "Times New Roman", serif;
   font-size: 22px;
   line-height: 1;
@@ -141,7 +141,7 @@
 .situationCard p {
   min-height: 72px;
   margin: 16px 0 20px;
-  color: #5f564d;
+  color: #6B87A8;
   font-size: 14px;
   line-height: 1.72;
 }
@@ -150,7 +150,7 @@
 .pathItem strong,
 .entranceBody strong,
 .featureCopy a {
-  color: #7d4e2c;
+  color: #BF9B30;
   font-size: 12px;
   font-weight: 850;
   letter-spacing: 0.11em;
@@ -179,14 +179,14 @@
 
 .pathItem + .pathItem {
   padding-left: 34px;
-  border-left: 1px solid rgba(103, 78, 49, 0.16);
+  border-left: 1px solid #D8E2F0;
 }
 
 .pathTop {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: #8f5f36;
+  color: #BF9B30;
 }
 
 .pathTop span {
@@ -209,7 +209,7 @@
 .pathItem p {
   min-height: 78px;
   margin: 16px 0 22px;
-  color: #5f564d;
+  color: #6B87A8;
   font-size: 14px;
   line-height: 1.72;
 }
@@ -217,8 +217,8 @@
 .entrances {
   margin-top: 28px;
   padding: 28px 28px 34px;
-  border: 1px solid rgba(103, 78, 49, 0.13);
-  background: rgba(255, 253, 248, 0.38);
+  border: 1px solid #D8E2F0;
+  background: rgba(255, 255, 255, 0.38);
 }
 
 .entrances .centerHeader {
@@ -233,8 +233,8 @@
 
 .entranceCard {
   overflow: hidden;
-  border: 1px solid rgba(103, 78, 49, 0.14);
-  background: rgba(255, 253, 248, 0.66);
+  border: 1px solid #D8E2F0;
+  background: rgba(255, 255, 255, 0.66);
   color: inherit;
   text-decoration: none;
 }
@@ -257,7 +257,7 @@
 .entranceBody p {
   min-height: 92px;
   margin: 14px 0 18px;
-  color: #5f564d;
+  color: #6B87A8;
   font-size: 14px;
   line-height: 1.72;
 }
@@ -270,8 +270,8 @@
   grid-template-columns: minmax(0, 0.42fr) minmax(280px, 0.36fr) minmax(220px, 0.22fr);
   gap: 30px;
   align-items: center;
-  border: 1px solid rgba(103, 78, 49, 0.13);
-  background: rgba(255, 253, 248, 0.52);
+  border: 1px solid #D8E2F0;
+  background: rgba(255, 255, 255, 0.52);
 }
 
 .featureCopy h2 {
@@ -282,7 +282,7 @@
 
 .featureCopy p {
   margin: 16px 0 22px;
-  color: #5f564d;
+  color: #6B87A8;
   font-size: 15px;
   line-height: 1.76;
 }
@@ -290,7 +290,7 @@
 .featureLinks {
   display: grid;
   gap: 0;
-  border-top: 1px solid rgba(103, 78, 49, 0.13);
+  border-top: 1px solid #D8E2F0;
 }
 
 .featureLinks a {
@@ -298,8 +298,8 @@
   justify-content: space-between;
   gap: 20px;
   padding: 14px 0;
-  border-bottom: 1px solid rgba(103, 78, 49, 0.13);
-  color: #6f4326;
+  border-bottom: 1px solid #D8E2F0;
+  color: #BF9B30;
   font-size: 13px;
   font-weight: 720;
   line-height: 1.4;
@@ -341,7 +341,7 @@
 
   .pathItem:nth-child(even) {
     padding-left: 20px;
-    border-left: 1px solid rgba(103, 78, 49, 0.16);
+    border-left: 1px solid #D8E2F0;
   }
 }
 
@@ -398,7 +398,7 @@
   .pathItem:nth-child(even) {
     padding: 24px 0;
     border-left: 0;
-    border-top: 1px solid rgba(103, 78, 49, 0.14);
+    border-top: 1px solid #D8E2F0;
   }
 
   .entrances,

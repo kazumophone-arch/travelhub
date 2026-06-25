@@ -37,7 +37,7 @@ function getCardStyle(city: City): CSSProperties {
     backgroundImage: getImageBackground(
       imageUrl,
       "linear-gradient(180deg, rgba(31,26,23,0.04) 0%, rgba(31,26,23,0.72) 100%)",
-      "linear-gradient(135deg, #d9c7ad 0%, #fffdf8 54%, #9a6a43 100%)"
+      "linear-gradient(135deg, #d9c7ad 0%, #FFFFFF 54%, #BF9B30 100%)"
     ),
     backgroundSize: "cover",
     backgroundPosition: getCssImagePosition(city.imagePosition),
@@ -105,7 +105,7 @@ const sectionHeaderStyle: CSSProperties = {
 
 const smallLabelStyle: CSSProperties = {
   marginBottom: 8,
-  color: "#9A6A43",
+  color: "#BF9B30",
   fontSize: 12,
   fontWeight: 850,
   letterSpacing: 0,
@@ -114,7 +114,7 @@ const smallLabelStyle: CSSProperties = {
 
 const sectionTitleStyle: CSSProperties = {
   margin: 0,
-  color: "#1F1A17",
+  color: "#0D2B52",
   fontSize: 34,
   lineHeight: 1.08,
   letterSpacing: 0,
@@ -124,7 +124,7 @@ const sectionTitleStyle: CSSProperties = {
 const sectionCopyStyle: CSSProperties = {
   margin: "10px 0 0",
   maxWidth: 560,
-  color: "#6F6258",
+  color: "#6B87A8",
   fontSize: 15,
   lineHeight: 1.65,
 };
@@ -135,12 +135,12 @@ const viewAllStyle: CSSProperties = {
   minHeight: 40,
   padding: "0 14px",
   borderRadius: 8,
-  background: "#FFFDF8",
-  color: "#9A6A43",
+  background: "#FFFFFF",
+  color: "#BF9B30",
   textDecoration: "none",
   fontSize: 13,
   fontWeight: 850,
-  border: "1px solid #E4D8C8",
+  border: "1px solid #D8E2F0",
 };
 
 const gridStyle: CSSProperties = {
@@ -156,9 +156,9 @@ const cardStyle: CSSProperties = {
   alignItems: "flex-end",
   overflow: "hidden",
   borderRadius: 8,
-  color: "#FFF8EF",
+  color: "#FFFFFF",
   textDecoration: "none",
-  backgroundColor: "#D8C7B3",
+  backgroundColor: "#D8E2F0",
   boxShadow: "0 14px 34px rgba(42, 33, 28, 0.1)",
 };
 
@@ -171,7 +171,7 @@ const monthBadgeStyle: CSSProperties = {
   borderRadius: 8,
   background: "rgba(255, 248, 239, 0.9)",
   border: "1px solid rgba(255, 248, 239, 0.52)",
-  color: "#2A211C",
+  color: "#0D2B52",
   fontSize: 12,
   fontWeight: 850,
 };
@@ -194,7 +194,7 @@ const metaStyle: CSSProperties = {
 
 const cardTitleStyle: CSSProperties = {
   margin: 0,
-  color: "#FFF8EF",
+  color: "#FFFFFF",
   fontSize: 28,
   lineHeight: 1.08,
   letterSpacing: 0,
@@ -211,8 +211,8 @@ const cardTextStyle: CSSProperties = {
 const emptyStyle: CSSProperties = {
   padding: 20,
   borderRadius: 8,
-  background: "#FFFDF8",
-  border: "1px solid #E4D8C8",
-  color: "#6F6258",
+  background: "#FFFFFF",
+  border: "1px solid #D8E2F0",
+  color: "#6B87A8",
   fontSize: 14,
 };

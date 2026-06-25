@@ -294,7 +294,7 @@ function getLabelStyle(isPrimary: boolean, tone: AffiliateTone): CSSProperties {
 
   return {
     ...baseLabelStyle,
-    color: isPrimary ? "rgba(255, 248, 239, 0.66)" : "#9A6A43",
+    color: isPrimary ? "rgba(255, 255, 255, 0.7)" : "#BF9B30",
     opacity: isLightSecondary ? 0.9 : 1,
   };
 }
@@ -303,10 +303,10 @@ function getNoteStyle(isPrimary: boolean, tone: AffiliateTone): CSSProperties {
   return {
     ...noteStyle,
     color: isPrimary
-      ? "rgba(255, 248, 239, 0.72)"
+      ? "rgba(255, 255, 255, 0.78)"
       : tone === "dark"
-        ? "rgba(31, 26, 23, 0.66)"
-        : "#6F6258",
+        ? "rgba(255, 255, 255, 0.7)"
+        : "#6B87A8",
   };
 }
 
@@ -322,39 +322,39 @@ const baseButtonStyle: CSSProperties = {
   gap: 12,
   minHeight: 52,
   padding: "10px 12px 10px 14px",
-  borderRadius: 8,
+  borderRadius: 6,
   textDecoration: "none",
   border: "1px solid transparent",
 };
 
 const primaryLightToneButtonStyle: CSSProperties = {
   ...baseButtonStyle,
-  background: "#2A211C",
-  color: "#FFF8EF",
-  borderColor: "#2A211C",
-  boxShadow: "0 8px 18px rgba(42, 33, 28, 0.12)",
+  background: "#BF9B30",
+  color: "#FFFFFF",
+  borderColor: "#BF9B30",
+  boxShadow: "0 8px 18px rgba(191, 155, 48, 0.22)",
 };
 
 const secondaryLightToneButtonStyle: CSSProperties = {
   ...baseButtonStyle,
-  background: "#FFFDF8",
-  color: "#1F1A17",
-  borderColor: "#E4D8C8",
+  background: "#F0F4FA",
+  color: "#0D2B52",
+  borderColor: "#D8E2F0",
 };
 
 const primaryDarkToneButtonStyle: CSSProperties = {
   ...baseButtonStyle,
-  background: "#2A211C",
-  color: "#FFF8EF",
-  borderColor: "rgba(255, 248, 239, 0.24)",
+  background: "#BF9B30",
+  color: "#FFFFFF",
+  borderColor: "#BF9B30",
   boxShadow: "0 8px 18px rgba(0, 0, 0, 0.12)",
 };
 
 const secondaryDarkToneButtonStyle: CSSProperties = {
   ...baseButtonStyle,
-  background: "rgba(255, 253, 248, 0.96)",
-  color: "#1F1A17",
-  borderColor: "rgba(228, 216, 200, 0.72)",
+  background: "rgba(255, 255, 255, 0.96)",
+  color: "#0D2B52",
+  borderColor: "#D8E2F0",
 };
 
 const buttonTextStyle: CSSProperties = {
@@ -377,8 +377,8 @@ const arrowOnDarkStyle: CSSProperties = {
   display: "grid",
   placeItems: "center",
   borderRadius: "50%",
-  background: "rgba(255, 255, 255, 0.18)",
-  color: "#ffffff",
+  background: "rgba(255, 255, 255, 0.22)",
+  color: "#FFFFFF",
   fontSize: 14,
   fontWeight: 850,
 };
@@ -389,8 +389,8 @@ const arrowOnWarmStyle: CSSProperties = {
   display: "grid",
   placeItems: "center",
   borderRadius: "50%",
-  background: "rgba(154, 106, 67, 0.12)",
-  color: "#1F1A17",
+  background: "rgba(191, 155, 48, 0.16)",
+  color: "#0D2B52",
   fontSize: 14,
   fontWeight: 850,
 };
@@ -401,8 +401,8 @@ const arrowOnWhiteStyle: CSSProperties = {
   display: "grid",
   placeItems: "center",
   borderRadius: "50%",
-  background: "rgba(42, 33, 28, 0.08)",
-  color: "#1F1A17",
+  background: "#F0F4FA",
+  color: "#0D2B52",
   fontSize: 14,
   fontWeight: 850,
 };

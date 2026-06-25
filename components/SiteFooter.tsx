@@ -79,8 +79,8 @@ export function SiteFooter() {
 
 const footerStyle: CSSProperties = {
   padding: "42px 24px 48px",
-  background: "linear-gradient(180deg, rgba(243, 236, 223, 0) 0%, #eee3d2 100%)",
-  color: "#211f1a",
+  background: "linear-gradient(180deg, rgba(243, 236, 223, 0) 0%, #F0F4FA 100%)",
+  color: "#0D2B52",
 };
 
 const innerStyle: CSSProperties = {
@@ -114,14 +114,14 @@ const brandStyle: CSSProperties = {
 };
 
 const brandMarkStyle: CSSProperties = {
-  color: "#8f5f36",
+  color: "#BF9B30",
   fontSize: 19,
   lineHeight: 1,
 };
 
 const textStyle: CSSProperties = {
   margin: "18px 0 0",
-  color: "#5f564d",
+  color: "#6B87A8",
   fontSize: 14,
   lineHeight: 1.8,
 };
@@ -138,7 +138,7 @@ const columnStyle: CSSProperties = {
 };
 
 const columnTitleStyle: CSSProperties = {
-  color: "#8f5f36",
+  color: "#BF9B30",
   fontSize: 11,
   lineHeight: 1,
   fontWeight: 850,
@@ -153,7 +153,7 @@ const linkListStyle: CSSProperties = {
 
 const linkStyle: CSSProperties = {
   width: "fit-content",
-  color: "#3f372f",
+  color: "#0D2B52",
   textDecoration: "none",
   fontSize: 13,
   lineHeight: 1.3,
@@ -172,14 +172,14 @@ const bottomStyle: CSSProperties = {
 const noticeStyle: CSSProperties = {
   margin: 0,
   maxWidth: 640,
-  color: "#6d6257",
+  color: "#BF9B30",
   fontSize: 12,
   lineHeight: 1.7,
 };
 
 const copyrightStyle: CSSProperties = {
   margin: 0,
-  color: "#8a7c6d",
+  color: "#BF9B30",
   fontSize: 12,
   whiteSpace: "nowrap",
 };

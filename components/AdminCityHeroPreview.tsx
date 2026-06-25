@@ -1,13 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import type { CSSProperties } from "react";
-import styles from "./SupabaseCityDetail.module.css";
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
+import canvasStyles from "./AdminCityHeroPreview.module.css";
 import {
   getCssImagePosition,
   getImageBackground,
   type ImagePosition,
 } from "@/lib/url-fields";
+
+const DESIGN_WIDTH = 1120;
+
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 type CtaPreview = {
   label: string;
@@ -26,6 +37,95 @@ type Props = {
   ctas?: CtaPreview[];
 };
 
+type PreviewTier = {
+  title: string;
+  text: string;
+};
+
+const stayTiers: PreviewTier[] = [
+  {
+    title: "Signature stays",
+    text: "For special trips, polished hotels, and memorable first nights.",
+  },
+  {
+    title: "Smart stays",
+    text: "Well-located hotels with a balance of comfort and price.",
+  },
+  {
+    title: "Essential stays",
+    text: "Simple stays for travelers who want to spend more on the city.",
+  },
+];
+
+const experienceTiers: PreviewTier[] = [
+  {
+    title: "Private experiences",
+    text: "A slower, more personal way to see the city.",
+  },
+  {
+    title: "Popular tours",
+    text: "Classic experiences for a first visit.",
+  },
+  {
+    title: "Easy activities",
+    text: "Short, flexible activities that fit into a simple day.",
+  },
+];
+
+type PreviewSpot = {
+  title: string;
+  text: string;
+};
+
+const previewSpots: PreviewSpot[] = [
+  {
+    title: "Featured landmark",
+    text: "A signature sight worth building the day around.",
+  },
+  {
+    title: "Cultural district",
+    text: "Museums, galleries, and local craft to explore.",
+  },
+  {
+    title: "Scenic walk",
+    text: "An easy route for slow mornings and photos.",
+  },
+];
+
+function useScaledPreview() {
+  const viewportRef = useRef<HTMLDivElement | null>(null);
+  const pageRef = useRef<HTMLDivElement | null>(null);
+  const [scale, setScale] = useState(1);
+  const [scaledHeight, setScaledHeight] = useState(0);
+
+  useIsomorphicLayoutEffect(() => {
+    const viewport = viewportRef.current;
+    const page = pageRef.current;
+
+    if (!viewport || !page) return;
+
+    function update() {
+      if (!viewport || !page) return;
+
+      const containerWidth = viewport.clientWidth;
+      const nextScale = containerWidth > 0 ? containerWidth / DESIGN_WIDTH : 1;
+
+      setScale(nextScale);
+      setScaledHeight(page.scrollHeight * nextScale);
+    }
+
+    update();
+
+    const observer = new ResizeObserver(update);
+    observer.observe(viewport);
+    observer.observe(page);
+
+    return () => observer.disconnect();
+  }, []);
+
+  return { viewportRef, pageRef, scale, scaledHeight };
+}
+
 export function AdminCityHeroPreview({
   title,
   country,
@@ -36,8 +136,10 @@ export function AdminCityHeroPreview({
   publicPath,
   ctas = [],
 }: Props) {
+  const { viewportRef, pageRef, scale, scaledHeight } = useScaledPreview();
   const safePublicPath = publicPath || "";
   const visibleCtas = ctas.filter((cta) => cta.isVisible);
+  const cityLabel = title || "this city";
 
   return (
     <section style={wrapStyle}>
@@ -73,45 +175,121 @@ export function AdminCityHeroPreview({
         </div>
       ) : null}
 
-      <div className={styles.page} style={previewFrameStyle}>
+      <div
+        ref={viewportRef}
+        className={canvasStyles.previewViewport}
+        style={{ height: scaledHeight || undefined }}
+      >
         <div
-          className={styles.hero}
-          style={{
-            ...heroOverrideStyle,
-            backgroundImage: getImageBackground(
-              imageUrl,
-              "linear-gradient(90deg, rgba(9, 16, 20, 0.82) 0%, rgba(9, 16, 20, 0.62) 45%, rgba(9, 16, 20, 0.18) 100%), linear-gradient(180deg, rgba(9, 16, 20, 0.08) 0%, rgba(9, 16, 20, 0.72) 100%)",
-              "linear-gradient(135deg, #26352f 0%, #b68b5e 52%, #f3e3cb 100%)"
-            ),
-            backgroundPosition: getCssImagePosition(imagePosition),
-          }}
+          ref={pageRef}
+          className={canvasStyles.previewPage}
+          style={{ transform: `scale(${scale})` }}
         >
-          <div className={styles.heroInner} style={heroInnerOverrideStyle}>
-            <div className={styles.heroCopy}>
-              <div className={styles.eyebrow}>TravelHub city guide</div>
-              <div className={styles.countryPill}>{country || "国未入力"}</div>
-              <h1 className={styles.heroTitle} style={heroTitleOverrideStyle}>
-                {title || "都市名未入力"}
-              </h1>
-              <p className={styles.heroLead}>
-                {leadText || "概要や説明がここに表示されます。"}
-              </p>
-            </div>
-
-            {visibleCtas.length > 0 ? (
-              <div className={styles.heroCta}>
-                <div className={styles.ctaKicker}>Plan this trip</div>
-                <div style={ctaRowStyle}>
-                  {visibleCtas.map((cta) => (
-                    <a key={cta.label} href={cta.href} style={ctaPillStyle}>
-                      {cta.label}
-                    </a>
-                  ))}
-                </div>
+          <div
+            className={canvasStyles.hero}
+            style={{
+              backgroundImage: getImageBackground(
+                imageUrl,
+                "linear-gradient(90deg, rgba(9, 16, 20, 0.82) 0%, rgba(9, 16, 20, 0.62) 45%, rgba(9, 16, 20, 0.18) 100%), linear-gradient(180deg, rgba(9, 16, 20, 0.08) 0%, rgba(9, 16, 20, 0.72) 100%)",
+                "linear-gradient(135deg, #0D2B52 0%, #0D2B52 55%, #0D2B52 100%)"
+              ),
+              backgroundPosition: getCssImagePosition(imagePosition),
+            }}
+          >
+            <div className={canvasStyles.heroInner}>
+              <div className={canvasStyles.heroCopy}>
+                <div className={canvasStyles.eyebrow}>TravelHub city guide</div>
+                <div className={canvasStyles.countryPill}>{country || "国未入力"}</div>
+                <h1 className={canvasStyles.heroTitle}>{title || "都市名未入力"}</h1>
+                <p className={canvasStyles.heroLead}>
+                  {leadText || "概要や説明がここに表示されます。"}
+                </p>
               </div>
-            ) : null}
+
+              {visibleCtas.length > 0 ? (
+                <div className={canvasStyles.heroCta}>
+                  <div className={canvasStyles.ctaKicker}>Plan this trip</div>
+                  <div className={canvasStyles.ctaPillRow}>
+                    {visibleCtas.map((cta) => (
+                      <a key={cta.label} href={cta.href} className={canvasStyles.ctaPill}>
+                        {cta.label}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          </div>
+
+          <div className={canvasStyles.body}>
+            <PreviewTierSection
+              label="Where to Stay"
+              title={`Choose the right base in ${cityLabel}`}
+              tiers={stayTiers}
+            />
+
+            <PreviewTierSection
+              label="Experiences"
+              title={`Ways to experience ${cityLabel}`}
+              tiers={experienceTiers}
+            />
+
+            <section className={canvasStyles.tierSection}>
+              <div className={canvasStyles.sectionIntro}>
+                <div>
+                  <div className={canvasStyles.label}>Explore next</div>
+                  <h2 className={canvasStyles.sectionTitle}>
+                    Popular spots in {cityLabel}
+                  </h2>
+                </div>
+
+                <p className={canvasStyles.sectionLead}>
+                  Start with the places visitors usually want to understand first.
+                </p>
+              </div>
+
+              <div className={canvasStyles.spotGrid}>
+                {previewSpots.map((spot) => (
+                  <div key={spot.title} className={canvasStyles.spotTile}>
+                    <div className={canvasStyles.spotCityBadge}>{cityLabel}</div>
+                    <div className={canvasStyles.spotPanel}>
+                      <h3 className={canvasStyles.spotTitle}>{spot.title}</h3>
+                      <p className={canvasStyles.spotText}>{spot.text}</p>
+                      <div className={canvasStyles.spotAction}>Open spot guide →</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
           </div>
         </div>
+      </div>
+    </section>
+  );
+}
+
+function PreviewTierSection({
+  label,
+  title,
+  tiers,
+}: {
+  label: string;
+  title: string;
+  tiers: PreviewTier[];
+}) {
+  return (
+    <section className={canvasStyles.tierSection}>
+      <div className={canvasStyles.label}>{label}</div>
+      <h2 className={canvasStyles.sectionTitle}>{title}</h2>
+
+      <div className={canvasStyles.tierList}>
+        {tiers.map((tier) => (
+          <article key={tier.title} className={canvasStyles.tierItem}>
+            <div className={canvasStyles.tierKicker}>Guide note</div>
+            <h3 className={canvasStyles.tierTitle}>{tier.title}</h3>
+            <p className={canvasStyles.tierText}>{tier.text}</p>
+          </article>
+        ))}
       </div>
     </section>
   );
@@ -189,40 +367,4 @@ const ctaStatusHiddenStyle: CSSProperties = {
   ...ctaStatusVisibleStyle,
   background: "#f3f5f4",
   color: "#7a8795",
-};
-
-const previewFrameStyle: CSSProperties = {
-  minHeight: "auto",
-  borderRadius: 26,
-  overflow: "hidden",
-};
-
-const heroOverrideStyle: CSSProperties = {
-  minHeight: 430,
-  padding: "40px 22px 26px",
-};
-
-const heroInnerOverrideStyle: CSSProperties = {
-  gridTemplateColumns: "1fr",
-};
-
-const heroTitleOverrideStyle: CSSProperties = {
-  fontSize: "clamp(32px, 6vw, 50px)",
-};
-
-const ctaRowStyle: CSSProperties = {
-  display: "flex",
-  flexWrap: "wrap",
-  gap: 8,
-  marginTop: 4,
-};
-
-const ctaPillStyle: CSSProperties = {
-  padding: "9px 11px",
-  borderRadius: 999,
-  background: "#ffffff",
-  color: "#17202a",
-  textDecoration: "none",
-  fontSize: 12,
-  fontWeight: 850,
 };

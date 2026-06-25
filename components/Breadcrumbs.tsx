@@ -51,7 +51,7 @@ const wrapStyle: CSSProperties = {
   marginBottom: 22,
   fontSize: 13,
   fontWeight: 800,
-  color: "#171717",
+  color: "#0D2B52",
 };
 
 const itemWrapStyle: CSSProperties = {
