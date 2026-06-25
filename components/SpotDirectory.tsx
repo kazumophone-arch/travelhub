@@ -9,7 +9,6 @@ import { spotsCopyVariants, pickDailyVariant } from "@/lib/copyVariants";
 import {
   getCssImagePosition,
   getImageBackground,
-  getOptionalHttpUrl,
 } from "@/lib/url-fields";
 
 type Props = {
@@ -198,14 +197,10 @@ function getSpotCategories(spot: SpotItem) {
 
 
 function getSpotPhotoCardStyle(spot: SpotItem): CSSProperties {
-  const seed = encodeURIComponent(`travelhub-spot-${spot.citySlug}-${spot.slug}`);
-  const fallbackImageUrl = `https://picsum.photos/seed/${seed}/1000/700`;
-  const imageUrl = getOptionalHttpUrl(spot.imageUrl) || fallbackImageUrl;
-
   return {
     ...spotCardStyle,
     backgroundImage: getImageBackground(
-      imageUrl,
+      spot.imageUrl,
       "linear-gradient(180deg, rgba(31, 26, 23, 0.02) 0%, rgba(31, 26, 23, 0.18) 50%, rgba(31, 26, 23, 0.72) 100%)",
       "linear-gradient(135deg, #eadbc8 0%, #b8936e 52%, #0D2B52 100%)"
     ),

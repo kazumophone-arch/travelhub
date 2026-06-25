@@ -3,7 +3,11 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { themes, type Theme } from "@/data/themes";
 import { getPublishedSupabaseDirectoryCities } from "@/data/supabase-public-cities";
+import { getImageBackground } from "@/lib/url-fields";
 import styles from "./ThemeDetail.module.css";
+
+const FALLBACK_TILE_GRADIENT =
+  "linear-gradient(135deg, #26352f 0%, #b68b5e 52%, #f3e3cb 100%)";
 
 type DirectoryCity = {
   slug: string;
@@ -126,7 +130,11 @@ export default async function ThemeDetailPage({ params }: PageProps) {
                 href={`/c/${city.slug}?src=theme-detail&v=theme_${theme.slug}_${city.slug}`}
                 className={styles.destinationCard}
                 style={{
-                  backgroundImage: `linear-gradient(180deg, rgba(26, 22, 18, 0.04) 0%, rgba(26, 22, 18, 0.28) 48%, rgba(26, 22, 18, 0.76) 100%), url("${getCityImage(city)}")`,
+                  backgroundImage: getImageBackground(
+                    getCityImage(city),
+                    "linear-gradient(180deg, rgba(26, 22, 18, 0.04) 0%, rgba(26, 22, 18, 0.28) 48%, rgba(26, 22, 18, 0.76) 100%)",
+                    FALLBACK_TILE_GRADIENT
+                  ),
                 }}
               >
                 <div className={styles.cardBody}>
@@ -371,11 +379,7 @@ function normalize(value: string) {
 }
 
 function getCityImage(city: DirectoryCity) {
-  return (
-    city.imageUrl ||
-    city.image_url ||
-    `https://picsum.photos/seed/${encodeURIComponent(city.slug)}/1100/760`
-  );
+  return city.imageUrl || city.image_url || "";
 }
 
 function getThemeImage(theme: Theme) {

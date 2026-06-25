@@ -61,7 +61,7 @@ export async function SupabaseCityDetail({ city, tracking }: Props) {
           />
 
           <div className={styles.heroHeading}>
-            <div className={styles.heroBadge}>🎬 動画で紹介中</div>
+            <div className={styles.heroBadge}>🎬 FEATURED IN OUR VIDEOS</div>
             <h1 className={styles.heroTitle}>{city.city}</h1>
             <p className={styles.heroCountry}>{city.country}</p>
           </div>
@@ -74,7 +74,7 @@ export async function SupabaseCityDetail({ city, tracking }: Props) {
             rel="noopener noreferrer sponsored"
             className={styles.heroCtaPrimary}
           >
-            ツアー・体験を予約する
+            Book tours & experiences
           </a>
 
           <a
@@ -83,7 +83,7 @@ export async function SupabaseCityDetail({ city, tracking }: Props) {
             rel="noopener noreferrer sponsored"
             className={styles.heroCtaSecondary}
           >
-            ホテルを比較する
+            Compare hotels
           </a>
 
           <a
@@ -92,7 +92,7 @@ export async function SupabaseCityDetail({ city, tracking }: Props) {
             rel="noopener noreferrer sponsored"
             className={styles.heroCtaSecondary}
           >
-            eSIMを入手する
+            Get an eSIM
           </a>
         </div>
       </section>
@@ -133,7 +133,7 @@ export async function SupabaseCityDetail({ city, tracking }: Props) {
                     rel="noopener noreferrer sponsored"
                     className={styles.highlightTourLink}
                   >
-                    このスポットのツアーを見る →
+                    See tours for this spot →
                   </a>
                 </div>
               ))}
@@ -185,7 +185,7 @@ export async function SupabaseCityDetail({ city, tracking }: Props) {
                   rel="noopener noreferrer sponsored"
                   className={styles.spotTourLink}
                 >
-                  このスポットのツアーを見る →
+                  See tours for this spot →
                 </a>
               </div>
             ))}
