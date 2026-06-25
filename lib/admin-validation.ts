@@ -80,6 +80,7 @@ export type CityValidationInput = {
   affiliateHotelUrl?: unknown;
   affiliateTourUrl?: unknown;
   sortRank?: unknown;
+  featuredRank?: unknown;
 };
 
 export function validateCityFields(input: CityValidationInput) {
@@ -127,6 +128,15 @@ export function validateCityFields(input: CityValidationInput) {
     !Number.isFinite(Number(input.sortRank))
   ) {
     errors.push("表示順は数値で入力してください。");
+  }
+
+  if (
+    input.featuredRank !== undefined &&
+    input.featuredRank !== null &&
+    input.featuredRank !== "" &&
+    !Number.isFinite(Number(input.featuredRank))
+  ) {
+    errors.push("注目順は数値で入力してください。");
   }
 
   return errors;

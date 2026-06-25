@@ -178,6 +178,13 @@ export async function POST(request: Request) {
     affiliate_tour_url: String(body.affiliateTourUrl ?? ""),
     is_published: Boolean(body.isPublished),
     sort_rank: Number(body.sortRank ?? 999),
+    is_featured: Boolean(body.isFeatured),
+    featured_rank:
+      body.featuredRank === undefined ||
+      body.featuredRank === null ||
+      body.featuredRank === ""
+        ? null
+        : Number(body.featuredRank),
     updated_at: new Date().toISOString(),
   };
 
@@ -269,6 +276,13 @@ export async function PATCH(request: Request) {
     affiliate_tour_url: String(body.affiliateTourUrl ?? ""),
     is_published: Boolean(body.isPublished),
     sort_rank: Number(body.sortRank ?? 999),
+    is_featured: Boolean(body.isFeatured),
+    featured_rank:
+      body.featuredRank === undefined ||
+      body.featuredRank === null ||
+      body.featuredRank === ""
+        ? null
+        : Number(body.featuredRank),
     updated_at: new Date().toISOString(),
   };
 

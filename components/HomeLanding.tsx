@@ -20,8 +20,6 @@ type QuickLink = {
   href: string;
 };
 
-const HERO_CITY_SLUGS = ["kyoto", "rome", "tokyo"];
-
 // Used only when Supabase has no published cities yet (e.g. local/dev).
 const FALLBACK_HERO_CITY: HeroCity = {
   slug: "kyoto",
@@ -58,13 +56,17 @@ function getHomeJournalArticles() {
 }
 
 function getHeroCities(cities: City[]): HeroCity[] {
-  const bySlug = new Map(cities.map((city) => [city.slug, city]));
-  const matched = HERO_CITY_SLUGS
-    .map((slug) => bySlug.get(slug))
-    .filter((city): city is City => Boolean(city));
+  const featured = cities
+    .filter((city) => city.isFeatured)
+    .sort((a, b) => {
+      const rankA = a.featuredRank ?? Number.POSITIVE_INFINITY;
+      const rankB = b.featuredRank ?? Number.POSITIVE_INFINITY;
+      return rankA - rankB;
+    })
+    .slice(0, 3);
 
-  if (matched.length > 0) {
-    return matched;
+  if (featured.length > 0) {
+    return featured;
   }
 
   return cities.length > 0 ? cities.slice(0, 3) : [FALLBACK_HERO_CITY];

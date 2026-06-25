@@ -60,7 +60,7 @@ export type City = {
   imageSourceUrl?: string;
 
   isFeatured?: boolean;
-  featuredRank?: number;
+  featuredRank?: number | null;
 
   spotDetails?: Spot[];
 

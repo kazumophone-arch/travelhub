@@ -29,6 +29,8 @@ export type SupabasePublicCity = {
   affiliate_tour_url?: string | null;
   is_published: boolean;
   sort_rank?: number | null;
+  is_featured: boolean;
+  featured_rank: number | null;
 };
 
 export async function getPublishedSupabaseCity(
@@ -92,6 +94,8 @@ function toDirectoryCity(
     description: city.description || city.summary,
     isPublished: city.is_published,
     sortRank: city.sort_rank ?? 999,
+    isFeatured: Boolean(city.is_featured),
+    featuredRank: city.featured_rank ?? null,
     imageUrl: city.image_url,
     imagePosition: normalizeImagePosition(city.imagePosition ?? city.image_position),
     imageAlt: city.image_alt || city.city,

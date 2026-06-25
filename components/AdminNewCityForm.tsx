@@ -40,6 +40,8 @@ type CityForm = {
   tagIds: string[];
   isPublished: boolean;
   sortRank: number;
+  isFeatured: boolean;
+  featuredRank: number | null;
 };
 
 type CountryOption = {
@@ -70,6 +72,8 @@ const initialForm: CityForm = {
   tagIds: [],
   isPublished: false,
   sortRank: 999,
+  isFeatured: false,
+  featuredRank: null,
 };
 
 async function readResponse(response: Response) {
@@ -474,6 +478,33 @@ export function AdminNewCityForm() {
             style={inputStyle}
           />
         </label>
+
+        <label style={checkStyle}>
+          <input
+            type="checkbox"
+            checked={form.isFeatured}
+            onChange={(event) => update("isFeatured", event.target.checked)}
+          />
+          ホームのヒーローに表示（注目都市）
+        </label>
+
+        <label style={labelStyle}>
+          注目順（小さいほど先に表示、空欄可）
+          <input
+            type="number"
+            value={form.featuredRank ?? ""}
+            onChange={(event) =>
+              update(
+                "featuredRank",
+                event.target.value === "" ? null : Number(event.target.value)
+              )
+            }
+            style={inputStyle}
+          />
+        </label>
+        <AdminFieldHint>
+          ホームページのヒーロー回転に出す都市と順番を決めます。注目都市が0件の場合は表示順の上位3件が使われます。
+        </AdminFieldHint>
 
         <AdminTagSelector
           selectedTagIds={form.tagIds}
