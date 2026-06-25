@@ -9,7 +9,6 @@
 .hero,
 .feelings,
 .discoverySection,
-.entrySection,
 .closing {
   width: min(1180px, calc(100% - 64px));
   margin: 0 auto;
@@ -85,8 +84,7 @@
 }
 
 .feelings h2,
-.discoverySection h2,
-.entrySection h2 {
+.discoverySection h2 {
   margin: 0 0 24px;
   text-align: center;
   font-family: Georgia, "Times New Roman", serif;
@@ -114,8 +112,7 @@
 }
 
 .feelingCard:hover,
-.discoveryRow:hover,
-.entryCard:hover {
+.discoveryRow:hover {
   transform: translateY(-2px);
 }
 
@@ -130,8 +127,7 @@
 }
 
 .feelingBody h3,
-.discoveryCopy h3,
-.entryCard h3 {
+.discoveryCopy h3 {
   margin: 0;
   font-family: Georgia, "Times New Roman", serif;
   font-weight: 520;
@@ -144,8 +140,7 @@
 }
 
 .feelingBody p,
-.discoveryCopy p,
-.entryCard p {
+.discoveryCopy p {
   color: #6B87A8;
   font-size: 14px;
   line-height: 1.72;
@@ -157,8 +152,7 @@
 }
 
 .feelingBody strong,
-.discoveryCopy strong,
-.entryCard strong {
+.discoveryCopy strong {
   color: #BF9B30;
   font-size: 11px;
   font-weight: 850;
@@ -216,36 +210,6 @@
   background-position: center;
 }
 
-.entrySection {
-  padding: 10px 0 38px;
-}
-
-.entryGrid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 18px;
-}
-
-.entryCard {
-  min-height: 150px;
-  display: grid;
-  padding: 24px;
-  border: 1px solid #D8E2F0;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.58);
-  color: inherit;
-  text-decoration: none;
-  transition: transform 180ms ease;
-}
-
-.entryCard h3 {
-  font-size: 24px;
-}
-
-.entryCard p {
-  margin: 8px 0 12px;
-}
-
 .closing {
   padding: 22px 0 62px;
   display: flex;
@@ -269,7 +233,6 @@
   .hero,
   .feelings,
   .discoverySection,
-  .entrySection,
   .closing {
     width: min(100% - 32px, 760px);
   }
@@ -278,8 +241,7 @@
     grid-template-columns: 1fr;
   }
 
-  .feelingGrid,
-  .entryGrid {
+  .feelingGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -292,7 +254,6 @@
   .hero,
   .feelings,
   .discoverySection,
-  .entrySection,
   .closing {
     width: min(100% - 24px, 520px);
   }
@@ -303,10 +264,6 @@
 
   .heroImage {
     min-height: 280px;
-  }
-
-  .entryGrid {
-    grid-template-columns: 1fr;
   }
 
   .feelingGrid {

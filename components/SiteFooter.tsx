@@ -9,7 +9,6 @@ const footerColumns = [
       { href: "/discover", label: "Discover" },
       { href: "/cities", label: "Destinations" },
       { href: "/themes", label: "Themes" },
-      { href: "/guides", label: "Guides" },
       { href: "/journal", label: "Journal" },
     ],
   },

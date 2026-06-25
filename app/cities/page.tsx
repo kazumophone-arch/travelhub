@@ -21,60 +21,6 @@ const fallbackImages = [
   "/assets/home/queenstown.jpg",
 ];
 
-const seasonLinks = [
-  {
-    title: "Spring",
-    text: "Soft light, flowers, and gentle city walks.",
-    href: "/themes/spring",
-    image: "/assets/home/kyoto-hero.jpg",
-  },
-  {
-    title: "Summer",
-    text: "Coastal escapes, lakes, and long evenings.",
-    href: "/themes/summer",
-    image: "/assets/home/lake-bled.jpg",
-  },
-  {
-    title: "Autumn",
-    text: "Foliage, culture, and slower scenic towns.",
-    href: "/themes/autumn",
-    image: "/assets/home/rome-preview.jpg",
-  },
-  {
-    title: "Winter",
-    text: "Clear air, quiet streets, and calm stays.",
-    href: "/themes/winter",
-    image: "/assets/home/find-peace.jpg",
-  },
-];
-
-const moodLinks = [
-  {
-    title: "Relax",
-    text: "Slow down and unwind.",
-    href: "/discover",
-    image: "/assets/home/find-peace.jpg",
-  },
-  {
-    title: "Adventure",
-    text: "Outdoor scenery and active trips.",
-    href: "/discover",
-    image: "/assets/home/queenstown.jpg",
-  },
-  {
-    title: "Culture",
-    text: "Art, history, and local traditions.",
-    href: "/discover",
-    image: "/assets/home/rome-preview.jpg",
-  },
-  {
-    title: "City Break",
-    text: "Short trips with big city energy.",
-    href: "/discover",
-    image: "/assets/home/marrakech.jpg",
-  },
-];
-
 function getCityName(city: RawCity) {
   return getText(city, ["city", "name", "title"]) || "Destination";
 }
@@ -185,50 +131,6 @@ export default async function CitiesPage() {
               </div>
             </Link>
           ))}
-        </div>
-      </section>
-
-      <section className={styles.explorePanel}>
-        <div className={styles.exploreColumn}>
-          <div className={styles.panelTitle}>✦ Explore by season</div>
-
-          <div className={styles.miniGrid}>
-            {seasonLinks.map((item) => (
-              <Link key={item.title} href={item.href} className={styles.miniItem}>
-                <div
-                  className={styles.miniImage}
-                  style={{ backgroundImage: `url("${item.image}")` }}
-                />
-                <h3>{item.title}</h3>
-                <p>{item.text}</p>
-              </Link>
-            ))}
-          </div>
-
-          <Link href="/themes" className={styles.panelLink}>
-            View seasonal ideas →
-          </Link>
-        </div>
-
-        <div className={styles.exploreColumn}>
-          <div className={styles.panelTitle}>✦ Explore by mood</div>
-
-          <div className={styles.miniGrid}>
-            {moodLinks.map((item) => (
-              <Link key={item.title} href={item.href} className={styles.miniItem}>
-                <div
-                  className={styles.miniImage}
-                  style={{ backgroundImage: `url("${item.image}")` }}
-                />
-                <h3>{item.title}</h3>
-                <p>{item.text}</p>
-              </Link>
-            ))}
-          </div>
-
-          <Link href="/discover" className={styles.panelLink}>
-            View mood ideas →
-          </Link>
         </div>
       </section>
 

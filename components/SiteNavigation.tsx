@@ -8,7 +8,6 @@ const publicNavLinks = [
   { href: "/discover", label: "Discover" },
   { href: "/cities", label: "Destinations" },
   { href: "/themes", label: "Themes" },
-  { href: "/guides", label: "Guides" },
   { href: "/journal", label: "Journal" },
   { href: "/about", label: "About" },
 ];
@@ -47,10 +46,6 @@ function isActivePath(pathname: string, href: string) {
 
   if (href === "/themes") {
     return pathname === "/themes" || pathname.startsWith("/themes/");
-  }
-
-  if (href === "/guides") {
-    return pathname === "/guides";
   }
 
   if (href === "/journal") {
@@ -181,7 +176,7 @@ export function SiteNavigation() {
             </div>
 
             <p className="travelhub-mobile-note">
-              Discover destinations, themes, guides, journal stories, and about.
+              Discover destinations, themes, journal stories, and about.
             </p>
           </nav>
         </div>

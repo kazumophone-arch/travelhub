@@ -30,9 +30,9 @@ const structure = [
     href: "/themes",
   },
   {
-    label: "Guides",
+    label: "Discover",
     text: "A planning hub that routes travelers to the right city, spot, or article.",
-    href: "/guides",
+    href: "/discover",
   },
   {
     label: "Cities",
@@ -60,7 +60,7 @@ export default function AboutPage() {
           </p>
           <div className={styles.heroActions}>
             <Link href="/themes">Explore themes →</Link>
-            <Link href="/guides">Start with guides →</Link>
+            <Link href="/discover">Start with discover →</Link>
           </div>
         </div>
 

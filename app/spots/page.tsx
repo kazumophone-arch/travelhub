@@ -37,51 +37,6 @@ const fallbackImages = [
   "/assets/home/queenstown.jpg",
 ];
 
-const moodLinks = [
-  {
-    title: "Quiet",
-    text: "Soft mornings, calm paths, and slower visits.",
-    href: "/discover",
-    image: "/assets/home/find-peace.jpg",
-  },
-  {
-    title: "Scenic",
-    text: "Views, water, mountains, and visual landmarks.",
-    href: "/discover",
-    image: "/assets/home/lake-bled.jpg",
-  },
-  {
-    title: "Culture",
-    text: "Temples, old streets, museums, and local texture.",
-    href: "/themes",
-    image: "/assets/home/rome-preview.jpg",
-  },
-  {
-    title: "City life",
-    text: "Markets, cafés, alleys, and evening neighborhoods.",
-    href: "/journal",
-    image: "/assets/home/marrakech.jpg",
-  },
-];
-
-const planningLinks = [
-  {
-    title: "Pair with nearby places",
-    text: "Use spot guides to understand what belongs in the same day.",
-    href: "/guides",
-  },
-  {
-    title: "Choose the city first",
-    text: "If the place is not decided yet, start from destination pages.",
-    href: "/cities",
-  },
-  {
-    title: "Plan by season",
-    text: "Some places change completely depending on timing.",
-    href: "/themes",
-  },
-];
-
 async function getSupabaseCitiesAndSpots() {
   const [citiesResult, spotsResult] = await Promise.all([
     supabase
@@ -263,35 +218,6 @@ export default async function SpotsPage() {
         </div>
       </section>
 
-      <section className={styles.moodPanel}>
-        <div className={styles.panelHeader}>
-          <div className={styles.eyebrow}>Plan by mood</div>
-          <h2>Choose the kind of place the day needs.</h2>
-        </div>
-
-        <div className={styles.moodGrid}>
-          {moodLinks.map((item) => (
-            <Link key={item.title} href={item.href} className={styles.moodItem}>
-              <div
-                className={styles.moodImage}
-                style={{ backgroundImage: `url("${item.image}")` }}
-              />
-              <h3>{item.title}</h3>
-              <p>{item.text}</p>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      <section className={styles.planningPanel}>
-        {planningLinks.map((item) => (
-          <Link key={item.title} href={item.href}>
-            <h3>{item.title}</h3>
-            <p>{item.text}</p>
-            <strong>Continue →</strong>
-          </Link>
-        ))}
-      </section>
     </main>
   );
 }

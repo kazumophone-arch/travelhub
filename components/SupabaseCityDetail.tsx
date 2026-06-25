@@ -32,7 +32,9 @@ const FALLBACK_TILE_GRADIENT =
 export async function SupabaseCityDetail({ city, tracking }: Props) {
   const spots = (await getPublishedSupabaseSpotsForCity(city.slug)) as Spot[];
   const spotTrackingQuery = getTrackingQuery(tracking);
-  const highlightSpots = spots.slice(0, 4);
+  const HIGHLIGHT_COUNT = 4;
+  const highlightSpots = spots.length > HIGHLIGHT_COUNT ? spots.slice(0, HIGHLIGHT_COUNT) : [];
+  const remainingSpots = highlightSpots.length > 0 ? spots.slice(HIGHLIGHT_COUNT) : spots;
 
   const cityThumbUrl = getOptionalHttpUrl(city.image_url);
 
@@ -98,13 +100,11 @@ export async function SupabaseCityDetail({ city, tracking }: Props) {
       </section>
 
       <section className={styles.body}>
-        <section id="highlights" className={styles.highlights}>
-          <div className={styles.label}>Highlights</div>
-          <h2 className={styles.highlightsTitle}>What stands out in {city.city}</h2>
+        {highlightSpots.length > 0 ? (
+          <section id="highlights" className={styles.highlights}>
+            <div className={styles.label}>Highlights</div>
+            <h2 className={styles.highlightsTitle}>What stands out in {city.city}</h2>
 
-          {highlightSpots.length === 0 ? (
-            <div className={styles.empty}>No published spots yet.</div>
-          ) : (
             <div className={styles.highlightGrid}>
               {highlightSpots.map((spot) => (
                 <div key={spot.id} className={styles.highlightItem}>
@@ -138,8 +138,8 @@ export async function SupabaseCityDetail({ city, tracking }: Props) {
                 </div>
               ))}
             </div>
-          )}
-        </section>
+          </section>
+        ) : null}
 
         <div className={styles.sectionIntro}>
           <div>
@@ -152,11 +152,11 @@ export async function SupabaseCityDetail({ city, tracking }: Props) {
           </p>
         </div>
 
-        {spots.length === 0 ? (
+        {remainingSpots.length === 0 ? (
           <div className={styles.empty}>No published spots yet.</div>
         ) : (
           <div className={styles.spotGrid}>
-            {spots.map((spot) => (
+            {remainingSpots.map((spot) => (
               <div key={spot.id} className={styles.spotItem}>
                 <Link
                   href={`/c/${city.slug}/spot/${spot.slug}${spotTrackingQuery}`}
