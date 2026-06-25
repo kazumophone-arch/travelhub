@@ -37,7 +37,6 @@ export function SiteFooter() {
         <div className={styles.top} style={topStyle}>
           <div style={brandBlockStyle}>
             <Link href="/" style={brandStyle}>
-              <span style={brandMarkStyle}>⌖</span>
               <span>TravelHub</span>
             </Link>
 
@@ -111,12 +110,6 @@ const brandStyle: CSSProperties = {
   fontSize: 28,
   fontWeight: 520,
   letterSpacing: "-0.045em",
-};
-
-const brandMarkStyle: CSSProperties = {
-  color: "#BF9B30",
-  fontSize: 19,
-  lineHeight: 1,
 };
 
 const textStyle: CSSProperties = {
