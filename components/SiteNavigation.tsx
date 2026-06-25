@@ -86,7 +86,6 @@ export function SiteNavigation() {
     <>
       <header className={headerClassName} aria-label="Main navigation">
         <Link href="/" className="travelhub-public-brand">
-          <span className="travelhub-brand-mark">⌖</span>
           <span>TravelHub</span>
         </Link>
 

@@ -5,6 +5,7 @@ import { useState } from "react";
 import type { City } from "@/data/types";
 import { AIRALO_URL } from "@/lib/quick-affiliate-links";
 import { HomeWaitlistForm } from "@/components/HomeWaitlistForm";
+import { journalArticles } from "@/data/journal";
 import styles from "./HomeLanding.module.css";
 
 type Props = {
@@ -35,6 +36,27 @@ const quickLinks: QuickLink[] = [
   { label: "eSIM", emoji: "📱", href: AIRALO_URL },
 ];
 
+const HOME_JOURNAL_SLUGS = [
+  "esim-vs-pocket-wifi-japan",
+  "japan-spring-cities",
+  "marrakech-color-calm",
+  "rome-slowly",
+];
+
+function getHomeJournalArticles() {
+  const bySlug = new Map(journalArticles.map((article) => [article.slug, article]));
+  const matched = HOME_JOURNAL_SLUGS
+    .map((slug) => bySlug.get(slug))
+    .filter((article): article is NonNullable<typeof article> => Boolean(article));
+
+  if (matched.length > 0) {
+    return matched;
+  }
+
+  const featured = journalArticles.filter((article) => article.featured);
+  return (featured.length > 0 ? featured : journalArticles).slice(0, 4);
+}
+
 function getHeroCities(cities: City[]): HeroCity[] {
   const bySlug = new Map(cities.map((city) => [city.slug, city]));
   const matched = HERO_CITY_SLUGS
@@ -52,6 +74,7 @@ export function HomeLanding({ cities }: Props) {
   const heroCities = getHeroCities(cities);
   const [activeHero, setActiveHero] = useState(0);
   const activeCity = heroCities[activeHero] ?? heroCities[0];
+  const homeJournalArticles = getHomeJournalArticles();
 
   return (
     <main className={styles.root}>
@@ -127,6 +150,33 @@ export function HomeLanding({ cities }: Props) {
             </Link>
           ))}
         </div>
+      </section>
+
+      <section className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <h2 className={styles.sectionTitle}>From the Journal</h2>
+        </div>
+
+        <div className={styles.journalScroll}>
+          {homeJournalArticles.map((article) => (
+            <Link
+              key={article.slug}
+              href={`/journal/${article.slug}`}
+              className={styles.journalCard}
+            >
+              <div
+                className={styles.journalCardPhoto}
+                style={{ backgroundImage: `url('${article.image}')` }}
+              />
+              <div className={styles.journalCardCategory}>{article.category}</div>
+              <div className={styles.journalCardTitle}>{article.title}</div>
+            </Link>
+          ))}
+        </div>
+
+        <Link href="/journal" className={styles.journalViewAll}>
+          View all journal stories →
+        </Link>
       </section>
 
       <section className={styles.waitlistSection}>
