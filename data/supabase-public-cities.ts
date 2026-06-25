@@ -31,6 +31,8 @@ export type SupabasePublicCity = {
   sort_rank?: number | null;
   is_featured: boolean;
   featured_rank: number | null;
+  best_months: string[];
+  season_note: string | null;
 };
 
 export async function getPublishedSupabaseCity(
@@ -103,6 +105,8 @@ function toDirectoryCity(
     imageSourceUrl: city.image_source_url,
     spotDetails: spots.map(toCitySpotFromSupabase),
     seasons: ["All year"],
+    months: city.best_months ?? [],
+    seasonNote: city.season_note ?? null,
     travelStyles: [city.region || "City break"],
     themes: [city.region || "Travel city"],
     categories: city.region ? [city.region] : [],

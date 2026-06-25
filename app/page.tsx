@@ -19,7 +19,8 @@ export const metadata: Metadata = createPublicMetadata({
 export default async function Home() {
   const supabaseCities = await getPublishedSupabaseDirectoryCities();
   const publishedCities = sortByRank(supabaseCities);
+  const currentMonth = new Date().toLocaleString("en-US", { month: "long" });
 
-  return <HomeLanding cities={publishedCities} />;
+  return <HomeLanding cities={publishedCities} currentMonth={currentMonth} />;
 }
 

@@ -81,7 +81,40 @@ export type CityValidationInput = {
   affiliateTourUrl?: unknown;
   sortRank?: unknown;
   featuredRank?: unknown;
+  bestMonths?: unknown;
 };
+
+export const MONTH_NAMES = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+const VALID_MONTH_NAMES = new Set(MONTH_NAMES);
+
+export function normalizeBestMonths(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+
+  const unique = new Set<string>();
+
+  for (const item of value) {
+    const month = String(item ?? "").trim();
+    if (VALID_MONTH_NAMES.has(month)) {
+      unique.add(month);
+    }
+  }
+
+  return MONTH_NAMES.filter((month) => unique.has(month));
+}
 
 export function validateCityFields(input: CityValidationInput) {
   const errors: string[] = [];

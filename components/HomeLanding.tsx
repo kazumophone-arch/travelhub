@@ -10,6 +10,7 @@ import styles from "./HomeLanding.module.css";
 
 type Props = {
   cities: City[];
+  currentMonth: string;
 };
 
 type HeroCity = Pick<City, "slug" | "city" | "country" | "imageUrl">;
@@ -72,11 +73,14 @@ function getHeroCities(cities: City[]): HeroCity[] {
   return cities.length > 0 ? cities.slice(0, 3) : [FALLBACK_HERO_CITY];
 }
 
-export function HomeLanding({ cities }: Props) {
+export function HomeLanding({ cities, currentMonth }: Props) {
   const heroCities = getHeroCities(cities);
   const [activeHero, setActiveHero] = useState(0);
   const activeCity = heroCities[activeHero] ?? heroCities[0];
   const homeJournalArticles = getHomeJournalArticles();
+  const seasonalCities = cities
+    .filter((city) => city.months?.includes(currentMonth))
+    .slice(0, 4);
 
   return (
     <main className={styles.root}>
@@ -153,6 +157,34 @@ export function HomeLanding({ cities }: Props) {
           ))}
         </div>
       </section>
+
+      {seasonalCities.length > 0 && (
+        <section className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <h2 className={styles.sectionTitle}>Good to visit in {currentMonth}</h2>
+          </div>
+
+          <div className={styles.destinationScroll}>
+            {seasonalCities.map((city) => (
+              <Link
+                key={`${city.slug}-seasonal`}
+                href={`/c/${city.slug}?src=home&v=seasonal_${currentMonth}_${city.slug}`}
+                className={styles.destinationCard}
+              >
+                <div
+                  className={styles.destinationCardPhoto}
+                  style={city.imageUrl ? { backgroundImage: `url('${city.imageUrl}')` } : undefined}
+                />
+                <div className={styles.destinationCardName}>{city.city}</div>
+                <div className={styles.destinationCardCountry}>{city.country}</div>
+                {city.seasonNote ? (
+                  <p className={styles.seasonalCardNote}>{city.seasonNote}</p>
+                ) : null}
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className={styles.section}>
         <div className={styles.sectionHeader}>

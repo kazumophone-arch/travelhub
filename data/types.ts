@@ -66,6 +66,7 @@ export type City = {
 
   seasons?: string[];
   months?: string[];
+  seasonNote?: string | null;
   travelStyles?: string[];
   themes?: string[];
   categories?: string[];

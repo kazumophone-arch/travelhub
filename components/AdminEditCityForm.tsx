@@ -14,6 +14,7 @@ import layoutStyles from "@/components/AdminCityHeroPreview.module.css";
 import { hasPreviewUrl } from "@/components/AdminLivePreview";
 import {
   formatValidationErrors,
+  MONTH_NAMES,
   slugify,
   validateCityFields,
   validateSlug,
@@ -49,6 +50,8 @@ type CityForm = {
   sortRank: number;
   isFeatured: boolean;
   featuredRank: number | null;
+  bestMonths: string[];
+  seasonNote: string;
 };
 
 type CountryOption = {
@@ -83,6 +86,8 @@ const emptyForm: CityForm = {
   sortRank: 999,
   isFeatured: false,
   featuredRank: null,
+  bestMonths: [],
+  seasonNote: "",
 };
 
 async function readResponse(response: Response) {
@@ -241,6 +246,10 @@ export function AdminEditCityForm({ id }: Props) {
           cityData.featured_rank === null || cityData.featured_rank === undefined
             ? null
             : Number(cityData.featured_rank),
+        bestMonths: Array.isArray(cityData.best_months)
+          ? (cityData.best_months as unknown[]).map((month) => String(month ?? "").trim()).filter(Boolean)
+          : [],
+        seasonNote: String(cityData.season_note ?? ""),
       });
 
       setStatusMessage("");
@@ -281,6 +290,15 @@ export function AdminEditCityForm({ id }: Props) {
 
   function generateSlugFromCity() {
     update("slug", slugify(form.city));
+  }
+
+  function toggleBestMonth(month: string) {
+    setForm((current) => ({
+      ...current,
+      bestMonths: current.bestMonths.includes(month)
+        ? current.bestMonths.filter((existing) => existing !== month)
+        : [...current.bestMonths, month],
+    }));
   }
 
   function insertDescriptionTemplate() {
@@ -590,6 +608,44 @@ export function AdminEditCityForm({ id }: Props) {
             ホームページのヒーロー回転に出す都市と順番を決めます。注目都市が0件の場合は表示順の上位3件が使われます。
           </AdminFieldHint>
 
+          <div style={labelStyle}>
+            おすすめの月（複数選択可）
+            <div style={monthGridStyle}>
+              {MONTH_NAMES.map((month) => {
+                const isSelected = form.bestMonths.includes(month);
+
+                return (
+                  <button
+                    key={month}
+                    type="button"
+                    onClick={() => toggleBestMonth(month)}
+                    style={isSelected ? monthOptionSelectedStyle : monthOptionStyle}
+                    aria-pressed={isSelected}
+                  >
+                    {month}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+          <AdminFieldHint>
+            ホームページの「Good to visit in [月]」セクションは、ここで選んだ月に現在の月が含まれる都市のみ表示します。
+          </AdminFieldHint>
+
+          <label style={labelStyle}>
+            季節のひとことメモ（おすすめの月の理由）
+            <textarea
+              value={form.seasonNote}
+              onChange={(event) => update("seasonNote", event.target.value)}
+              rows={3}
+              style={textareaStyle}
+              placeholder="例: Cherry blossoms peak in late March, quiet temples in November."
+            />
+          </label>
+          <AdminFieldHint>
+            ホームページの季節カードに表示される説明文です。未入力の場合は説明文を表示しません。
+          </AdminFieldHint>
+
           <AdminTagSelector
             selectedTagIds={form.tagIds}
             onChange={(tagIds) => update("tagIds", tagIds)}
@@ -715,6 +771,31 @@ const checkStyle: CSSProperties = {
   color: "#607080",
   fontSize: 13,
   fontWeight: 750,
+};
+
+const monthGridStyle: CSSProperties = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 90px), 1fr))",
+  gap: 6,
+};
+
+const monthOptionStyle: CSSProperties = {
+  padding: "8px 9px",
+  borderRadius: 12,
+  border: "1px solid rgba(23,32,42,.08)",
+  background: "#f8faf7",
+  color: "#17202a",
+  fontSize: 12,
+  fontWeight: 750,
+  textAlign: "center",
+  cursor: "pointer",
+};
+
+const monthOptionSelectedStyle: CSSProperties = {
+  ...monthOptionStyle,
+  border: "1px solid rgba(19,138,114,.3)",
+  background: "#e8f7ef",
+  color: "#126b43",
 };
 
 const publishReadinessStyle: CSSProperties = {

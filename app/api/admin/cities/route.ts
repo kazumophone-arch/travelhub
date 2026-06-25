@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import {
   formatValidationErrors,
+  normalizeBestMonths,
   validateCityFields,
 } from "@/lib/admin-validation";
 import {
@@ -185,6 +186,8 @@ export async function POST(request: Request) {
       body.featuredRank === ""
         ? null
         : Number(body.featuredRank),
+    best_months: normalizeBestMonths(body.bestMonths),
+    season_note: body.seasonNote ? String(body.seasonNote).trim() : null,
     updated_at: new Date().toISOString(),
   };
 
@@ -283,6 +286,8 @@ export async function PATCH(request: Request) {
       body.featuredRank === ""
         ? null
         : Number(body.featuredRank),
+    best_months: normalizeBestMonths(body.bestMonths),
+    season_note: body.seasonNote ? String(body.seasonNote).trim() : null,
     updated_at: new Date().toISOString(),
   };
 
