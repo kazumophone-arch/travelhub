@@ -90,3 +90,34 @@ export function getImagePositionLabel(value: unknown) {
   const position = normalizeImagePosition(value);
   return IMAGE_POSITION_OPTIONS.find((option) => option.value === position)?.label ?? "中央";
 }
+
+export type GalleryImage = {
+  url: string;
+  position?: ImagePosition;
+  alt?: string;
+  credit?: string;
+};
+
+export function normalizeGallery(value: unknown): GalleryImage[] {
+  if (!Array.isArray(value)) return [];
+
+  const images: GalleryImage[] = [];
+
+  for (const item of value) {
+    if (!item || typeof item !== "object") continue;
+
+    const url = getOptionalHttpUrl((item as { url?: unknown }).url as string | undefined);
+    if (!url) continue;
+
+    const record = item as { position?: unknown; alt?: unknown; credit?: unknown };
+
+    images.push({
+      url,
+      position: normalizeImagePosition(record.position),
+      alt: String(record.alt ?? "").trim(),
+      credit: String(record.credit ?? "").trim(),
+    });
+  }
+
+  return images;
+}

@@ -20,9 +20,17 @@ import {
 } from "@/lib/admin-validation";
 import {
   IMAGE_POSITION_OPTIONS,
+  normalizeGallery,
   normalizeImagePosition,
+  type GalleryImage,
   type ImagePosition,
 } from "@/lib/url-fields";
+
+type SpotNotesForm = {
+  how_to_use: string;
+  best_for: string;
+  before_you_go: string;
+};
 
 type Props = {
   id: string;
@@ -52,6 +60,8 @@ type SpotForm = {
   affiliateTourUrl: string;
   tagIds: string[];
   isPublished: boolean;
+  gallery: GalleryImage[];
+  notes: SpotNotesForm;
 };
 
 type StatusKind = "info" | "success" | "error";
@@ -72,6 +82,8 @@ const emptyForm: SpotForm = {
   affiliateTourUrl: "",
   tagIds: [],
   isPublished: false,
+  gallery: [],
+  notes: { how_to_use: "", best_for: "", before_you_go: "" },
 };
 
 async function readResponse(response: Response) {
@@ -193,6 +205,12 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
         affiliateTourUrl: spot.affiliate_tour_url ?? "",
         tagIds: spotTagIds,
         isPublished: Boolean(spot.is_published),
+        gallery: normalizeGallery(spot.gallery),
+        notes: {
+          how_to_use: String(spot.notes?.how_to_use ?? ""),
+          best_for: String(spot.notes?.best_for ?? ""),
+          before_you_go: String(spot.notes?.before_you_go ?? ""),
+        },
       });
 
       setStatusMessage(
@@ -225,6 +243,13 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
 
   function generateSlugFromSpot() {
     update("slug", slugify(form.name));
+  }
+
+  function updateNote<K extends keyof SpotNotesForm>(key: K, value: string) {
+    setForm((current) => ({
+      ...current,
+      notes: { ...current.notes, [key]: value },
+    }));
   }
 
   function insertDescriptionTemplate() {
@@ -411,6 +436,12 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
           onChangeImagePosition={(value) => update("imagePosition", value)}
           onChangeAffiliateHotelUrl={(value) => update("affiliateHotelUrl", value)}
           onChangeAffiliateTourUrl={(value) => update("affiliateTourUrl", value)}
+          gallery={form.gallery}
+          onChangeGallery={(value) => update("gallery", value)}
+          notes={form.notes}
+          onChangeHowToUse={(value) => updateNote("how_to_use", value)}
+          onChangeBestFor={(value) => updateNote("best_for", value)}
+          onChangeBeforeYouGo={(value) => updateNote("before_you_go", value)}
         />
       </div>
 

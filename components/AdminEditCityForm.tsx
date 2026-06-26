@@ -21,7 +21,9 @@ import {
 } from "@/lib/admin-validation";
 import {
   IMAGE_POSITION_OPTIONS,
+  normalizeGallery,
   normalizeImagePosition,
+  type GalleryImage,
   type ImagePosition,
 } from "@/lib/url-fields";
 
@@ -52,6 +54,7 @@ type CityForm = {
   featuredRank: number | null;
   bestMonths: string[];
   seasonNote: string;
+  gallery: GalleryImage[];
 };
 
 type CountryOption = {
@@ -88,6 +91,7 @@ const emptyForm: CityForm = {
   featuredRank: null,
   bestMonths: [],
   seasonNote: "",
+  gallery: [],
 };
 
 async function readResponse(response: Response) {
@@ -251,6 +255,7 @@ export function AdminEditCityForm({ id }: Props) {
           ? (cityData.best_months as unknown[]).map((month) => String(month ?? "").trim()).filter(Boolean)
           : [],
         seasonNote: String(cityData.season_note ?? ""),
+        gallery: normalizeGallery(cityData.gallery),
       });
 
       setStatusMessage("");
@@ -455,6 +460,8 @@ export function AdminEditCityForm({ id }: Props) {
           onChangeImagePosition={(value) => update("imagePosition", value)}
           onChangeAffiliateHotelUrl={(value) => update("affiliateHotelUrl", value)}
           onChangeAffiliateTourUrl={(value) => update("affiliateTourUrl", value)}
+          gallery={form.gallery}
+          onChangeGallery={(value) => update("gallery", value)}
         />
       </div>
 

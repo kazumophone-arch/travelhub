@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import {
   formatValidationErrors,
+  normalizeGalleryForWrite,
+  normalizeSpotNotesForWrite,
   validateSpotFields,
 } from "@/lib/admin-validation";
 import {
@@ -17,7 +19,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const ADMIN_SPOT_SELECT =
-  "id, city_id, name, slug, summary, description, image_url, image_alt, image_credit, image_source_url, image_position, affiliate_hotel_url, affiliate_tour_url, is_published, created_at, updated_at";
+  "id, city_id, name, slug, summary, description, image_url, image_alt, image_credit, image_source_url, image_position, affiliate_hotel_url, affiliate_tour_url, is_published, gallery, notes, created_at, updated_at";
 
 type AdminDbError = {
   code?: string;
@@ -176,6 +178,8 @@ export async function POST(request: Request) {
     affiliate_hotel_url: String(body.affiliateHotelUrl ?? ""),
     affiliate_tour_url: String(body.affiliateTourUrl ?? ""),
     is_published: Boolean(body.isPublished),
+    gallery: normalizeGalleryForWrite(body.gallery),
+    notes: normalizeSpotNotesForWrite(body.notes),
     updated_at: new Date().toISOString(),
   };
 
@@ -274,6 +278,8 @@ export async function PATCH(request: Request) {
     affiliate_hotel_url: String(body.affiliateHotelUrl ?? ""),
     affiliate_tour_url: String(body.affiliateTourUrl ?? ""),
     is_published: Boolean(body.isPublished),
+    gallery: normalizeGalleryForWrite(body.gallery),
+    notes: normalizeSpotNotesForWrite(body.notes),
     updated_at: new Date().toISOString(),
   };
 

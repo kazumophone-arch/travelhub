@@ -106,6 +106,13 @@
   grid-column: span 2;
 }
 
+.galleryEditorSlot {
+  position: absolute;
+  top: 64px;
+  right: 16px;
+  z-index: 5;
+}
+
 .guideShell {
   width: min(1280px, calc(100% - 64px));
   margin: 0 auto;

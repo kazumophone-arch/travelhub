@@ -5,8 +5,15 @@ import { SpotDetailView, type SpotDetailSpot } from "@/components/SpotDetailView
 import { EditableText } from "@/components/EditableText";
 import { EditableImageButton } from "@/components/EditableImageButton";
 import { EditableLinkButton } from "@/components/EditableLinkButton";
+import { EditableGallery } from "@/components/EditableGallery";
 import type { SupabasePublicCity } from "@/data/supabase-public-cities";
-import { normalizeImagePosition, type ImagePosition } from "@/lib/url-fields";
+import { normalizeImagePosition, type GalleryImage, type ImagePosition } from "@/lib/url-fields";
+
+type SpotNotesForm = {
+  how_to_use: string;
+  best_for: string;
+  before_you_go: string;
+};
 
 type Props = {
   spotId: string;
@@ -27,6 +34,12 @@ type Props = {
   onChangeImagePosition: (value: ImagePosition) => void;
   onChangeAffiliateHotelUrl: (value: string) => void;
   onChangeAffiliateTourUrl: (value: string) => void;
+  gallery: GalleryImage[];
+  onChangeGallery: (value: GalleryImage[]) => void;
+  notes: SpotNotesForm;
+  onChangeHowToUse: (value: string) => void;
+  onChangeBestFor: (value: string) => void;
+  onChangeBeforeYouGo: (value: string) => void;
 };
 
 async function readResponse(response: Response) {
@@ -58,6 +71,12 @@ export function AdminSpotInlineEditor({
   onChangeImagePosition,
   onChangeAffiliateHotelUrl,
   onChangeAffiliateTourUrl,
+  gallery,
+  onChangeGallery,
+  notes,
+  onChangeHowToUse,
+  onChangeBestFor,
+  onChangeBeforeYouGo,
 }: Props) {
   const [city, setCity] = useState<SupabasePublicCity | null>(null);
   const [nearbySpots, setNearbySpots] = useState<SpotDetailSpot[]>([]);
@@ -120,6 +139,8 @@ export function AdminSpotInlineEditor({
     imagePosition,
     affiliate_hotel_url: affiliateHotelUrl,
     affiliate_tour_url: affiliateTourUrl,
+    gallery,
+    notes,
   };
 
   if (!city) {
@@ -179,6 +200,42 @@ export function AdminSpotInlineEditor({
                 onChange: onChangeAffiliateTourUrl,
               },
             ]}
+          />
+        ),
+        galleryEditor: (
+          <EditableGallery
+            images={gallery}
+            onChange={onChangeGallery}
+            uploadKind="spot"
+            citySlug={citySlug}
+            spotSlug={slug}
+          />
+        ),
+        howToUse: (
+          <EditableText
+            value={notes.how_to_use}
+            onChange={onChangeHowToUse}
+            multiline
+            ariaLabel="How to use it"
+            placeholder="Treat this as one focused stop, then connect it with nearby places from the same city guide."
+          />
+        ),
+        bestFor: (
+          <EditableText
+            value={notes.best_for}
+            onChange={onChangeBestFor}
+            multiline
+            ariaLabel="Best for"
+            placeholder="First-time visitors, slow walkers, visual routes..."
+          />
+        ),
+        beforeYouGo: (
+          <EditableText
+            value={notes.before_you_go}
+            onChange={onChangeBeforeYouGo}
+            multiline
+            ariaLabel="Before you go"
+            placeholder="Check current access, opening conditions, and transport details..."
           />
         ),
       }}

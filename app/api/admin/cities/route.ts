@@ -3,6 +3,7 @@ import { supabaseAdmin } from "@/lib/supabase-admin";
 import {
   formatValidationErrors,
   normalizeBestMonths,
+  normalizeGalleryForWrite,
   validateCityFields,
 } from "@/lib/admin-validation";
 import {
@@ -188,6 +189,7 @@ export async function POST(request: Request) {
         : Number(body.featuredRank),
     best_months: normalizeBestMonths(body.bestMonths),
     season_note: body.seasonNote ? String(body.seasonNote).trim() : null,
+    gallery: normalizeGalleryForWrite(body.gallery),
     updated_at: new Date().toISOString(),
   };
 
@@ -288,6 +290,7 @@ export async function PATCH(request: Request) {
         : Number(body.featuredRank),
     best_months: normalizeBestMonths(body.bestMonths),
     season_note: body.seasonNote ? String(body.seasonNote).trim() : null,
+    gallery: normalizeGalleryForWrite(body.gallery),
     updated_at: new Date().toISOString(),
   };
 

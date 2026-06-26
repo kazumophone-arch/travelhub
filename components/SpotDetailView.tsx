@@ -4,11 +4,13 @@ import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import styles from "./SupabaseSpotDetail.module.css";
 import type { SupabasePublicCity } from "@/data/supabase-public-cities";
+import type { SpotNotes } from "@/data/supabase-public-spots";
 import type { TrackingParams } from "@/lib/tracking-query";
 import {
   getCssImagePosition,
   getImageBackground,
   getOptionalHttpUrl,
+  type GalleryImage,
 } from "@/lib/url-fields";
 
 export type SpotDetailSpot = {
@@ -24,6 +26,8 @@ export type SpotDetailSpot = {
   affiliate_tour_url?: string | null;
   affiliateHotelUrl?: string;
   affiliateTourUrl?: string;
+  gallery?: GalleryImage[];
+  notes?: SpotNotes;
 };
 
 export type SpotDetailSlots = {
@@ -32,6 +36,10 @@ export type SpotDetailSlots = {
   why?: ReactNode;
   heroOverlay?: ReactNode;
   planEditor?: ReactNode;
+  galleryEditor?: ReactNode;
+  howToUse?: ReactNode;
+  bestFor?: ReactNode;
+  beforeYouGo?: ReactNode;
 };
 
 type Props = {
@@ -71,7 +79,37 @@ export function SpotDetailView({ city, spot, nearbySpots, tracking, slots }: Pro
     `Use ${spot.name} as a thoughtful stop while exploring ${city.city}.`
   );
 
-  const collageItems = [spot, ...nearbySpots].slice(0, 4);
+  type CollageItem = {
+    key: string;
+    image_url: string;
+    imagePosition?: string;
+    image_position?: string | null;
+  };
+
+  const ownGalleryItems: CollageItem[] = (spot.gallery ?? []).map((image, index) => ({
+    key: `gallery-${index}`,
+    image_url: image.url,
+    imagePosition: image.position,
+  }));
+
+  const collageItems: CollageItem[] =
+    ownGalleryItems.length > 0
+      ? [
+          {
+            key: "main",
+            image_url: spot.image_url,
+            imagePosition: spot.imagePosition,
+            image_position: spot.image_position,
+          },
+          ...ownGalleryItems,
+        ].slice(0, 4)
+      : [spot, ...nearbySpots].slice(0, 4).map((item, index) => ({
+          key: item.slug || `nearby-${index}`,
+          image_url: item.image_url,
+          imagePosition: item.imagePosition,
+          image_position: item.image_position,
+        }));
+
   const collageSideItems = collageItems.slice(1);
 
   return (
@@ -115,12 +153,15 @@ export function SpotDetailView({ city, spot, nearbySpots, tracking, slots }: Pro
             }}
           >
             {slots?.heroOverlay}
+            {slots?.galleryEditor ? (
+              <div className={styles.galleryEditorSlot}>{slots.galleryEditor}</div>
+            ) : null}
           </div>
 
           <div className={styles.collageSide}>
-            {collageSideItems.map((item, index) => (
+            {collageSideItems.map((item) => (
               <div
-                key={`${item.slug}-${index}`}
+                key={item.key}
                 className={styles.collageSmall}
                 style={{
                   backgroundImage: getImageBackground(
@@ -148,24 +189,27 @@ export function SpotDetailView({ city, spot, nearbySpots, tracking, slots }: Pro
           <article className={styles.note}>
             <h2>How to use it</h2>
             <p>
-              Treat this as one focused stop, then connect it with nearby places
-              from the same city guide.
+              {slots?.howToUse ??
+                spot.notes?.how_to_use ??
+                "Treat this as one focused stop, then connect it with nearby places from the same city guide."}
             </p>
           </article>
 
           <article className={styles.note}>
             <h2>Best for</h2>
             <p>
-              First-time visitors, slow walkers, visual routes, and travelers
-              building a simple day around one strong place.
+              {slots?.bestFor ??
+                spot.notes?.best_for ??
+                "First-time visitors, slow walkers, visual routes, and travelers building a simple day around one strong place."}
             </p>
           </article>
 
           <article className={styles.note}>
             <h2>Before you go</h2>
             <p>
-              Check current access, opening conditions, and transport details
-              before fixing the final route.
+              {slots?.beforeYouGo ??
+                spot.notes?.before_you_go ??
+                "Check current access, opening conditions, and transport details before fixing the final route."}
             </p>
           </article>
         </section>

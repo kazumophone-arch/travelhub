@@ -6,7 +6,7 @@ import {
   type SupabasePublicSpot,
 } from "@/data/supabase-public-spots";
 import { supabase } from "@/lib/supabase";
-import { normalizeImagePosition } from "@/lib/url-fields";
+import { normalizeGallery, normalizeImagePosition, type GalleryImage } from "@/lib/url-fields";
 
 export type SupabasePublicCity = {
   id: string;
@@ -33,6 +33,7 @@ export type SupabasePublicCity = {
   featured_rank: number | null;
   best_months: string[];
   season_note: string | null;
+  gallery?: GalleryImage[];
 };
 
 export async function getPublishedSupabaseCity(
@@ -58,6 +59,7 @@ export function normalizeSupabasePublicCity(
   return {
     ...city,
     imagePosition: normalizeImagePosition(city.image_position),
+    gallery: normalizeGallery(city.gallery),
   };
 }
 

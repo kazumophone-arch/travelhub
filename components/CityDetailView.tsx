@@ -28,6 +28,7 @@ export type CityDetailSlots = {
   country?: ReactNode;
   heroOverlay?: ReactNode;
   ctaEditor?: ReactNode;
+  galleryEditor?: ReactNode;
 };
 
 type Props = {
@@ -114,6 +115,30 @@ export function CityDetailView({ city, spots, tracking, slots }: Props) {
       </section>
 
       <section className={styles.body}>
+        {(city.gallery && city.gallery.length > 0) || slots?.galleryEditor ? (
+          <section className={styles.gallerySection} aria-label={`${city.city} photos`}>
+            <div className={styles.label}>More photos</div>
+            <h2 className={styles.sectionTitle}>{city.city} in pictures</h2>
+
+            {slots?.galleryEditor}
+
+            {city.gallery && city.gallery.length > 0 ? (
+              <div className={styles.galleryGrid}>
+                {city.gallery.map((image, index) => (
+                  <div
+                    key={`${image.url}-${index}`}
+                    className={styles.galleryTile}
+                    style={{
+                      backgroundImage: `url(${JSON.stringify(image.url)})`,
+                      backgroundPosition: getCssImagePosition(image.position),
+                    }}
+                  />
+                ))}
+              </div>
+            ) : null}
+          </section>
+        ) : null}
+
         {highlightSpots.length > 0 ? (
           <section id="highlights" className={styles.highlights}>
             <div className={styles.label}>Highlights</div>

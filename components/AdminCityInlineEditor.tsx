@@ -5,8 +5,9 @@ import { CityDetailView, type CityDetailSpot } from "@/components/CityDetailView
 import { EditableText } from "@/components/EditableText";
 import { EditableImageButton } from "@/components/EditableImageButton";
 import { EditableLinkButton } from "@/components/EditableLinkButton";
+import { EditableGallery } from "@/components/EditableGallery";
 import type { SupabasePublicCity } from "@/data/supabase-public-cities";
-import { normalizeImagePosition, type ImagePosition } from "@/lib/url-fields";
+import { normalizeImagePosition, type GalleryImage, type ImagePosition } from "@/lib/url-fields";
 
 type Props = {
   cityId: string;
@@ -26,6 +27,8 @@ type Props = {
   onChangeImagePosition: (value: ImagePosition) => void;
   onChangeAffiliateHotelUrl: (value: string) => void;
   onChangeAffiliateTourUrl: (value: string) => void;
+  gallery: GalleryImage[];
+  onChangeGallery: (value: GalleryImage[]) => void;
 };
 
 async function readResponse(response: Response) {
@@ -56,6 +59,8 @@ export function AdminCityInlineEditor({
   onChangeImagePosition,
   onChangeAffiliateHotelUrl,
   onChangeAffiliateTourUrl,
+  gallery,
+  onChangeGallery,
 }: Props) {
   const [spots, setSpots] = useState<CityDetailSpot[]>([]);
 
@@ -110,6 +115,7 @@ export function AdminCityInlineEditor({
     featured_rank: null,
     best_months: bestMonths,
     season_note: seasonNote || null,
+    gallery,
   };
 
   return (
@@ -154,6 +160,14 @@ export function AdminCityInlineEditor({
                 onChange: onChangeAffiliateTourUrl,
               },
             ]}
+          />
+        ),
+        galleryEditor: (
+          <EditableGallery
+            images={gallery}
+            onChange={onChangeGallery}
+            uploadKind="city"
+            citySlug={slug}
           />
         ),
       }}

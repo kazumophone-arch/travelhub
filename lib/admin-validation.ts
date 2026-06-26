@@ -116,6 +116,41 @@ export function normalizeBestMonths(value: unknown): string[] {
   return MONTH_NAMES.filter((month) => unique.has(month));
 }
 
+export function normalizeGalleryForWrite(value: unknown) {
+  if (!Array.isArray(value)) return [];
+
+  return value
+    .map((item) => {
+      if (!item || typeof item !== "object") return null;
+
+      const record = item as Record<string, unknown>;
+      const url = String(record.url ?? "").trim();
+      if (!url) return null;
+
+      return {
+        url,
+        position: String(record.position ?? "center").trim() || "center",
+        alt: String(record.alt ?? "").trim(),
+        credit: String(record.credit ?? "").trim(),
+      };
+    })
+    .filter((item): item is { url: string; position: string; alt: string; credit: string } =>
+      Boolean(item)
+    );
+}
+
+export function normalizeSpotNotesForWrite(value: unknown) {
+  if (!value || typeof value !== "object") return {};
+
+  const record = value as Record<string, unknown>;
+
+  return {
+    how_to_use: String(record.how_to_use ?? "").trim(),
+    best_for: String(record.best_for ?? "").trim(),
+    before_you_go: String(record.before_you_go ?? "").trim(),
+  };
+}
+
 export function validateCityFields(input: CityValidationInput) {
   const errors: string[] = [];
 

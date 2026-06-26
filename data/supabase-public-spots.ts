@@ -1,9 +1,15 @@
 import "server-only";
 import { supabase } from "@/lib/supabase";
-import { normalizeImagePosition } from "@/lib/url-fields";
+import { normalizeGallery, normalizeImagePosition, type GalleryImage } from "@/lib/url-fields";
 
 export const SUPABASE_PUBLIC_SPOT_SELECT =
-  "id, city_id, name, slug, summary, description, image_url, image_alt, image_credit, image_source_url, image_position, affiliate_hotel_url, affiliate_tour_url, is_published";
+  "id, city_id, name, slug, summary, description, image_url, image_alt, image_credit, image_source_url, image_position, affiliate_hotel_url, affiliate_tour_url, is_published, gallery, notes";
+
+export type SpotNotes = {
+  how_to_use?: string;
+  best_for?: string;
+  before_you_go?: string;
+};
 
 export type SupabasePublicSpot = {
   id: string;
@@ -23,6 +29,8 @@ export type SupabasePublicSpot = {
   affiliateHotelUrl?: string;
   affiliateTourUrl?: string;
   is_published: boolean;
+  gallery?: GalleryImage[];
+  notes?: SpotNotes;
 };
 
 export function normalizeSupabasePublicSpot(
@@ -33,6 +41,8 @@ export function normalizeSupabasePublicSpot(
     imagePosition: normalizeImagePosition(spot.image_position),
     affiliateHotelUrl: spot.affiliate_hotel_url ?? "",
     affiliateTourUrl: spot.affiliate_tour_url ?? "",
+    gallery: normalizeGallery(spot.gallery),
+    notes: spot.notes ?? {},
   };
 }
 
