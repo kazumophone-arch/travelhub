@@ -25,10 +25,19 @@ export async function SupabaseSpotDetail({ city, spot, tracking }: Props) {
     .filter((nearbySpot) => nearbySpot.slug !== spot.slug)
     .slice(0, 3);
 
-  const hotelAffiliateUrl = spot.affiliateHotelUrl ?? spot.affiliate_hotel_url;
-  const tourAffiliateUrl = spot.affiliateTourUrl ?? spot.affiliate_tour_url;
-  const hasHotelAffiliate = Boolean(getOptionalHttpUrl(hotelAffiliateUrl));
-  const hasTourAffiliate = Boolean(getOptionalHttpUrl(tourAffiliateUrl));
+  const spotHotelAffiliateUrl = spot.affiliateHotelUrl ?? spot.affiliate_hotel_url;
+  const spotTourAffiliateUrl = spot.affiliateTourUrl ?? spot.affiliate_tour_url;
+  const cityHotelAffiliateUrl = city.affiliate_hotel_url;
+  const cityTourAffiliateUrl = city.affiliate_tour_url;
+
+  // Prefer the spot-level affiliate URL, falling back to the city-level one —
+  // this mirrors the resolution order applied server-side in app/out/[type]/route.ts.
+  const hasHotelAffiliate = Boolean(
+    getOptionalHttpUrl(spotHotelAffiliateUrl) || getOptionalHttpUrl(cityHotelAffiliateUrl)
+  );
+  const hasTourAffiliate = Boolean(
+    getOptionalHttpUrl(spotTourAffiliateUrl) || getOptionalHttpUrl(cityTourAffiliateUrl)
+  );
 
   const trackingSrc = tracking?.src ?? "spot-detail";
   const trackingV = tracking?.v ?? `spot_${city.slug}_${spot.slug}`;

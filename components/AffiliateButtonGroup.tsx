@@ -25,6 +25,8 @@ type Props = {
   variant?: AffiliateVariant;
   showHotels?: boolean;
   showTours?: boolean;
+  compact?: boolean;
+  hideDisclosure?: boolean;
 };
 
 type AffiliateItem = {
@@ -66,6 +68,8 @@ export function AffiliateButtonGroup({
   variant = "city",
   showHotels = true,
   showTours = true,
+  compact = false,
+  hideDisclosure = false,
 }: Props) {
   const encodedCity = encodeURIComponent(city.slug);
   const encodedSrc = encodeURIComponent(src);
@@ -136,7 +140,7 @@ export function AffiliateButtonGroup({
             <div style={buttonTextStyle}>
               <span style={labelStyle}>{item.label}</span>
               <span style={titleStyle}>{item.title}</span>
-              <span style={noteStyle}>{item.note}</span>
+              {compact ? null : <span style={noteStyle}>{item.note}</span>}
             </div>
 
             <span style={arrowStyle}>→</span>
@@ -144,9 +148,11 @@ export function AffiliateButtonGroup({
         );
       })}
 
-      <p style={disclosureStyle}>
-        External affiliate links. TravelHub may earn a commission at no extra cost to you.
-      </p>
+      {hideDisclosure ? null : (
+        <p style={disclosureStyle}>
+          External affiliate links. TravelHub may earn a commission at no extra cost to you.
+        </p>
+      )}
     </div>
   );
 }

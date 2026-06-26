@@ -132,18 +132,25 @@
   margin-top: 34px;
   padding: 28px;
   display: flex;
-  justify-content: space-between;
-  gap: 28px;
-  align-items: end;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.ctaBox span {
-  color: #BF9B30;
-  font-size: 12px;
-  font-weight: 820;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  white-space: nowrap;
+.ctaAffiliateGroup {
+  width: 100%;
+}
+
+@media (min-width: 720px) {
+  .ctaBox {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 28px;
+  }
+
+  .ctaAffiliateGroup {
+    flex: 0 0 320px;
+  }
 }
 
 .sidebar {
@@ -178,14 +185,5 @@
 
   .compareGrid {
     grid-template-columns: 1fr;
-  }
-
-  .ctaBox {
-    display: block;
-  }
-
-  .ctaBox span {
-    display: inline-flex;
-    margin-top: 18px;
   }
 }

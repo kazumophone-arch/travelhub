@@ -12,6 +12,14 @@ export type JournalArticle = {
   image: string;
   featured?: boolean;
   ctaLabel?: string;
+  /**
+   * Slug of the published city this article's affiliate CTA should point to.
+   * Live published cities (verified against the Supabase `cities` table):
+   * kyoto, rome, tokyo. Picked to match the article's actual subject; falls
+   * back to a sensible default for articles about places that aren't
+   * published cities (e.g. Marrakech, Lake Bled) — never invent a fake city.
+   */
+  relatedCitySlug: string;
 };
 
 export const journalCategories: JournalCategory[] = [
@@ -31,6 +39,7 @@ export const journalArticles: JournalArticle[] = [
     image: "/assets/home/find-peace.jpg",
     featured: true,
     ctaLabel: "Read the essentials",
+    relatedCitySlug: "tokyo",
   },
   {
     slug: "japan-spring-cities",
@@ -39,6 +48,7 @@ export const journalArticles: JournalArticle[] = [
     description:
       "Soft light, seasonal flowers, and cities that feel especially good when the weather turns gentle.",
     image: "/assets/home/kyoto-hero.jpg",
+    relatedCitySlug: "kyoto",
   },
   {
     slug: "quiet-europe-summer",
@@ -47,6 +57,7 @@ export const journalArticles: JournalArticle[] = [
     description:
       "Places that keep the warmth and scenery without making the trip feel crowded or overbuilt.",
     image: "/assets/home/lake-bled.jpg",
+    relatedCitySlug: "rome",
   },
   {
     slug: "kyoto-autumn-season",
@@ -55,6 +66,7 @@ export const journalArticles: JournalArticle[] = [
     description:
       "A short editorial note on color, pacing, and why Kyoto rewards slower planning in autumn.",
     image: "/assets/home/kyoto-hero.jpg",
+    relatedCitySlug: "kyoto",
   },
   {
     slug: "quiet-first-day-kyoto",
@@ -63,6 +75,7 @@ export const journalArticles: JournalArticle[] = [
     description:
       "How to begin Kyoto without rushing straight into the busiest routes.",
     image: "/assets/home/kyoto-hero.jpg",
+    relatedCitySlug: "kyoto",
   },
   {
     slug: "rome-slowly",
@@ -71,6 +84,7 @@ export const journalArticles: JournalArticle[] = [
     description:
       "A gentler way to approach Rome beyond the checklist and the crowds.",
     image: "/assets/home/rome-preview.jpg",
+    relatedCitySlug: "rome",
   },
   {
     slug: "marrakech-color-calm",
@@ -79,6 +93,7 @@ export const journalArticles: JournalArticle[] = [
     description:
       "How to read the city through texture, courtyards, markets, and quieter moments.",
     image: "/assets/home/marrakech.jpg",
+    relatedCitySlug: "tokyo",
   },
   {
     slug: "where-to-stay-kyoto-first-trip",
@@ -87,6 +102,7 @@ export const journalArticles: JournalArticle[] = [
     description:
       "How to choose a base that keeps temples, food, stations, and quiet evenings within reach.",
     image: "/assets/home/kyoto-hero.jpg",
+    relatedCitySlug: "kyoto",
   },
   {
     slug: "choose-hotel-area-before-booking",
@@ -95,6 +111,7 @@ export const journalArticles: JournalArticle[] = [
     description:
       "A simple way to decide where to stay before comparing rooms and prices.",
     image: "/assets/home/rome-preview.jpg",
+    relatedCitySlug: "rome",
   },
   {
     slug: "what-to-book-before-japan",
@@ -103,6 +120,7 @@ export const journalArticles: JournalArticle[] = [
     description:
       "The essentials worth arranging before arrival so the first day feels easier.",
     image: "/assets/home/taste-culture.jpg",
+    relatedCitySlug: "tokyo",
   },
   {
     slug: "airport-to-city-japan",
@@ -111,6 +129,7 @@ export const journalArticles: JournalArticle[] = [
     description:
       "Train, transfer, or taxi — how to think about the first move after landing.",
     image: "/assets/home/queenstown.jpg",
+    relatedCitySlug: "tokyo",
   },
   {
     slug: "luggage-delivery-japan",
@@ -119,5 +138,6 @@ export const journalArticles: JournalArticle[] = [
     description:
       "When hands-free travel makes sense, especially between hotels, stations, and airports.",
     image: "/assets/home/live-the-moment.jpg",
+    relatedCitySlug: "tokyo",
   },
 ];

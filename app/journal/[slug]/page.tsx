@@ -1,7 +1,9 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
 import { journalArticles } from "@/data/journal";
+import { getPublishedSupabaseCity } from "@/data/supabase-public-cities";
 import styles from "./JournalArticle.module.css";
 
 type PageProps = {
@@ -39,6 +41,7 @@ export default async function JournalArticlePage({ params }: PageProps) {
   const related = journalArticles
     .filter((item) => item.slug !== article.slug)
     .slice(0, 3);
+  const ctaCity = await getPublishedSupabaseCity(article.relatedCitySlug);
 
   return (
     <main className={styles.page}>
@@ -110,17 +113,6 @@ export default async function JournalArticlePage({ params }: PageProps) {
                 that makes arrival more stressful.
               </p>
 
-              <aside className={styles.ctaBox}>
-                <div>
-                  <div className={styles.kicker}>Travel essential</div>
-                  <h3>Compare mobile internet before you fly.</h3>
-                  <p>
-                    Add your affiliate comparison link here once the partner is
-                    selected.
-                  </p>
-                </div>
-                <span>Affiliate CTA slot →</span>
-              </aside>
             </>
           ) : (
             <>
@@ -137,6 +129,30 @@ export default async function JournalArticlePage({ params }: PageProps) {
               </p>
             </>
           )}
+
+          {ctaCity ? (
+            <aside className={styles.ctaBox}>
+              <div>
+                <div className={styles.kicker}>Plan the next step</div>
+                <h3>Turn this guide into a booking.</h3>
+                <p>
+                  Compare stays and experiences in {ctaCity.city} once this
+                  article has given the trip some shape.
+                </p>
+              </div>
+
+              <div className={styles.ctaAffiliateGroup}>
+                <AffiliateButtonGroup
+                  city={ctaCity}
+                  src="journal"
+                  v={`journal_${article.slug}`}
+                  variant="final"
+                  showHotels
+                  showTours
+                />
+              </div>
+            </aside>
+          ) : null}
         </article>
 
         <aside className={styles.sidebar}>

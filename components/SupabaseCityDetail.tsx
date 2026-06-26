@@ -1,9 +1,10 @@
 import Link from "next/link";
 import styles from "./SupabaseCityDetail.module.css";
+import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import type { SupabasePublicCity } from "@/data/supabase-public-cities";
 import { getPublishedSupabaseSpotsForCity } from "@/data/supabase-public-spots";
-import { AIRALO_URL, getBookingSearchUrl, getViatorSearchUrl } from "@/lib/quick-affiliate-links";
+import { AIRALO_URL, getViatorSearchUrl } from "@/lib/quick-affiliate-links";
 import type { TrackingParams } from "@/lib/tracking-query";
 import {
   getCssImagePosition,
@@ -70,32 +71,32 @@ export async function SupabaseCityDetail({ city, tracking }: Props) {
         </div>
 
         <div className={styles.heroCtaStack}>
-          <a
-            href={getViatorSearchUrl(city.city)}
-            target="_blank"
-            rel="noopener noreferrer sponsored"
-            className={styles.heroCtaPrimary}
-          >
-            Book tours & experiences
-          </a>
+          <div className={styles.heroAffiliateGroup}>
+            <AffiliateButtonGroup
+              city={city}
+              src="city-detail"
+              v={`city_detail_${city.slug}`}
+              variant="city"
+              tone="dark"
+              showHotels
+              showTours
+              compact
+              hideDisclosure
+            />
 
-          <a
-            href={getBookingSearchUrl(city.city)}
-            target="_blank"
-            rel="noopener noreferrer sponsored"
-            className={styles.heroCtaSecondary}
-          >
-            Compare hotels
-          </a>
+            <a
+              href={AIRALO_URL}
+              target="_blank"
+              rel="noopener noreferrer sponsored"
+              className={styles.heroCtaEsim}
+            >
+              Get an eSIM
+            </a>
+          </div>
 
-          <a
-            href={AIRALO_URL}
-            target="_blank"
-            rel="noopener noreferrer sponsored"
-            className={styles.heroCtaSecondary}
-          >
-            Get an eSIM
-          </a>
+          <p className={styles.heroCtaDisclosure}>
+            External affiliate links. TravelHub may earn a commission at no extra cost to you.
+          </p>
         </div>
       </section>
 

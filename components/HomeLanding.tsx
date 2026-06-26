@@ -15,12 +15,6 @@ type Props = {
 
 type HeroCity = Pick<City, "slug" | "city" | "country" | "imageUrl">;
 
-type QuickLink = {
-  label: string;
-  emoji: string;
-  href: string;
-};
-
 // Used only when Supabase has no published cities yet (e.g. local/dev).
 const FALLBACK_HERO_CITY: HeroCity = {
   slug: "kyoto",
@@ -28,12 +22,6 @@ const FALLBACK_HERO_CITY: HeroCity = {
   country: "Japan",
   imageUrl: "/assets/home/kyoto-hero.jpg",
 };
-
-const quickLinks: QuickLink[] = [
-  { label: "Hotels", emoji: "🏨", href: "https://www.booking.com/" },
-  { label: "Tours", emoji: "🗺️", href: "https://www.viator.com/" },
-  { label: "eSIM", emoji: "📱", href: AIRALO_URL },
-];
 
 const HOME_JOURNAL_SLUGS = [
   "esim-vs-pocket-wifi-japan",
@@ -123,18 +111,29 @@ export function HomeLanding({ cities, currentMonth }: Props) {
 
       <section className={styles.quickLinkSection}>
         <div className={styles.quickLinkRow}>
-          {quickLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              target="_blank"
-              rel="noopener noreferrer sponsored"
-              className={styles.quickLinkItem}
-            >
-              <span className={styles.quickLinkEmoji}>{link.emoji}</span>
-              <span className={styles.quickLinkLabel}>{link.label}</span>
-            </a>
-          ))}
+          <a
+            href={`/out/hotels?c=${encodeURIComponent(activeCity.slug)}&src=home&v=home_quicklink_hotels`}
+            className={styles.quickLinkItem}
+          >
+            <span className={styles.quickLinkEmoji}>🏨</span>
+            <span className={styles.quickLinkLabel}>Hotels</span>
+          </a>
+          <a
+            href={`/out/tours?c=${encodeURIComponent(activeCity.slug)}&src=home&v=home_quicklink_tours`}
+            className={styles.quickLinkItem}
+          >
+            <span className={styles.quickLinkEmoji}>🗺️</span>
+            <span className={styles.quickLinkLabel}>Tours</span>
+          </a>
+          <a
+            href={AIRALO_URL}
+            target="_blank"
+            rel="noopener noreferrer sponsored"
+            className={styles.quickLinkItem}
+          >
+            <span className={styles.quickLinkEmoji}>📱</span>
+            <span className={styles.quickLinkLabel}>eSIM</span>
+          </a>
         </div>
       </section>
 
