@@ -322,7 +322,7 @@ async function handleOutboundRedirect(request: Request, context: OutboundRouteCo
     return new NextResponse("City not found", { status: 404 });
   }
 
-  if (!affiliateLink && !inferredSpotSlug) {
+  if (!affiliateLink) {
     affiliateLink = getSupabaseCityAffiliateLink({
       city: supabaseCity,
       type,
