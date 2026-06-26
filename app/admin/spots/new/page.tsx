@@ -11,7 +11,13 @@ export const metadata = {
   },
 };
 
-export default function NewSpotPage() {
+type Props = {
+  searchParams: Promise<{ cityId?: string }>;
+};
+
+export default async function NewSpotPage({ searchParams }: Props) {
+  const { cityId } = await searchParams;
+
   return (
     <main style={pageStyle}>
       <section style={shellStyle}>
@@ -22,7 +28,7 @@ export default function NewSpotPage() {
         <p style={textStyle}>
           現在のデータベース項目を使って Supabase にスポットを作成します。
         </p>
-        <AdminNewSpotForm />
+        <AdminNewSpotForm initialCityId={cityId ?? ""} />
       </section>
     </main>
   );

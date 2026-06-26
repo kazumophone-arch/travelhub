@@ -76,6 +76,7 @@ async function resolveCityForSpot(cityId: string) {
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get("id");
+  const cityId = searchParams.get("cityId");
 
   if (id) {
     const { data, error } = await supabaseAdmin
@@ -97,10 +98,16 @@ export async function GET(request: Request) {
     return NextResponse.json({ spot: data, tagIds: tagResult.tagIds });
   }
 
-  const { data, error } = await supabaseAdmin
+  let query = supabaseAdmin
     .from("spots")
     .select(ADMIN_SPOT_SELECT)
     .order("created_at", { ascending: false });
+
+  if (cityId) {
+    query = query.eq("city_id", cityId);
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

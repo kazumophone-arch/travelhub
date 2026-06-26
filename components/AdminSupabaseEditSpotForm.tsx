@@ -10,7 +10,8 @@ import {
   buildSpotDescription,
 } from "@/components/AdminContentTools";
 import { AdminTagSelector } from "@/components/AdminTagSelector";
-import { AdminLivePreview, hasPreviewUrl } from "@/components/AdminLivePreview";
+import { AdminSpotWysiwygPreview } from "@/components/AdminSpotWysiwygPreview";
+import layoutStyles from "@/components/AdminEditLayout.module.css";
 import {
   formatValidationErrors,
   slugify,
@@ -339,7 +340,7 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
   }
 
   return (
-    <div style={wrapStyle}>
+    <div className={layoutStyles.editLayout}>
       <section style={formStyle}>
         <AdminContentGuidance kind="spot" />
 
@@ -361,6 +362,12 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
             ))}
           </select>
         </label>
+
+        {form.cityId ? (
+          <Link href={`/admin/cities/edit/${form.cityId}`} style={inlinePublicLinkStyle}>
+            この都市の編集画面を開く →
+          </Link>
+        ) : null}
 
         <label style={labelStyle}>
           スポット名
@@ -557,42 +564,23 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
         )}
       </section>
 
-      <AdminLivePreview
-        label="ライブプレビュー"
-        title={form.name || "スポット名未入力"}
-        subtitle={selectedCity ? `${selectedCity.city}, ${selectedCity.country}` : "都市未選択"}
-        description={form.description || form.summary}
+      <AdminSpotWysiwygPreview
+        spotId={form.id}
+        cityId={form.cityId}
+        name={form.name}
+        slug={form.slug}
+        summary={form.summary}
+        description={form.description}
         imageUrl={form.imageUrl}
         imagePosition={form.imagePosition}
+        affiliateHotelUrl={form.affiliateHotelUrl}
+        affiliateTourUrl={form.affiliateTourUrl}
         isPublished={form.isPublished}
         publicPath={selectedCitySlug && form.slug ? `/c/${selectedCitySlug}/spot/${form.slug}` : ""}
-        ctas={[
-          {
-            label: "ホテル",
-            href: `/out/hotels?c=${encodeURIComponent(selectedCitySlug)}&s=${encodeURIComponent(form.slug)}&src=admin-preview&v=spot_preview`,
-            isVisible:
-              Boolean(selectedCitySlug && form.slug) &&
-              hasPreviewUrl(form.affiliateHotelUrl),
-          },
-          {
-            label: "ツアー",
-            href: `/out/tours?c=${encodeURIComponent(selectedCitySlug)}&s=${encodeURIComponent(form.slug)}&src=admin-preview&v=spot_preview`,
-            isVisible:
-              Boolean(selectedCitySlug && form.slug) &&
-              hasPreviewUrl(form.affiliateTourUrl),
-          },
-        ]}
       />
     </div>
   );
 }
-
-const wrapStyle: CSSProperties = {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 360px), 1fr))",
-  gap: 18,
-  alignItems: "start",
-};
 
 const formStyle: CSSProperties = {
   padding: 18,
@@ -620,6 +608,16 @@ const inputStyle: CSSProperties = {
   background: "#f8faf7",
   color: "#17202a",
   fontSize: 14,
+};
+
+const inlinePublicLinkStyle: CSSProperties = {
+  display: "inline-flex",
+  width: "fit-content",
+  marginBottom: 14,
+  color: "#138a72",
+  fontSize: 12,
+  fontWeight: 850,
+  textDecoration: "none",
 };
 
 const textareaStyle: CSSProperties = {

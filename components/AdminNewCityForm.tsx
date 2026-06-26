@@ -9,7 +9,8 @@ import {
   buildCityDescription,
 } from "@/components/AdminContentTools";
 import { AdminTagSelector } from "@/components/AdminTagSelector";
-import { AdminLivePreview, hasPreviewUrl } from "@/components/AdminLivePreview";
+import { AdminCityWysiwygPreview } from "@/components/AdminCityWysiwygPreview";
+import layoutStyles from "@/components/AdminEditLayout.module.css";
 import {
   formatValidationErrors,
   MONTH_NAMES,
@@ -301,7 +302,7 @@ export function AdminNewCityForm() {
   }
 
   return (
-    <div style={wrapStyle}>
+    <div className={layoutStyles.editLayout}>
       <section style={formStyle}>
         <AdminContentGuidance kind="city" />
 
@@ -614,38 +615,23 @@ export function AdminNewCityForm() {
         )}
       </section>
 
-      <AdminLivePreview
-        label="ライブプレビュー"
-        title={form.city || "新しい都市"}
-        subtitle={form.country || "国"}
-        description={form.description || form.summary}
+      <AdminCityWysiwygPreview
+        cityId=""
+        title={form.city}
+        slug={form.slug}
+        country={form.country}
         imageUrl={form.imageUrl}
         imagePosition={form.imagePosition}
+        affiliateHotelUrl={form.affiliateHotelUrl}
+        affiliateTourUrl={form.affiliateTourUrl}
+        bestMonths={form.bestMonths}
+        seasonNote={form.seasonNote}
         isPublished={form.isPublished}
         publicPath={form.slug ? `/c/${form.slug}` : ""}
-        ctas={[
-          {
-            label: "ホテル",
-            href: `/out/hotels?c=${encodeURIComponent(form.slug)}&src=admin-preview&v=city_preview`,
-            isVisible: Boolean(form.slug) && hasPreviewUrl(form.affiliateHotelUrl),
-          },
-          {
-            label: "ツアー",
-            href: `/out/tours?c=${encodeURIComponent(form.slug)}&src=admin-preview&v=city_preview`,
-            isVisible: Boolean(form.slug) && hasPreviewUrl(form.affiliateTourUrl),
-          },
-        ]}
       />
     </div>
   );
 }
-
-const wrapStyle: CSSProperties = {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 360px), 1fr))",
-  gap: 18,
-  alignItems: "start",
-};
 
 const formStyle: CSSProperties = {
   padding: 18,

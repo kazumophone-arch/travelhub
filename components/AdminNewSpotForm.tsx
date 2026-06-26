@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState, type CSSProperties } from "react";
 import {
   AdminContentGuidance,
@@ -9,7 +10,8 @@ import {
   buildSpotDescription,
 } from "@/components/AdminContentTools";
 import { AdminTagSelector } from "@/components/AdminTagSelector";
-import { AdminLivePreview, hasPreviewUrl } from "@/components/AdminLivePreview";
+import { AdminSpotWysiwygPreview } from "@/components/AdminSpotWysiwygPreview";
+import layoutStyles from "@/components/AdminEditLayout.module.css";
 import {
   formatValidationErrors,
   slugify,
@@ -48,6 +50,10 @@ type SpotForm = {
 };
 
 type StatusKind = "info" | "success" | "error";
+
+type Props = {
+  initialCityId?: string;
+};
 
 const initialForm: SpotForm = {
   cityId: "",
@@ -119,9 +125,9 @@ function PublishReadinessPanel({ notes }: { notes: string[] }) {
   );
 }
 
-export function AdminNewSpotForm() {
+export function AdminNewSpotForm({ initialCityId = "" }: Props) {
   const [cities, setCities] = useState<CityOption[]>([]);
-  const [form, setForm] = useState<SpotForm>(initialForm);
+  const [form, setForm] = useState<SpotForm>({ ...initialForm, cityId: initialCityId });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [status, setStatus] = useState("都市を読み込み中...");
@@ -295,7 +301,7 @@ export function AdminNewSpotForm() {
   }
 
   return (
-    <div style={wrapStyle}>
+    <div className={layoutStyles.editLayout}>
       <section style={formStyle}>
         <AdminContentGuidance kind="spot" />
 
@@ -320,6 +326,12 @@ export function AdminNewSpotForm() {
             ))}
           </select>
         </label>
+
+        {form.cityId ? (
+          <Link href={`/admin/cities/edit/${form.cityId}`} style={inlinePublicLinkStyle}>
+            この都市の編集画面を開く →
+          </Link>
+        ) : null}
 
         <label style={labelStyle}>
           スポット名
@@ -517,42 +529,23 @@ export function AdminNewSpotForm() {
         )}
       </section>
 
-      <AdminLivePreview
-        label="ライブプレビュー"
-        title={form.name || "新しいスポット"}
-        subtitle={selectedCity ? `${selectedCity.city}, ${selectedCity.country}` : "都市"}
-        description={form.description || form.summary}
+      <AdminSpotWysiwygPreview
+        spotId=""
+        cityId={form.cityId}
+        name={form.name}
+        slug={form.slug}
+        summary={form.summary}
+        description={form.description}
         imageUrl={form.imageUrl}
         imagePosition={form.imagePosition}
+        affiliateHotelUrl={form.affiliateHotelUrl}
+        affiliateTourUrl={form.affiliateTourUrl}
         isPublished={form.isPublished}
         publicPath={selectedCitySlug && form.slug ? `/c/${selectedCitySlug}/spot/${form.slug}` : ""}
-        ctas={[
-          {
-            label: "ホテル",
-            href: `/out/hotels?c=${encodeURIComponent(selectedCitySlug)}&s=${encodeURIComponent(form.slug)}&src=admin-preview&v=spot_preview`,
-            isVisible:
-              Boolean(selectedCitySlug && form.slug) &&
-              hasPreviewUrl(form.affiliateHotelUrl),
-          },
-          {
-            label: "ツアー",
-            href: `/out/tours?c=${encodeURIComponent(selectedCitySlug)}&s=${encodeURIComponent(form.slug)}&src=admin-preview&v=spot_preview`,
-            isVisible:
-              Boolean(selectedCitySlug && form.slug) &&
-              hasPreviewUrl(form.affiliateTourUrl),
-          },
-        ]}
       />
     </div>
   );
 }
-
-const wrapStyle: CSSProperties = {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 360px), 1fr))",
-  gap: 18,
-  alignItems: "start",
-};
 
 const formStyle: CSSProperties = {
   padding: 18,
@@ -580,6 +573,16 @@ const inputStyle: CSSProperties = {
   background: "#f8faf7",
   color: "#17202a",
   fontSize: 14,
+};
+
+const inlinePublicLinkStyle: CSSProperties = {
+  display: "inline-flex",
+  width: "fit-content",
+  marginBottom: 14,
+  color: "#138a72",
+  fontSize: 12,
+  fontWeight: 850,
+  textDecoration: "none",
 };
 
 const textareaStyle: CSSProperties = {

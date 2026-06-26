@@ -9,8 +9,9 @@ import {
   buildCityDescription,
 } from "@/components/AdminContentTools";
 import { AdminTagSelector } from "@/components/AdminTagSelector";
-import { AdminCityHeroPreview } from "@/components/AdminCityHeroPreview";
-import layoutStyles from "@/components/AdminCityHeroPreview.module.css";
+import { AdminCityWysiwygPreview } from "@/components/AdminCityWysiwygPreview";
+import { AdminCitySpotsPanel } from "@/components/AdminCitySpotsPanel";
+import layoutStyles from "@/components/AdminEditLayout.module.css";
 import {
   formatValidationErrors,
   MONTH_NAMES,
@@ -652,6 +653,13 @@ export function AdminEditCityForm({ id }: Props) {
           />
         </FormSection>
 
+        <FormSection
+          title="Spots in this city"
+          hint="このスラッグに紐づく実際のスポットです。プレビューにもそのまま反映されます。"
+        >
+          <AdminCitySpotsPanel cityId={form.id} citySlug={form.slug} />
+        </FormSection>
+
         <PublishReadinessPanel notes={publishReadinessNotes} />
 
         <div style={buttonRowStyle}>
@@ -670,33 +678,20 @@ export function AdminEditCityForm({ id }: Props) {
           </p>
         )}
       </section>
-      <div className={layoutStyles.previewColumn}>
-        <AdminCityHeroPreview
-          title={form.city}
-          country={form.country}
-          imageUrl={form.imageUrl}
-          imagePosition={form.imagePosition}
-          isPublished={form.isPublished}
-          publicPath={publicPath}
-          ctas={[
-            {
-              label: "Find hotels",
-              href: `/out/hotels?c=${encodeURIComponent(form.slug)}&src=admin-preview&v=city_preview`,
-              isVisible: Boolean(form.slug),
-            },
-            {
-              label: "Explore tours",
-              href: `/out/tours?c=${encodeURIComponent(form.slug)}&src=admin-preview&v=city_preview`,
-              isVisible: Boolean(form.slug),
-            },
-            {
-              label: "Get an eSIM",
-              href: "https://www.airalo.com/",
-              isVisible: true,
-            },
-          ]}
-        />
-      </div>
+      <AdminCityWysiwygPreview
+        cityId={form.id}
+        title={form.city}
+        slug={form.slug}
+        country={form.country}
+        imageUrl={form.imageUrl}
+        imagePosition={form.imagePosition}
+        affiliateHotelUrl={form.affiliateHotelUrl}
+        affiliateTourUrl={form.affiliateTourUrl}
+        bestMonths={form.bestMonths}
+        seasonNote={form.seasonNote}
+        isPublished={form.isPublished}
+        publicPath={publicPath}
+      />
     </div>
   );
 }

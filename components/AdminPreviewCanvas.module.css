@@ -1,0 +1,11 @@
+.previewViewport {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid rgba(23, 32, 42, 0.08);
+  border-radius: 16px;
+}
+
+.previewPage {
+  transform-origin: top left;
+}
