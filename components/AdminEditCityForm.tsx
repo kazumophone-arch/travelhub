@@ -11,7 +11,6 @@ import {
 import { AdminTagSelector } from "@/components/AdminTagSelector";
 import { AdminCityHeroPreview } from "@/components/AdminCityHeroPreview";
 import layoutStyles from "@/components/AdminCityHeroPreview.module.css";
-import { hasPreviewUrl } from "@/components/AdminLivePreview";
 import {
   formatValidationErrors,
   MONTH_NAMES,
@@ -675,21 +674,25 @@ export function AdminEditCityForm({ id }: Props) {
         <AdminCityHeroPreview
           title={form.city}
           country={form.country}
-          leadText={form.summary || form.description}
           imageUrl={form.imageUrl}
           imagePosition={form.imagePosition}
           isPublished={form.isPublished}
           publicPath={publicPath}
           ctas={[
             {
-              label: "ホテル",
+              label: "Find hotels",
               href: `/out/hotels?c=${encodeURIComponent(form.slug)}&src=admin-preview&v=city_preview`,
-              isVisible: Boolean(form.slug) && hasPreviewUrl(form.affiliateHotelUrl),
+              isVisible: Boolean(form.slug),
             },
             {
-              label: "ツアー",
+              label: "Explore tours",
               href: `/out/tours?c=${encodeURIComponent(form.slug)}&src=admin-preview&v=city_preview`,
-              isVisible: Boolean(form.slug) && hasPreviewUrl(form.affiliateTourUrl),
+              isVisible: Boolean(form.slug),
+            },
+            {
+              label: "Get an eSIM",
+              href: "https://www.airalo.com/",
+              isVisible: true,
             },
           ]}
         />

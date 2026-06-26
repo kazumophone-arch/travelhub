@@ -29,7 +29,6 @@ type CtaPreview = {
 type Props = {
   title: string;
   country: string;
-  leadText: string;
   imageUrl: string;
   imagePosition?: ImagePosition;
   isPublished: boolean;
@@ -37,59 +36,13 @@ type Props = {
   ctas?: CtaPreview[];
 };
 
-type PreviewTier = {
-  title: string;
-  text: string;
-};
-
-const stayTiers: PreviewTier[] = [
-  {
-    title: "Signature stays",
-    text: "For special trips, polished hotels, and memorable first nights.",
-  },
-  {
-    title: "Smart stays",
-    text: "Well-located hotels with a balance of comfort and price.",
-  },
-  {
-    title: "Essential stays",
-    text: "Simple stays for travelers who want to spend more on the city.",
-  },
-];
-
-const experienceTiers: PreviewTier[] = [
-  {
-    title: "Private experiences",
-    text: "A slower, more personal way to see the city.",
-  },
-  {
-    title: "Popular tours",
-    text: "Classic experiences for a first visit.",
-  },
-  {
-    title: "Easy activities",
-    text: "Short, flexible activities that fit into a simple day.",
-  },
-];
-
 type PreviewSpot = {
   title: string;
-  text: string;
 };
 
 const previewSpots: PreviewSpot[] = [
-  {
-    title: "Featured landmark",
-    text: "A signature sight worth building the day around.",
-  },
-  {
-    title: "Cultural district",
-    text: "Museums, galleries, and local craft to explore.",
-  },
-  {
-    title: "Scenic walk",
-    text: "An easy route for slow mornings and photos.",
-  },
+  { title: "Featured landmark" },
+  { title: "Cultural district" },
 ];
 
 function useScaledPreview() {
@@ -129,7 +82,6 @@ function useScaledPreview() {
 export function AdminCityHeroPreview({
   title,
   country,
-  leadText,
   imageUrl,
   imagePosition,
   isPublished,
@@ -190,50 +142,37 @@ export function AdminCityHeroPreview({
             style={{
               backgroundImage: getImageBackground(
                 imageUrl,
-                "linear-gradient(90deg, rgba(9, 16, 20, 0.82) 0%, rgba(9, 16, 20, 0.62) 45%, rgba(9, 16, 20, 0.18) 100%), linear-gradient(180deg, rgba(9, 16, 20, 0.08) 0%, rgba(9, 16, 20, 0.72) 100%)",
-                "linear-gradient(135deg, #0D2B52 0%, #0D2B52 55%, #0D2B52 100%)"
+                "linear-gradient(180deg, rgba(13, 43, 82, 0) 32%, rgba(13, 43, 82, 0.82) 100%)",
+                "linear-gradient(135deg, #26352f 0%, #b68b5e 52%, #f3e3cb 100%)"
               ),
               backgroundPosition: getCssImagePosition(imagePosition),
             }}
           >
-            <div className={canvasStyles.heroInner}>
-              <div className={canvasStyles.heroCopy}>
-                <div className={canvasStyles.eyebrow}>TravelHub city guide</div>
-                <div className={canvasStyles.countryPill}>{country || "国未入力"}</div>
-                <h1 className={canvasStyles.heroTitle}>{title || "都市名未入力"}</h1>
-                <p className={canvasStyles.heroLead}>
-                  {leadText || "概要や説明がここに表示されます。"}
-                </p>
-              </div>
-
-              {visibleCtas.length > 0 ? (
-                <div className={canvasStyles.heroCta}>
-                  <div className={canvasStyles.ctaKicker}>Plan this trip</div>
-                  <div className={canvasStyles.ctaPillRow}>
-                    {visibleCtas.map((cta) => (
-                      <a key={cta.label} href={cta.href} className={canvasStyles.ctaPill}>
-                        {cta.label}
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              ) : null}
+            <div className={canvasStyles.heroCopy}>
+              <div className={canvasStyles.eyebrow}>🎬 Featured in our videos</div>
+              <h1 className={canvasStyles.heroTitle}>{title || "都市名未入力"}</h1>
+              <p className={canvasStyles.heroCountry}>{country || "国未入力"}</p>
             </div>
           </div>
 
+          {ctas.length > 0 ? (
+            <div className={canvasStyles.ctaRow}>
+              {ctas.map((cta) => (
+                <a
+                  key={cta.label}
+                  href={cta.href}
+                  className={
+                    cta.isVisible ? canvasStyles.ctaPill : canvasStyles.ctaPillMuted
+                  }
+                >
+                  {cta.label}
+                  {cta.isVisible ? null : " (暫定リンクで表示)"}
+                </a>
+              ))}
+            </div>
+          ) : null}
+
           <div className={canvasStyles.body}>
-            <PreviewTierSection
-              label="Where to Stay"
-              title={`Choose the right base in ${cityLabel}`}
-              tiers={stayTiers}
-            />
-
-            <PreviewTierSection
-              label="Experiences"
-              title={`Ways to experience ${cityLabel}`}
-              tiers={experienceTiers}
-            />
-
             <section className={canvasStyles.tierSection}>
               <div className={canvasStyles.sectionIntro}>
                 <div>
@@ -254,7 +193,7 @@ export function AdminCityHeroPreview({
                     <div className={canvasStyles.spotCityBadge}>{cityLabel}</div>
                     <div className={canvasStyles.spotPanel}>
                       <h3 className={canvasStyles.spotTitle}>{spot.title}</h3>
-                      <p className={canvasStyles.spotText}>{spot.text}</p>
+                      <p className={canvasStyles.spotText}>No summary yet.</p>
                       <div className={canvasStyles.spotAction}>Open spot guide →</div>
                     </div>
                   </div>
@@ -263,33 +202,6 @@ export function AdminCityHeroPreview({
             </section>
           </div>
         </div>
-      </div>
-    </section>
-  );
-}
-
-function PreviewTierSection({
-  label,
-  title,
-  tiers,
-}: {
-  label: string;
-  title: string;
-  tiers: PreviewTier[];
-}) {
-  return (
-    <section className={canvasStyles.tierSection}>
-      <div className={canvasStyles.label}>{label}</div>
-      <h2 className={canvasStyles.sectionTitle}>{title}</h2>
-
-      <div className={canvasStyles.tierList}>
-        {tiers.map((tier) => (
-          <article key={tier.title} className={canvasStyles.tierItem}>
-            <div className={canvasStyles.tierKicker}>Guide note</div>
-            <h3 className={canvasStyles.tierTitle}>{tier.title}</h3>
-            <p className={canvasStyles.tierText}>{tier.text}</p>
-          </article>
-        ))}
       </div>
     </section>
   );
