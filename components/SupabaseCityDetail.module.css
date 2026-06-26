@@ -22,8 +22,8 @@
 
 .heroThumb {
   flex-shrink: 0;
-  width: 88px;
-  height: 88px;
+  width: 140px;
+  height: 140px;
   border-radius: 14px;
   background-size: cover;
   background-position: center;
@@ -234,7 +234,7 @@
 
 .spotTile {
   position: relative;
-  min-height: 460px;
+  min-height: 240px;
   display: flex;
   align-items: flex-end;
   overflow: hidden;
@@ -346,7 +346,7 @@
   }
 
   .spotTile {
-    min-height: 440px;
+    min-height: 220px;
   }
 }
 
