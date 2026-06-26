@@ -50,18 +50,18 @@ export async function SupabaseCityDetail({ city, tracking }: Props) {
           ]}
         />
 
-        <div className={styles.heroTop}>
-          <div
-            className={styles.heroThumb}
-            style={
-              cityThumbUrl
-                ? {
-                    backgroundImage: `url(${JSON.stringify(cityThumbUrl)})`,
-                    backgroundPosition: getCssImagePosition(city.imagePosition ?? city.image_position),
-                  }
-                : { background: FALLBACK_TILE_GRADIENT }
-            }
-          />
+        <div
+          className={styles.heroBanner}
+          style={
+            cityThumbUrl
+              ? {
+                  backgroundImage: `url(${JSON.stringify(cityThumbUrl)})`,
+                  backgroundPosition: getCssImagePosition(city.imagePosition ?? city.image_position),
+                }
+              : { background: FALLBACK_TILE_GRADIENT }
+          }
+        >
+          <div className={styles.heroBannerOverlay} />
 
           <div className={styles.heroHeading}>
             <div className={styles.heroBadge}>🎬 FEATURED IN OUR VIDEOS</div>
