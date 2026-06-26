@@ -53,7 +53,8 @@ export async function SupabaseSpotDetail({ city, spot, tracking }: Props) {
     `Use ${spot.name} as a thoughtful stop while exploring ${city.city}.`
   );
 
-  const collageItems = [spot, ...nearbySpots].slice(0, 5);
+  const collageItems = [spot, ...nearbySpots].slice(0, 4);
+  const collageSideItems = collageItems.slice(1);
 
   return (
     <main className={styles.page}>
@@ -81,23 +82,22 @@ export async function SupabaseSpotDetail({ city, spot, tracking }: Props) {
         </aside>
 
         <div className={styles.collage} aria-label={`${spot.name} images`}>
-          {collageItems.map((item, index) =>
-            index === 0 ? (
-              <div
-                key={`${item.slug}-${index}`}
-                className={styles.collageMain}
-                style={{
-                  backgroundImage: getImageBackground(
-                    item.image_url,
-                    "linear-gradient(180deg, rgba(31, 26, 23, 0.04) 0%, rgba(31, 26, 23, 0.20) 54%, rgba(31, 26, 23, 0.44) 100%)",
-                    "linear-gradient(135deg, #efe1d0 0%, #c7a987 48%, #0D2B52 100%)"
-                  ),
-                  backgroundPosition: getCssImagePosition(
-                    item.imagePosition ?? item.image_position
-                  ),
-                }}
-              />
-            ) : (
+          <div
+            className={styles.collageMain}
+            style={{
+              backgroundImage: getImageBackground(
+                collageItems[0].image_url,
+                "linear-gradient(180deg, rgba(31, 26, 23, 0.04) 0%, rgba(31, 26, 23, 0.20) 54%, rgba(31, 26, 23, 0.44) 100%)",
+                "linear-gradient(135deg, #efe1d0 0%, #c7a987 48%, #0D2B52 100%)"
+              ),
+              backgroundPosition: getCssImagePosition(
+                collageItems[0].imagePosition ?? collageItems[0].image_position
+              ),
+            }}
+          />
+
+          <div className={styles.collageSide}>
+            {collageSideItems.map((item, index) => (
               <div
                 key={`${item.slug}-${index}`}
                 className={styles.collageSmall}
@@ -112,8 +112,8 @@ export async function SupabaseSpotDetail({ city, spot, tracking }: Props) {
                   ),
                 }}
               />
-            )
-          )}
+            ))}
+          </div>
         </div>
       </section>
 
