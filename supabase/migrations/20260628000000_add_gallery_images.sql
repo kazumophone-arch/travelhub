@@ -13,3 +13,11 @@ alter table spots
 -- ("why go" reuses the existing description/summary fields).
 alter table spots
   add column if not exists notes jsonb not null default '{}'::jsonb;
+
+-- Per-city climate + seasonality used by the "Best time to visit" section.
+-- Shape: {
+--   "months": [ { "month": "Jan", "high": 9, "low": 1, "demand": "low" }, ... ],
+--   "peak_season": "", "value_season": "", "weather_summary": ""
+-- } where demand is one of low | mid | high | peak (crowds & prices).
+alter table cities
+  add column if not exists climate jsonb not null default '{}'::jsonb;

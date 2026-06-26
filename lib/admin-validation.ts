@@ -151,6 +151,47 @@ export function normalizeSpotNotesForWrite(value: unknown) {
   };
 }
 
+const CLIMATE_DEMANDS = new Set(["low", "mid", "high", "peak"]);
+
+function toClimateTemp(value: unknown): number | null {
+  if (value === null || value === undefined || value === "") return null;
+  const num = Number(value);
+  return Number.isFinite(num) ? num : null;
+}
+
+export function normalizeClimateForWrite(value: unknown) {
+  const record = (value && typeof value === "object" ? value : {}) as Record<string, unknown>;
+
+  const months = Array.isArray(record.months)
+    ? record.months
+        .map((item) => {
+          if (!item || typeof item !== "object") return null;
+          const monthRecord = item as Record<string, unknown>;
+          const month = String(monthRecord.month ?? "").trim();
+          if (!month) return null;
+
+          const demand = String(monthRecord.demand ?? "mid").trim().toLowerCase();
+
+          return {
+            month,
+            high: toClimateTemp(monthRecord.high),
+            low: toClimateTemp(monthRecord.low),
+            demand: CLIMATE_DEMANDS.has(demand) ? demand : "mid",
+          };
+        })
+        .filter((item): item is { month: string; high: number | null; low: number | null; demand: string } =>
+          Boolean(item)
+        )
+    : [];
+
+  return {
+    months,
+    peak_season: String(record.peak_season ?? "").trim(),
+    value_season: String(record.value_season ?? "").trim(),
+    weather_summary: String(record.weather_summary ?? "").trim(),
+  };
+}
+
 export function validateCityFields(input: CityValidationInput) {
   const errors: string[] = [];
 

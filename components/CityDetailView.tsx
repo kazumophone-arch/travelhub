@@ -3,7 +3,9 @@ import type { ReactNode } from "react";
 import styles from "./SupabaseCityDetail.module.css";
 import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { CityClimate } from "@/components/CityClimate";
 import { TierCtaLink } from "@/components/TierCtaLink";
+import { normalizeClimate } from "@/lib/climate";
 import type { SupabasePublicCity } from "@/data/supabase-public-cities";
 import { AIRALO_URL } from "@/lib/quick-affiliate-links";
 import type { TrackingParams } from "@/lib/tracking-query";
@@ -29,6 +31,7 @@ export type CityDetailSlots = {
   heroOverlay?: ReactNode;
   ctaEditor?: ReactNode;
   galleryEditor?: ReactNode;
+  climateEditor?: ReactNode;
 };
 
 type Props = {
@@ -115,6 +118,12 @@ export function CityDetailView({ city, spots, tracking, slots }: Props) {
       </section>
 
       <section className={styles.body}>
+        <CityClimate
+          cityName={city.city}
+          climate={normalizeClimate(city.climate)}
+          editor={slots?.climateEditor}
+        />
+
         {(city.gallery && city.gallery.length > 0) || slots?.galleryEditor ? (
           <section className={styles.gallerySection} aria-label={`${city.city} photos`}>
             <div className={styles.label}>More photos</div>

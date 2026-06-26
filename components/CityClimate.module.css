@@ -1,0 +1,173 @@
+.section {
+  margin-bottom: 56px;
+  padding-bottom: 44px;
+  border-bottom: 1px solid #D8E2F0;
+}
+
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.label {
+  margin-bottom: 12px;
+  color: #BF9B30;
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.title {
+  margin: 0;
+  color: #0D2B52;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(28px, 4vw, 44px);
+  line-height: 1;
+  font-weight: 520;
+  letter-spacing: -0.045em;
+}
+
+.highlightGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.highlightCard {
+  display: flex;
+  gap: 12px;
+  padding: 18px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #FBFCFE 0%, #F2F6FB 100%);
+  border: 1px solid #E1E9F3;
+}
+
+.highlightIcon {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.highlightLabel {
+  margin-bottom: 6px;
+  color: #6B87A8;
+  font-size: 11px;
+  font-weight: 850;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.highlightValue {
+  margin: 0;
+  color: #0D2B52;
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 600;
+}
+
+.chart {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 6px;
+  align-items: end;
+  padding: 18px;
+  border-radius: 16px;
+  background: #FBFCFE;
+  border: 1px solid #E1E9F3;
+}
+
+.column {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+}
+
+.highTemp {
+  font-size: 12px;
+  font-weight: 850;
+  color: #0D2B52;
+}
+
+.lowTemp {
+  font-size: 11px;
+  font-weight: 700;
+  color: #6B87A8;
+}
+
+.track {
+  position: relative;
+  width: 100%;
+  max-width: 22px;
+  height: 130px;
+  border-radius: 999px;
+  background: #E7EDF5;
+}
+
+.bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-radius: 999px;
+  min-height: 6px;
+}
+
+.monthLabel {
+  font-size: 11px;
+  font-weight: 800;
+  color: #34507A;
+}
+
+.demandDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 750;
+  color: #34507A;
+}
+
+.legendDot {
+  width: 11px;
+  height: 11px;
+  border-radius: 999px;
+}
+
+.legendNote {
+  color: #6B87A8;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .highlightGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .chart {
+    overflow-x: auto;
+  }
+
+  .column {
+    min-width: 36px;
+  }
+}

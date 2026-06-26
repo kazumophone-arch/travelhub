@@ -6,8 +6,10 @@ import { EditableText } from "@/components/EditableText";
 import { EditableImageButton } from "@/components/EditableImageButton";
 import { EditableLinkButton } from "@/components/EditableLinkButton";
 import { EditableGallery } from "@/components/EditableGallery";
+import { EditableClimate } from "@/components/EditableClimate";
 import type { SupabasePublicCity } from "@/data/supabase-public-cities";
 import { normalizeImagePosition, type GalleryImage, type ImagePosition } from "@/lib/url-fields";
+import type { CityClimate } from "@/lib/climate";
 
 type Props = {
   cityId: string;
@@ -29,6 +31,8 @@ type Props = {
   onChangeAffiliateTourUrl: (value: string) => void;
   gallery: GalleryImage[];
   onChangeGallery: (value: GalleryImage[]) => void;
+  climate: CityClimate;
+  onChangeClimate: (value: CityClimate) => void;
 };
 
 async function readResponse(response: Response) {
@@ -61,6 +65,8 @@ export function AdminCityInlineEditor({
   onChangeAffiliateTourUrl,
   gallery,
   onChangeGallery,
+  climate,
+  onChangeClimate,
 }: Props) {
   const [spots, setSpots] = useState<CityDetailSpot[]>([]);
 
@@ -116,6 +122,7 @@ export function AdminCityInlineEditor({
     best_months: bestMonths,
     season_note: seasonNote || null,
     gallery,
+    climate,
   };
 
   return (
@@ -170,6 +177,7 @@ export function AdminCityInlineEditor({
             citySlug={slug}
           />
         ),
+        climateEditor: <EditableClimate climate={climate} onChange={onChangeClimate} />,
       }}
     />
   );

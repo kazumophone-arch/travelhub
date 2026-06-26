@@ -7,6 +7,7 @@ import {
 } from "@/data/supabase-public-spots";
 import { supabase } from "@/lib/supabase";
 import { normalizeGallery, normalizeImagePosition, type GalleryImage } from "@/lib/url-fields";
+import { normalizeClimate, type CityClimate } from "@/lib/climate";
 
 export type SupabasePublicCity = {
   id: string;
@@ -34,6 +35,7 @@ export type SupabasePublicCity = {
   best_months: string[];
   season_note: string | null;
   gallery?: GalleryImage[];
+  climate?: CityClimate;
 };
 
 export async function getPublishedSupabaseCity(
@@ -60,6 +62,7 @@ export function normalizeSupabasePublicCity(
     ...city,
     imagePosition: normalizeImagePosition(city.image_position),
     gallery: normalizeGallery(city.gallery),
+    climate: normalizeClimate(city.climate),
   };
 }
 

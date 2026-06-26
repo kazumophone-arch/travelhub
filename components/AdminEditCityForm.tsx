@@ -26,6 +26,7 @@ import {
   type GalleryImage,
   type ImagePosition,
 } from "@/lib/url-fields";
+import { normalizeClimate, type CityClimate } from "@/lib/climate";
 
 type Props = {
   id: string;
@@ -55,6 +56,7 @@ type CityForm = {
   bestMonths: string[];
   seasonNote: string;
   gallery: GalleryImage[];
+  climate: CityClimate;
 };
 
 type CountryOption = {
@@ -92,6 +94,7 @@ const emptyForm: CityForm = {
   bestMonths: [],
   seasonNote: "",
   gallery: [],
+  climate: normalizeClimate(null),
 };
 
 async function readResponse(response: Response) {
@@ -256,6 +259,7 @@ export function AdminEditCityForm({ id }: Props) {
           : [],
         seasonNote: String(cityData.season_note ?? ""),
         gallery: normalizeGallery(cityData.gallery),
+        climate: normalizeClimate(cityData.climate),
       });
 
       setStatusMessage("");
@@ -462,6 +466,8 @@ export function AdminEditCityForm({ id }: Props) {
           onChangeAffiliateTourUrl={(value) => update("affiliateTourUrl", value)}
           gallery={form.gallery}
           onChangeGallery={(value) => update("gallery", value)}
+          climate={form.climate}
+          onChangeClimate={(value) => update("climate", value)}
         />
       </div>
 
