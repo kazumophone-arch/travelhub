@@ -2,6 +2,17 @@
 
 import type { CSSProperties, MouseEvent } from "react";
 import type { City } from "@/data/types";
+import { getImageBackground } from "@/lib/url-fields";
+
+const CARD_ICON: Record<AffiliatePrimary, string> = {
+  hotels: "🛏️",
+  tours: "🚩",
+};
+
+const CARD_VIEW_LABEL: Record<AffiliatePrimary, string> = {
+  hotels: "View stays",
+  tours: "View tours",
+};
 
 type AffiliateCity = Pick<City, "slug" | "city">;
 
@@ -27,6 +38,8 @@ type Props = {
   showTours?: boolean;
   compact?: boolean;
   hideDisclosure?: boolean;
+  layout?: "buttons" | "cards";
+  thumbnailUrl?: string;
 };
 
 type AffiliateItem = {
@@ -70,6 +83,8 @@ export function AffiliateButtonGroup({
   showTours = true,
   compact = false,
   hideDisclosure = false,
+  layout = "buttons",
+  thumbnailUrl,
 }: Props) {
   const encodedCity = encodeURIComponent(city.slug);
   const encodedSrc = encodeURIComponent(src);
@@ -112,6 +127,53 @@ export function AffiliateButtonGroup({
     ...items.filter((item) => item.key === primary),
     ...items.filter((item) => item.key !== primary),
   ];
+
+  if (layout === "cards") {
+    return (
+      <div style={cardWrapStyle}>
+        {orderedItems.map((item) => (
+          <a
+            key={item.key}
+            href={item.href}
+            style={cardStyle}
+            onClick={(event) =>
+              handleAffiliateClick(event, {
+                item,
+                citySlug: city.slug,
+                spotSlug,
+                src,
+                variant,
+              })
+            }
+          >
+            <div style={cardTextStyle}>
+              <span style={cardIconStyle}>{CARD_ICON[item.key]}</span>
+              <span style={cardTitleStyle}>{item.title}</span>
+              <span style={cardNoteStyle}>{item.note}</span>
+              <span style={cardViewLabelStyle}>{CARD_VIEW_LABEL[item.key]} →</span>
+            </div>
+
+            <div
+              style={{
+                ...cardThumbStyle,
+                backgroundImage: getImageBackground(
+                  thumbnailUrl,
+                  "linear-gradient(180deg, rgba(13, 43, 82, 0) 0%, rgba(13, 43, 82, 0.18) 100%)",
+                  "linear-gradient(135deg, #eadbc8 0%, #b8936e 52%, #0D2B52 100%)"
+                ),
+              }}
+            />
+          </a>
+        ))}
+
+        {hideDisclosure ? null : (
+          <p style={disclosureStyle}>
+            External affiliate links. TravelHub may earn a commission at no extra cost to you.
+          </p>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div style={wrapStyle}>
@@ -319,6 +381,66 @@ function getNoteStyle(isPrimary: boolean, tone: AffiliateTone): CSSProperties {
 const wrapStyle: CSSProperties = {
   display: "grid",
   gap: 8,
+};
+
+const cardWrapStyle: CSSProperties = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+  gap: 14,
+};
+
+const cardStyle: CSSProperties = {
+  display: "flex",
+  alignItems: "stretch",
+  gap: 16,
+  padding: 18,
+  borderRadius: 10,
+  background: "#FFF8E6",
+  border: "1px solid #E8D080",
+  textDecoration: "none",
+  color: "#0D2B52",
+};
+
+const cardTextStyle: CSSProperties = {
+  display: "flex",
+  flexDirection: "column",
+  gap: 6,
+  flex: 1,
+  minWidth: 0,
+};
+
+const cardIconStyle: CSSProperties = {
+  fontSize: 20,
+  lineHeight: 1,
+};
+
+const cardTitleStyle: CSSProperties = {
+  fontSize: 17,
+  lineHeight: 1.2,
+  fontWeight: 800,
+};
+
+const cardNoteStyle: CSSProperties = {
+  fontSize: 13,
+  lineHeight: 1.5,
+  color: "#6B87A8",
+};
+
+const cardViewLabelStyle: CSSProperties = {
+  marginTop: "auto",
+  fontSize: 12,
+  fontWeight: 850,
+  letterSpacing: "0.04em",
+  textTransform: "uppercase",
+  color: "#BF9B30",
+};
+
+const cardThumbStyle: CSSProperties = {
+  flexShrink: 0,
+  width: 110,
+  borderRadius: 8,
+  backgroundSize: "cover",
+  backgroundPosition: "center",
 };
 
 const baseButtonStyle: CSSProperties = {

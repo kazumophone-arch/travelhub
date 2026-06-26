@@ -167,12 +167,21 @@ export async function SupabaseSpotDetail({ city, spot, tracking }: Props) {
                 v={trackingV}
                 spotSlug={spot.slug}
                 primary={hasHotelAffiliate ? "hotels" : "tours"}
-                tone="dark"
                 variant={hasHotelAffiliate ? "spot-hotel" : "spot-tour"}
                 showHotels={hasHotelAffiliate}
                 showTours={hasTourAffiliate}
+                layout="cards"
+                thumbnailUrl={getOptionalHttpUrl(spot.image_url) || getOptionalHttpUrl(city.image_url)}
               />
             </div>
+          </section>
+        ) : null}
+
+        {city.best_months && city.best_months.length > 0 ? (
+          <section className={styles.seasonSection} aria-labelledby="season-title">
+            <div className={styles.sectionLabel}>When to visit {city.city}</div>
+            <h2 id="season-title">{city.best_months.join(" · ")}</h2>
+            {city.season_note ? <p>{city.season_note}</p> : null}
           </section>
         ) : null}
 

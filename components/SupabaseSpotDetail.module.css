@@ -178,6 +178,31 @@
   min-width: 0;
 }
 
+.seasonSection {
+  max-width: 560px;
+  margin: 0 0 44px;
+  padding: 22px 26px;
+  border-radius: 10px;
+  background: #FFF8E6;
+  border: 1px solid #E8D080;
+}
+
+.seasonSection h2 {
+  margin: 8px 0 0;
+  color: #0D2B52;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 24px;
+  line-height: 1.2;
+  font-weight: 520;
+}
+
+.seasonSection p {
+  margin: 10px 0 0;
+  color: #6B87A8;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
 .whySection {
   max-width: 780px;
   margin: 0 0 58px;
