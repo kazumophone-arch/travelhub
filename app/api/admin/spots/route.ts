@@ -18,8 +18,9 @@ import { normalizeImagePosition } from "@/lib/url-fields";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const ADMIN_SPOT_SELECT =
-  "id, city_id, name, slug, summary, description, image_url, image_alt, image_credit, image_source_url, image_position, affiliate_hotel_url, affiliate_tour_url, is_published, gallery, notes, created_at, updated_at";
+// "*" keeps the admin resilient to optional columns (gallery, notes, ...)
+// that may not exist before their migration has been run.
+const ADMIN_SPOT_SELECT = "*";
 
 type AdminDbError = {
   code?: string;
@@ -45,6 +46,32 @@ function spotErrorResponse(error: AdminDbError) {
     { error: error.message ?? "スポットの保存に失敗しました。" },
     { status: 500 }
   );
+}
+
+const OPTIONAL_SPOT_COLUMNS = ["gallery", "notes"] as const;
+
+// True when the DB rejects a write because an optional column (gallery, notes,
+// ...) does not exist yet — i.e. its migration has not been run. Lets us retry
+// the write without those keys so deploying code before running the migration
+// never breaks saving the core fields.
+function isMissingOptionalSpotColumnError(error: AdminDbError) {
+  const message = String(error.message ?? "").toLowerCase();
+
+  return (
+    error.code === "42703" ||
+    error.code === "PGRST204" ||
+    OPTIONAL_SPOT_COLUMNS.some((column) => message.includes(column))
+  );
+}
+
+function withoutOptionalSpotColumns(payload: Record<string, unknown>) {
+  const next = { ...payload };
+
+  for (const column of OPTIONAL_SPOT_COLUMNS) {
+    delete next[column];
+  }
+
+  return next;
 }
 
 async function resolveCityForSpot(cityId: string) {
@@ -183,11 +210,19 @@ export async function POST(request: Request) {
     updated_at: new Date().toISOString(),
   };
 
-  const { data, error } = await supabaseAdmin
+  let { data, error } = await supabaseAdmin
     .from("spots")
     .insert(payload)
     .select()
     .single();
+
+  if (error && isMissingOptionalSpotColumnError(error)) {
+    ({ data, error } = await supabaseAdmin
+      .from("spots")
+      .insert(withoutOptionalSpotColumns(payload))
+      .select()
+      .single());
+  }
 
   if (error) {
     return spotErrorResponse(error);
@@ -283,12 +318,21 @@ export async function PATCH(request: Request) {
     updated_at: new Date().toISOString(),
   };
 
-  const { data, error } = await supabaseAdmin
+  let { data, error } = await supabaseAdmin
     .from("spots")
     .update(payload)
     .eq("id", id)
     .select()
     .single();
+
+  if (error && isMissingOptionalSpotColumnError(error)) {
+    ({ data, error } = await supabaseAdmin
+      .from("spots")
+      .update(withoutOptionalSpotColumns(payload))
+      .eq("id", id)
+      .select()
+      .single());
+  }
 
   if (error) {
     return spotErrorResponse(error);

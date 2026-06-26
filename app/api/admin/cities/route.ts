@@ -58,6 +58,31 @@ function cityErrorResponse(error: AdminDbError) {
   );
 }
 
+const OPTIONAL_CITY_COLUMNS = ["gallery", "climate"] as const;
+
+// True when a write is rejected because an optional column (gallery, climate,
+// ...) does not exist yet. Lets us retry without those keys so deploying code
+// before running its migration never breaks saving the core city fields.
+function isMissingOptionalCityColumnError(error: AdminDbError) {
+  const message = String(error.message ?? "").toLowerCase();
+
+  return (
+    error.code === "42703" ||
+    error.code === "PGRST204" ||
+    OPTIONAL_CITY_COLUMNS.some((column) => message.includes(column))
+  );
+}
+
+function withoutOptionalCityColumns(payload: Record<string, unknown>) {
+  const next = { ...payload };
+
+  for (const column of OPTIONAL_CITY_COLUMNS) {
+    delete next[column];
+  }
+
+  return next;
+}
+
 async function resolveCountryForCity(countryId: string) {
   if (!countryId) {
     return {
@@ -193,11 +218,19 @@ export async function POST(request: Request) {
     updated_at: new Date().toISOString(),
   };
 
-  const { data, error } = await supabaseAdmin
+  let { data, error } = await supabaseAdmin
     .from("cities")
     .insert(payload)
     .select()
     .single();
+
+  if (error && isMissingOptionalCityColumnError(error)) {
+    ({ data, error } = await supabaseAdmin
+      .from("cities")
+      .insert(withoutOptionalCityColumns(payload))
+      .select()
+      .single());
+  }
 
   if (error) {
     return cityErrorResponse(error);
@@ -294,12 +327,21 @@ export async function PATCH(request: Request) {
     updated_at: new Date().toISOString(),
   };
 
-  const { data, error } = await supabaseAdmin
+  let { data, error } = await supabaseAdmin
     .from("cities")
     .update(payload)
     .eq("id", id)
     .select()
     .single();
+
+  if (error && isMissingOptionalCityColumnError(error)) {
+    ({ data, error } = await supabaseAdmin
+      .from("cities")
+      .update(withoutOptionalCityColumns(payload))
+      .eq("id", id)
+      .select()
+      .single());
+  }
 
   if (error) {
     return cityErrorResponse(error);

@@ -2,8 +2,10 @@ import "server-only";
 import { supabase } from "@/lib/supabase";
 import { normalizeGallery, normalizeImagePosition, type GalleryImage } from "@/lib/url-fields";
 
-export const SUPABASE_PUBLIC_SPOT_SELECT =
-  "id, city_id, name, slug, summary, description, image_url, image_alt, image_credit, image_source_url, image_position, affiliate_hotel_url, affiliate_tour_url, is_published, gallery, notes";
+// Use "*" so optional columns that may not yet exist in every environment
+// (gallery, notes, climate, ...) never make the public query fail. Postgres
+// "*" returns whatever columns exist; normalizeSupabasePublicSpot fills gaps.
+export const SUPABASE_PUBLIC_SPOT_SELECT = "*";
 
 export type SpotNotes = {
   how_to_use?: string;
