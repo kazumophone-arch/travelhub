@@ -453,6 +453,8 @@ export function AdminEditCityForm({ id }: Props) {
           onChangeCountry={updateManualCountry}
           onChangeImageUrl={(value) => update("imageUrl", value)}
           onChangeImagePosition={(value) => update("imagePosition", value)}
+          onChangeAffiliateHotelUrl={(value) => update("affiliateHotelUrl", value)}
+          onChangeAffiliateTourUrl={(value) => update("affiliateTourUrl", value)}
         />
       </div>
 

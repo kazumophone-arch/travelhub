@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { CityDetailView, type CityDetailSpot } from "@/components/CityDetailView";
 import { EditableText } from "@/components/EditableText";
 import { EditableImageButton } from "@/components/EditableImageButton";
+import { EditableLinkButton } from "@/components/EditableLinkButton";
 import type { SupabasePublicCity } from "@/data/supabase-public-cities";
 import { normalizeImagePosition, type ImagePosition } from "@/lib/url-fields";
 
@@ -23,6 +24,8 @@ type Props = {
   onChangeCountry: (value: string) => void;
   onChangeImageUrl: (value: string) => void;
   onChangeImagePosition: (value: ImagePosition) => void;
+  onChangeAffiliateHotelUrl: (value: string) => void;
+  onChangeAffiliateTourUrl: (value: string) => void;
 };
 
 async function readResponse(response: Response) {
@@ -51,6 +54,8 @@ export function AdminCityInlineEditor({
   onChangeCountry,
   onChangeImageUrl,
   onChangeImagePosition,
+  onChangeAffiliateHotelUrl,
+  onChangeAffiliateTourUrl,
 }: Props) {
   const [spots, setSpots] = useState<CityDetailSpot[]>([]);
 
@@ -131,6 +136,24 @@ export function AdminCityInlineEditor({
             onChangePosition={onChangeImagePosition}
             uploadKind="city"
             citySlug={slug}
+          />
+        ),
+        ctaEditor: (
+          <EditableLinkButton
+            tone="dark"
+            buttonLabel="🔗 ホテル・ツアーのリンクを編集"
+            fields={[
+              {
+                label: "ホテルアフィリエイトURL",
+                value: affiliateHotelUrl,
+                onChange: onChangeAffiliateHotelUrl,
+              },
+              {
+                label: "ツアーアフィリエイトURL",
+                value: affiliateTourUrl,
+                onChange: onChangeAffiliateTourUrl,
+              },
+            ]}
           />
         ),
       }}

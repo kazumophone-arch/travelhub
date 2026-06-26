@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { SpotDetailView, type SpotDetailSpot } from "@/components/SpotDetailView";
 import { EditableText } from "@/components/EditableText";
 import { EditableImageButton } from "@/components/EditableImageButton";
+import { EditableLinkButton } from "@/components/EditableLinkButton";
 import type { SupabasePublicCity } from "@/data/supabase-public-cities";
 import { normalizeImagePosition, type ImagePosition } from "@/lib/url-fields";
 
@@ -24,6 +25,8 @@ type Props = {
   onChangeDescription: (value: string) => void;
   onChangeImageUrl: (value: string) => void;
   onChangeImagePosition: (value: ImagePosition) => void;
+  onChangeAffiliateHotelUrl: (value: string) => void;
+  onChangeAffiliateTourUrl: (value: string) => void;
 };
 
 async function readResponse(response: Response) {
@@ -53,6 +56,8 @@ export function AdminSpotInlineEditor({
   onChangeDescription,
   onChangeImageUrl,
   onChangeImagePosition,
+  onChangeAffiliateHotelUrl,
+  onChangeAffiliateTourUrl,
 }: Props) {
   const [city, setCity] = useState<SupabasePublicCity | null>(null);
   const [nearbySpots, setNearbySpots] = useState<SpotDetailSpot[]>([]);
@@ -157,6 +162,23 @@ export function AdminSpotInlineEditor({
             uploadKind="spot"
             citySlug={citySlug}
             spotSlug={slug}
+          />
+        ),
+        planEditor: (
+          <EditableLinkButton
+            buttonLabel="🔗 このスポットのホテル・ツアーリンクを編集"
+            fields={[
+              {
+                label: "ホテルアフィリエイトURL（スポット固有）",
+                value: affiliateHotelUrl,
+                onChange: onChangeAffiliateHotelUrl,
+              },
+              {
+                label: "ツアーアフィリエイトURL（スポット固有）",
+                value: affiliateTourUrl,
+                onChange: onChangeAffiliateTourUrl,
+              },
+            ]}
           />
         ),
       }}

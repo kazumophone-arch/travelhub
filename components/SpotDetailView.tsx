@@ -31,6 +31,7 @@ export type SpotDetailSlots = {
   lead?: ReactNode;
   why?: ReactNode;
   heroOverlay?: ReactNode;
+  planEditor?: ReactNode;
 };
 
 type Props = {
@@ -169,7 +170,7 @@ export function SpotDetailView({ city, spot, nearbySpots, tracking, slots }: Pro
           </article>
         </section>
 
-        {hasHotelAffiliate || hasTourAffiliate ? (
+        {hasHotelAffiliate || hasTourAffiliate || slots?.planEditor ? (
           <section className={styles.planSection} aria-labelledby="plan-spot-title">
             <div className={styles.planCopy}>
               <div className={styles.sectionLabel}>Plan around this spot</div>
@@ -178,22 +179,26 @@ export function SpotDetailView({ city, spot, nearbySpots, tracking, slots }: Pro
                 Compare only the direct options attached to this spot, then keep
                 exploring the guide when you need more context.
               </p>
+
+              {slots?.planEditor}
             </div>
 
-            <div className={styles.planCta}>
-              <AffiliateButtonGroup
-                city={city}
-                src={trackingSrc}
-                v={trackingV}
-                spotSlug={spot.slug}
-                primary={hasHotelAffiliate ? "hotels" : "tours"}
-                variant={hasHotelAffiliate ? "spot-hotel" : "spot-tour"}
-                showHotels={hasHotelAffiliate}
-                showTours={hasTourAffiliate}
-                layout="cards"
-                thumbnailUrl={getOptionalHttpUrl(spot.image_url) || getOptionalHttpUrl(city.image_url)}
-              />
-            </div>
+            {hasHotelAffiliate || hasTourAffiliate ? (
+              <div className={styles.planCta}>
+                <AffiliateButtonGroup
+                  city={city}
+                  src={trackingSrc}
+                  v={trackingV}
+                  spotSlug={spot.slug}
+                  primary={hasHotelAffiliate ? "hotels" : "tours"}
+                  variant={hasHotelAffiliate ? "spot-hotel" : "spot-tour"}
+                  showHotels={hasHotelAffiliate}
+                  showTours={hasTourAffiliate}
+                  layout="cards"
+                  thumbnailUrl={getOptionalHttpUrl(spot.image_url) || getOptionalHttpUrl(city.image_url)}
+                />
+              </div>
+            ) : null}
           </section>
         ) : null}
 

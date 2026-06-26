@@ -27,6 +27,7 @@ export type CityDetailSlots = {
   title?: ReactNode;
   country?: ReactNode;
   heroOverlay?: ReactNode;
+  ctaEditor?: ReactNode;
 };
 
 type Props = {
@@ -107,6 +108,8 @@ export function CityDetailView({ city, spots, tracking, slots }: Props) {
           <p className={styles.heroCtaDisclosure}>
             External affiliate links. TravelHub may earn a commission at no extra cost to you.
           </p>
+
+          {slots?.ctaEditor}
         </div>
       </section>
 

@@ -409,6 +409,8 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
           onChangeDescription={(value) => update("description", value)}
           onChangeImageUrl={(value) => update("imageUrl", value)}
           onChangeImagePosition={(value) => update("imagePosition", value)}
+          onChangeAffiliateHotelUrl={(value) => update("affiliateHotelUrl", value)}
+          onChangeAffiliateTourUrl={(value) => update("affiliateTourUrl", value)}
         />
       </div>
 
