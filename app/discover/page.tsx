@@ -62,7 +62,7 @@ const discoveries = [
     text: "Neon streets, quiet shrines, fast trains.",
     href: "/c/tokyo",
     label: "Open city guide",
-    image: "/assets/home/seek-wonder.jpg",
+    image: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800",
   },
 ];
 

@@ -442,13 +442,4 @@ const ctaLinkStyle: CSSProperties = {
   whiteSpace: "nowrap",
 };
 
-const mobileStyles = `
-@media (max-width: 980px) {
-  .themeSeasonRail {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-`;
-
-
 

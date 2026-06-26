@@ -90,7 +90,6 @@ export function AdminCityHeroPreview({
 }: Props) {
   const { viewportRef, pageRef, scale, scaledHeight } = useScaledPreview();
   const safePublicPath = publicPath || "";
-  const visibleCtas = ctas.filter((cta) => cta.isVisible);
   const cityLabel = title || "this city";
 
   return (
