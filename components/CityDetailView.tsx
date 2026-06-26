@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 import styles from "./SupabaseCityDetail.module.css";
 import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
@@ -22,16 +23,23 @@ export type CityDetailSpot = {
   image_position?: string | null;
 };
 
+export type CityDetailSlots = {
+  title?: ReactNode;
+  country?: ReactNode;
+  heroOverlay?: ReactNode;
+};
+
 type Props = {
   city: SupabasePublicCity;
   spots: CityDetailSpot[];
   tracking?: TrackingParams;
+  slots?: CityDetailSlots;
 };
 
 const FALLBACK_TILE_GRADIENT =
   "linear-gradient(135deg, #26352f 0%, #b68b5e 52%, #f3e3cb 100%)";
 
-export function CityDetailView({ city, spots, tracking }: Props) {
+export function CityDetailView({ city, spots, tracking, slots }: Props) {
   const spotTrackingQuery = getTrackingQuery(tracking);
   const HIGHLIGHT_COUNT = 4;
   const highlightSpots = spots.length > HIGHLIGHT_COUNT ? spots.slice(0, HIGHLIGHT_COUNT) : [];
@@ -63,9 +71,11 @@ export function CityDetailView({ city, spots, tracking }: Props) {
         >
           <div className={styles.heroBannerOverlay} />
 
+          {slots?.heroOverlay}
+
           <div className={styles.heroHeading}>
-            <h1 className={styles.heroTitle}>{city.city}</h1>
-            <p className={styles.heroCountry}>{city.country}</p>
+            <h1 className={styles.heroTitle}>{slots?.title ?? city.city}</h1>
+            <p className={styles.heroCountry}>{slots?.country ?? city.country}</p>
           </div>
         </div>
 

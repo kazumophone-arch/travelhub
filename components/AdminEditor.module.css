@@ -1,0 +1,98 @@
+.root {
+  display: grid;
+  gap: 18px;
+}
+
+.toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid rgba(23, 32, 42, 0.1);
+  box-shadow: 0 6px 18px rgba(30, 64, 88, 0.06);
+}
+
+.toolbarTitle {
+  margin-right: auto;
+  font-size: 14px;
+  font-weight: 850;
+  color: #17202a;
+}
+
+.toolbarHint {
+  width: 100%;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #607080;
+}
+
+.publishToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 750;
+  color: #607080;
+}
+
+.primaryButton {
+  padding: 9px 16px;
+  border-radius: 999px;
+  border: 0;
+  background: #138a72;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 850;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.ghostButton {
+  padding: 9px 14px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid rgba(23, 32, 42, 0.12);
+  color: #607080;
+  font-size: 13px;
+  font-weight: 850;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.status {
+  font-size: 12px;
+  font-weight: 850;
+  color: #138a72;
+}
+
+.statusError {
+  color: #9a3d2f;
+}
+
+.stage {
+  overflow: hidden;
+  border-radius: 18px;
+  border: 1px solid rgba(23, 32, 42, 0.08);
+  background: #ffffff;
+}
+
+.settings {
+  padding: 18px;
+  border-radius: 18px;
+  background: #ffffff;
+  border: 1px solid rgba(23, 32, 42, 0.08);
+}
+
+.settingsTitle {
+  margin: 0 0 16px;
+  font-size: 14px;
+  font-weight: 850;
+  color: #17202a;
+}

@@ -9,9 +9,9 @@ import {
   buildCityDescription,
 } from "@/components/AdminContentTools";
 import { AdminTagSelector } from "@/components/AdminTagSelector";
-import { AdminCityWysiwygPreview } from "@/components/AdminCityWysiwygPreview";
+import { AdminCityInlineEditor } from "@/components/AdminCityInlineEditor";
 import { AdminCitySpotsPanel } from "@/components/AdminCitySpotsPanel";
-import layoutStyles from "@/components/AdminEditLayout.module.css";
+import editorStyles from "@/components/AdminEditor.module.css";
 import {
   formatValidationErrors,
   MONTH_NAMES,
@@ -168,6 +168,7 @@ export function AdminEditCityForm({ id }: Props) {
   const [statusKind, setStatusKind] = useState<StatusKind>("info");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const publishReadinessNotes = getCityPublishReadinessNotes(form);
 
   function setStatusMessage(message: string, kind: StatusKind = "info") {
@@ -393,9 +394,72 @@ export function AdminEditCityForm({ id }: Props) {
   const publicPath = form.slug ? `/c/${form.slug}` : "";
 
   return (
-    <div className={layoutStyles.editLayout}>
-      <section style={formStyle}>
-        <FormSection
+    <div className={editorStyles.root}>
+      <div className={editorStyles.toolbar}>
+        <span className={editorStyles.toolbarTitle}>{form.city || "都市"} を編集</span>
+        <label className={editorStyles.publishToggle}>
+          <input
+            type="checkbox"
+            checked={form.isPublished}
+            onChange={(event) => update("isPublished", event.target.checked)}
+          />
+          公開
+        </label>
+        {publicPath ? (
+          <Link href={publicPath} target="_blank" rel="noreferrer" className={editorStyles.ghostButton}>
+            公開ページを開く
+          </Link>
+        ) : null}
+        <button
+          type="button"
+          onClick={() => setSettingsOpen((value) => !value)}
+          className={editorStyles.ghostButton}
+        >
+          {settingsOpen ? "詳細設定を閉じる" : "詳細設定"}
+        </button>
+        <button type="button" onClick={saveCity} className={editorStyles.primaryButton}>
+          保存
+        </button>
+        {status ? (
+          <span
+            className={
+              statusKind === "error"
+                ? `${editorStyles.status} ${editorStyles.statusError}`
+                : editorStyles.status
+            }
+          >
+            {status}
+          </span>
+        ) : null}
+        <p className={editorStyles.toolbarHint}>
+          下のページ上で、点線の枠をクリックするとタイトル・国名を直接編集できます。画像はヒーロー右上の「画像を変更」から。スラッグ・アフィリエイトURL・季節・タグなどページに出ない項目は「詳細設定」から編集します。
+        </p>
+      </div>
+
+      <div className={editorStyles.stage}>
+        <AdminCityInlineEditor
+          cityId={form.id}
+          slug={form.slug}
+          city={form.city}
+          country={form.country}
+          imageUrl={form.imageUrl}
+          imagePosition={form.imagePosition}
+          affiliateHotelUrl={form.affiliateHotelUrl}
+          affiliateTourUrl={form.affiliateTourUrl}
+          bestMonths={form.bestMonths}
+          seasonNote={form.seasonNote}
+          isPublished={form.isPublished}
+          onChangeCity={(value) => update("city", value)}
+          onChangeCountry={updateManualCountry}
+          onChangeImageUrl={(value) => update("imageUrl", value)}
+          onChangeImagePosition={(value) => update("imagePosition", value)}
+        />
+      </div>
+
+      {settingsOpen ? (
+        <section className={editorStyles.settings}>
+          <h2 className={editorStyles.settingsTitle}>詳細設定</h2>
+          <FormSection
           title="Page identity"
           hint="都市の基本情報と公開状態です。右側プレビュー全体の元データになります。"
         >
@@ -677,31 +741,11 @@ export function AdminEditCityForm({ id }: Props) {
             {status}
           </p>
         )}
-      </section>
-      <AdminCityWysiwygPreview
-        cityId={form.id}
-        title={form.city}
-        slug={form.slug}
-        country={form.country}
-        imageUrl={form.imageUrl}
-        imagePosition={form.imagePosition}
-        affiliateHotelUrl={form.affiliateHotelUrl}
-        affiliateTourUrl={form.affiliateTourUrl}
-        bestMonths={form.bestMonths}
-        seasonNote={form.seasonNote}
-        isPublished={form.isPublished}
-        publicPath={publicPath}
-      />
+        </section>
+      ) : null}
     </div>
   );
 }
-
-const formStyle: CSSProperties = {
-  padding: 18,
-  borderRadius: 24,
-  background: "#ffffff",
-  border: "1px solid rgba(23,32,42,.08)",
-};
 
 const sectionStyle: CSSProperties = {
   marginBottom: 24,

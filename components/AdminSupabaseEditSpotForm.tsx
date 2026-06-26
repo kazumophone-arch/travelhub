@@ -10,8 +10,8 @@ import {
   buildSpotDescription,
 } from "@/components/AdminContentTools";
 import { AdminTagSelector } from "@/components/AdminTagSelector";
-import { AdminSpotWysiwygPreview } from "@/components/AdminSpotWysiwygPreview";
-import layoutStyles from "@/components/AdminEditLayout.module.css";
+import { AdminSpotInlineEditor } from "@/components/AdminSpotInlineEditor";
+import editorStyles from "@/components/AdminEditor.module.css";
 import {
   formatValidationErrors,
   slugify,
@@ -134,6 +134,7 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [status, setStatus] = useState("読み込み中...");
   const [statusKind, setStatusKind] = useState<StatusKind>("info");
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const selectedCity = cityOptions.find((city) => city.id === form.cityId);
   const selectedCitySlug = selectedCity?.slug ?? "";
   const publishReadinessNotes = getSpotPublishReadinessNotes(form);
@@ -339,35 +340,101 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
     return <div style={emptyStyle}>読み込み中...</div>;
   }
 
+  const publicPath =
+    selectedCitySlug && form.slug ? `/c/${selectedCitySlug}/spot/${form.slug}` : "";
+
   return (
-    <div className={layoutStyles.editLayout}>
-      <section style={formStyle}>
-        <AdminContentGuidance kind="spot" />
-
-        <label style={labelStyle}>
-          都市
-          <select
-            value={form.cityId}
-            onChange={(event) => updateCity(event.target.value)}
-            style={inputStyle}
-          >
-            <option value="" disabled>
-              都市を選択
-            </option>
-            {cityOptions.map((city) => (
-              <option key={city.id} value={city.id}>
-                {city.city}, {city.country}
-                {city.is_published ? "" : " — 下書き"}
-              </option>
-            ))}
-          </select>
+    <div className={editorStyles.root}>
+      <div className={editorStyles.toolbar}>
+        <span className={editorStyles.toolbarTitle}>{form.name || "スポット"} を編集</span>
+        <label className={editorStyles.publishToggle}>
+          <input
+            type="checkbox"
+            checked={form.isPublished}
+            onChange={(event) => update("isPublished", event.target.checked)}
+          />
+          公開
         </label>
-
-        {form.cityId ? (
-          <Link href={`/admin/cities/edit/${form.cityId}`} style={inlinePublicLinkStyle}>
-            この都市の編集画面を開く →
+        {publicPath ? (
+          <Link href={publicPath} target="_blank" rel="noreferrer" className={editorStyles.ghostButton}>
+            公開ページを開く
           </Link>
         ) : null}
+        {form.cityId ? (
+          <Link href={`/admin/cities/edit/${form.cityId}`} className={editorStyles.ghostButton}>
+            都市の編集へ
+          </Link>
+        ) : null}
+        <button
+          type="button"
+          onClick={() => setSettingsOpen((value) => !value)}
+          className={editorStyles.ghostButton}
+        >
+          {settingsOpen ? "詳細設定を閉じる" : "詳細設定"}
+        </button>
+        <button type="button" onClick={save} className={editorStyles.primaryButton}>
+          保存
+        </button>
+        {status ? (
+          <span
+            className={
+              statusKind === "error"
+                ? `${editorStyles.status} ${editorStyles.statusError}`
+                : editorStyles.status
+            }
+          >
+            {status}
+          </span>
+        ) : null}
+        <p className={editorStyles.toolbarHint}>
+          下のページ上で、点線の枠をクリックするとスポット名・概要・説明文を直接編集できます。画像はヒーロー右上の「画像を変更」から。都市の選択・スラッグ・アフィリエイトURL・タグなどは「詳細設定」から編集します。
+        </p>
+      </div>
+
+      <div className={editorStyles.stage}>
+        <AdminSpotInlineEditor
+          spotId={form.id}
+          cityId={form.cityId}
+          citySlug={selectedCitySlug}
+          name={form.name}
+          slug={form.slug}
+          summary={form.summary}
+          description={form.description}
+          imageUrl={form.imageUrl}
+          imagePosition={form.imagePosition}
+          affiliateHotelUrl={form.affiliateHotelUrl}
+          affiliateTourUrl={form.affiliateTourUrl}
+          onChangeName={(value) => update("name", value)}
+          onChangeSummary={(value) => update("summary", value)}
+          onChangeDescription={(value) => update("description", value)}
+          onChangeImageUrl={(value) => update("imageUrl", value)}
+          onChangeImagePosition={(value) => update("imagePosition", value)}
+        />
+      </div>
+
+      {settingsOpen ? (
+        <section className={editorStyles.settings}>
+          <h2 className={editorStyles.settingsTitle}>詳細設定</h2>
+          <AdminContentGuidance kind="spot" />
+
+          <label style={labelStyle}>
+            都市
+            <select
+              value={form.cityId}
+              onChange={(event) => updateCity(event.target.value)}
+              style={inputStyle}
+            >
+              <option value="" disabled>
+                都市を選択
+              </option>
+              {cityOptions.map((city) => (
+                <option key={city.id} value={city.id}>
+                  {city.city}, {city.country}
+                  {city.is_published ? "" : " — 下書き"}
+                </option>
+              ))}
+            </select>
+          </label>
 
         <label style={labelStyle}>
           スポット名
@@ -562,32 +629,11 @@ export function AdminSupabaseEditSpotForm({ id }: Props) {
             {status}
           </p>
         )}
-      </section>
-
-      <AdminSpotWysiwygPreview
-        spotId={form.id}
-        cityId={form.cityId}
-        name={form.name}
-        slug={form.slug}
-        summary={form.summary}
-        description={form.description}
-        imageUrl={form.imageUrl}
-        imagePosition={form.imagePosition}
-        affiliateHotelUrl={form.affiliateHotelUrl}
-        affiliateTourUrl={form.affiliateTourUrl}
-        isPublished={form.isPublished}
-        publicPath={selectedCitySlug && form.slug ? `/c/${selectedCitySlug}/spot/${form.slug}` : ""}
-      />
+        </section>
+      ) : null}
     </div>
   );
 }
-
-const formStyle: CSSProperties = {
-  padding: 18,
-  borderRadius: 24,
-  background: "#ffffff",
-  border: "1px solid rgba(23,32,42,.08)",
-};
 
 const labelStyle: CSSProperties = {
   display: "grid",
@@ -608,16 +654,6 @@ const inputStyle: CSSProperties = {
   background: "#f8faf7",
   color: "#17202a",
   fontSize: 14,
-};
-
-const inlinePublicLinkStyle: CSSProperties = {
-  display: "inline-flex",
-  width: "fit-content",
-  marginBottom: 14,
-  color: "#138a72",
-  fontSize: 12,
-  fontWeight: 850,
-  textDecoration: "none",
 };
 
 const textareaStyle: CSSProperties = {

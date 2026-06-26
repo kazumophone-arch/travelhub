@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import styles from "./SupabaseSpotDetail.module.css";
@@ -25,14 +26,22 @@ export type SpotDetailSpot = {
   affiliateTourUrl?: string;
 };
 
+export type SpotDetailSlots = {
+  title?: ReactNode;
+  lead?: ReactNode;
+  why?: ReactNode;
+  heroOverlay?: ReactNode;
+};
+
 type Props = {
   city: SupabasePublicCity;
   spot: SpotDetailSpot;
   nearbySpots: SpotDetailSpot[];
   tracking?: TrackingParams;
+  slots?: SpotDetailSlots;
 };
 
-export function SpotDetailView({ city, spot, nearbySpots, tracking }: Props) {
+export function SpotDetailView({ city, spot, nearbySpots, tracking, slots }: Props) {
   const spotHotelAffiliateUrl = spot.affiliateHotelUrl ?? spot.affiliate_hotel_url;
   const spotTourAffiliateUrl = spot.affiliateTourUrl ?? spot.affiliate_tour_url;
   const cityHotelAffiliateUrl = city.affiliate_hotel_url;
@@ -77,12 +86,12 @@ export function SpotDetailView({ city, spot, nearbySpots, tracking }: Props) {
             ]}
           />
           <div className={styles.eyebrow}>Place guide</div>
-          <h1 className={styles.title}>{spot.name}</h1>
+          <h1 className={styles.title}>{slots?.title ?? spot.name}</h1>
           <p className={styles.location}>
             {city.city}, {countryName}
           </p>
           <div className={styles.rule} />
-          <p className={styles.lead}>{heroDescription}</p>
+          <p className={styles.lead}>{slots?.lead ?? heroDescription}</p>
 
           <Link href={`/c/${city.slug}`} className={styles.backInline}>
             Back to {city.city} guide →
@@ -93,6 +102,7 @@ export function SpotDetailView({ city, spot, nearbySpots, tracking }: Props) {
           <div
             className={styles.collageMain}
             style={{
+              position: "relative",
               backgroundImage: getImageBackground(
                 collageItems[0].image_url,
                 "linear-gradient(180deg, rgba(31, 26, 23, 0.04) 0%, rgba(31, 26, 23, 0.20) 54%, rgba(31, 26, 23, 0.44) 100%)",
@@ -102,7 +112,9 @@ export function SpotDetailView({ city, spot, nearbySpots, tracking }: Props) {
                 collageItems[0].imagePosition ?? collageItems[0].image_position
               ),
             }}
-          />
+          >
+            {slots?.heroOverlay}
+          </div>
 
           <div className={styles.collageSide}>
             {collageSideItems.map((item, index) => (
@@ -196,7 +208,7 @@ export function SpotDetailView({ city, spot, nearbySpots, tracking }: Props) {
         <section className={styles.whySection}>
           <div className={styles.sectionLabel}>Why go</div>
           <h2>The reason to make time for it.</h2>
-          <p>{whyGoText}</p>
+          <p>{slots?.why ?? whyGoText}</p>
         </section>
 
         {nearbySpots.length > 0 ? (
