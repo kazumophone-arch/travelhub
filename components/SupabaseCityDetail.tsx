@@ -2,9 +2,10 @@ import Link from "next/link";
 import styles from "./SupabaseCityDetail.module.css";
 import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { TierCtaLink } from "@/components/TierCtaLink";
 import type { SupabasePublicCity } from "@/data/supabase-public-cities";
 import { getPublishedSupabaseSpotsForCity } from "@/data/supabase-public-spots";
-import { AIRALO_URL, getViatorSearchUrl } from "@/lib/quick-affiliate-links";
+import { AIRALO_URL } from "@/lib/quick-affiliate-links";
 import type { TrackingParams } from "@/lib/tracking-query";
 import {
   getCssImagePosition,
@@ -64,7 +65,6 @@ export async function SupabaseCityDetail({ city, tracking }: Props) {
           <div className={styles.heroBannerOverlay} />
 
           <div className={styles.heroHeading}>
-            <div className={styles.heroBadge}>🎬 FEATURED IN OUR VIDEOS</div>
             <h1 className={styles.heroTitle}>{city.city}</h1>
             <p className={styles.heroCountry}>{city.country}</p>
           </div>
@@ -84,14 +84,15 @@ export async function SupabaseCityDetail({ city, tracking }: Props) {
               hideDisclosure
             />
 
-            <a
+            <TierCtaLink
               href={AIRALO_URL}
-              target="_blank"
-              rel="noopener noreferrer sponsored"
+              affiliateType="esim"
+              citySlug={city.slug}
+              source="city-detail"
               className={styles.heroCtaEsim}
             >
               Get an eSIM
-            </a>
+            </TierCtaLink>
           </div>
 
           <p className={styles.heroCtaDisclosure}>
@@ -129,7 +130,7 @@ export async function SupabaseCityDetail({ city, tracking }: Props) {
                   </Link>
 
                   <a
-                    href={getViatorSearchUrl(`${spot.name} ${city.city}`)}
+                    href={`/out/tours?c=${encodeURIComponent(city.slug)}&s=${encodeURIComponent(spot.slug)}&src=city-detail&v=highlight_tours_${spot.slug}`}
                     target="_blank"
                     rel="noopener noreferrer sponsored"
                     className={styles.highlightTourLink}
@@ -181,7 +182,7 @@ export async function SupabaseCityDetail({ city, tracking }: Props) {
                 </Link>
 
                 <a
-                  href={getViatorSearchUrl(`${spot.name} ${city.city}`)}
+                  href={`/out/tours?c=${encodeURIComponent(city.slug)}&s=${encodeURIComponent(spot.slug)}&src=city-detail&v=spot_tile_tours_${spot.slug}`}
                   target="_blank"
                   rel="noopener noreferrer sponsored"
                   className={styles.spotTourLink}

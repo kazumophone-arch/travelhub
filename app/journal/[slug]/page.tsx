@@ -67,16 +67,8 @@ export default async function JournalArticlePage({ params }: PageProps) {
         <article className={styles.articleBody}>
           <div className={styles.sectionLabel}>Guide note</div>
           <h2>{getIntroHeading(article.slug)}</h2>
-          <p>
-            Travel planning usually becomes easier when the first decision is
-            not a product, a hotel, or a route. It is the kind of trip you are
-            trying to protect: calm arrival, fewer small mistakes, and a first
-            day that does not feel improvised.
-          </p>
-          <p>
-            This guide keeps the decision simple. Start with the situation,
-            then choose the option that removes the most friction from the trip.
-          </p>
+          <p>{article.description}</p>
+          <p>{getCategoryNote(article.category)}</p>
 
           {isEssentials ? (
             <>
@@ -183,4 +175,20 @@ function getIntroHeading(slug: string) {
   }
 
   return "A slower way to plan the trip.";
+}
+
+function getCategoryNote(category: string) {
+  if (category === "Seasonal Ideas") {
+    return "Use this as a seasonal lens first — a way to decide when a place is worth visiting, before deciding exactly where.";
+  }
+
+  if (category === "City Stories") {
+    return "Read this as a mood check before the logistics: does this place match the kind of trip you actually want to take.";
+  }
+
+  if (category === "Planning Notes") {
+    return "This is meant to be read before the planning gets specific — most of these choices get easier once one decision is made first.";
+  }
+
+  return "Start with the situation, then choose the option that removes the most friction from the trip.";
 }

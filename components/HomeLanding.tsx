@@ -5,6 +5,7 @@ import { useState } from "react";
 import type { City } from "@/data/types";
 import { AIRALO_URL } from "@/lib/quick-affiliate-links";
 import { HomeWaitlistForm } from "@/components/HomeWaitlistForm";
+import { TierCtaLink } from "@/components/TierCtaLink";
 import { journalArticles } from "@/data/journal";
 import styles from "./HomeLanding.module.css";
 
@@ -83,7 +84,6 @@ export function HomeLanding({ cities, currentMonth }: Props) {
         <div className={styles.heroOverlay} />
 
         <div className={styles.heroContent}>
-          <span className={styles.heroBadgeOutline}>🎬 FEATURED IN OUR VIDEOS</span>
           <h1 className={styles.heroCityTitle}>{activeCity.city}</h1>
           <p className={styles.heroCountryText}>{activeCity.country}</p>
 
@@ -125,15 +125,16 @@ export function HomeLanding({ cities, currentMonth }: Props) {
             <span className={styles.quickLinkEmoji}>🗺️</span>
             <span className={styles.quickLinkLabel}>Tours</span>
           </a>
-          <a
+          <TierCtaLink
             href={AIRALO_URL}
-            target="_blank"
-            rel="noopener noreferrer sponsored"
+            affiliateType="esim"
+            citySlug={activeCity.slug}
+            source="home_quicklink"
             className={styles.quickLinkItem}
           >
             <span className={styles.quickLinkEmoji}>📱</span>
             <span className={styles.quickLinkLabel}>eSIM</span>
-          </a>
+          </TierCtaLink>
         </div>
       </section>
 

@@ -32,19 +32,6 @@
   padding: 16px 16px 72px;
 }
 
-.heroBadgeOutline {
-  display: inline-flex;
-  width: fit-content;
-  padding: 5px 10px;
-  border-radius: 999px;
-  border: 1px solid #BF9B30;
-  color: #BF9B30;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-}
-
 .heroCityTitle {
   margin: 0;
   color: #FFFFFF;

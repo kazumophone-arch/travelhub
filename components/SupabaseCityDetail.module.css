@@ -40,16 +40,6 @@
   padding: 24px;
 }
 
-.heroBadge {
-  display: inline-flex;
-  margin-bottom: 10px;
-  padding: 5px 10px;
-  border-radius: 999px;
-  border: 1px solid #BF9B30;
-  color: #BF9B30;
-  font-size: 12px;
-  font-weight: 800;
-}
 
 .heroTitle {
   margin: 0;

@@ -360,18 +360,10 @@ function pickThemeCities(theme: Theme, cities: DirectoryCity[]) {
     return { city, score };
   });
 
-  const matched = scored
+  return scored
     .filter((item) => item.score > 0)
     .sort((a, b) => b.score - a.score)
     .map((item) => item.city);
-
-  if (matched.length >= 4) return matched;
-
-  const fill = cities.filter(
-    (city) => !matched.some((matchedCity) => matchedCity.slug === city.slug)
-  );
-
-  return [...matched, ...fill];
 }
 
 function normalize(value: string) {

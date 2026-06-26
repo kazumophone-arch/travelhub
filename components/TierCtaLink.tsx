@@ -2,7 +2,7 @@
 
 import type { CSSProperties, MouseEvent, ReactNode } from "react";
 
-type AffiliateType = "hotels" | "tours";
+type AffiliateType = "hotels" | "tours" | "esim";
 
 type Props = {
   href: string;

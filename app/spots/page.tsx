@@ -28,14 +28,8 @@ type SupabaseCityRow = {
 
 type RawSpot = SupabasePublicSpot & Record<string, unknown>;
 
-const fallbackImages = [
-  "/assets/home/kyoto-hero.jpg",
-  "/assets/home/rome-preview.jpg",
-  "/assets/home/marrakech.jpg",
-  "/assets/home/lake-bled.jpg",
-  "/assets/home/find-peace.jpg",
-  "/assets/home/queenstown.jpg",
-];
+const PLACEHOLDER_GRADIENT =
+  "linear-gradient(135deg, #26352f 0%, #b68b5e 52%, #f3e3cb 100%)";
 
 async function getSupabaseCitiesAndSpots() {
   const [citiesResult, spotsResult] = await Promise.all([
@@ -74,30 +68,16 @@ function getSpotDescription(spot: RawSpot) {
   );
 }
 
-function getCuratedImage(spot: RawSpot, city?: SupabaseCityRow) {
-  const key = `${getSpotName(spot)} ${getSpotSlug(spot)} ${city?.city ?? ""} ${
-    city?.country ?? ""
-  }`.toLowerCase();
-
-  if (key.includes("arashiyama")) return "/assets/home/kyoto-hero.jpg";
-  if (key.includes("bamboo")) return "/assets/home/kyoto-hero.jpg";
-  if (key.includes("fushimi")) return "/assets/home/kyoto-hero.jpg";
-  if (key.includes("kiyomizu")) return "/assets/home/kyoto-hero.jpg";
-  if (key.includes("kyoto")) return "/assets/home/kyoto-hero.jpg";
-  if (key.includes("rome") || key.includes("italy")) return "/assets/home/rome-preview.jpg";
-  if (key.includes("marrakech") || key.includes("morocco")) return "/assets/home/marrakech.jpg";
-  if (key.includes("paris") || key.includes("france")) return "/assets/home/paris-preview.jpg";
-  if (key.includes("tokyo") || key.includes("japan")) return "/assets/home/kyoto-hero.jpg";
-
-  return "";
+function getImage(spot: RawSpot) {
+  return getText(spot, ["image_url", "imageUrl", "image", "heroImage", "hero_image"]);
 }
 
-function getImage(spot: RawSpot, index: number, city?: SupabaseCityRow) {
-  return (
-    getCuratedImage(spot, city) ||
-    getText(spot, ["image_url", "imageUrl", "image", "heroImage", "hero_image"]) ||
-    fallbackImages[index % fallbackImages.length]
-  );
+function getImageBackgroundStyle(spot: RawSpot, overlay: string) {
+  const url = getImage(spot);
+
+  return url
+    ? `${overlay}, url("${url}")`
+    : PLACEHOLDER_GRADIENT;
 }
 
 function getCityForSpot(
@@ -161,7 +141,10 @@ export default async function SpotsPage() {
             <div
               className={styles.featuredImage}
               style={{
-                backgroundImage: `linear-gradient(180deg, rgba(31, 26, 23, 0.03) 0%, rgba(31, 26, 23, 0.32) 100%), url("${getImage(featured, 0, featuredCity)}")`,
+                backgroundImage: getImageBackgroundStyle(
+                  featured,
+                  "linear-gradient(180deg, rgba(31, 26, 23, 0.03) 0%, rgba(31, 26, 23, 0.32) 100%)"
+                ),
               }}
             />
 
@@ -200,7 +183,10 @@ export default async function SpotsPage() {
                 <div
                   className={styles.placeImage}
                   style={{
-                    backgroundImage: `linear-gradient(180deg, rgba(31, 26, 23, 0.02) 0%, rgba(31, 26, 23, 0.34) 100%), url("${getImage(spot, index + 1, city)}")`,
+                    backgroundImage: getImageBackgroundStyle(
+                      spot,
+                      "linear-gradient(180deg, rgba(31, 26, 23, 0.02) 0%, rgba(31, 26, 23, 0.34) 100%)"
+                    ),
                   }}
                 />
 
