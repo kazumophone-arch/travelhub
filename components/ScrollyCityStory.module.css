@@ -1,0 +1,451 @@
+.page {
+  position: relative;
+  min-height: 100vh;
+  background: #0D2B52;
+  color: #FFFFFF;
+}
+
+.backgroundLayer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: #0D2B52;
+}
+
+.backgroundImage {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  filter: blur(18px);
+  transform: scale(1.06);
+  transition: opacity 900ms ease, filter 900ms ease, transform 900ms ease;
+  background-color: #0D2B52;
+}
+
+.backgroundImageEl {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.backgroundImage[data-active="true"] {
+  opacity: 1;
+  filter: blur(0);
+  transform: scale(1);
+}
+
+.backgroundScrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(13, 43, 82, 0.35) 0%,
+    rgba(13, 43, 82, 0.55) 50%,
+    rgba(13, 43, 82, 0.82) 100%
+  );
+}
+
+.footprintNav {
+  position: fixed;
+  top: 50%;
+  left: 12px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transform: translateY(-50%);
+}
+
+.footprint {
+  font-size: 14px;
+  line-height: 1;
+  opacity: 0.28;
+  filter: grayscale(1);
+  transition: opacity 400ms ease, filter 400ms ease, transform 400ms ease;
+  transform: scale(0.85);
+}
+
+.footprint[data-state="visited"] {
+  opacity: 0.55;
+  filter: grayscale(0.4);
+  transform: scale(0.9);
+}
+
+.footprint[data-state="current"] {
+  opacity: 1;
+  filter: grayscale(0);
+  transform: scale(1.15);
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+}
+
+.section {
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-end;
+  padding: 32px 20px 56px 44px;
+}
+
+.heroBlock,
+.spotBlock {
+  width: min(560px, 100%);
+  margin: 0 auto 0 0;
+}
+
+.spotTrack {
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.spotTrack::-webkit-scrollbar {
+  display: none;
+}
+
+.spotCard {
+  flex: 0 0 100%;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+}
+
+.heroTitle {
+  margin: 12px 0 0;
+  color: #FFFFFF;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(38px, 9vw, 60px);
+  line-height: 1;
+  font-weight: 520;
+  letter-spacing: -0.03em;
+  text-shadow: 0 14px 36px rgba(0, 0, 0, 0.3);
+}
+
+.heroCountry {
+  margin: 8px 0 0;
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 14px;
+}
+
+.heroCtaStack {
+  margin-top: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.heroAffiliateGroup {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+}
+
+.heroCtaEsim {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  padding: 0 20px;
+  border-radius: 6px;
+  background: #F0F4FA;
+  color: #0D2B52;
+  border: 1px solid #D8E2F0;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.heroCtaEsim:hover {
+  background: #E3EAF4;
+}
+
+.heroCtaDisclosure {
+  margin: 2px 0 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 11px;
+  line-height: 1.45;
+  opacity: 0.8;
+}
+
+.spotLabel {
+  margin-bottom: 12px;
+  color: #BF9B30;
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.spotTitle {
+  margin: 0;
+  color: #FFFFFF;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(30px, 6vw, 46px);
+  line-height: 1.02;
+  font-weight: 520;
+  letter-spacing: -0.04em;
+  text-shadow: 0 14px 36px rgba(0, 0, 0, 0.3);
+}
+
+.spotSummary {
+  max-width: 480px;
+  margin: 14px 0 0;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.spotLink {
+  display: inline-flex;
+  margin-top: 20px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: rgba(191, 155, 48, 0.22);
+  color: #E8D080;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.panelBlock {
+  width: min(640px, 100%);
+  margin: 0 auto 0 0;
+}
+
+.panelTitle {
+  margin: 6px 0 0;
+  color: #FFFFFF;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(28px, 6vw, 44px);
+  line-height: 1.05;
+  font-weight: 520;
+  letter-spacing: -0.03em;
+  text-shadow: 0 14px 36px rgba(0, 0, 0, 0.3);
+}
+
+.panelLead {
+  max-width: 520px;
+  margin: 14px 0 0;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.panelSubLead {
+  max-width: 520px;
+  margin: 8px 0 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.sampleBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  margin-bottom: 10px;
+  border-radius: 999px;
+  border: 1px solid #BF9B30;
+  color: #E8D080;
+  background: rgba(191, 155, 48, 0.14);
+  font-size: 10px;
+  font-weight: 850;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.sampleCard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 18px;
+  border-radius: 14px;
+  background: rgba(13, 43, 82, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(6px);
+}
+
+.sampleText {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.cardGrid {
+  display: grid;
+  gap: 14px;
+  margin-top: 22px;
+}
+
+.cardTitle {
+  margin: 0 0 4px;
+  color: #FFFFFF;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.cardDuration {
+  margin: 0 0 10px;
+  color: #E8D080;
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.sampleCard > :global(div) {
+  margin-top: 12px;
+  width: 100%;
+}
+
+.seasonTabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 22px 0 16px;
+}
+
+.seasonTab {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 13px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.seasonTab[data-active="true"] {
+  border-color: #BF9B30;
+  background: #BF9B30;
+  color: #FFFFFF;
+}
+
+.climateHighlights {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.climateHighlightCard {
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.climateHighlightLabel {
+  display: block;
+  margin-bottom: 6px;
+  color: #BF9B30;
+  font-size: 10px;
+  font-weight: 850;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.climateHighlightValue {
+  margin: 0;
+  color: #FFFFFF;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.darkChart {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(28px, 1fr));
+  gap: 5px;
+  align-items: end;
+  margin-top: 12px;
+  padding: 16px 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  overflow-x: auto;
+}
+
+.darkChartColumn {
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+}
+
+.darkChartHigh {
+  font-size: 11px;
+  font-weight: 800;
+  color: #FFFFFF;
+}
+
+.darkChartTrack {
+  position: relative;
+  width: 100%;
+  max-width: 18px;
+  height: 110px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.darkChartBar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  border-radius: 999px;
+  min-height: 6px;
+}
+
+.darkChartPeakMark {
+  position: absolute;
+  top: -16px;
+  color: #E8D080;
+  font-size: 10px;
+}
+
+.darkChartMonth {
+  font-size: 10px;
+  font-weight: 750;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+@media (min-width: 640px) {
+  .cardGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .section {
+    padding: 48px 56px 72px;
+  }
+
+  .heroCtaStack {
+    align-items: flex-start;
+  }
+
+  .heroCtaEsim {
+    align-self: flex-start;
+    min-width: 220px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backgroundImage {
+    transition: none;
+  }
+
+  .footprint {
+    transition: none;
+  }
+}
