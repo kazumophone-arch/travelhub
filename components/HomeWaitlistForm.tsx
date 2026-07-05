@@ -64,7 +64,7 @@ export function HomeWaitlistForm() {
         className={styles.waitlistButton}
         disabled={status === "submitting"}
       >
-        {status === "submitting" ? "Submitting..." : "Join the waitlist"}
+        {status === "submitting" ? "Submitting..." : "Join updates"}
       </button>
 
       {status === "error" && message ? (

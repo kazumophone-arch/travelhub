@@ -1,79 +1,393 @@
 .root {
   width: 100%;
   overflow-x: hidden;
-  background: #FFFFFF;
-  color: #0D2B52;
+  background: linear-gradient(180deg, #0B0906 0%, #14100A 45%, #1A140C 100%);
+  color: #F3ECDA;
   font-family: Georgia, "Times New Roman", serif;
 }
 
-.heroFull {
+.bookshelfHero {
   position: relative;
   width: 100%;
   min-height: 100vh;
   display: flex;
-  align-items: flex-end;
-  background-color: #D8E2F0;
+  align-items: center;
+  background: linear-gradient(180deg, #0B0906 0%, #14100A 55%, #1A140C 100%);
+  overflow: hidden;
+}
+
+.bookshelfBackdropImage {
+  position: absolute;
+  inset: -8%;
   background-size: cover;
   background-position: center;
+  filter: blur(22px) sepia(0.35) saturate(0.85) brightness(0.4);
+  opacity: 0.62;
+  transform: scale(1.05);
 }
 
-.heroOverlay {
+.bookshelfBackdrop {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(13, 43, 82, 0) 0%, rgba(13, 43, 82, 0.75) 100%);
+  background:
+    radial-gradient(circle at 8% 18%, rgba(232, 184, 92, 0.3), transparent 32%),
+    radial-gradient(circle at 94% 22%, rgba(232, 184, 92, 0.26), transparent 34%),
+    radial-gradient(circle at 50% 12%, rgba(191, 155, 48, 0.2), transparent 55%),
+    linear-gradient(180deg, rgba(11, 9, 6, 0.4) 0%, rgba(11, 9, 6, 0.58) 45%, rgba(11, 9, 6, 0.92) 100%);
 }
 
-.heroContent {
+.bookshelfInner {
   position: relative;
   z-index: 2;
   width: 100%;
+  padding: 88px 16px 48px;
+  display: grid;
+  gap: 24px;
+  justify-items: center;
+  text-align: center;
+}
+
+.heroTextCol {
   display: grid;
   gap: 10px;
-  padding: 16px 16px 72px;
+  justify-items: center;
+  width: 100%;
 }
 
-.heroCityTitle {
+.heroKicker {
   margin: 0;
-  color: #FFFFFF;
-  font-size: 44px;
-  line-height: 1;
-  font-weight: 500;
-  letter-spacing: -0.03em;
-}
-
-.heroCountryText {
-  margin: 0 0 6px;
-  color: #FFFFFF;
+  color: #E8B85C;
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 14px;
-  opacity: 0.86;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
 }
 
-.heroCta {
+.heroHeadline {
+  margin: 0;
+  max-width: 720px;
+  color: #FFFFFF;
+  font-family: var(--font-playfair), Georgia, serif;
+  font-size: clamp(28px, 6vw, 46px);
+  line-height: 1.1;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.heroSubcopy {
+  margin: 0 0 8px;
+  color: rgba(255, 255, 255, 0.72);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 15px;
+}
+
+.heroBookCol {
+  width: 100%;
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+}
+
+.bookshelfRow {
+  position: relative;
+  width: 100%;
+  max-width: 1080px;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 0;
+  padding: 12px 0 28px;
+}
+
+/* Adjacent, partially-visible neighbouring covers that sit behind the
+   active title. These now carry the actual city photograph (heavily
+   darkened) so the shelf reads as real books, not blank spines. */
+
+.bookSide {
+  position: relative;
+  flex: 0 0 auto;
+  width: 13%;
+  max-width: 110px;
+  height: 320px;
+  border: 0;
+  padding: 0;
+  border-radius: 2px 5px 5px 2px;
+  overflow: hidden;
+  cursor: pointer;
+  z-index: 1;
+  align-self: center;
+  background-color: #171009;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.42) saturate(0.55) sepia(0.12);
+  box-shadow: 0 18px 30px rgba(0, 0, 0, 0.55);
+  transition: filter 0.2s ease;
+}
+
+.bookSide:hover {
+  filter: brightness(0.56) saturate(0.68) sepia(0.12);
+}
+
+.bookSideLeft {
+  margin-right: -30px;
+  transform: rotate(-4deg) translateY(20px);
+}
+
+.bookSideRight {
+  margin-left: -30px;
+  transform: rotate(4deg) translateY(20px);
+}
+
+.bookSideEmpty {
+  flex: 0 0 auto;
+  width: 13%;
+  max-width: 110px;
+}
+
+/* Active book — built as a real object, layer by layer:
+   spine -> cover photograph -> legibility shade -> ornaments/title
+   -> page edge -> ground shadow. */
+
+.bookMain {
+  position: relative;
+  flex: 0 0 auto;
+  width: min(300px, 62vw);
+  aspect-ratio: 2 / 3;
+  z-index: 3;
+}
+
+.bookSpine {
+  position: absolute;
+  left: 0;
+  top: 3px;
+  bottom: 3px;
+  width: 22px;
+  border-radius: 4px 0 0 4px;
+  background:
+    repeating-linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.32) 0px,
+      rgba(0, 0, 0, 0.32) 1px,
+      transparent 1px,
+      transparent 5px
+    ),
+    linear-gradient(90deg, var(--spine-band, #0A1A2C) 0%, var(--spine-base-1, #152C46) 35%, var(--spine-base-2, #12283F) 100%);
+  box-shadow:
+    inset -3px 0 5px rgba(0, 0, 0, 0.55),
+    inset 2px 0 2px rgba(255, 255, 255, 0.05);
+  z-index: 1;
+}
+
+/* Raised binding bands across the spine, typical of a hardcover */
+.bookSpine::before {
+  content: "";
+  position: absolute;
+  inset: 14% 2px;
+  background:
+    linear-gradient(180deg, transparent 0%, transparent 18%, rgba(0, 0, 0, 0.4) 18%, rgba(0, 0, 0, 0.4) 22%, transparent 22%, transparent 38%,
+      rgba(0, 0, 0, 0.4) 38%, rgba(0, 0, 0, 0.4) 42%, transparent 42%, transparent 58%,
+      rgba(0, 0, 0, 0.4) 58%, rgba(0, 0, 0, 0.4) 62%, transparent 62%, transparent 78%,
+      rgba(0, 0, 0, 0.4) 78%, rgba(0, 0, 0, 0.4) 82%, transparent 82%, transparent 100%);
+}
+
+/* Cover: the city photograph, full bleed, with the title overlaid as
+   real text (never baked into the image). */
+.bookCover {
+  position: relative;
+  height: 100%;
+  margin: 0 9px 0 22px;
+  border-radius: 2px 5px 5px 2px;
+  background: linear-gradient(160deg, var(--cover-base-1, #1E3E60) 0%, var(--cover-base-2, #0E2138) 100%);
+  box-shadow:
+    0 2px 0 rgba(0, 0, 0, 0.3) inset,
+    0 0 0 1px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  padding: 26px 18px 18px;
+  text-align: center;
+}
+
+.bookCoverPhoto {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
   width: 100%;
-  min-height: 48px;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Restrained dark grade over the top of the cover so the title stays
+   readable against any photograph. */
+.bookCoverShade {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 8, 5, 0.72) 0%,
+    rgba(10, 8, 5, 0.28) 42%,
+    rgba(10, 8, 5, 0.05) 62%,
+    rgba(10, 8, 5, 0.5) 100%
+  );
+}
+
+/* Small gold corner brackets — not a full continuous frame */
+.coverOrnaments {
+  position: absolute;
+  inset: 12px;
+  z-index: 2;
+  pointer-events: none;
+  background-image:
+    linear-gradient(#E8B85C, #E8B85C), linear-gradient(#E8B85C, #E8B85C),
+    linear-gradient(#E8B85C, #E8B85C), linear-gradient(#E8B85C, #E8B85C),
+    linear-gradient(#E8B85C, #E8B85C), linear-gradient(#E8B85C, #E8B85C),
+    linear-gradient(#E8B85C, #E8B85C), linear-gradient(#E8B85C, #E8B85C);
+  background-size:
+    18px 2px, 2px 18px,
+    18px 2px, 2px 18px,
+    18px 2px, 2px 18px,
+    18px 2px, 2px 18px;
+  background-position:
+    top left, top left,
+    top right, top right,
+    bottom left, bottom left,
+    bottom right, bottom right;
+  background-repeat: no-repeat;
+  opacity: 0.85;
+}
+
+/* Thin gold edging just inside the cover */
+.coverInnerBorder {
+  position: absolute;
+  inset: 7px;
+  z-index: 2;
+  pointer-events: none;
+  border: 1px solid rgba(232, 184, 92, 0.55);
+  border-radius: 1px;
+}
+
+.bookTitle {
+  position: relative;
+  z-index: 3;
+  margin: 4px 0 4px;
+  color: #F8F1DE;
+  font-family: var(--font-playfair), Georgia, serif;
+  font-size: clamp(21px, 5vw, 29px);
+  line-height: 1.05;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.bookCountry {
+  position: relative;
+  z-index: 3;
+  margin: 0;
+  color: #E8B85C;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
+}
+
+/* Page block edge along the right side */
+.pageEdge {
+  position: absolute;
+  right: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 8px;
+  border-radius: 0 3px 3px 0;
+  background: repeating-linear-gradient(
+    180deg,
+    #EDE3C8 0px,
+    #EDE3C8 2px,
+    #D8CBA6 2px,
+    #D8CBA6 3px
+  );
+  box-shadow: inset 2px 0 3px rgba(0, 0, 0, 0.25);
+  z-index: 1;
+}
+
+/* Ground contact shadow so the book reads as standing on a shelf */
+.bookContactShadow {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: -18px;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(50% 100% at 50% 0%, rgba(0, 0, 0, 0.55), transparent 75%);
+  z-index: 0;
+}
+
+/* CTAs live outside the book object entirely */
+.heroActions {
+  width: 100%;
+  max-width: 320px;
+  display: grid;
+  gap: 8px;
+}
+
+.heroPrimaryCta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 46px;
   border-radius: 6px;
   background: #BF9B30;
   color: #FFFFFF;
   text-decoration: none;
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 800;
 }
 
-.heroCta:hover {
+.heroPrimaryCta:hover {
   background: #A8882A;
 }
 
+.heroPrimaryCtaArrow {
+  transition: transform 0.15s ease;
+}
+
+.heroPrimaryCta:hover .heroPrimaryCtaArrow {
+  transform: translateX(3px);
+}
+
+.heroSecondaryRow {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.heroSecondaryCta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 40px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #FFFFFF;
+  text-decoration: none;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.heroSecondaryCta:hover {
+  border-color: #BF9B30;
+  color: #BF9B30;
+}
+
 .heroDots {
-  position: absolute;
-  z-index: 2;
-  left: 0;
-  right: 0;
-  bottom: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -91,67 +405,53 @@
 }
 
 .heroDot {
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.35);
 }
 
 .heroDotActive {
   background: #BF9B30;
 }
 
-.quickLinkSection {
-  background: #FFFFFF;
-  border-bottom: 1px solid #D8E2F0;
-}
-
-.quickLinkRow {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.quickLinkItem {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  min-height: 64px;
-  padding: 14px 8px;
-  color: #0D2B52;
-  text-decoration: none;
-  border-right: 1px solid #D8E2F0;
-}
-
-.quickLinkRow a:last-child {
-  border-right: 0;
-}
-
-.quickLinkEmoji {
-  font-size: 22px;
-  line-height: 1;
-}
-
-.quickLinkLabel {
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 12px;
-  font-weight: 800;
-}
-
 .section {
   padding: 0 16px;
-  margin-top: 48px;
+  margin-top: 56px;
 }
 
 .sectionHeader {
-  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(232, 184, 92, 0.18);
 }
 
-.sectionTitle {
-  margin: 0;
-  color: #0D2B52;
-  font-size: clamp(26px, 3vw, 40px);
-  line-height: 1;
-  font-weight: 500;
-  letter-spacing: -0.04em;
+.sectionLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #E8B85C;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.sectionLink {
+  flex: 0 0 auto;
+  color: #F3ECDA;
+  text-decoration: none;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.sectionLink:hover {
+  color: #E8B85C;
 }
 
 .destinationScroll {
@@ -164,10 +464,14 @@
 }
 
 .destinationCard {
-  flex: 0 0 60%;
+  flex: 0 0 56%;
   scroll-snap-align: start;
   display: grid;
   gap: 4px;
+  padding: 10px;
+  border: 1px solid rgba(232, 184, 92, 0.18);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
   color: inherit;
   text-decoration: none;
 }
@@ -175,8 +479,8 @@
 .destinationCardPhoto {
   width: 100%;
   aspect-ratio: 4 / 3;
-  border-radius: 8px;
-  background-color: #D8E2F0;
+  border-radius: 6px;
+  background-color: #1C140A;
   background-size: cover;
   background-position: center;
 }
@@ -187,30 +491,22 @@
   line-height: 1.1;
   font-weight: 500;
   letter-spacing: -0.02em;
+  color: #F3ECDA;
 }
 
 .destinationCardCountry {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
-  color: #6B87A8;
+  color: #B9A98C;
 }
 
-.destinationCardCta {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 8px;
-  min-height: 48px;
-  border-radius: 6px;
-  background: #BF9B30;
-  color: #FFFFFF;
+.destinationCardMonths {
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 14px;
+  font-size: 11px;
   font-weight: 800;
-}
-
-.destinationCard:hover .destinationCardCta {
-  background: #A8882A;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #E8B85C;
 }
 
 .seasonalCardNote {
@@ -218,90 +514,117 @@
   font-family: Arial, Helvetica, sans-serif;
   font-size: 13px;
   line-height: 1.4;
-  color: #6B87A8;
+  color: #B9A98C;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.journalScroll {
-  display: flex;
-  gap: 12px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  padding-bottom: 4px;
-  -webkit-overflow-scrolling: touch;
-}
-
-.journalCard {
-  flex: 0 0 60%;
-  scroll-snap-align: start;
+.journalList {
   display: grid;
-  gap: 4px;
+  gap: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.journalRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   color: inherit;
   text-decoration: none;
+  transition: background 0.15s ease;
 }
 
-.journalCardPhoto {
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  border-radius: 8px;
-  background-color: #D8E2F0;
+.journalRow:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.journalRowPhoto {
+  flex: 0 0 64px;
+  width: 64px;
+  height: 64px;
+  border-radius: 6px;
+  background-color: #1C140A;
   background-size: cover;
   background-position: center;
 }
 
-.journalCardCategory {
-  margin-top: 8px;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: #BF9B30;
+.journalRowBody {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: grid;
+  gap: 4px;
 }
 
-.journalCardTitle {
-  font-size: 17px;
+.journalRowTitle {
+  font-size: 16px;
   line-height: 1.2;
   font-weight: 500;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
+  color: #F3ECDA;
 }
 
-.journalViewAll {
-  display: inline-flex;
-  margin-top: 16px;
-  color: #0D2B52;
-  text-decoration: none;
+.journalRowDescription {
+  margin: 0;
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 14px;
-  font-weight: 800;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #B9A98C;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.journalRowArrow {
+  flex: 0 0 auto;
+  color: #E8B85C;
+  font-size: 18px;
 }
 
 .waitlistSection {
-  margin-top: 48px;
-  padding: 0 16px;
+  margin-top: 56px;
+  padding: 0 16px 56px;
 }
 
 .waitlistPanel {
   display: grid;
-  gap: 14px;
-  padding: 24px;
+  gap: 12px;
+  padding: 24px 20px;
+  border: 1px solid rgba(232, 184, 92, 0.3);
   border-radius: 8px;
-  background: #0D2B52;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(0, 0, 0, 0.08) 100%);
   color: #FFFFFF;
   text-align: center;
+  justify-items: center;
 }
 
 .waitlistTitle {
   margin: 0;
-  font-size: clamp(20px, 5vw, 30px);
-  line-height: 1.25;
-  font-weight: 500;
-  letter-spacing: -0.02em;
+  color: #F3ECDA;
+  font-family: var(--font-playfair), Georgia, serif;
+  font-size: clamp(18px, 4vw, 24px);
+  line-height: 1.3;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.waitlistSubcopy {
+  margin: -6px 0 4px;
+  color: rgba(243, 236, 218, 0.65);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
 }
 
 .waitlistForm {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  width: 100%;
 }
 
 .waitlistInput {
@@ -360,25 +683,36 @@
   color: #e3a07a;
 }
 
+@media (max-width: 520px) {
+  .bookSide,
+  .bookSideEmpty {
+    width: 11%;
+    max-width: 70px;
+  }
+
+  .bookSideLeft {
+    margin-right: -46px;
+  }
+
+  .bookSideRight {
+    margin-left: -46px;
+  }
+
+  .bookMain {
+    width: min(240px, 66vw);
+  }
+}
+
 @media (min-width: 700px) {
   .destinationScroll {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     overflow-x: visible;
   }
 
   .destinationCard {
     flex: initial;
-  }
-
-  .journalScroll {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    overflow-x: visible;
-  }
-
-  .journalCard {
-    flex: initial;
+    max-width: 340px;
   }
 
   .waitlistForm {
@@ -397,14 +731,6 @@
 }
 
 @media (min-width: 980px) {
-  .heroFull {
-    min-height: 80vh;
-  }
-
-  .journalScroll {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-
   .root > .section,
   .root > .waitlistSection {
     max-width: 1200px;
@@ -414,15 +740,36 @@
     padding-right: 32px;
   }
 
-  .heroContent {
+  .bookshelfInner {
     max-width: 1200px;
     margin: 0 auto;
-    padding-left: 32px;
-    padding-right: 32px;
+    grid-template-columns: minmax(320px, 440px) 1fr;
+    grid-template-areas:
+      "text book"
+      "cta  book";
+    align-items: center;
+    justify-items: stretch;
+    gap: 28px 56px;
+    text-align: left;
   }
 
-  .heroCta {
-    width: auto;
-    min-width: 220px;
+  .heroTextCol {
+    grid-area: text;
+    text-align: left;
+    justify-items: start;
+  }
+
+  .heroActions {
+    grid-area: cta;
+    justify-self: start;
+  }
+
+  .heroBookCol {
+    grid-area: book;
+    justify-self: center;
+  }
+
+  .bookMain {
+    width: 320px;
   }
 }
