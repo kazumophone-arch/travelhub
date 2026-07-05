@@ -404,6 +404,10 @@ export function HomeLanding({ cities, currentMonth }: Props) {
                 Experiences
               </a>
             </div>
+
+            <Link href="/cities" className={styles.heroTertiaryLink}>
+              Browse all destinations →
+            </Link>
           </div>
         </div>
       </section>
