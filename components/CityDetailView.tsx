@@ -5,7 +5,7 @@ import { AffiliateButtonGroup } from "@/components/AffiliateButtonGroup";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { CityClimate } from "@/components/CityClimate";
 import { TierCtaLink } from "@/components/TierCtaLink";
-import { normalizeClimate } from "@/lib/climate";
+import { hasClimateData, normalizeClimate } from "@/lib/climate";
 import { journalArticles } from "@/data/journal";
 import type { SupabasePublicCity } from "@/data/supabase-public-cities";
 import { AIRALO_URL } from "@/lib/quick-affiliate-links";
@@ -51,12 +51,26 @@ type Props = {
   tracking?: TrackingParams;
   slots?: CityDetailSlots;
   nearbyCities?: CityDetailNearbyCity[];
+  // Country-local chapter numbering: current library order, not permanent
+  // IDs. Never written into URLs or JSON-LD.
+  chapterNumber?: number | null;
+  chapterTotal?: number;
+  nextCity?: CityDetailNearbyCity | null;
 };
 
 const FALLBACK_TILE_GRADIENT =
   "linear-gradient(135deg, #26352f 0%, #b68b5e 52%, #f3e3cb 100%)";
 
-export function CityDetailView({ city, spots, tracking, slots, nearbyCities }: Props) {
+export function CityDetailView({
+  city,
+  spots,
+  tracking,
+  slots,
+  nearbyCities,
+  chapterNumber,
+  chapterTotal,
+  nextCity,
+}: Props) {
   const spotTrackingQuery = getTrackingQuery(tracking);
   const HIGHLIGHT_COUNT = 4;
   const highlightSpots = spots.length > HIGHLIGHT_COUNT ? spots.slice(0, HIGHLIGHT_COUNT) : [];
@@ -69,6 +83,22 @@ export function CityDetailView({ city, spots, tracking, slots, nearbyCities }: P
     .filter((article) => article.relatedCitySlug === city.slug)
     .slice(0, 3);
   const otherCities = nearbyCities ?? [];
+
+  const showChapterNumber =
+    typeof chapterNumber === "number" && (chapterTotal ?? 0) >= 2;
+
+  const hasSeasonalData =
+    hasClimateData(normalizeClimate(city.climate)) ||
+    (city.best_months?.length ?? 0) > 0;
+  const isCompactChapter = spots.length >= 1 && spots.length < 3;
+  const placeWord = spots.length === 1 ? "place" : "places";
+  const gapsNotice = !hasSeasonalData && isCompactChapter
+    ? `This is a compact chapter: ${spots.length} ${spots.length === 1 ? "place is" : "places are"} currently open, and seasonal notes have not been added yet.`
+    : isCompactChapter
+      ? `This chapter currently covers ${spots.length} ${placeWord}. It is a compact entry in the Taleglen library.`
+      : !hasSeasonalData
+        ? `Seasonal notes for ${city.city} have not been added yet.`
+        : null;
 
   return (
     <main className={styles.page}>
@@ -97,6 +127,11 @@ export function CityDetailView({ city, spots, tracking, slots, nearbyCities }: P
           {slots?.heroOverlay}
 
           <div className={styles.heroHeading}>
+            {showChapterNumber ? (
+              <p className={styles.chapterEyebrow}>
+                {city.country} · Chapter {chapterNumber} of {chapterTotal}
+              </p>
+            ) : null}
             <h1 className={styles.heroTitle}>{slots?.title ?? city.city}</h1>
             <p className={styles.heroCountry}>{slots?.country ?? city.country}</p>
           </div>
@@ -277,6 +312,8 @@ export function CityDetailView({ city, spots, tracking, slots, nearbyCities }: P
           </div>
         )}
 
+        {gapsNotice ? <p className={styles.gapsNotice}>{gapsNotice}</p> : null}
+
         {relatedJournal.length > 0 ? (
           <section
             className={styles.relatedJournalSection}
@@ -349,6 +386,37 @@ export function CityDetailView({ city, spots, tracking, slots, nearbyCities }: P
                 </Link>
               ))}
             </div>
+          </section>
+        ) : null}
+
+        {nextCity ? (
+          <section className={styles.nextChapterSection} aria-labelledby="next-chapter-title">
+            <Link href={`/c/${nextCity.slug}`} className={styles.nextChapterCard}>
+              <div className={styles.nextChapterBody}>
+                <div className={styles.label}>Next chapter</div>
+                <h2 id="next-chapter-title" className={styles.nextChapterTitle}>
+                  {nextCity.city}
+                </h2>
+                {(nextCity.summary ?? "").trim() ? (
+                  <p className={styles.nextChapterSummary}>{(nextCity.summary ?? "").trim()}</p>
+                ) : null}
+                <span className={styles.nearbyCityAction}>
+                  Open the {nextCity.city} guide →
+                </span>
+              </div>
+
+              <div
+                className={styles.nextChapterImage}
+                style={{
+                  backgroundImage: getImageBackground(
+                    nextCity.image_url ?? "",
+                    "linear-gradient(180deg, rgba(13, 43, 82, 0) 0%, rgba(13, 43, 82, 0.22) 100%)",
+                    FALLBACK_TILE_GRADIENT
+                  ),
+                  backgroundPosition: getCssImagePosition(nextCity.image_position),
+                }}
+              />
+            </Link>
           </section>
         ) : null}
       </section>

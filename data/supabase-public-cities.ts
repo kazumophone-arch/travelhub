@@ -134,36 +134,73 @@ export type NearbySupabaseCity = {
   sort_rank?: number | null;
 };
 
-// Other published cities in the same country, for the "more places in
-// {country}" section. Matches by country_id when set, otherwise by the
-// country text field. Returns [] on any error so the section simply hides.
-export async function getPublishedNearbySupabaseCities(
+export type CountryChapterContext = {
+  // 1-based position of this city among its country's published cities,
+  // or null when the country has fewer than 2 published cities. Chapter
+  // numbers are current library order, not permanent IDs.
+  chapterNumber: number | null;
+  chapterTotal: number;
+  nextCity: NearbySupabaseCity | null;
+  nearbyCities: NearbySupabaseCity[];
+};
+
+const EMPTY_CHAPTER_CONTEXT: CountryChapterContext = {
+  chapterNumber: null,
+  chapterTotal: 0,
+  nextCity: null,
+  nearbyCities: [],
+};
+
+// Single query over the published cities of this city's country, used to
+// derive chapter numbering, the next-chapter link, and the nearby-cities
+// section. Chapter order: sort_rank ascending, city name ascending as the
+// tie-breaker. Matches by country_id when set, otherwise by the country
+// text field. Returns the empty context on any error so all dependent
+// sections simply hide.
+export async function getCountryChapterContext(
   city: SupabasePublicCity,
-  limit = 4
-): Promise<NearbySupabaseCity[]> {
+  nearbyLimit = 4
+): Promise<CountryChapterContext> {
   let query = supabase
     .from("cities")
     .select("id, slug, city, country, country_id, summary, image_url, image_position, sort_rank")
     .eq("is_published", true)
-    .neq("id", city.id)
     .order("sort_rank", { ascending: true, nullsFirst: false })
-    .limit(limit);
+    .order("city", { ascending: true });
 
   if (city.country_id) {
     query = query.eq("country_id", city.country_id);
   } else if (city.country?.trim()) {
     query = query.ilike("country", city.country.trim());
   } else {
-    return [];
+    return EMPTY_CHAPTER_CONTEXT;
   }
 
   const { data, error } = await query;
 
   if (error || !data) {
-    return [];
+    return EMPTY_CHAPTER_CONTEXT;
   }
 
-  return data as NearbySupabaseCity[];
+  const chapters = data as NearbySupabaseCity[];
+  const index = chapters.findIndex((chapter) => chapter.id === city.id);
+
+  if (index === -1) {
+    return EMPTY_CHAPTER_CONTEXT;
+  }
+
+  const chapterTotal = chapters.length;
+  const nextCity = chapters[index + 1] ?? null;
+  const nearbyCities = chapters
+    .filter((chapter) => chapter.id !== city.id && chapter.id !== nextCity?.id)
+    .slice(0, nearbyLimit);
+
+  return {
+    chapterNumber: chapterTotal >= 2 ? index + 1 : null,
+    chapterTotal,
+    nextCity,
+    nearbyCities,
+  };
 }
 
 export async function getPublishedSupabaseDirectoryCities(): Promise<City[]> {

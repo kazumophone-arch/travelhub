@@ -334,11 +334,11 @@ export function SpotDetailView({ city, spot, nearbySpots, tracking, slots }: Pro
         <section className={styles.backSection}>
           <div>
             <div className={styles.sectionLabel}>City guide</div>
-            <h2>Return to the full {city.city} guide.</h2>
+            <h2>Return to the {city.city} chapter.</h2>
           </div>
 
           <Link href={`/c/${city.slug}`} className={styles.cityLink}>
-            Back to city guide
+            Back to the {city.city} chapter
           </Link>
         </section>
       </section>

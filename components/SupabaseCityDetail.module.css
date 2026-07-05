@@ -516,3 +516,85 @@
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
+
+.chapterEyebrow {
+  margin: 0 0 8px;
+  color: #E8D080;
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+}
+
+.gapsNotice {
+  margin: 40px 0 0;
+  color: #6B87A8;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.nextChapterSection {
+  margin-top: 64px;
+  padding-top: 44px;
+  border-top: 1px solid #D8E2F0;
+}
+
+.nextChapterCard {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(200px, 0.9fr);
+  gap: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #D8E2F0;
+  background: #FFFFFF;
+  color: #0D2B52;
+  text-decoration: none;
+}
+
+.nextChapterBody {
+  display: grid;
+  align-content: center;
+  justify-items: start;
+  gap: 10px;
+  padding: 28px 26px;
+}
+
+.nextChapterBody .label {
+  margin-bottom: 0;
+}
+
+.nextChapterTitle {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(26px, 3vw, 36px);
+  line-height: 1.1;
+  font-weight: 520;
+  letter-spacing: -0.03em;
+}
+
+.nextChapterSummary {
+  margin: 0;
+  color: #6B87A8;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.nextChapterImage {
+  min-height: 200px;
+  background-size: cover;
+  background-position: center;
+  background-color: #D8E2F0;
+}
+
+@media (max-width: 700px) {
+  .nextChapterCard {
+    grid-template-columns: 1fr;
+  }
+
+  .nextChapterImage {
+    order: -1;
+    min-height: 180px;
+  }
+}
