@@ -4,7 +4,7 @@ import { AdminNavigation } from "@/components/AdminNavigation";
 import { AdminNewCityForm } from "@/components/AdminNewCityForm";
 
 export const metadata = {
-  title: "新しい都市 | TravelHub Admin",
+  title: "新しい都市 | Taleglen Admin",
   robots: {
     index: false,
     follow: false,

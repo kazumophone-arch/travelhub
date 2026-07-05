@@ -1,6 +1,6 @@
-# TravelHub Public Page QA Checklist
+# Taleglen Public Page QA Checklist
 
-Use this checklist after adding or editing cities/spots in the admin UI. The goal is to confirm that published TravelHub content appears correctly, unpublished content stays private, and affiliate CTAs behave safely.
+Use this checklist after adding or editing cities/spots in the admin UI. The goal is to confirm that published Taleglen content appears correctly, unpublished content stays private, and affiliate CTAs behave safely.
 
 ## Home And Directory Checks
 

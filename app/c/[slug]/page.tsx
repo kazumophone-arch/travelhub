@@ -21,12 +21,12 @@ export async function generateMetadata({
 
   if (!city) {
     return {
-      title: "City not found | TravelHub",
-      description: "This TravelHub city page could not be found.",
+      title: "City not found | Taleglen",
+      description: "This Taleglen city page could not be found.",
     };
   }
 
-  const title = `${city.city}, ${city.country} Travel Links | TravelHub`;
+  const title = `${city.city}, ${city.country} Travel Links | Taleglen`;
   const description =
     city.description ||
     city.summary ||

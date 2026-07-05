@@ -1,8 +1,8 @@
 import crypto from "crypto";
 
-export const ADMIN_SESSION_COOKIE = "travelhub_admin_session";
+export const ADMIN_SESSION_COOKIE = "taleglen_admin_session";
 
-const SESSION_PAYLOAD = "travelhub-admin-v1";
+const SESSION_PAYLOAD = "taleglen-admin-v1";
 const SESSION_MAX_AGE_SECONDS = 60 * 60 * 12;
 
 export function isAdminPasswordConfigured() {

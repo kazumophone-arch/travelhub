@@ -14,6 +14,26 @@ const publicNavLinks = [
 
 const publicSearchHref = "/discover";
 
+function OpenBookLogoIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width="20"
+      height="20"
+      fill="none"
+      stroke="#E8B85C"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M12 5.5c-1.6-1.1-3.8-1.6-6.3-1.4a1 1 0 0 0-.9 1v12.4c0 .6.5 1.1 1.1 1 2.2-.2 4.2.3 5.6 1.3" />
+      <path d="M12 5.5c1.6-1.1 3.8-1.6 6.3-1.4a1 1 0 0 1 .9 1v12.4c0 .6-.5 1.1-1.1 1-2.2-.2-4.2.3-5.6 1.3" />
+      <path d="M12 5.5v14.3" />
+    </svg>
+  );
+}
+
 function SearchIcon() {
   return (
     <svg
@@ -80,8 +100,13 @@ export function SiteNavigation() {
   return (
     <>
       <header className={headerClassName} aria-label="Main navigation">
-        <Link href="/" className="travelhub-public-brand">
-          <span>TravelHub</span>
+        <Link
+          href="/"
+          className="travelhub-public-brand"
+          style={{ fontFamily: "var(--font-playfair), Georgia, 'Times New Roman', serif", letterSpacing: "0.01em" }}
+        >
+          <OpenBookLogoIcon />
+          <span style={{ color: "#F3ECDA" }}>Taleglen</span>
         </Link>
 
         <nav className="travelhub-public-nav" aria-label="Public navigation">
@@ -141,7 +166,7 @@ export function SiteNavigation() {
             <div className="travelhub-mobile-menu-top">
               <div>
                 <div className="travelhub-mobile-menu-label">Menu</div>
-                <div className="travelhub-mobile-menu-title">TravelHub</div>
+                <div className="travelhub-mobile-menu-title">Taleglen</div>
               </div>
 
               <button

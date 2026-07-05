@@ -6,7 +6,7 @@ import { supabaseAdmin } from "@/lib/supabase-admin";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "管理画面 | TravelHub Admin",
+  title: "管理画面 | Taleglen Admin",
   robots: {
     index: false,
     follow: false,
@@ -129,7 +129,7 @@ const adminItems = [
   {
     title: "公開サイトへ",
     label: "サイト",
-    description: "公開中の TravelHub サイトへ戻ります。",
+    description: "公開中の Taleglen サイトへ戻ります。",
     href: "/",
   },
 ];
@@ -177,7 +177,7 @@ export default async function AdminPage() {
       <section style={shellStyle}>
         <AdminNavigation />
 
-        <div style={eyebrowStyle}>TravelHub 管理画面</div>
+        <div style={eyebrowStyle}>Taleglen 管理画面</div>
 
         <h1 style={titleStyle}>管理メニュー</h1>
 

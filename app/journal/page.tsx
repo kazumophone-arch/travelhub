@@ -8,9 +8,9 @@ import {
 import styles from "./JournalPage.module.css";
 
 export const metadata: Metadata = {
-  title: "Journal | TravelHub",
+  title: "Journal | Taleglen",
   description:
-    "TravelHub journal stories, seasonal ideas, planning notes, and travel essentials.",
+    "Taleglen journal stories, seasonal ideas, planning notes, and travel essentials.",
 };
 
 const featuredArticle =
@@ -29,7 +29,7 @@ export default function JournalPage() {
     <main className={styles.page}>
       <section className={styles.hero}>
         <div className={styles.heroCopy}>
-          <div className={styles.eyebrow}>TravelHub Journal</div>
+          <div className={styles.eyebrow}>Taleglen Journal</div>
           <h1>Journal</h1>
           <p className={styles.heroLead}>
             Stories, guides, and essentials for planning better trips.

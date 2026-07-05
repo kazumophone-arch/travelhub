@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getOptionalHttpUrl } from "@/lib/url-fields";
 
-export const SITE_NAME = "TravelHub";
+export const SITE_NAME = "Taleglen";
 export const DEFAULT_SITE_DESCRIPTION =
   "An editorial travel guide for discovering cities, seasonal escapes, and places worth planning around.";
 

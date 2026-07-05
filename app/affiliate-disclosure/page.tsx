@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 import styles from "./AffiliateDisclosurePage.module.css";
 
 export const metadata: Metadata = {
-  title: "Affiliate Disclosure | TravelHub",
+  title: "Affiliate Disclosure | Taleglen",
   description:
-    "TravelHub affiliate disclosure explaining how some links may support the site at no additional cost to readers.",
+    "Taleglen affiliate disclosure explaining how some links may support the site at no additional cost to readers.",
 };
 
 export default function AffiliateDisclosurePage() {
@@ -14,11 +14,11 @@ export default function AffiliateDisclosurePage() {
       <section className={styles.hero}>
         <div className={styles.heroCopy}>
           <div className={styles.eyebrow}>Affiliate Disclosure</div>
-          <h1>Some links may support TravelHub.</h1>
+          <h1>Some links may support Taleglen.</h1>
           <p>
-            TravelHub may include affiliate links to hotels, tours, travel
+            Taleglen may include affiliate links to hotels, tours, travel
             services, and planning tools. If a reader books or purchases through
-            those links, TravelHub may earn a commission at no additional cost
+            those links, Taleglen may earn a commission at no additional cost
             to the reader.
           </p>
           <span>Last updated: June 18, 2026</span>
@@ -38,9 +38,9 @@ export default function AffiliateDisclosurePage() {
           <div className={styles.eyebrow}>What this means</div>
           <h2>Affiliate links do not change the price you pay.</h2>
           <p>
-            When TravelHub links to a booking platform, tour provider, travel
+            When Taleglen links to a booking platform, tour provider, travel
             product, or other third-party service, that link may be an affiliate
-            link. This means TravelHub may receive a commission if a qualifying
+            link. This means Taleglen may receive a commission if a qualifying
             booking or purchase is made through that link.
           </p>
           <p>
@@ -53,7 +53,7 @@ export default function AffiliateDisclosurePage() {
           <div className={styles.eyebrow}>Editorial approach</div>
           <h2>Recommendations should remain useful first.</h2>
           <p>
-            TravelHub is designed as an editorial travel discovery site. Links
+            Taleglen is designed as an editorial travel discovery site. Links
             are placed to help readers move from inspiration to useful next
             steps: choosing a city, finding a place to stay, exploring tours, or
             preparing essentials before a trip.
@@ -67,9 +67,9 @@ export default function AffiliateDisclosurePage() {
 
         <article>
           <div className={styles.eyebrow}>Third-party services</div>
-          <h2>Bookings happen outside TravelHub.</h2>
+          <h2>Bookings happen outside Taleglen.</h2>
           <p>
-            TravelHub may send readers to third-party websites. Prices,
+            Taleglen may send readers to third-party websites. Prices,
             availability, cancellation rules, fees, taxes, safety information,
             and booking conditions are controlled by those third-party services.
           </p>
@@ -83,7 +83,7 @@ export default function AffiliateDisclosurePage() {
           <div className={styles.eyebrow}>Transparency</div>
           <h2>Affiliate notices may appear across the site.</h2>
           <p>
-            TravelHub may include short affiliate notices near buttons, booking
+            Taleglen may include short affiliate notices near buttons, booking
             links, hotel links, tour links, or other commercial recommendations.
             This page provides the broader explanation.
           </p>
@@ -91,7 +91,7 @@ export default function AffiliateDisclosurePage() {
             For corrections, broken links, or questions about this disclosure,
             use the contact page.
           </p>
-          <Link href="/contact">Contact TravelHub →</Link>
+          <Link href="/contact">Contact Taleglen →</Link>
         </article>
       </section>
     </main>

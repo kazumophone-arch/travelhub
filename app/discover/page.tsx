@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import styles from "./DiscoverPage.module.css";
 
 export const metadata: Metadata = {
-  title: "Discover | TravelHub",
+  title: "Discover | Taleglen",
   description:
     "Discover travel ideas by feeling, scene, pace, season, destination, and places worth building a trip around.",
 };

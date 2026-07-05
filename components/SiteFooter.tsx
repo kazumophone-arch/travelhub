@@ -36,7 +36,7 @@ export function SiteFooter() {
         <div className={styles.top} style={topStyle}>
           <div style={brandBlockStyle}>
             <Link href="/" style={brandStyle}>
-              <span>TravelHub</span>
+              <span>Taleglen</span>
             </Link>
 
             <p style={textStyle}>
@@ -64,11 +64,11 @@ export function SiteFooter() {
 
         <div className={styles.bottom} style={bottomStyle}>
           <p style={noticeStyle}>
-            Some links may be affiliate links. TravelHub may earn a commission
+            Some links may be affiliate links. Taleglen may earn a commission
             if you book through them, at no additional cost to you.
           </p>
 
-          <p style={copyrightStyle}>© 2026 TravelHub</p>
+          <p style={copyrightStyle}>© 2026 Taleglen</p>
         </div>
       </div>
     </footer>

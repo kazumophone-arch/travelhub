@@ -31,7 +31,7 @@ export const homeCopyVariants: HomeCopyVariant[] = [
   {
     heroTitle: "Start with the place, not the booking.",
     heroSubtitle:
-      "Use TravelHub to find the destination first, then compare stays or tours only when the route feels clearer.",
+      "Use Taleglen to find the destination first, then compare stays or tours only when the route feels clearer.",
     previewTitle: "Travel ideas before travel pressure",
     previewSub: "Inspiration · Context · Timing · Routes",
     discoverTitle: "Find a trip direction",
@@ -63,7 +63,7 @@ export const homeCopyVariants: HomeCopyVariant[] = [
   {
     heroTitle: "Find the city that fits the trip you want.",
     heroSubtitle:
-      "TravelHub helps you browse destinations by mood, timing, place type, and route logic before comparing links.",
+      "Taleglen helps you browse destinations by mood, timing, place type, and route logic before comparing links.",
     previewTitle: "A guide for early travel decisions",
     previewSub: "Feelings · Places · Seasons · Guides",
     discoverTitle: "Start with the trip feeling",
@@ -127,7 +127,7 @@ export const homeCopyVariants: HomeCopyVariant[] = [
   {
     heroTitle: "Browse travel ideas without rushing the decision.",
     heroSubtitle:
-      "TravelHub is built for the early stage: finding places, understanding fit, and comparing only when useful.",
+      "Taleglen is built for the early stage: finding places, understanding fit, and comparing only when useful.",
     previewTitle: "Slow down the first travel decision",
     previewSub: "Explore · Understand · Compare",
     discoverTitle: "Find by travel mood",

@@ -1,8 +1,8 @@
-# TravelHub Project Context
+# Taleglen Project Context
 
 ## Project Purpose
 
-TravelHub is a lightweight travel affiliate hub. Its near-term purpose is to send users from short-form social videos to focused city pages, show useful travel links, and eventually guide visitors toward hotel and tour affiliate links.
+Taleglen is a lightweight travel affiliate hub. Its near-term purpose is to send users from short-form social videos to focused city pages, show useful travel links, and eventually guide visitors toward hotel and tour affiliate links.
 
 This is not meant to be a full travel-planning app yet. Keep the product simple, fast, and easy to scale by adding more cities and spots.
 
@@ -131,7 +131,7 @@ Important environment variables inferred from the code:
 
 ## Development Rules for Future Codex Sessions
 
-- Keep TravelHub lightweight and affiliate-oriented. Do not redesign it into a full travel app without explicit confirmation.
+- Keep Taleglen lightweight and affiliate-oriented. Do not redesign it into a full travel app without explicit confirmation.
 - Before changing Next.js code, read the relevant Next.js 16 docs in `node_modules/next/dist/docs/`; this project warns that the version differs from older Next.js assumptions.
 - Preserve the current product direction: short-form video traffic, city hubs, useful links, affiliate CTAs.
 - Make small, scoped changes that follow the existing App Router and Supabase patterns.

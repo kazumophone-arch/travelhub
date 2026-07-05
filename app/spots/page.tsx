@@ -12,9 +12,9 @@ import styles from "./PlacesPage.module.css";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = createPublicMetadata({
-  title: "Places | TravelHub",
+  title: "Places | Taleglen",
   description:
-    "TravelHub places: editorial spot guides and specific places worth building a trip around.",
+    "Taleglen places: editorial spot guides and specific places worth building a trip around.",
   path: "/spots",
 });
 
@@ -154,7 +154,7 @@ export default async function SpotsPage() {
               <div className={styles.placeMeta}>
                 {featuredCity
                   ? `${featuredCity.city}, ${featuredCity.country}`
-                  : "TravelHub place guide"}
+                  : "Taleglen place guide"}
               </div>
               <div className={styles.starLine}>✦</div>
               <p>{getSpotDescription(featured)}</p>
@@ -192,7 +192,7 @@ export default async function SpotsPage() {
 
                 <div className={styles.placeBody}>
                   <div className={styles.country}>
-                    {city ? `${city.city}, ${city.country}` : "TravelHub"}
+                    {city ? `${city.city}, ${city.country}` : "Taleglen"}
                   </div>
                   <h3>{getSpotName(spot)}</h3>
                   <p>{getSpotDescription(spot)}</p>

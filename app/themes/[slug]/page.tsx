@@ -50,13 +50,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!theme) {
     return {
-      title: "Theme not found | TravelHub",
-      description: "This TravelHub theme page could not be found.",
+      title: "Theme not found | Taleglen",
+      description: "This Taleglen theme page could not be found.",
     };
   }
 
   return {
-    title: `${theme.title} Travel Ideas | TravelHub`,
+    title: `${theme.title} Travel Ideas | Taleglen`,
     description: theme.description,
   };
 }

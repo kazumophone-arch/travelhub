@@ -1,8 +1,8 @@
-# TravelHub Data Entry Guide
+# Taleglen Data Entry Guide
 
 ## Purpose
 
-TravelHub is a lightweight travel affiliate hub. Data entry should keep the site easy to scale while supporting useful city pages, precise spot pages, public search/filtering, SEO metadata, and hotel/tour affiliate CTAs.
+Taleglen is a lightweight travel affiliate hub. Data entry should keep the site easy to scale while supporting useful city pages, precise spot pages, public search/filtering, SEO metadata, and hotel/tour affiliate CTAs.
 
 The goal is consistency, not exhaustive travel coverage. Add enough clean information for a visitor arriving from a short-form travel video to understand the destination and choose the next useful link.
 

@@ -168,7 +168,7 @@ export function AffiliateButtonGroup({
 
         {hideDisclosure ? null : (
           <p style={disclosureStyle}>
-            External affiliate links. TravelHub may earn a commission at no extra cost to you.
+            External affiliate links. Taleglen may earn a commission at no extra cost to you.
           </p>
         )}
       </div>
@@ -212,7 +212,7 @@ export function AffiliateButtonGroup({
 
       {hideDisclosure ? null : (
         <p style={disclosureStyle}>
-          External affiliate links. TravelHub may earn a commission at no extra cost to you.
+          External affiliate links. Taleglen may earn a commission at no extra cost to you.
         </p>
       )}
     </div>

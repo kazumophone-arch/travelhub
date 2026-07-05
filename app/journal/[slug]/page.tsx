@@ -20,13 +20,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!article) {
     return {
-      title: "Article not found | TravelHub",
-      description: "This TravelHub journal article could not be found.",
+      title: "Article not found | Taleglen",
+      description: "This Taleglen journal article could not be found.",
     };
   }
 
   return {
-    title: `${article.title} | TravelHub`,
+    title: `${article.title} | Taleglen`,
     description: article.description,
   };
 }
@@ -150,7 +150,7 @@ export default async function JournalArticlePage({ params }: PageProps) {
         <aside className={styles.sidebar}>
           <div className={styles.sidebarBox}>
             <div className={styles.kicker}>Next step</div>
-            <h3>Keep planning inside TravelHub.</h3>
+            <h3>Keep planning inside Taleglen.</h3>
             <Link href="/themes">Explore themes →</Link>
             <Link href="/cities">Browse destinations →</Link>
           </div>

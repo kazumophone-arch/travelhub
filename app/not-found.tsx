@@ -17,7 +17,7 @@ export default function NotFound() {
 
           <div style={buttonGroupStyle}>
             <Link href="/" style={primaryButtonStyle}>
-              Back to TravelHub
+              Back to Taleglen
             </Link>
 
             <Link href="/about" style={secondaryButtonStyle}>

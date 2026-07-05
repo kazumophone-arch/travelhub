@@ -4,7 +4,7 @@ import { AdminCountryForm } from "@/components/AdminCountryForm";
 import { AdminNavigation } from "@/components/AdminNavigation";
 
 export const metadata = {
-  title: "新しい国 | TravelHub Admin",
+  title: "新しい国 | Taleglen Admin",
   robots: {
     index: false,
     follow: false,

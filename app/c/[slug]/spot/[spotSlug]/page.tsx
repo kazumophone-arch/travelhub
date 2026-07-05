@@ -23,12 +23,12 @@ export async function generateMetadata({
 
   if (!city || !spot) {
     return {
-      title: "Spot not found | TravelHub",
-      description: "This TravelHub spot page could not be found.",
+      title: "Spot not found | Taleglen",
+      description: "This Taleglen spot page could not be found.",
     };
   }
 
-  const title = `${spot.name} in ${city.city}, ${city.country} | TravelHub`;
+  const title = `${spot.name} in ${city.city}, ${city.country} | Taleglen`;
   const description =
     spot.description ||
     spot.summary ||

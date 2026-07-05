@@ -5,9 +5,9 @@ import { getText } from "@/lib/content-fallback";
 import styles from "./DestinationsPage.module.css";
 
 export const metadata: Metadata = {
-  title: "Destinations | TravelHub",
+  title: "Destinations | Taleglen",
   description:
-    "TravelHub destinations: editorial city guides and places worth planning around.",
+    "Taleglen destinations: editorial city guides and places worth planning around.",
 };
 
 type RawCity = Record<string, unknown>;
@@ -26,7 +26,7 @@ function getCityName(city: RawCity) {
 }
 
 function getCountry(city: RawCity) {
-  return getText(city, ["country", "countryName", "region"]) || "TravelHub";
+  return getText(city, ["country", "countryName", "region"]) || "Taleglen";
 }
 
 function getDescription(city: RawCity) {

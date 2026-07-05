@@ -4,7 +4,7 @@ import { AdminNavigation } from "@/components/AdminNavigation";
 import { AdminEditCityForm } from "@/components/AdminEditCityForm";
 
 export const metadata = {
-  title: "都市編集 | TravelHub Admin",
+  title: "都市編集 | Taleglen Admin",
   robots: {
     index: false,
     follow: false,

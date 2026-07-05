@@ -5,7 +5,7 @@ import { isAdminPasswordConfigured } from "@/lib/admin-auth";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "管理ログイン | TravelHub Admin",
+  title: "管理ログイン | Taleglen Admin",
   robots: {
     index: false,
     follow: false,
@@ -29,7 +29,7 @@ export default async function AdminLoginPage({ searchParams }: Props) {
   return (
     <main style={pageStyle}>
       <section style={shellStyle}>
-        <div style={eyebrowStyle}>TravelHub 管理画面</div>
+        <div style={eyebrowStyle}>Taleglen 管理画面</div>
         <h1 style={titleStyle}>ログイン</h1>
         <p style={textStyle}>
           管理画面を表示するには、管理パスワードを入力してください。

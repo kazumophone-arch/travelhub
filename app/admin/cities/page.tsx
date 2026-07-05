@@ -4,7 +4,7 @@ import { AdminNavigation } from "@/components/AdminNavigation";
 import { AdminSupabaseCityList } from "@/components/AdminSupabaseCityList";
 
 export const metadata = {
-  title: "都市管理 | TravelHub Admin",
+  title: "都市管理 | Taleglen Admin",
   robots: {
     index: false,
     follow: false,

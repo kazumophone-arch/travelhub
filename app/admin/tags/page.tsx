@@ -4,7 +4,7 @@ import { AdminNavigation } from "@/components/AdminNavigation";
 import { AdminTagManager } from "@/components/AdminTagManager";
 
 export const metadata = {
-  title: "タグ管理 | TravelHub Admin",
+  title: "タグ管理 | Taleglen Admin",
   robots: {
     index: false,
     follow: false,

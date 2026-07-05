@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 import styles from "./ContactPage.module.css";
 
 export const metadata: Metadata = {
-  title: "Contact | TravelHub",
+  title: "Contact | Taleglen",
   description:
-    "Contact TravelHub for partnerships, corrections, destination suggestions, and general inquiries.",
+    "Contact Taleglen for partnerships, corrections, destination suggestions, and general inquiries.",
 };
 
 const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim();
@@ -21,7 +21,7 @@ const contactTypes = [
   },
   {
     title: "Suggestions",
-    text: "For city, spot, seasonal idea, or guide suggestions that may improve TravelHub.",
+    text: "For city, spot, seasonal idea, or guide suggestions that may improve Taleglen.",
   },
 ];
 
@@ -33,7 +33,7 @@ export default function ContactPage() {
           <div className={styles.eyebrow}>Contact</div>
           <h1>For notes, corrections, and thoughtful partnerships.</h1>
           <p>
-            TravelHub is built as a calm travel discovery site. Use this page
+            Taleglen is built as a calm travel discovery site. Use this page
             for partnership inquiries, corrections, destination suggestions, or
             other messages related to the site.
           </p>

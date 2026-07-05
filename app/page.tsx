@@ -4,7 +4,7 @@ import { getPublishedSupabaseDirectoryCities } from "@/data/supabase-public-citi
 import { sortByRank } from "@/data/visibility";
 import { createPublicMetadata } from "@/lib/site-metadata";
 
-const title = "TravelHub | Cinematic City Guides and Travel Spots";
+const title = "Taleglen | Cinematic City Guides and Travel Spots";
 const description =
   "Explore photo-led city guides and memorable travel spots for your next stay, wander, and return-worthy trip.";
 

@@ -264,10 +264,10 @@ async function logOutboundClick(input: ClickLogInput) {
     });
 
     if (error) {
-      console.warn("[TravelHub click log failed]", error.message);
+      console.warn("[Taleglen click log failed]", error.message);
     }
   } catch (error) {
-    console.warn("[TravelHub click log failed]", error);
+    console.warn("[Taleglen click log failed]", error);
   }
 }
 
@@ -379,7 +379,7 @@ async function handleOutboundRedirect(request: Request, context: OutboundRouteCo
   };
 
   if (shouldLogClick) {
-    console.info("[TravelHub click]", JSON.stringify(clickEvent));
+    console.info("[Taleglen click]", JSON.stringify(clickEvent));
 
     await logOutboundClick({
       type,

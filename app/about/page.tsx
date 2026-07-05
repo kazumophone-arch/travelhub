@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 import styles from "./AboutPage.module.css";
 
 export const metadata: Metadata = {
-  title: "About | TravelHub",
+  title: "About | Taleglen",
   description:
-    "About TravelHub, a calmer travel discovery site for choosing destinations, city guides, spot guides, and trip essentials.",
+    "About Taleglen, a calmer travel discovery site for choosing destinations, city guides, spot guides, and trip essentials.",
 };
 
 const principles = [
@@ -15,7 +15,7 @@ const principles = [
   },
   {
     title: "Keep the path calm",
-    text: "TravelHub organizes themes, cities, spots, and essentials without turning planning into a noisy booking flow.",
+    text: "Taleglen organizes themes, cities, spots, and essentials without turning planning into a noisy booking flow.",
   },
   {
     title: "Make decisions easier",
@@ -51,10 +51,10 @@ export default function AboutPage() {
     <main className={styles.page}>
       <section className={styles.hero}>
         <div className={styles.heroCopy}>
-          <div className={styles.eyebrow}>About TravelHub</div>
+          <div className={styles.eyebrow}>About Taleglen</div>
           <h1>A calmer way to discover where a trip can begin.</h1>
           <p>
-            TravelHub is built as an editorial travel discovery site: a place to
+            Taleglen is built as an editorial travel discovery site: a place to
             move from inspiration to city guides, spot guides, and essential
             planning notes without turning the experience into a search engine.
           </p>
@@ -76,7 +76,7 @@ export default function AboutPage() {
       <section className={styles.intro}>
         <div>
           <div className={styles.eyebrow}>The role</div>
-          <h2>TravelHub is not trying to show everything.</h2>
+          <h2>Taleglen is not trying to show everything.</h2>
         </div>
         <p>
           The goal is to help travelers choose better starting points: a season,
@@ -96,7 +96,7 @@ export default function AboutPage() {
 
       <section className={styles.structure}>
         <div className={styles.sectionHeader}>
-          <div className={styles.eyebrow}>How TravelHub is organized</div>
+          <div className={styles.eyebrow}>How Taleglen is organized</div>
           <h2>Each section has a different job.</h2>
         </div>
 
@@ -118,9 +118,9 @@ export default function AboutPage() {
         </div>
         <div>
           <p>
-            TravelHub may include affiliate links to hotels, tours, travel
+            Taleglen may include affiliate links to hotels, tours, travel
             services, or other planning tools. If a reader books through those
-            links, TravelHub may earn a commission at no additional cost to the
+            links, Taleglen may earn a commission at no additional cost to the
             reader.
           </p>
           <Link href="/affiliate-disclosure">Read affiliate disclosure →</Link>

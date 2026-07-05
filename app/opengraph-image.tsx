@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "TravelHub - Find travel links by city";
+export const alt = "Taleglen - Find travel links by city";
 export const size = {
   width: 1200,
   height: 630,
@@ -193,7 +193,7 @@ export default function Image() {
               opacity: 0.72,
             }}
           >
-            TravelHub
+            Taleglen
           </div>
 
           <div

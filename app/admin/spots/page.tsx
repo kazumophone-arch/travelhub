@@ -4,7 +4,7 @@ import { AdminNavigation } from "@/components/AdminNavigation";
 import type { CSSProperties } from "react";
 
 export const metadata = {
-  title: "スポット管理 | TravelHub Admin",
+  title: "スポット管理 | Taleglen Admin",
   robots: {
     index: false,
     follow: false,

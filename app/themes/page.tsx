@@ -5,9 +5,9 @@ import { themes, type Theme } from "@/data/themes";
 import styles from "./ThemesPage.module.css";
 
 export const metadata = createPublicMetadata({
-  title: "Browse Themes | TravelHub",
+  title: "Browse Themes | Taleglen",
   description:
-    "Choose your next trip by season, feeling, and travel style with TravelHub theme guides.",
+    "Choose your next trip by season, feeling, and travel style with Taleglen theme guides.",
   path: "/themes",
 });
 

@@ -6,7 +6,7 @@ import { supabaseAdmin } from "@/lib/supabase-admin";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "クリック分析 | TravelHub Admin",
+  title: "クリック分析 | Taleglen Admin",
   robots: {
     index: false,
     follow: false,
@@ -152,7 +152,7 @@ export default async function AdminAnalyticsPage({ searchParams }: AdminAnalytic
         <h1 style={titleStyle}>外部リンククリック</h1>
 
         <p style={textStyle}>
-          TravelHub の外部リンク経由で記録されたホテルとツアーのクリックを選択中の期間で確認します。
+          Taleglen の外部リンク経由で記録されたホテルとツアーのクリックを選択中の期間で確認します。
         </p>
 
         <RangeFilter selectedRange={selectedRange.key} />

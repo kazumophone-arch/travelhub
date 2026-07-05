@@ -4,7 +4,7 @@ import { AdminNavigation } from "@/components/AdminNavigation";
 import { AdminSupabaseEditSpotForm } from "@/components/AdminSupabaseEditSpotForm";
 
 export const metadata = {
-  title: "スポット編集 | TravelHub Admin",
+  title: "スポット編集 | Taleglen Admin",
   robots: {
     index: false,
     follow: false,

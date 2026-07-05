@@ -182,7 +182,7 @@ export function CityDetailView({
           </div>
 
           <p className={styles.heroCtaDisclosure}>
-            External affiliate links. TravelHub may earn a commission at no extra cost to you.
+            External affiliate links. Taleglen may earn a commission at no extra cost to you.
           </p>
 
           {slots?.ctaEditor}
