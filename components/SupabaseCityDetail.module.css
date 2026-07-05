@@ -384,3 +384,135 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+.photoCredit {
+  margin: -10px 0 0;
+  color: #6B87A8;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.photoCreditLink {
+  color: inherit;
+  text-decoration: underline;
+}
+
+.relatedJournalSection,
+.nearbyCitiesSection {
+  margin-top: 64px;
+  padding-top: 44px;
+  border-top: 1px solid #D8E2F0;
+}
+
+.relatedJournalGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.relatedJournalCard {
+  display: grid;
+  align-content: start;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #D8E2F0;
+  background: #FFFFFF;
+  color: #0D2B52;
+  text-decoration: none;
+}
+
+.relatedJournalImage {
+  aspect-ratio: 16 / 10;
+  background-size: cover;
+  background-position: center;
+  background-color: #D8E2F0;
+}
+
+.relatedJournalBody {
+  display: grid;
+  gap: 8px;
+  padding: 16px 18px 20px;
+}
+
+.relatedJournalCategory {
+  color: #BF9B30;
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.relatedJournalBody h3 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 19px;
+  line-height: 1.25;
+  font-weight: 520;
+  letter-spacing: -0.02em;
+}
+
+.relatedJournalBody p {
+  margin: 0;
+  color: #6B87A8;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.nearbyCitiesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.nearbyCityCard {
+  display: grid;
+  align-content: start;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #D8E2F0;
+  background: #FFFFFF;
+  color: #0D2B52;
+  text-decoration: none;
+}
+
+.nearbyCityImage {
+  aspect-ratio: 16 / 10;
+  background-size: cover;
+  background-position: center;
+  background-color: #D8E2F0;
+}
+
+.nearbyCityBody {
+  display: grid;
+  gap: 8px;
+  padding: 16px 18px 20px;
+}
+
+.nearbyCityBody h3 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 21px;
+  line-height: 1.2;
+  font-weight: 520;
+  letter-spacing: -0.02em;
+}
+
+.nearbyCityBody p {
+  margin: 0;
+  color: #6B87A8;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.nearbyCityAction {
+  margin-top: 4px;
+  color: #BF9B30;
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}

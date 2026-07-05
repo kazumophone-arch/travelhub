@@ -122,6 +122,50 @@ function toDirectoryCity(
   };
 }
 
+export type NearbySupabaseCity = {
+  id: string;
+  slug: string;
+  city: string;
+  country: string;
+  country_id?: string | null;
+  summary: string | null;
+  image_url: string | null;
+  image_position?: string | null;
+  sort_rank?: number | null;
+};
+
+// Other published cities in the same country, for the "more places in
+// {country}" section. Matches by country_id when set, otherwise by the
+// country text field. Returns [] on any error so the section simply hides.
+export async function getPublishedNearbySupabaseCities(
+  city: SupabasePublicCity,
+  limit = 4
+): Promise<NearbySupabaseCity[]> {
+  let query = supabase
+    .from("cities")
+    .select("id, slug, city, country, country_id, summary, image_url, image_position, sort_rank")
+    .eq("is_published", true)
+    .neq("id", city.id)
+    .order("sort_rank", { ascending: true, nullsFirst: false })
+    .limit(limit);
+
+  if (city.country_id) {
+    query = query.eq("country_id", city.country_id);
+  } else if (city.country?.trim()) {
+    query = query.ilike("country", city.country.trim());
+  } else {
+    return [];
+  }
+
+  const { data, error } = await query;
+
+  if (error || !data) {
+    return [];
+  }
+
+  return data as NearbySupabaseCity[];
+}
+
 export async function getPublishedSupabaseDirectoryCities(): Promise<City[]> {
   const [citiesResult, spotsResult] = await Promise.all([
     supabase

@@ -6,6 +6,7 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { CityClimate } from "@/components/CityClimate";
 import { TierCtaLink } from "@/components/TierCtaLink";
 import { normalizeClimate } from "@/lib/climate";
+import { journalArticles } from "@/data/journal";
 import type { SupabasePublicCity } from "@/data/supabase-public-cities";
 import { AIRALO_URL } from "@/lib/quick-affiliate-links";
 import type { TrackingParams } from "@/lib/tracking-query";
@@ -25,6 +26,16 @@ export type CityDetailSpot = {
   image_position?: string | null;
 };
 
+export type CityDetailNearbyCity = {
+  id: string;
+  slug: string;
+  city: string;
+  country: string;
+  summary?: string | null;
+  image_url?: string | null;
+  image_position?: string | null;
+};
+
 export type CityDetailSlots = {
   title?: ReactNode;
   country?: ReactNode;
@@ -39,18 +50,25 @@ type Props = {
   spots: CityDetailSpot[];
   tracking?: TrackingParams;
   slots?: CityDetailSlots;
+  nearbyCities?: CityDetailNearbyCity[];
 };
 
 const FALLBACK_TILE_GRADIENT =
   "linear-gradient(135deg, #26352f 0%, #b68b5e 52%, #f3e3cb 100%)";
 
-export function CityDetailView({ city, spots, tracking, slots }: Props) {
+export function CityDetailView({ city, spots, tracking, slots, nearbyCities }: Props) {
   const spotTrackingQuery = getTrackingQuery(tracking);
   const HIGHLIGHT_COUNT = 4;
   const highlightSpots = spots.length > HIGHLIGHT_COUNT ? spots.slice(0, HIGHLIGHT_COUNT) : [];
   const remainingSpots = highlightSpots.length > 0 ? spots.slice(HIGHLIGHT_COUNT) : spots;
 
   const cityThumbUrl = getOptionalHttpUrl(city.image_url);
+  const heroImageCredit = (city.image_credit ?? "").trim();
+  const heroImageSourceUrl = getOptionalHttpUrl(city.image_source_url);
+  const relatedJournal = journalArticles
+    .filter((article) => article.relatedCitySlug === city.slug)
+    .slice(0, 3);
+  const otherCities = nearbyCities ?? [];
 
   return (
     <main className={styles.page}>
@@ -83,6 +101,25 @@ export function CityDetailView({ city, spots, tracking, slots }: Props) {
             <p className={styles.heroCountry}>{slots?.country ?? city.country}</p>
           </div>
         </div>
+
+        {heroImageCredit ? (
+          <p className={styles.photoCredit}>
+            Photo: {heroImageCredit}
+            {heroImageSourceUrl ? (
+              <>
+                {" · "}
+                <a
+                  href={heroImageSourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.photoCreditLink}
+                >
+                  Source
+                </a>
+              </>
+            ) : null}
+          </p>
+        ) : null}
 
         <div className={styles.heroCtaStack}>
           <div className={styles.heroAffiliateGroup}>
@@ -239,6 +276,81 @@ export function CityDetailView({ city, spots, tracking, slots }: Props) {
             ))}
           </div>
         )}
+
+        {relatedJournal.length > 0 ? (
+          <section
+            className={styles.relatedJournalSection}
+            aria-labelledby="related-journal-title"
+          >
+            <div className={styles.label}>From the journal</div>
+            <h2 id="related-journal-title" className={styles.sectionTitle}>
+              Notes that mention {city.city}
+            </h2>
+
+            <div className={styles.relatedJournalGrid}>
+              {relatedJournal.map((article) => (
+                <Link
+                  key={article.slug}
+                  href={`/journal/${article.slug}`}
+                  className={styles.relatedJournalCard}
+                >
+                  <div
+                    className={styles.relatedJournalImage}
+                    style={{ backgroundImage: `url(${JSON.stringify(article.image)})` }}
+                  />
+                  <div className={styles.relatedJournalBody}>
+                    <div className={styles.relatedJournalCategory}>{article.category}</div>
+                    <h3>{article.title}</h3>
+                    <p>{article.description}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
+        {otherCities.length > 0 ? (
+          <section
+            className={styles.nearbyCitiesSection}
+            aria-labelledby="nearby-cities-title"
+          >
+            <div className={styles.label}>Keep traveling</div>
+            <h2 id="nearby-cities-title" className={styles.sectionTitle}>
+              More places in {city.country}
+            </h2>
+
+            <div className={styles.nearbyCitiesGrid}>
+              {otherCities.map((nearbyCity) => (
+                <Link
+                  key={nearbyCity.id}
+                  href={`/c/${nearbyCity.slug}`}
+                  className={styles.nearbyCityCard}
+                >
+                  <div
+                    className={styles.nearbyCityImage}
+                    style={{
+                      backgroundImage: getImageBackground(
+                        nearbyCity.image_url ?? "",
+                        "linear-gradient(180deg, rgba(13, 43, 82, 0) 0%, rgba(13, 43, 82, 0.22) 100%)",
+                        FALLBACK_TILE_GRADIENT
+                      ),
+                      backgroundPosition: getCssImagePosition(nearbyCity.image_position),
+                    }}
+                  />
+                  <div className={styles.nearbyCityBody}>
+                    <h3>{nearbyCity.city}</h3>
+                    {(nearbyCity.summary ?? "").trim() ? (
+                      <p>{(nearbyCity.summary ?? "").trim()}</p>
+                    ) : null}
+                    <span className={styles.nearbyCityAction}>
+                      Open the {nearbyCity.city} guide →
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        ) : null}
       </section>
     </main>
   );

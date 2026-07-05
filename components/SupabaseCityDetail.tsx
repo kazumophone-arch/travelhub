@@ -1,5 +1,6 @@
 import { CityDetailView } from "@/components/CityDetailView";
 import type { SupabasePublicCity } from "@/data/supabase-public-cities";
+import { getPublishedNearbySupabaseCities } from "@/data/supabase-public-cities";
 import { getPublishedSupabaseSpotsForCity } from "@/data/supabase-public-spots";
 import type { TrackingParams } from "@/lib/tracking-query";
 
@@ -9,7 +10,17 @@ type Props = {
 };
 
 export async function SupabaseCityDetail({ city, tracking }: Props) {
-  const spots = await getPublishedSupabaseSpotsForCity(city.slug);
+  const [spots, nearbyCities] = await Promise.all([
+    getPublishedSupabaseSpotsForCity(city.slug),
+    getPublishedNearbySupabaseCities(city),
+  ]);
 
-  return <CityDetailView city={city} spots={spots} tracking={tracking} />;
+  return (
+    <CityDetailView
+      city={city}
+      spots={spots}
+      tracking={tracking}
+      nearbyCities={nearbyCities}
+    />
+  );
 }

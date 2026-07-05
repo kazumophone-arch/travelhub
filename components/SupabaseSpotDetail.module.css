@@ -459,3 +459,16 @@
   }
 }
 
+.photoCredit {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: #6B87A8;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.photoCreditLink {
+  color: inherit;
+  text-decoration: underline;
+}
+

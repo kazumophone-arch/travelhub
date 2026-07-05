@@ -20,6 +20,8 @@ export type SpotDetailSpot = {
   summary: string;
   description: string;
   image_url: string;
+  image_credit?: string | null;
+  image_source_url?: string | null;
   image_position?: string | null;
   imagePosition?: string;
   affiliate_hotel_url?: string | null;
@@ -68,6 +70,8 @@ export function SpotDetailView({ city, spot, nearbySpots, tracking, slots }: Pro
   const trackingSrc = tracking?.src ?? "spot-detail";
   const trackingV = tracking?.v ?? `spot_${city.slug}_${spot.slug}`;
   const countryName = city.countryName ?? city.country;
+  const spotImageCredit = (spot.image_credit ?? "").trim();
+  const spotImageSourceUrl = getOptionalHttpUrl(spot.image_source_url ?? "");
 
   const heroDescription = getConciseText(
     spot.summary || spot.description,
@@ -177,6 +181,25 @@ export function SpotDetailView({ city, spot, nearbySpots, tracking, slots }: Pro
             ))}
           </div>
         </div>
+
+        {spotImageCredit ? (
+          <p className={styles.photoCredit}>
+            Photo: {spotImageCredit}
+            {spotImageSourceUrl ? (
+              <>
+                {" · "}
+                <a
+                  href={spotImageSourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.photoCreditLink}
+                >
+                  Source
+                </a>
+              </>
+            ) : null}
+          </p>
+        ) : null}
       </section>
 
       <section className={styles.guideShell}>
