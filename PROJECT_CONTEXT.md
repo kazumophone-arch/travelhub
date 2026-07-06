@@ -16,7 +16,7 @@ This is not meant to be a full travel-planning app yet. Keep the product simple,
 - Tailwind CSS v4
 - ESLint flat config
 - GitHub repository: `kazumophone-arch/travelhub`
-- Production URL: `https://travelhub-murex.vercel.app/`
+- Production URL: `https://taleglen.com/` (custom domain; the old `https://travelhub-murex.vercel.app/` deployment URL still serves but canonical URLs point to taleglen.com)
 
 Important environment variables inferred from the code:
 

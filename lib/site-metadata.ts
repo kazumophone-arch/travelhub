@@ -5,7 +5,7 @@ export const SITE_NAME = "Taleglen";
 export const DEFAULT_SITE_DESCRIPTION =
   "An editorial travel guide for discovering cities, seasonal escapes, and places worth planning around.";
 
-const FALLBACK_SITE_URL = "https://travelhub-murex.vercel.app";
+const FALLBACK_SITE_URL = "https://taleglen.com";
 
 type PublicMetadataInput = {
   title: string;
