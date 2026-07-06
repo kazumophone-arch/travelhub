@@ -22,7 +22,7 @@ const sections = [
     title: "Cookies and analytics may help improve the site.",
     body: [
       "Taleglen may use cookies, analytics tools, server logs, or similar technologies to understand how pages are used, which destinations are viewed, and which links are clicked.",
-      "These tools may help improve page quality, measure affiliate link performance, detect broken links, and understand general site usage. Where required, cookie notices or consent controls should be added before launch.",
+      "These tools may help improve page quality, measure affiliate link performance, detect broken links, and understand general site usage. Where required by applicable law, cookie notices or consent controls are provided.",
     ],
   },
   {
@@ -77,8 +77,7 @@ export default function PrivacyPage() {
           <p>
             This page explains how Taleglen may handle contact information,
             analytics, cookies, affiliate link activity, and third-party
-            services. It is written for transparency and should be reviewed
-            before public launch.
+            services. It is written for transparency.
           </p>
           <span>Last updated: June 18, 2026</span>
         </div>
