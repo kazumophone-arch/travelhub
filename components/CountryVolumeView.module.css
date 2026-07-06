@@ -1,0 +1,437 @@
+.page {
+  min-height: 100vh;
+  background: #FFFFFF;
+  color: #0D2B52;
+}
+
+/* Volume cover — warm black with the country photo behind a dark shade. */
+.cover {
+  position: relative;
+  background-color: #17130E;
+  background-size: cover;
+  background-position: center;
+}
+
+.coverShade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(23, 19, 14, 0.55) 0%, rgba(23, 19, 14, 0.86) 100%);
+}
+
+.coverInner {
+  position: relative;
+  z-index: 1;
+  width: min(1180px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 34px 0 54px;
+  display: grid;
+  justify-items: start;
+  gap: 10px;
+}
+
+.coverMeta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.volumeLabel {
+  color: #E8B85C;
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+.regionLabel {
+  color: rgba(245, 238, 223, 0.72);
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.coverTitle {
+  margin: 2px 0 0;
+  color: #F5EEDF;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(42px, 7vw, 76px);
+  line-height: 0.98;
+  font-weight: 520;
+  letter-spacing: -0.03em;
+}
+
+.coverSubline {
+  margin: 0;
+  color: rgba(245, 238, 223, 0.78);
+  font-size: 14px;
+}
+
+.coverStartLink {
+  margin-top: 10px;
+  display: inline-flex;
+  align-items: center;
+  min-height: 46px;
+  padding: 0 22px;
+  border-radius: 6px;
+  background: #BF9B30;
+  color: #FFFFFF;
+  text-decoration: none;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.coverStartLink:hover {
+  background: #A8882A;
+}
+
+.coverSourceLink {
+  margin-top: 6px;
+  color: rgba(245, 238, 223, 0.5);
+  text-decoration: underline;
+  font-size: 11px;
+}
+
+.body {
+  width: min(1180px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 26px 0 96px;
+}
+
+.label {
+  margin-bottom: 12px;
+  color: #BF9B30;
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.sectionTitle {
+  margin: 0;
+  color: #0D2B52;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(26px, 3vw, 38px);
+  line-height: 1.08;
+  font-weight: 520;
+  letter-spacing: -0.03em;
+}
+
+.seasonNowBanner {
+  margin: 0 0 34px;
+  padding: 14px 18px;
+  border-radius: 10px;
+  background: #FFF8E6;
+  border: 1px solid #E8D080;
+  color: #0D2B52;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.seasonNowLink {
+  color: #0D2B52;
+  font-weight: 800;
+  text-decoration: underline;
+}
+
+.chapterSection {
+  margin-top: 12px;
+}
+
+.chapterList {
+  display: grid;
+  gap: 18px;
+  margin-top: 20px;
+}
+
+.chapterCard {
+  display: grid;
+  grid-template-columns: minmax(0, 0.42fr) minmax(0, 0.58fr);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #E9E2D2;
+  background: #FDFBF6;
+  color: #0D2B52;
+  text-decoration: none;
+}
+
+.chapterImage {
+  min-height: 220px;
+  background-size: cover;
+  background-position: center;
+  background-color: #D8E2F0;
+}
+
+.chapterBody {
+  display: grid;
+  align-content: center;
+  justify-items: start;
+  gap: 8px;
+  padding: 24px 26px;
+}
+
+.chapterMetaRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chapterNumber {
+  color: #BF9B30;
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+}
+
+.startHereBadge {
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #FFF8E6;
+  border: 1px solid #E8D080;
+  color: #8A6D1C;
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.chapterName {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(24px, 2.6vw, 32px);
+  line-height: 1.1;
+  font-weight: 520;
+  letter-spacing: -0.02em;
+}
+
+.chapterSummary {
+  margin: 0;
+  color: #6B87A8;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.chapterMonths {
+  margin: 0;
+  color: #8A6D1C;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.chapterAction {
+  margin-top: 4px;
+  color: #BF9B30;
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.matrixSection,
+.crowdSection,
+.journalSection {
+  margin-top: 64px;
+  padding-top: 44px;
+  border-top: 1px solid #E9E2D2;
+}
+
+.matrixScroll {
+  margin-top: 20px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.matrixTable {
+  border-collapse: collapse;
+  min-width: 640px;
+  width: 100%;
+}
+
+.matrixCityHead,
+.matrixMonthHead {
+  padding: 8px 6px;
+  color: #6B87A8;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+
+.matrixCityCell {
+  padding: 10px 12px 10px 0;
+  color: #0D2B52;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.matrixCell,
+.matrixCellBest {
+  padding: 10px 6px;
+  text-align: center;
+  border-top: 1px solid #F0EBDD;
+}
+
+.matrixDot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #BF9B30;
+}
+
+.crowdCaption {
+  margin: 8px 0 0;
+  color: #6B87A8;
+  font-size: 12px;
+}
+
+.crowdRow {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  margin-top: 20px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.crowdMonth {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  min-width: 34px;
+}
+
+.crowdBar {
+  display: block;
+  width: 18px;
+  border-radius: 4px 4px 0 0;
+}
+
+.crowdBar[data-demand="low"],
+.crowdLegendSwatch[data-demand="low"] {
+  background: #1f9d6b;
+}
+
+.crowdBar[data-demand="mid"],
+.crowdLegendSwatch[data-demand="mid"] {
+  background: #3b6fb0;
+}
+
+.crowdBar[data-demand="high"],
+.crowdLegendSwatch[data-demand="high"] {
+  background: #BF9B30;
+}
+
+.crowdBar[data-demand="peak"],
+.crowdLegendSwatch[data-demand="peak"] {
+  background: #c2542f;
+}
+
+.crowdMonthLabel {
+  color: #6B87A8;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.crowdLegend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.crowdLegendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #6B87A8;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.crowdLegendSwatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+.journalList {
+  display: grid;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.journalRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 16px 18px;
+  border-radius: 12px;
+  border: 1px solid #E9E2D2;
+  background: #FDFBF6;
+  color: #0D2B52;
+  text-decoration: none;
+}
+
+.journalRowCategory {
+  color: #BF9B30;
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.journalRowTitle {
+  margin: 6px 0 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 18px;
+  line-height: 1.25;
+  font-weight: 520;
+  letter-spacing: -0.02em;
+}
+
+.journalRowDescription {
+  margin: 6px 0 0;
+  color: #6B87A8;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.journalRowArrow {
+  flex-shrink: 0;
+  color: #BF9B30;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+@media (max-width: 700px) {
+  .chapterCard {
+    grid-template-columns: 1fr;
+  }
+
+  .chapterImage {
+    min-height: 180px;
+  }
+
+  .coverInner {
+    padding: 26px 0 44px;
+  }
+}

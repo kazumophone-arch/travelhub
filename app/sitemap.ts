@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { journalArticles } from "@/data/journal";
+import { getPublishedCountriesWithCities } from "@/data/supabase-public-countries";
 import { themes } from "@/data/themes";
 import { getAbsoluteUrl } from "@/lib/site-metadata";
 import { supabase } from "@/lib/supabase";
@@ -58,8 +59,8 @@ async function getSupabaseSitemapData() {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const { cities: supabaseCities, spots: supabaseSpots } =
-    await getSupabaseSitemapData();
+  const [{ cities: supabaseCities, spots: supabaseSpots }, publishedCountries] =
+    await Promise.all([getSupabaseSitemapData(), getPublishedCountriesWithCities()]);
 
   const supabaseCityById = new Map(
     supabaseCities.map((city) => [city.id, city])
@@ -109,6 +110,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .map((article) => addEntry(`/journal/${article.slug}`, "monthly", 0.65))
     .filter(isSitemapEntry);
 
+  const countryPages: MetadataRoute.Sitemap = publishedCountries
+    .map((country) =>
+      addEntry(
+        `/countries/${country.slug}`,
+        "weekly",
+        0.85,
+        toOptionalDate(country.updated_at)
+      )
+    )
+    .filter(isSitemapEntry);
+
   const cityPages: MetadataRoute.Sitemap = supabaseCities
     .map((city) =>
       addEntry(
@@ -141,6 +153,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...staticPages,
     ...themePages,
     ...journalPages,
+    ...countryPages,
     ...cityPages,
     ...spotPages,
   ];

@@ -1,7 +1,48 @@
 import type { SupabasePublicCity } from "@/data/supabase-public-cities";
+import type { SupabasePublicCountry } from "@/data/supabase-public-countries";
 import type { SupabasePublicSpot } from "@/data/supabase-public-spots";
 import { getAbsoluteUrl } from "@/lib/site-metadata";
 import { getOptionalHttpUrl } from "@/lib/url-fields";
+
+export function getCountryJsonLd(
+  country: SupabasePublicCountry,
+  cityNames: string[]
+) {
+  const image = getOptionalHttpUrl(country.image_url);
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "Country",
+    name: country.name,
+    url: getAbsoluteUrl(`/countries/${country.slug}`),
+    ...(image ? { image } : {}),
+    ...(cityNames.length > 0
+      ? {
+          containsPlace: cityNames.map((name) => ({
+            "@type": "City",
+            name,
+          })),
+        }
+      : {}),
+  };
+}
+
+// Keep in sync with the visible breadcrumb trail in components/CountryVolumeView.tsx
+export function getCountryBreadcrumbJsonLd(country: SupabasePublicCountry) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: getAbsoluteUrl("/") },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: country.name,
+        item: getAbsoluteUrl(`/countries/${country.slug}`),
+      },
+    ],
+  };
+}
 
 export function getCityTouristDestinationJsonLd(city: SupabasePublicCity) {
   const description = city.description || city.summary;
