@@ -535,6 +535,47 @@
   line-height: 1.6;
 }
 
+.staysCtaSection {
+  max-width: 640px;
+  margin: 0 0 56px;
+  display: grid;
+  gap: 10px;
+  justify-items: start;
+  scroll-margin-top: 90px;
+}
+
+.heroJumpLink {
+  justify-self: start;
+  color: #6B87A8;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.heroJumpLink:hover {
+  color: #BF9B30;
+}
+
+.toursCtaSection {
+  max-width: 640px;
+  margin: 44px 0 0;
+  display: grid;
+  gap: 10px;
+  justify-items: start;
+}
+
+.esimInlineLink {
+  color: #6B87A8;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.esimInlineLink:hover {
+  color: #BF9B30;
+}
+
 .nextChapterSection {
   margin-top: 64px;
   padding-top: 44px;

@@ -156,37 +156,9 @@ export function CityDetailView({
           </p>
         ) : null}
 
-        <div className={styles.heroCtaStack}>
-          <div className={styles.heroAffiliateGroup}>
-            <AffiliateButtonGroup
-              city={city}
-              src="city-detail"
-              v={`city_detail_${city.slug}`}
-              variant="city"
-              tone="dark"
-              showHotels
-              showTours
-              compact
-              hideDisclosure
-            />
-
-            <TierCtaLink
-              href={AIRALO_URL}
-              affiliateType="esim"
-              citySlug={city.slug}
-              source="city-detail"
-              className={styles.heroCtaEsim}
-            >
-              Get an eSIM
-            </TierCtaLink>
-          </div>
-
-          <p className={styles.heroCtaDisclosure}>
-            External affiliate links. Taleglen may earn a commission at no extra cost to you.
-          </p>
-
-          {slots?.ctaEditor}
-        </div>
+        <a href="#planning-options" className={styles.heroJumpLink}>
+          Jump to stays and experiences →
+        </a>
       </section>
 
       <section className={styles.body}>
@@ -195,6 +167,35 @@ export function CityDetailView({
           climate={normalizeClimate(city.climate)}
           editor={slots?.climateEditor}
         />
+
+        <section
+          id="planning-options"
+          className={styles.staysCtaSection}
+          aria-label={`Stays in ${city.city}`}
+        >
+          <AffiliateButtonGroup
+            city={city}
+            src="city-detail"
+            v={`city_stays_climate_${city.slug}`}
+            variant="stay"
+            showHotels
+            showTours={false}
+            layout="cards"
+            thumbnailUrl={cityThumbUrl}
+          />
+
+          <TierCtaLink
+            href={AIRALO_URL}
+            affiliateType="esim"
+            citySlug={city.slug}
+            source="city-detail"
+            className={styles.esimInlineLink}
+          >
+            Need mobile data there? Get an eSIM →
+          </TierCtaLink>
+
+          {slots?.ctaEditor}
+        </section>
 
         {(city.gallery && city.gallery.length > 0) || slots?.galleryEditor ? (
           <section className={styles.gallerySection} aria-label={`${city.city} photos`}>
@@ -311,6 +312,21 @@ export function CityDetailView({
             ))}
           </div>
         )}
+
+        <section className={styles.toursCtaSection} aria-label={`Experiences in ${city.city}`}>
+          <AffiliateButtonGroup
+            city={city}
+            src="city-detail"
+            v={`city_tours_highlights_${city.slug}`}
+            variant="tour"
+            primary="tours"
+            showHotels={false}
+            showTours
+            layout="cards"
+            hideDisclosure
+            thumbnailUrl={getOptionalHttpUrl(spots[0]?.image_url ?? "") || cityThumbUrl}
+          />
+        </section>
 
         {gapsNotice ? <p className={styles.gapsNotice}>{gapsNotice}</p> : null}
 

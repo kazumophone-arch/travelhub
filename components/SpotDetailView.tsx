@@ -237,6 +237,20 @@ export function SpotDetailView({ city, spot, nearbySpots, tracking, slots }: Pro
           </article>
         </section>
 
+        {city.best_months && city.best_months.length > 0 ? (
+          <section className={styles.seasonSection} aria-labelledby="season-title">
+            <div className={styles.sectionLabel}>When to visit {city.city}</div>
+            <h2 id="season-title">{city.best_months.join(" · ")}</h2>
+            {city.season_note ? <p>{city.season_note}</p> : null}
+          </section>
+        ) : null}
+
+        <section className={styles.whySection}>
+          <div className={styles.sectionLabel}>Why go</div>
+          <h2>The reason to make time for it.</h2>
+          <p>{slots?.why ?? whyGoText}</p>
+        </section>
+
         {hasHotelAffiliate || hasTourAffiliate || slots?.planEditor ? (
           <section className={styles.planSection} aria-labelledby="plan-spot-title">
             <div className={styles.planCopy}>
@@ -268,20 +282,6 @@ export function SpotDetailView({ city, spot, nearbySpots, tracking, slots }: Pro
             ) : null}
           </section>
         ) : null}
-
-        {city.best_months && city.best_months.length > 0 ? (
-          <section className={styles.seasonSection} aria-labelledby="season-title">
-            <div className={styles.sectionLabel}>When to visit {city.city}</div>
-            <h2 id="season-title">{city.best_months.join(" · ")}</h2>
-            {city.season_note ? <p>{city.season_note}</p> : null}
-          </section>
-        ) : null}
-
-        <section className={styles.whySection}>
-          <div className={styles.sectionLabel}>Why go</div>
-          <h2>The reason to make time for it.</h2>
-          <p>{slots?.why ?? whyGoText}</p>
-        </section>
 
         {nearbySpots.length > 0 ? (
           <section className={styles.nearbySection} aria-labelledby="nearby-title">
