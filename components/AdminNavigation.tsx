@@ -19,6 +19,9 @@ export function AdminNavigation() {
       <Link href="/admin/tags" style={linkStyle}>
         タグ管理
       </Link>
+      <Link href="/admin/import" style={linkStyle}>
+        AIコンテンツ取り込み
+      </Link>
       <Link href="/admin/analytics" style={linkStyle}>
         クリック分析
       </Link>
