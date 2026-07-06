@@ -1,11 +1,9 @@
 import "server-only";
+// Countries are readable with the anon client via the RLS policy
+// "Public can read published countries" (SELECT, is_published = true only;
+// applied and verified 2026-07-06). Queries below still filter explicitly
+// on is_published for clarity and defense in depth.
 import { supabase } from "@/lib/supabase";
-// The countries table currently has RLS enabled with no public read policy,
-// so the anon client gets an empty result (verified 2026-07-06). Until a
-// "public read published countries" policy ships (owner-applied migration),
-// country rows are read with the service-role client — server-only, and
-// always filtered to is_published = true. Cities keep using the anon client.
-import { supabaseAdmin } from "@/lib/supabase-admin";
 
 export type SupabasePublicCountry = {
   id: string;
@@ -91,7 +89,7 @@ async function getPublishedCitiesForCountry(
 // countries that get a public volume page or a sitemap entry.
 export async function getPublishedCountriesWithCities(): Promise<SupabasePublicCountry[]> {
   const [countriesResult, citiesResult] = await Promise.all([
-    supabaseAdmin
+    supabase
       .from("countries")
       .select(COUNTRY_SELECT)
       .eq("is_published", true)
@@ -125,7 +123,7 @@ export async function getPublishedCountriesWithCities(): Promise<SupabasePublicC
 }
 
 export async function getCountryVolume(slug: string): Promise<CountryVolume | null> {
-  const { data, error } = await supabaseAdmin
+  const { data, error } = await supabase
     .from("countries")
     .select(COUNTRY_SELECT)
     .eq("slug", slug)
