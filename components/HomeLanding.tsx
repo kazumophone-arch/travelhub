@@ -8,19 +8,19 @@ import { HomeWaitlistForm } from "@/components/HomeWaitlistForm";
 import { journalArticles } from "@/data/journal";
 import styles from "./HomeLanding.module.css";
 
-type Props = {
-  cities: City[];
-  currentMonth: string;
+// A country rendered as a hardcover volume on the Home shelf. Serializable
+// subset passed from the server page; never fabricated client-side.
+export type HomeVolume = {
+  id: string;
+  slug: string;
+  name: string;
+  image_url: string | null;
 };
 
-type HeroCity = Pick<City, "slug" | "city" | "country" | "imageUrl">;
-
-// Used only when Supabase has no published cities yet (e.g. local/dev).
-const FALLBACK_HERO_CITY: HeroCity = {
-  slug: "kyoto",
-  city: "Kyoto",
-  country: "Japan",
-  imageUrl: "/assets/home/kyoto-hero.jpg",
+type Props = {
+  cities: City[];
+  volumes: HomeVolume[];
+  currentMonth: string;
 };
 
 // Deterministic hardcover material palettes. No per-city DB field — the
@@ -42,8 +42,7 @@ const COVER_PALETTES: CoverPalette[] = [
   { cover: ["#3C3B3E", "#1F1E21"], spine: ["#2C2B2E", "#151417"], band: "#131214" }, // charcoal
 ];
 
-function getCoverPalette(city: HeroCity): CoverPalette {
-  const key = city.slug || city.city || "";
+function getCoverPalette(key: string): CoverPalette {
   let hash = 0;
   for (let i = 0; i < key.length; i += 1) {
     hash = (hash * 31 + key.charCodeAt(i)) >>> 0;
@@ -129,46 +128,6 @@ export function formatMonthRanges(months: string[] | undefined | null): string {
     .join(", ");
 }
 
-function BedIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      width="15"
-      height="15"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.7"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M3 17v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4" />
-      <path d="M3 17v2.5M21 17v2.5" />
-      <path d="M3 15h18" />
-      <path d="M6 11V9a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2" />
-    </svg>
-  );
-}
-
-function TicketIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      width="15"
-      height="15"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.7"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M4 8a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1.5 1.5 0 0 0 0 3v2a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-2a1.5 1.5 0 0 0 0-3V8z" />
-      <path d="M14 7v10" strokeDasharray="2.2 2.2" />
-    </svg>
-  );
-}
-
 function CalendarIcon() {
   return (
     <svg
@@ -249,35 +208,34 @@ function getHomeJournalArticles() {
   return (featured.length > 0 ? featured : journalArticles).slice(0, 4);
 }
 
-function getHeroCities(cities: City[]): HeroCity[] {
-  const featured = cities
-    .filter((city) => city.isFeatured)
-    .sort((a, b) => {
-      const rankA = a.featuredRank ?? Number.POSITIVE_INFINITY;
-      const rankB = b.featuredRank ?? Number.POSITIVE_INFINITY;
-      return rankA - rankB;
-    })
-    .slice(0, 3);
-
-  if (featured.length > 0) {
-    return featured;
-  }
-
-  return cities.length > 0 ? cities.slice(0, 3) : [FALLBACK_HERO_CITY];
+function getChapterCount(cities: City[], volume: HomeVolume): number {
+  return cities.filter((city) => city.countryId === volume.id).length;
 }
 
-export function HomeLanding({ cities, currentMonth }: Props) {
-  const heroCities = getHeroCities(cities);
+function getSideVolumeStyle(volume: HomeVolume): CSSProperties {
+  if (volume.image_url) {
+    return { backgroundImage: `url('${volume.image_url}')` };
+  }
+
+  const palette = getCoverPalette(volume.slug);
+  return {
+    background: `linear-gradient(160deg, ${palette.cover[0]} 0%, ${palette.cover[1]} 100%)`,
+  };
+}
+
+export function HomeLanding({ cities, volumes, currentMonth }: Props) {
+  const heroVolumes = volumes.slice(0, 3);
   const [activeHero, setActiveHero] = useState(0);
-  const activeCity = heroCities[activeHero] ?? heroCities[0];
+  const activeVolume = heroVolumes[activeHero] ?? heroVolumes[0];
   const homeJournalArticles = getHomeJournalArticles();
   const seasonalCities = cities
     .filter((city) => city.months?.includes(currentMonth))
     .slice(0, 4);
 
-  const sideCities = heroCities.filter((_, index) => index !== activeHero);
-  const leftSideCity = sideCities[0];
-  const rightSideCity = sideCities[1];
+  const sideVolumes = heroVolumes.filter((_, index) => index !== activeHero);
+  const leftSideVolume = sideVolumes[0];
+  const rightSideVolume = sideVolumes[1];
+  const activeChapterCount = activeVolume ? getChapterCount(cities, activeVolume) : 0;
 
   return (
     <main className={styles.root}>
@@ -285,8 +243,8 @@ export function HomeLanding({ cities, currentMonth }: Props) {
         <div
           className={styles.bookshelfBackdropImage}
           style={
-            activeCity.imageUrl
-              ? { backgroundImage: `url('${activeCity.imageUrl}')` }
+            activeVolume?.image_url
+              ? { backgroundImage: `url('${activeVolume.image_url}')` }
               : undefined
           }
           aria-hidden="true"
@@ -300,110 +258,96 @@ export function HomeLanding({ cities, currentMonth }: Props) {
             <p className={styles.heroSubcopy}>Curated places. Honest guides. Real next steps.</p>
           </div>
 
-          <div className={styles.heroBookCol}>
-            <div className={styles.bookshelfRow}>
-              {leftSideCity ? (
-                <button
-                  type="button"
-                  aria-label={`Show ${leftSideCity.city}`}
-                  className={`${styles.bookSide} ${styles.bookSideLeft}`}
-                  style={
-                    leftSideCity.imageUrl
-                      ? { backgroundImage: `url('${leftSideCity.imageUrl}')` }
-                      : undefined
-                  }
-                  onClick={() => setActiveHero(heroCities.indexOf(leftSideCity))}
-                />
-              ) : (
-                <div className={`${styles.bookSideEmpty} ${styles.bookSideLeft}`} aria-hidden="true" />
-              )}
+          {activeVolume ? (
+            <div className={styles.heroBookCol}>
+              <div className={styles.bookshelfRow}>
+                {leftSideVolume ? (
+                  <button
+                    type="button"
+                    aria-label={`Show ${leftSideVolume.name}`}
+                    className={`${styles.bookSide} ${styles.bookSideLeft}`}
+                    style={getSideVolumeStyle(leftSideVolume)}
+                    onClick={() => setActiveHero(heroVolumes.indexOf(leftSideVolume))}
+                  />
+                ) : (
+                  <div className={`${styles.bookSideEmpty} ${styles.bookSideLeft}`} aria-hidden="true" />
+                )}
 
-              <div className={styles.bookMain}>
-                <div
-                  className={styles.bookSpine}
-                  style={coverStyleVars(getCoverPalette(activeCity)) as CSSProperties}
-                  aria-hidden="true"
-                />
+                <div className={styles.bookMain}>
+                  <div
+                    className={styles.bookSpine}
+                    style={coverStyleVars(getCoverPalette(activeVolume.slug)) as CSSProperties}
+                    aria-hidden="true"
+                  />
 
-                <div
-                  className={styles.bookCover}
-                  style={coverStyleVars(getCoverPalette(activeCity)) as CSSProperties}
-                >
-                  {activeCity.imageUrl ? (
-                    <img
-                      src={activeCity.imageUrl}
-                      alt={`${activeCity.city} cover photograph`}
-                      className={styles.bookCoverPhoto}
-                    />
-                  ) : null}
-                  <div className={styles.bookCoverShade} aria-hidden="true" />
-                  <div className={styles.coverOrnaments} aria-hidden="true" />
-                  <div className={styles.coverInnerBorder} aria-hidden="true" />
+                  <div
+                    className={styles.bookCover}
+                    style={coverStyleVars(getCoverPalette(activeVolume.slug)) as CSSProperties}
+                  >
+                    {activeVolume.image_url ? (
+                      <img
+                        src={activeVolume.image_url}
+                        alt={`${activeVolume.name} volume cover photograph`}
+                        className={styles.bookCoverPhoto}
+                      />
+                    ) : null}
+                    <div className={styles.bookCoverShade} aria-hidden="true" />
+                    <div className={styles.coverOrnaments} aria-hidden="true" />
+                    <div className={styles.coverInnerBorder} aria-hidden="true" />
 
-                  <h2 className={styles.bookTitle}>{activeCity.city}</h2>
-                  <p className={styles.bookCountry}>{activeCity.country}</p>
+                    <h2 className={styles.bookTitle}>{activeVolume.name}</h2>
+                    {activeChapterCount > 0 ? (
+                      <p className={styles.bookCountry}>
+                        {activeChapterCount} chapter{activeChapterCount === 1 ? "" : "s"}
+                      </p>
+                    ) : null}
+                  </div>
+
+                  <div className={styles.pageEdge} aria-hidden="true" />
+                  <div className={styles.bookContactShadow} aria-hidden="true" />
                 </div>
 
-                <div className={styles.pageEdge} aria-hidden="true" />
-                <div className={styles.bookContactShadow} aria-hidden="true" />
+                {rightSideVolume ? (
+                  <button
+                    type="button"
+                    aria-label={`Show ${rightSideVolume.name}`}
+                    className={`${styles.bookSide} ${styles.bookSideRight}`}
+                    style={getSideVolumeStyle(rightSideVolume)}
+                    onClick={() => setActiveHero(heroVolumes.indexOf(rightSideVolume))}
+                  />
+                ) : (
+                  <div className={`${styles.bookSideEmpty} ${styles.bookSideRight}`} aria-hidden="true" />
+                )}
               </div>
 
-              {rightSideCity ? (
-                <button
-                  type="button"
-                  aria-label={`Show ${rightSideCity.city}`}
-                  className={`${styles.bookSide} ${styles.bookSideRight}`}
-                  style={
-                    rightSideCity.imageUrl
-                      ? { backgroundImage: `url('${rightSideCity.imageUrl}')` }
-                      : undefined
-                  }
-                  onClick={() => setActiveHero(heroCities.indexOf(rightSideCity))}
-                />
-              ) : (
-                <div className={`${styles.bookSideEmpty} ${styles.bookSideRight}`} aria-hidden="true" />
+              {heroVolumes.length > 1 && (
+                <div className={styles.heroDots}>
+                  {heroVolumes.map((volume, index) => (
+                    <button
+                      key={volume.slug}
+                      type="button"
+                      aria-label={`Show ${volume.name}`}
+                      className={
+                        index === activeHero ? styles.heroDotActive : styles.heroDot
+                      }
+                      onClick={() => setActiveHero(index)}
+                    />
+                  ))}
+                </div>
               )}
             </div>
-
-            {heroCities.length > 1 && (
-              <div className={styles.heroDots}>
-                {heroCities.map((city, index) => (
-                  <button
-                    key={city.slug}
-                    type="button"
-                    aria-label={`Show ${city.city}`}
-                    className={
-                      index === activeHero ? styles.heroDotActive : styles.heroDot
-                    }
-                    onClick={() => setActiveHero(index)}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
+          ) : null}
 
           <div className={styles.heroActions}>
-            <Link href={`/c/${activeCity.slug}`} className={styles.heroPrimaryCta}>
-              Open the {activeCity.city} guide
-              <span className={styles.heroPrimaryCtaArrow} aria-hidden="true">→</span>
-            </Link>
-
-            <div className={styles.heroSecondaryRow}>
-              <a
-                href={`/out/hotels?c=${encodeURIComponent(activeCity.slug)}&src=home&v=home_quicklink_hotels`}
-                className={styles.heroSecondaryCta}
+            {activeVolume ? (
+              <Link
+                href={`/countries/${activeVolume.slug}`}
+                className={styles.heroPrimaryCta}
               >
-                <BedIcon />
-                Stays
-              </a>
-              <a
-                href={`/out/tours?c=${encodeURIComponent(activeCity.slug)}&src=home&v=home_quicklink_tours`}
-                className={styles.heroSecondaryCta}
-              >
-                <TicketIcon />
-                Experiences
-              </a>
-            </div>
+                Open the {activeVolume.name} volume
+                <span className={styles.heroPrimaryCtaArrow} aria-hidden="true">→</span>
+              </Link>
+            ) : null}
 
             <Link href="/cities" className={styles.heroTertiaryLink}>
               Browse all destinations →
