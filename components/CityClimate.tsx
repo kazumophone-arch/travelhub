@@ -28,17 +28,24 @@ export function CityClimate({ cityName, climate, editor }: Props) {
   const maxTemp = hasTemps ? Math.max(...temps) : 1;
   const span = maxTemp - minTemp || 1;
 
-  const highlightCards = [
+  // Season facts (peak/value) always show when present. weather_summary is
+  // already surfaced in CityDetailView's "At a glance" panel, so it's only
+  // repeated here as a fact item when there are no season facts to show —
+  // otherwise this section would duplicate At a glance without adding
+  // anything new.
+  const seasonFacts = [
     climate.peak_season
       ? { key: "peak", icon: "🔥", label: "Peak season", value: climate.peak_season }
       : null,
     climate.value_season
-      ? { key: "value", icon: "💰", label: "Best value (cheapest)", value: climate.value_season }
+      ? { key: "value", icon: "💰", label: "Best value", value: climate.value_season }
       : null,
-    climate.weather_summary
-      ? { key: "weather", icon: "🌤", label: "Weather in a nutshell", value: climate.weather_summary }
-      : null,
-  ].filter((card): card is { key: string; icon: string; label: string; value: string } => Boolean(card));
+  ].filter((fact): fact is { key: string; icon: string; label: string; value: string } => Boolean(fact));
+
+  const highlightCards =
+    seasonFacts.length === 0 && climate.weather_summary
+      ? [{ key: "weather", icon: "🌤", label: "Weather", value: climate.weather_summary }]
+      : seasonFacts;
 
   return (
     <section className={styles.section} aria-label={`${cityName} climate and best time to visit`}>
@@ -51,15 +58,15 @@ export function CityClimate({ cityName, climate, editor }: Props) {
       </div>
 
       {highlightCards.length > 0 ? (
-        <div className={styles.highlightGrid}>
+        <div className={styles.factStrip}>
           {highlightCards.map((card) => (
-            <div key={card.key} className={styles.highlightCard}>
-              <div className={styles.highlightIcon} aria-hidden="true">
+            <div key={card.key} className={styles.factChip}>
+              <div className={styles.factIcon} aria-hidden="true">
                 {card.icon}
               </div>
               <div>
-                <div className={styles.highlightLabel}>{card.label}</div>
-                <p className={styles.highlightValue}>{card.value}</p>
+                <div className={styles.factLabel}>{card.label}</div>
+                <p className={styles.factValue}>{card.value}</p>
               </div>
             </div>
           ))}
