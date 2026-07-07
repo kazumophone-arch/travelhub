@@ -8,6 +8,7 @@ import { TierCtaLink } from "@/components/TierCtaLink";
 import { hasClimateData, normalizeClimate } from "@/lib/climate";
 import { journalArticles } from "@/data/journal";
 import type { SupabasePublicCity } from "@/data/supabase-public-cities";
+import type { SpotNotes } from "@/data/supabase-public-spots";
 import { AIRALO_URL } from "@/lib/quick-affiliate-links";
 import type { TrackingParams } from "@/lib/tracking-query";
 import {
@@ -24,6 +25,7 @@ export type CityDetailSpot = {
   summary: string;
   image_url: string;
   image_position?: string | null;
+  notes?: SpotNotes;
 };
 
 export type CityDetailNearbyCity = {
@@ -87,9 +89,25 @@ export function CityDetailView({
   const showChapterNumber =
     typeof chapterNumber === "number" && (chapterTotal ?? 0) >= 2;
 
-  const hasSeasonalData =
-    hasClimateData(normalizeClimate(city.climate)) ||
-    (city.best_months?.length ?? 0) > 0;
+  const climate = normalizeClimate(city.climate);
+
+  const cityLead = (city.description || city.summary || "").trim();
+  const bestTimeLine =
+    (city.season_note ?? "").trim() ||
+    ((city.best_months?.length ?? 0) > 0 ? city.best_months.join(", ") : "");
+  const glanceFacts = [
+    bestTimeLine ? { label: "Best time to visit", value: bestTimeLine } : null,
+    climate.weather_summary ? { label: "Weather", value: climate.weather_summary } : null,
+    spots.length > 0
+      ? {
+          label: "This chapter",
+          value: `${spots.length} ${spots.length === 1 ? "spot" : "spots"} documented so far.`,
+        }
+      : null,
+  ].filter((fact): fact is { label: string; value: string } => Boolean(fact));
+  const hasAtAGlance = Boolean(cityLead) || glanceFacts.length > 0;
+
+  const hasSeasonalData = hasClimateData(climate) || (city.best_months?.length ?? 0) > 0;
   const isCompactChapter = spots.length >= 1 && spots.length < 3;
   const placeWord = spots.length === 1 ? "place" : "places";
   const gapsNotice = !hasSeasonalData && isCompactChapter
@@ -162,11 +180,27 @@ export function CityDetailView({
       </section>
 
       <section className={styles.body}>
-        <CityClimate
-          cityName={city.city}
-          climate={normalizeClimate(city.climate)}
-          editor={slots?.climateEditor}
-        />
+        {hasAtAGlance ? (
+          <section className={styles.atAGlance} aria-label={`${city.city} at a glance`}>
+            <div className={styles.label}>Chapter brief</div>
+            <h2 className={styles.sectionTitle}>{city.city} at a glance</h2>
+
+            {cityLead ? <p className={styles.atAGlanceLead}>{cityLead}</p> : null}
+
+            {glanceFacts.length > 0 ? (
+              <div className={styles.atAGlanceFacts}>
+                {glanceFacts.map((fact) => (
+                  <div key={fact.label} className={styles.atAGlanceFact}>
+                    <span className={styles.atAGlanceFactLabel}>{fact.label}</span>
+                    <span className={styles.atAGlanceFactValue}>{fact.value}</span>
+                  </div>
+                ))}
+              </div>
+            ) : null}
+          </section>
+        ) : null}
+
+        <CityClimate cityName={city.city} climate={climate} editor={slots?.climateEditor} />
 
         <section
           id="planning-options"
@@ -181,6 +215,7 @@ export function CityDetailView({
             showHotels
             showTours={false}
             layout="cards"
+            density="compact"
             thumbnailUrl={cityThumbUrl}
           />
 
@@ -246,6 +281,9 @@ export function CityDetailView({
                     />
                     <h3 className={styles.highlightName}>{spot.name}</h3>
                     <p className={styles.highlightText}>{spot.summary || "No summary yet."}</p>
+                    {spot.notes?.best_for ? (
+                      <p className={styles.highlightDecisionLine}>{spot.notes.best_for}</p>
+                    ) : null}
                   </Link>
 
                   <a
@@ -296,6 +334,9 @@ export function CityDetailView({
                   <div className={styles.spotPanel}>
                     <h3 className={styles.spotTitle}>{spot.name}</h3>
                     <p className={styles.spotText}>{spot.summary || "No summary yet."}</p>
+                    {spot.notes?.best_for ? (
+                      <p className={styles.spotDecisionLine}>{spot.notes.best_for}</p>
+                    ) : null}
                     <div className={styles.spotAction}>Open spot guide →</div>
                   </div>
                 </Link>
@@ -323,6 +364,7 @@ export function CityDetailView({
             showHotels={false}
             showTours
             layout="cards"
+            density="compact"
             hideDisclosure
             thumbnailUrl={getOptionalHttpUrl(spots[0]?.image_url ?? "") || cityThumbUrl}
           />

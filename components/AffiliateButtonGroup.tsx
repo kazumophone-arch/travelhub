@@ -39,6 +39,7 @@ type Props = {
   compact?: boolean;
   hideDisclosure?: boolean;
   layout?: "buttons" | "cards";
+  density?: "default" | "compact";
   thumbnailUrl?: string;
 };
 
@@ -84,8 +85,10 @@ export function AffiliateButtonGroup({
   compact = false,
   hideDisclosure = false,
   layout = "buttons",
+  density = "default",
   thumbnailUrl,
 }: Props) {
+  const isCompactDensity = density === "compact";
   const encodedCity = encodeURIComponent(city.slug);
   const encodedSrc = encodeURIComponent(src);
   const encodedV = encodeURIComponent(v);
@@ -130,12 +133,12 @@ export function AffiliateButtonGroup({
 
   if (layout === "cards") {
     return (
-      <div style={cardWrapStyle}>
+      <div style={isCompactDensity ? cardWrapCompactStyle : cardWrapStyle}>
         {orderedItems.map((item) => (
           <a
             key={item.key}
             href={item.href}
-            style={cardStyle}
+            style={isCompactDensity ? cardCompactStyle : cardStyle}
             onClick={(event) =>
               handleAffiliateClick(event, {
                 item,
@@ -146,16 +149,16 @@ export function AffiliateButtonGroup({
               })
             }
           >
-            <div style={cardTextStyle}>
+            <div style={isCompactDensity ? cardTextCompactStyle : cardTextStyle}>
               <span style={cardIconStyle}>{CARD_ICON[item.key]}</span>
               <span style={cardTitleStyle}>{item.title}</span>
-              <span style={cardNoteStyle}>{item.note}</span>
+              {isCompactDensity ? null : <span style={cardNoteStyle}>{item.note}</span>}
               <span style={cardViewLabelStyle}>{CARD_VIEW_LABEL[item.key]} →</span>
             </div>
 
             <div
               style={{
-                ...cardThumbStyle,
+                ...(isCompactDensity ? cardThumbCompactStyle : cardThumbStyle),
                 backgroundImage: getImageBackground(
                   thumbnailUrl,
                   "linear-gradient(180deg, rgba(13, 43, 82, 0) 0%, rgba(13, 43, 82, 0.18) 100%)",
@@ -441,6 +444,28 @@ const cardThumbStyle: CSSProperties = {
   borderRadius: 8,
   backgroundSize: "cover",
   backgroundPosition: "center",
+};
+
+const cardWrapCompactStyle: CSSProperties = {
+  ...cardWrapStyle,
+  gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))",
+  gap: 10,
+};
+
+const cardCompactStyle: CSSProperties = {
+  ...cardStyle,
+  gap: 12,
+  padding: 12,
+};
+
+const cardTextCompactStyle: CSSProperties = {
+  ...cardTextStyle,
+  gap: 3,
+};
+
+const cardThumbCompactStyle: CSSProperties = {
+  ...cardThumbStyle,
+  width: 72,
 };
 
 const baseButtonStyle: CSSProperties = {

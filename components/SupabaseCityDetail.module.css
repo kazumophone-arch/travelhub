@@ -114,6 +114,68 @@
   letter-spacing: 0.14em;
 }
 
+.atAGlance {
+  margin-bottom: 40px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid #D8E2F0;
+}
+
+.atAGlanceLead {
+  max-width: 760px;
+  margin: 14px 0 0;
+  color: #34507A;
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+.atAGlanceFacts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.atAGlanceFact {
+  display: grid;
+  gap: 4px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #FBFCFE 0%, #F2F6FB 100%);
+  border: 1px solid #E1E9F3;
+}
+
+.atAGlanceFactLabel {
+  color: #6B87A8;
+  font-size: 11px;
+  font-weight: 850;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.atAGlanceFactValue {
+  color: #0D2B52;
+  font-size: 13px;
+  line-height: 1.5;
+  font-weight: 600;
+}
+
+.highlightDecisionLine {
+  margin: 6px 0 0;
+  color: #BF9B30;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.spotDecisionLine {
+  max-width: 480px;
+  margin: 8px 0 0;
+  color: #E8D080;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
 .gallerySection {
   margin-bottom: 56px;
   padding-bottom: 44px;
