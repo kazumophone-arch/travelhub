@@ -451,8 +451,13 @@ export function AdminEditCityForm({ id }: Props) {
           slug={form.slug}
           city={form.city}
           country={form.country}
+          countryId={form.countryId}
+          sortRank={form.sortRank}
           imageUrl={form.imageUrl}
           imagePosition={form.imagePosition}
+          imageAlt={form.imageAlt}
+          imageCredit={form.imageCredit}
+          imageSourceUrl={form.imageSourceUrl}
           affiliateHotelUrl={form.affiliateHotelUrl}
           affiliateTourUrl={form.affiliateTourUrl}
           bestMonths={form.bestMonths}
@@ -538,7 +543,7 @@ export function AdminEditCityForm({ id }: Props) {
 
         <FormSection
           title="Hero"
-          hint="右側プレビュー上部のヒーロー（画像・タイトル・リード文）に反映されます。"
+          hint="上のプレビューに反映されます：画像URL・表示位置はヒーロー背景に、画像クレジット・出典URLはヒーロー下の「Photo: ...」表記に反映されます（クレジットが空欄の間は非表示）。画像代替テキストはページ本文には表示されず、アクセシビリティ用途のみです。"
         >
           <label style={labelStyle}>
             概要（ヒーローのリード文）
@@ -614,7 +619,7 @@ export function AdminEditCityForm({ id }: Props) {
 
         <FormSection
           title="Where to Stay"
-          hint="ホテルURLを入力すると、プレビューのホテルCTAが「表示予定」になります。"
+          hint="上のプレビューに反映されます：ホテルURLを入力すると「Stays」CTAカードが表示され、空欄にすると非表示になります。"
         >
           <label style={labelStyle}>
             ホテルアフィリエイトURL（https）
@@ -628,7 +633,7 @@ export function AdminEditCityForm({ id }: Props) {
 
         <FormSection
           title="Experiences"
-          hint="ツアーURLを入力すると、プレビューのツアーCTAが「表示予定」になります。"
+          hint="上のプレビューに反映されます：ツアーURLを入力すると「Experiences」CTAカードが表示され、空欄にすると非表示になります。"
         >
           <label style={labelStyle}>
             ツアーアフィリエイトURL（https）
@@ -642,7 +647,7 @@ export function AdminEditCityForm({ id }: Props) {
 
         <FormSection
           title="Explore next / Supporting copy"
-          hint="現在のプレビューには直接表示されない補足情報です（説明は概要が空欄のときのみヒーローのリード文として使われます）。"
+          hint="このセクションは基本的にCityページ本文には表示されません（管理・検索用の補足情報）。例外：おすすめの月・季節メモはホームページの「Good to visit in [月]」セクションでのみ使われます。「表示順」「ホームのヒーローに表示」はホームページの表示に影響し、Cityページ自体は変わりません。"
         >
           <label style={labelStyle}>
             説明
